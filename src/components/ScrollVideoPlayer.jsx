@@ -14,7 +14,7 @@ export default function ScrollVideoPlayer() {
     for (let i = 1; i <= totalFrames; i++) {
       const img = new Image();
       const paddedIndex = String(i).padStart(3, '0');
-      img.src = `/scroller-images/ezgif-frame-${paddedIndex}.jpg`;
+      img.src = `https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/scroller-images/ezgif-frame-${paddedIndex}.jpg`;
       img.onload = () => {
         loadedCount++;
         if (loadedCount === totalFrames) {
