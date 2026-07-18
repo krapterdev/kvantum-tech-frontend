@@ -13,9 +13,9 @@ export default function Services({ services = [] }) {
     <section className="container mx-auto max-w-[1280px] px-6 py-20 border-t border-white/8 select-none bg-white/[0.002]">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
         <div className="text-left">
-          <span className="tech-badge mb-4">Core Services</span>
+          <span className="tech-badge mb-4">What We Do</span>
           <h2 className="text-3xl sm:text-4xl font-headline font-bold text-zinc-100 leading-tight">
-            Dynamic Business <span className="gradient-text">Capabilities</span>
+            Our Core <span className="gradient-text">Capabilities</span>
           </h2>
         </div>
         <Button
@@ -23,7 +23,7 @@ export default function Services({ services = [] }) {
           variant="primary"
           className="text-sm px-6 py-3 rounded-lg"
         >
-          Explore All 16 Capabilities <ArrowRight size={15} />
+          Explore All Services <ArrowRight size={15} />
         </Button>
       </div>
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Cpu, ShieldCheck, Activity } from 'lucide-react';
 import Button from '../ui/Button';
@@ -7,17 +7,17 @@ import Badge from '../ui/Badge';
 import GradientText from '../ui/GradientText';
 
 export default function Hero() {
-  const [liveUptime, setLiveUptime] = useState(99.994);
-  const [activeNodes, setActiveNodes] = useState(4192);
-  const [cpuLoad, setCpuLoad] = useState(34);
+  const [pageSpeed, setPageSpeed] = useState(99);
+  const [loadTime, setLoadTime] = useState(0.72);
+  const [uptime, setUptime] = useState(99.99);
   const navigate = useNavigate();
 
-  // Statistics counters ticker
+  // Realistic statistics ticker
   useEffect(() => {
     const interval = setInterval(() => {
-      setLiveUptime(() => +(99.99 + Math.random() * 0.005).toFixed(3));
-      setActiveNodes(prev => prev + (Math.random() > 0.5 ? 1 : -1));
-      setCpuLoad(() => Math.floor(25 + Math.random() * 15));
+      setPageSpeed(() => Math.floor(98 + Math.random() * 3));
+      setLoadTime(() => +(0.65 + Math.random() * 0.15).toFixed(2));
+      setUptime(() => +(99.98 + Math.random() * 0.019).toFixed(3));
     }, 4000);
     return () => clearInterval(interval);
   }, []);
@@ -30,16 +30,16 @@ export default function Hero() {
         <div className="flex flex-col items-start text-left">
           <Badge className="mb-6 flex items-center gap-1.5">
             <Activity size={12} className="animate-pulse text-cyanCustom" />
-            SYSTEM PROTOCOL v5.0.0 SECURED
+            Studio Kvantum — Live Development
           </Badge>
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-headline font-bold text-zinc-100 leading-[1.08] tracking-tight mb-6">
-            We engineer <GradientText>digital fluidity</GradientText> <br />
-            at enterprise scale.
+            We build <GradientText>high-performance</GradientText> <br />
+            digital experiences.
           </h1>
 
           <p className="text-zinc-400 text-base sm:text-lg leading-relaxed max-w-[600px] mb-9">
-            Architecting ultra-high performance ecosystems through logic-heavy software engineering and precision design. We deploy robust, containerized systems built for high traffic.
+            We partner with ambitious brands to design, engineer, and optimize websites, web applications, and custom software that load instantly, convert visitor attention, and scale cleanly.
           </p>
 
           <div className="flex flex-wrap gap-4">
@@ -51,18 +51,18 @@ export default function Hero() {
               }}
               variant="primary"
             >
-              Initialize Project <ArrowRight size={16} />
+              Start a Project <ArrowRight size={16} />
             </Button>
             <Button
               onClick={() => navigate('/services')}
               variant="secondary"
             >
-              Explore Services
+              Our Capabilities
             </Button>
           </div>
         </div>
 
-        {/* Right Side: Interactive Telemetry Card */}
+        {/* Right Side: Interactive Performance Metrics Card */}
         <div className="flex justify-center w-full">
           <Card 
             tilt 
@@ -78,46 +78,46 @@ export default function Hero() {
                     <Cpu size={18} className="text-cyanCustom" />
                   </div>
                   <div>
-                    <h4 className="text-zinc-100 text-sm font-semibold">Core Node Engine</h4>
-                    <span className="text-zinc-500 text-[11px] font-mono block">NODE_STATUS: STABLE</span>
+                    <h4 className="text-zinc-100 text-sm font-semibold">Performance Core</h4>
+                    <span className="text-zinc-500 text-[11px] font-mono block">Vitals Status: Optimized</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]"></div>
-                  <span className="text-[11px] font-mono text-zinc-400">ONLINE</span>
+                  <span className="text-[11px] font-mono text-zinc-400">ACTIVE</span>
                 </div>
               </div>
 
-              {/* Stat 1: Conversion Rate */}
+              {/* Stat 1: Lighthouse Score */}
               <div>
                 <span className="block text-[11px] font-mono text-zinc-400 uppercase tracking-wider mb-2">
-                  Success Conversion Rate
+                  Lighthouse Speed Index
                 </span>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-extrabold text-cyanCustom font-headline leading-none">{liveUptime}%</span>
-                  <span className="text-emerald-500 text-xs font-semibold">+0.001%</span>
+                  <span className="text-4xl font-extrabold text-cyanCustom font-headline leading-none">{pageSpeed}/100</span>
+                  <span className="text-emerald-500 text-xs font-semibold">Core Web Vitals Pass</span>
                 </div>
                 <div className="h-1.5 bg-zinc-800 rounded-full mt-3 overflow-hidden">
                   <div 
                     className="h-full bg-gradient-to-r from-cyanCustom to-purpleCustom rounded-full transition-all duration-300"
-                    style={{ width: `${liveUptime}%` }}
+                    style={{ width: `${pageSpeed}%` }}
                   ></div>
                 </div>
               </div>
 
               {/* Stats Grid */}
-              <div className="grid grid-cols-2 gap-5 border-t border-white/8 pt-5">
+              <div className="grid grid-cols-2 gap-5 border-t border-white/8 pt-5 text-left">
                 <div>
                   <span className="block text-[11px] font-mono text-zinc-500 uppercase tracking-wider mb-1">
-                    Active Nodes
+                    Avg Load Time
                   </span>
-                  <span className="text-xl font-bold text-zinc-100">{activeNodes.toLocaleString()}</span>
+                  <span className="text-xl font-bold text-zinc-100">{loadTime}s</span>
                 </div>
                 <div>
                   <span className="block text-[11px] font-mono text-zinc-500 uppercase tracking-wider mb-1">
-                    Processor Stress
+                    Platform Uptime
                   </span>
-                  <span className="text-xl font-bold text-purpleCustom">{cpuLoad}%</span>
+                  <span className="text-xl font-bold text-purpleCustom">{uptime}%</span>
                 </div>
               </div>
 
@@ -125,7 +125,7 @@ export default function Hero() {
               <div className="flex items-center gap-2.5 bg-white/[0.01] p-3 rounded-lg border border-white/8">
                 <ShieldCheck size={16} className="text-cyanCustom" />
                 <span className="text-[11px] font-mono text-zinc-400">
-                  Secure Handshake Protocol Active
+                  Clean Semantic Build — React 19 / Vite
                 </span>
               </div>
 

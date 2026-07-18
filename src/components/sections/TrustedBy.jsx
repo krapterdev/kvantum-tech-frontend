@@ -13,8 +13,8 @@ export default function TrustedBy() {
   return (
     <section className="border-y border-white/8 bg-zinc-950/20 py-8 select-none">
       <div className="container mx-auto max-w-[1280px] px-6">
-        <p className="text-zinc-500 font-mono text-xs text-center uppercase tracking-[0.15em] mb-6">
-          System Integrated Architecture Stack
+        <p className="text-zinc-500 font-mono text-[10px] text-center uppercase tracking-[0.2em] mb-6">
+          Our Core Technology Stack
         </p>
         <div className="flex flex-wrap items-center justify-center gap-10 md:gap-16 opacity-50 hover:opacity-75 transition-opacity duration-300">
           {integrations.map((item, idx) => {

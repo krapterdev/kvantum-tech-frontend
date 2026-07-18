@@ -27,12 +27,12 @@ export default function Newsletter() {
   return (
     <section className="container mx-auto max-w-[680px] px-6 py-20 border-t border-white/8 select-none">
       <div className="text-center mb-10">
-        <span className="tech-badge mb-4">Newsletter Node</span>
+        <span className="tech-badge mb-4">Newsletter</span>
         <h2 className="text-3xl font-headline font-bold text-zinc-100 leading-tight">
           Subscribe to <span className="gradient-text">Insights</span>
         </h2>
         <p className="text-zinc-400 text-sm mt-2">
-          Get latency reports, SEO algorithm updates, and system architectural diagrams delivered to your inbox.
+          Get the latest insights on web engineering, design trends, and SEO strategies delivered straight to your inbox.
         </p>
       </div>
 
@@ -41,7 +41,7 @@ export default function Newsletter() {
           <input
             type="email"
             required
-            placeholder="e.g. subscriber@domain.com"
+            placeholder="Enter your email address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-5 py-4 pr-32 text-zinc-100 text-sm font-sans placeholder-zinc-500 outline-none focus:border-cyanCustom/40 transition-colors"
@@ -58,13 +58,13 @@ export default function Newsletter() {
 
         {status.success && (
           <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 px-4 py-3 rounded-lg text-emerald-400 text-xs font-mono">
-            <Check size={14} /> <strong>[SUCCESS]</strong> Telemetry mail synced. Thank you for subscribing!
+            <Check size={14} /> Thank you! You have successfully subscribed to our newsletter.
           </div>
         )}
 
         {status.error && (
           <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 px-4 py-3 rounded-lg text-red-400 text-xs font-mono">
-            <strong>[ERROR]</strong> {status.error}
+            {status.error}
           </div>
         )}
       </form>

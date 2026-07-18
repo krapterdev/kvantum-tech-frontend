@@ -7,21 +7,21 @@ import Badge from '../ui/Badge';
 export default function Projects() {
   const portfolios = [
     {
-      title: "Finova Payment Pipeline",
-      category: "Fintech Infrastructure",
-      desc: "Architected a custom Postgres connection pool handling 4,000+ API handshakes per minute under 3.2ms edge speeds.",
+      title: "Finova Pay Gateway",
+      category: "Fintech Platform",
+      desc: "Designed and built a custom payment gateway handling thousands of secure API calls per minute under sub-second load times.",
       tags: ["Node.js", "PostgreSQL", "Docker"]
     },
     {
-      title: "Headless E-commerce Store",
-      category: "E-Commerce",
-      desc: "Built a React storefront rendering dynamic catalog search inputs, increasing shopping checkout conversions by 65%.",
+      title: "NovaStore Headless Shop",
+      category: "E-Commerce Ecosystem",
+      desc: "Created a modern headless e-commerce store with dynamic catalog filtering, resulting in a 35% increase in purchase conversions.",
       tags: ["React", "Vite", "Stripe API"]
     },
     {
-      title: "Autonomous RAG Chatbot Core",
-      category: "AI Integrations",
-      desc: "Compiled vector index matching routines with Pinecone and streaming websockets, resolving support tickets automatically.",
+      title: "DexAI Support Assistant",
+      category: "AI Integration",
+      desc: "Developed a context-aware customer support chatbot that uses retrieval-augmented generation to handle client queries in real-time.",
       tags: ["LLM Agents", "RAG", "Websockets"]
     }
   ];
@@ -30,8 +30,8 @@ export default function Projects() {
     <section className="container mx-auto max-w-[1280px] px-6 py-20 border-t border-white/8 select-none">
       <SectionHeading
         badge="Case Studies"
-        title="Featured System Deployments"
-        subtitle="Recent production platforms launched for enterprise client teams."
+        title="Featured Work"
+        subtitle="Recent web applications and custom platforms launched for our clients."
       />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {portfolios.map((p, idx) => (

@@ -9,38 +9,38 @@ export default function ProjectsPage() {
 
   const portfolios = [
     {
-      title: "Finova Payment Pipeline",
+      title: "Finova Pay Gateway",
       category: "Fintech",
-      desc: "Architected a custom Postgres connection pool handling 4,000+ API handshakes per minute under 3.2ms edge speeds.",
+      desc: "Designed and built a custom payment gateway handling thousands of secure API calls per minute under sub-second load times.",
       tags: ["Node.js", "PostgreSQL", "Docker"]
     },
     {
-      title: "Headless E-commerce Store",
-      category: "E-commerce",
-      desc: "Built a React storefront rendering dynamic catalog search inputs, increasing shopping checkout conversions by 65%.",
+      title: "NovaStore Headless Shop",
+      category: "E-Commerce",
+      desc: "Created a modern headless e-commerce store with dynamic catalog filtering, resulting in a 35% increase in purchase conversions.",
       tags: ["React", "Vite", "Stripe API"]
     },
     {
-      title: "Autonomous RAG Chatbot Core",
-      category: "AI Solutions",
-      desc: "Compiled vector index matching routines with Pinecone and streaming websockets, resolving support tickets automatically.",
+      title: "DexAI Support Assistant",
+      category: "AI Integration",
+      desc: "Developed a context-aware customer support chatbot that uses retrieval-augmented generation to handle client queries in real-time.",
       tags: ["LLM Agents", "RAG", "Websockets"]
     },
     {
-      title: "Apex Logistics Dashboard",
-      category: "Fintech",
-      desc: "Real-time telemetry and tracking interfaces displaying telemetry analytics with low-latency event synchronization.",
+      title: "Apex Logistics Platform",
+      category: "Custom Systems",
+      desc: "Built a real-time tracking interface displaying shipment analytics with low-latency updates.",
       tags: ["React", "Websockets", "Tailwind CSS"]
     },
     {
-      title: "Decentralized Auth Gateway",
-      category: "AI Solutions",
-      desc: "Tokenized session verification services executing secure validation checks for remote worker identities.",
+      title: "Secure Gate Auth",
+      category: "Custom Systems",
+      desc: "Created a tokenized session verification service executing secure validations for enterprise user authentication.",
       tags: ["JWT", "Redis", "Node.js"]
     }
   ];
 
-  const categories = ['All', 'Fintech', 'E-commerce', 'AI Solutions'];
+  const categories = ['All', 'Fintech', 'E-Commerce', 'AI Integration', 'Custom Systems'];
 
   const filteredPortfolios = filter === 'All' 
     ? portfolios 
@@ -53,10 +53,10 @@ export default function ProjectsPage() {
       <div className="text-center mb-16">
         <Badge className="mb-4">Case Studies</Badge>
         <h1 className="text-4xl sm:text-5xl font-headline font-bold text-zinc-100 mb-4">
-          Featured <GradientText>Deployments</GradientText>
+          Featured <GradientText>Projects</GradientText>
         </h1>
         <p className="text-zinc-400 max-w-xl mx-auto text-base sm:text-lg leading-relaxed">
-          Explore production platforms and high-traffic pipelines built for our enterprise clients.
+          Explore web products, apps, and custom platforms built for our clients.
         </p>
       </div>
 

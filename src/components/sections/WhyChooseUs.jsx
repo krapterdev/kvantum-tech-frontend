@@ -6,20 +6,20 @@ import SectionHeading from '../ui/SectionHeading';
 export default function WhyChooseUs() {
   const points = [
     {
-      title: "Bespoke Architectures",
-      desc: "We write clean, semantic code tailor-made for your business scope. No templates or cookie-cutter solutions.",
+      title: "Tailored Engineering",
+      desc: "Every line of code is written specifically for your project. We don't use generic templates or rigid site builders.",
       icon: ShieldCheck,
       color: "text-cyanCustom"
     },
     {
-      title: "Sub-Second Performance",
-      desc: "We optimize bundles, images, and queries to target Google's Core Web Vitals under 3.2ms edge speeds.",
+      title: "Core Speed Focus",
+      desc: "We optimize code bundles and server response times to ensure your site passes Google's Core Web Vitals with flying colors.",
       icon: Zap,
       color: "text-emerald-400"
     },
     {
-      title: "Autonomous Automations",
-      desc: "Integrating dynamic database search indexes and RAG agent configurations to automate client telemetry flows.",
+      title: "Smart API Integrations",
+      desc: "We integrate custom database systems and modern third-party APIs to automate your business workflows seamlessly.",
       icon: Bot,
       color: "text-purpleCustom"
     }
@@ -28,9 +28,9 @@ export default function WhyChooseUs() {
   return (
     <section className="container mx-auto max-w-[1280px] px-6 py-20 select-none">
       <SectionHeading
-        badge="System Parameters"
-        title="Why Brands Upgrade with Kvantum"
-        subtitle="We build high-performance systems designed to capture markets and operate without manual intervention."
+        badge="Our Approach"
+        title="Why Brands Partner with Kvantum"
+        subtitle="We build reliable, high-performance web products designed to scale with your business and keep visitors engaged."
       />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {points.map((point, idx) => {

@@ -15,13 +15,13 @@ export default function CTA() {
         <div className="glow-orb -bottom-20 -right-20 w-[300px] h-[300px] bg-purpleCustom/20"></div>
 
         <div className="relative z-10 max-w-xl flex flex-col items-center gap-4">
-          <span className="tech-badge">Secure Connection</span>
+          <span className="tech-badge">Let's Collaborate</span>
           <h2 className="text-3xl sm:text-5xl font-headline font-bold text-zinc-100 leading-tight">
-            Ready to upgrade <br />
-            your engineering stack?
+            Ready to build <br />
+            something remarkable?
           </h2>
           <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mt-2">
-            Establish a secure handshake telemetry connection with our Noida sector 62 developers to discuss custom architectures and SEO optimization campaigns.
+            Get in touch with our development team in Noida Sector 62 to discuss your custom project requirements, design scope, and growth strategies.
           </p>
         </div>
 
@@ -30,7 +30,7 @@ export default function CTA() {
           variant="primary"
           className="relative z-10 px-8 py-4 rounded-xl"
         >
-          Initialize Telemetry Handshake <ArrowRight size={16} />
+          Start the Conversation <ArrowRight size={16} />
         </Button>
       </div>
     </section>

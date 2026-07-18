@@ -8,8 +8,8 @@ export default function Testimonials() {
     <section className="container mx-auto max-w-[1280px] px-6 py-20 border-t border-white/8 select-none">
       <SectionHeading
         badge="Reviews"
-        title="Telemetry Node Feedback"
-        subtitle="Read feedback logs transmitted by CTOs and product owners."
+        title="What Our Clients Say"
+        subtitle="Hear directly from the founders and product leads we collaborate with."
       />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {testimonials.map((t) => (

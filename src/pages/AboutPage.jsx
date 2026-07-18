@@ -1,5 +1,5 @@
 import React from 'react';
-import { Cpu, Server, Shield, Code, Layers, Users } from 'lucide-react';
+import { Cpu, Server, Shield, Code, Layers, Users, Smartphone, Bot, Globe } from 'lucide-react';
 import Card from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
 import GradientText from '@/components/ui/GradientText';
@@ -9,17 +9,52 @@ export default function AboutPage({ theme }) {
     ? 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-LM.jpg' 
     : 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg';
 
+  const techStack = [
+    {
+      layer: "Frontend",
+      tech: "React, Vite, CSS variables, Semantic HTML5",
+      focus: "Hardware-accelerated rendering and animations",
+      target: "Lighthouse Performance Score near 100%",
+      icon: Code,
+      color: "text-cyanCustom"
+    },
+    {
+      layer: "Backend",
+      tech: "Node.js, Express, MongoDB Atlas, REST APIs",
+      focus: "Structured query modeling and secure auth patterns",
+      target: "Fast server processing and reliable endpoints",
+      icon: Server,
+      color: "text-purpleCustom"
+    },
+    {
+      layer: "Mobile App",
+      tech: "React Native, Expo, Native Device APIs",
+      focus: "Offline caching and native fluid animations",
+      target: "60fps high-fidelity mobile performance",
+      icon: Smartphone,
+      color: "text-cyanCustom"
+    },
+    {
+      layer: "AI & Integrations",
+      tech: "OpenAI API, Custom RAG systems, Vector indexes",
+      focus: "Intelligent database search and helper agents",
+      target: "Automated business workflow automation",
+      icon: Bot,
+      color: "text-purpleCustom"
+    }
+  ];
+
   return (
     <div className="container mx-auto max-w-[1280px] px-6 py-20 relative z-[5] select-none">
       
       {/* 1. Header Area */}
       <div className="text-center mb-20">
-        <Badge className="mb-4">Corporate Profile</Badge>
+        <Badge className="mb-4">Our Profile</Badge>
         <h1 className="text-4xl sm:text-5xl font-headline font-bold text-zinc-100 mb-4">
           About <GradientText>Studio Kvantum</GradientText>
         </h1>
         <p className="text-zinc-400 max-w-xl mx-auto text-base sm:text-lg leading-relaxed">
-          Engineering the future of enterprise software, creative design systems, and digital user acquisition paradigms.
+          Designing and engineering high-performance websites, custom web applications, and growth-focused search strategy.
         </p>
       </div>
 
@@ -29,16 +64,16 @@ export default function AboutPage({ theme }) {
         {/* Story copy */}
         <div className="text-left flex flex-col gap-5 text-sm sm:text-base leading-relaxed text-zinc-400">
           <h2 className="text-2xl sm:text-3xl text-zinc-100 font-bold font-headline mb-2">
-            Our Mission: Eradicate Digital Friction
+            Our Mission: Build Fast, Clean, and Effective Web Products
           </h2>
           <p>
-            Established in Delhi NCR, Kvantum Tech Solutions (Studio Kvantum) was founded on a simple realization: the modern web is bloated. Heavy libraries, redundant trackers, and unstructured stylesheets have degraded page rendering speeds and compromised search indexing visibility.
+            Based in Delhi NCR, Studio Kvantum (Kvantum Tech Solutions) was founded to solve a major issue in modern web development: bloat. Overly complex frameworks, heavy page loaders, and chaotic stylesheets frequently degrade load times and impact search ranking visibility.
           </p>
           <p>
-            Our mission is to engineer high-fidelity, high-performance digital portals that run at native execution speed. We blend rigorous logic with curated typography and interactive depth, constructing websites, mobile applications, and AI integrations that represent top-tier design capability.
+            We build web products that run quickly and look beautiful. By combining clean engineering with thoughtful layout design and smooth interactions, we construct digital spaces that help your business convert visitors into clients.
           </p>
           <p>
-            We work as an integrated engineering partner for brands globally. By translating strategic marketing targets into strict code architectures, we make sure your conversions grow systematically.
+            We operate as an integrated technical partner. By translating business marketing targets into solid code execution, we help you scale your digital presence systematically.
           </p>
         </div>
 
@@ -46,7 +81,7 @@ export default function AboutPage({ theme }) {
         <div className="flex justify-center md:justify-end">
           <Card className="w-full max-w-[420px] p-12 border flex flex-col items-center gap-8 text-center shadow-[0_20px_40px_rgba(0,0,0,0.3)]">
             <span className="text-[11px] font-mono text-zinc-500 uppercase tracking-widest">
-              Secured Identity Node
+              Digital Product Studio
             </span>
             
             <div className="flex flex-col items-center gap-4">
@@ -61,76 +96,55 @@ export default function AboutPage({ theme }) {
             </div>
 
             <div className="text-xs text-zinc-400 font-mono leading-relaxed">
-              REGISTERED AS KTS IND. INC.<br />
-              STABLE CERTIFICATE: 8a93-ef20-410c
+              STUDIO KVANTUM<br />
+              DELHI NCR, INDIA
             </div>
           </Card>
         </div>
 
       </div>
 
-      {/* 3. Tech Stack Matrix Table */}
+      {/* 3. Tech Stack Matrix Grid */}
       <div className="mb-24 text-left">
-        <div className="mb-8">
+        <div className="mb-10">
           <h3 className="text-2xl text-zinc-100 font-bold font-headline mb-2.5 flex items-center gap-2">
-            <Layers size={20} className="text-cyanCustom" /> Technical Stack Matrix
+            <Layers size={20} className="text-cyanCustom" /> Our Technology Stack
           </h3>
           <p className="text-zinc-400 text-sm">
-            Our structured, multi-layer technologies deployed across our customer portfolio.
+            We use a modern, lightweight set of tools configured specifically for performance and scaling.
           </p>
         </div>
 
-        {/* Scrollable table container */}
-        <div className="overflow-x-auto rounded-2xl border border-white/8 shadow-[0_10px_30px_rgba(0,0,0,0.2)]">
-          <table className="w-full border-collapse text-left min-w-[700px] text-xs sm:text-sm font-mono">
-            <thead>
-              <tr className="bg-zinc-950/80 border-b border-white/8 text-zinc-300">
-                <th className="px-5 py-4 font-semibold text-[13px] tracking-wider">Layer Node</th>
-                <th className="px-5 py-4 font-semibold text-[13px] tracking-wider">Technology Stack</th>
-                <th className="px-5 py-4 font-semibold text-[13px] tracking-wider">Specialized Focus</th>
-                <th className="px-5 py-4 font-semibold text-[13px] tracking-wider">Performance Target</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/8 text-zinc-400 bg-zinc-900/10">
-              <tr className="hover:bg-white/[0.02] transition-colors">
-                <td className="px-5 py-5 font-bold text-cyanCustom">FRONTEND</td>
-                <td className="px-5 py-5">React, Vite, CSS Custom Props, HTML5 Semantic</td>
-                <td className="px-5 py-5">Hardware-Accelerated 3D CSS rendering</td>
-                <td className="px-5 py-5 text-emerald-500">100% Lighthouse Performance</td>
-              </tr>
-              <tr className="hover:bg-white/[0.02] transition-colors">
-                <td className="px-5 py-5 font-bold text-purpleCustom">MOBILE CORE</td>
-                <td className="px-5 py-5">React Native, Expo, SQLite, Apple Haptic APIs</td>
-                <td className="px-5 py-5">Device caching & native execution triggers</td>
-                <td className="px-5 py-5 text-emerald-500">60fps visual fluid transitions</td>
-              </tr>
-              <tr className="hover:bg-white/[0.02] transition-colors">
-                <td className="px-5 py-5 font-bold text-cyanCustom">BACKEND NODES</td>
-                <td className="px-5 py-5">Node.js, MongoDB Atlas, Mongoose schemas</td>
-                <td className="px-5 py-5">Structured JSON query models & secure JWT keys</td>
-                <td className="px-5 py-5 text-emerald-500">Sub-12ms processing times</td>
-              </tr>
-              <tr className="hover:bg-white/[0.02] transition-colors">
-                <td className="px-5 py-5 font-bold text-purpleCustom">AI & COGNITIVE</td>
-                <td className="px-5 py-5">LangChain, Pinecone DB, OpenAI Assistants</td>
-                <td className="px-5 py-5">Retrieval-Augmented Generation (RAG)</td>
-                <td className="px-5 py-5 text-emerald-500">85%+ automated query response</td>
-              </tr>
-              <tr className="hover:bg-white/[0.02] transition-colors">
-                <td className="px-5 py-5 font-bold text-cyanCustom">DEVOPS & EDGE</td>
-                <td className="px-5 py-5">GitHub Actions, Docker, Serverless Cloud CDN</td>
-                <td className="px-5 py-5">Automated CI-CD pipelines & S3 storage integrations</td>
-                <td className="px-5 py-5 text-emerald-500">99.99% Global Uptime Target</td>
-              </tr>
-            </tbody>
-          </table>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {techStack.map((tech, idx) => {
+            const Icon = tech.icon;
+            return (
+              <Card key={idx} className="p-8 border flex flex-col justify-between gap-4">
+                <div className="flex justify-between items-start">
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2 bg-white/[0.02] border border-white/8 rounded-lg ${tech.color}`}>
+                      <Icon size={18} />
+                    </div>
+                    <h4 className="text-zinc-100 font-headline font-bold text-lg">{tech.layer}</h4>
+                  </div>
+                  <span className="text-[10px] font-mono text-emerald-400 border border-emerald-500/20 bg-emerald-500/5 px-2.5 py-0.5 rounded-full">
+                    {tech.target}
+                  </span>
+                </div>
+                <div className="text-sm text-zinc-400 flex flex-col gap-2 mt-2">
+                  <p><strong>Stack:</strong> {tech.tech}</p>
+                  <p><strong>Focus:</strong> {tech.focus}</p>
+                </div>
+              </Card>
+            );
+          })}
         </div>
       </div>
 
       {/* 4. Engineering Principles Grid */}
       <div className="text-left">
         <h3 className="text-2xl text-zinc-100 font-bold font-headline mb-10 flex items-center gap-2">
-          <Users size={20} className="text-purpleCustom" /> Our Core Engineering Values
+          <Users size={20} className="text-purpleCustom" /> Our Core Values
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -140,9 +154,9 @@ export default function AboutPage({ theme }) {
               <Code size={20} />
             </div>
             <div>
-              <h4 className="text-zinc-100 text-lg font-headline font-bold mb-2">Performance-First Compilation</h4>
+              <h4 className="text-zinc-100 text-lg font-headline font-bold mb-2">Performance-First Approach</h4>
               <p className="text-zinc-400 text-sm leading-relaxed">
-                We avoid massive framework bloat. We use Vanilla CSS styling and compile lean JS bundles. Every script loader is audited to ensure immediate interactivity on mobile devices.
+                We avoid massive framework bloat. We use tailored CSS and build lightweight JS bundles. Every script loader is audited to ensure immediate interactivity on mobile and desktop devices.
               </p>
             </div>
           </Card>
@@ -152,9 +166,9 @@ export default function AboutPage({ theme }) {
               <Cpu size={20} />
             </div>
             <div>
-              <h4 className="text-zinc-100 text-lg font-headline font-bold mb-2">Semantic Code Structures</h4>
+              <h4 className="text-zinc-100 text-lg font-headline font-bold mb-2">SEO-First Engineering</h4>
               <p className="text-zinc-400 text-sm leading-relaxed">
-                Our templates follow strict HTML5 semantic definitions to facilitate search engine indexing. Your headers, articles, and navigations are compiled specifically for crawlers to parse instantly.
+                Our templates follow strict HTML5 semantic definitions to facilitate search engine indexing. Your headers, layouts, and page structures are built specifically for web crawlers to read instantly.
               </p>
             </div>
           </Card>
@@ -164,9 +178,9 @@ export default function AboutPage({ theme }) {
               <Shield size={20} />
             </div>
             <div>
-              <h4 className="text-zinc-100 text-lg font-headline font-bold mb-2">Data-Driven Accountability</h4>
+              <h4 className="text-zinc-100 text-lg font-headline font-bold mb-2">Transparent Metrics</h4>
               <p className="text-zinc-400 text-sm leading-relaxed">
-                We don't rely on guesswork. We configure detailed Meta Pixel configurations, custom Google Analytics tracking, and attribution pipelines to ensure marketing ROAS is transparent.
+                We believe in clear targets. We configure precise tracking setups and conversion metrics so you can measure the real business growth your web app drives.
               </p>
             </div>
           </Card>
@@ -176,9 +190,9 @@ export default function AboutPage({ theme }) {
               <Server size={20} />
             </div>
             <div>
-              <h4 className="text-zinc-100 text-lg font-headline font-bold mb-2">Edge Scalability Systems</h4>
+              <h4 className="text-zinc-100 text-lg font-headline font-bold mb-2">Scalable Architecture</h4>
               <p className="text-zinc-400 text-sm leading-relaxed">
-                We execute server processes near the client. By deploying stateless cloud modules across global regional clusters, we achieve absolute network resilience and zero-downtime database failovers.
+                We host static client modules on global edge servers close to your visitors. This setup ensures fast delivery speeds, high security, and minimal latency.
               </p>
             </div>
           </Card>

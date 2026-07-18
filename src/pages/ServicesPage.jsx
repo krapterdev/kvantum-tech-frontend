@@ -23,15 +23,15 @@ export default function ServicesPage({ services = [] }) {
       {/* 1. Introductory Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center mb-24 border-b border-white/8 pb-20">
         <div>
-          <Badge className="mb-4">Service Matrix</Badge>
+          <Badge className="mb-4">Our Services</Badge>
           <h1 className="text-4xl sm:text-5xl font-headline font-bold text-zinc-100 mb-6 leading-tight">
             Capabilities <GradientText>Explorer</GradientText>
           </h1>
           <p className="text-zinc-400 text-base leading-relaxed mb-5">
-            Kvantum Tech Solutions delivers end-to-end full-stack capabilities. We don't build generic page layouts; we design, model, compile, and deploy resilient digital engines. 
+            Studio Kvantum delivers custom web development, brand design, and search performance strategies. We do not use template page builders; we engineer fast, secure, and responsive web products.
           </p>
           <p className="text-zinc-400 text-base leading-relaxed">
-            Select any capability block below to examine its strategic workflows, technical node stacks, and attribution metrics.
+            Select any capability block below to examine our development stack, workflow focus, and target metrics.
           </p>
         </div>
 
@@ -47,9 +47,9 @@ export default function ServicesPage({ services = [] }) {
       {/* 2. Services Grid */}
       <div>
         <div className="mb-12 text-center">
-          <h2 className="text-2xl sm:text-3xl text-zinc-100 font-bold font-headline">Select Core Module</h2>
+          <h2 className="text-2xl sm:text-3xl text-zinc-100 font-bold font-headline">Select a Capability</h2>
           <p className="text-zinc-400 text-sm mt-2">
-            Click on a service block to expand the blueprint logs.
+            Click on a service card to expand the details.
           </p>
         </div>
 
@@ -83,7 +83,7 @@ export default function ServicesPage({ services = [] }) {
                   className="flex items-center gap-1.5 text-xs font-semibold mt-2 transition-colors duration-200"
                   style={{ color: service.color || 'var(--accent-cyan)' }}
                 >
-                  Open Blueprint Logs <ArrowRight size={14} />
+                  View Details <ArrowRight size={14} />
                 </div>
               </div>
             </Card>
@@ -116,14 +116,14 @@ export default function ServicesPage({ services = [] }) {
                 </div>
                 <div>
                   <h3 className="text-2xl text-zinc-100 font-extrabold font-headline">{selectedService.title}</h3>
-                  <span className="text-[11px] font-mono text-zinc-500 block uppercase mt-0.5">SERVICE_NODE: {selectedService.id.toUpperCase()}</span>
+                  <span className="text-[11px] font-mono text-zinc-500 block uppercase mt-0.5">SERVICE ID: {selectedService.id.toUpperCase()}</span>
                 </div>
               </div>
 
               {/* Blueprint Description */}
               <div className="mb-8">
                 <h4 className="text-sm font-mono text-zinc-100 uppercase tracking-widest mb-3 flex items-center gap-2">
-                  <Cpu size={16} style={{ color: selectedService.color || 'var(--accent-cyan)' }} /> Blueprint Log
+                  <Cpu size={16} style={{ color: selectedService.color || 'var(--accent-cyan)' }} /> Capability Profile
                 </h4>
                 <p className="text-zinc-400 text-[15px] leading-relaxed">
                   {selectedService.longDesc}
@@ -133,7 +133,7 @@ export default function ServicesPage({ services = [] }) {
               {/* Technologies */}
               <div className="mb-8">
                 <h4 className="text-sm font-mono text-zinc-100 uppercase tracking-widest mb-4 flex items-center gap-2">
-                  <GitBranch size={16} style={{ color: selectedService.color || 'var(--accent-cyan)' }} /> Stack Nodes
+                  <GitBranch size={16} style={{ color: selectedService.color || 'var(--accent-cyan)' }} /> Technology Stack
                 </h4>
                 <div className="flex flex-wrap gap-2.5">
                   {selectedService.techStack.split(',').map((tech, i) => (
@@ -151,7 +151,7 @@ export default function ServicesPage({ services = [] }) {
               <div className="flex items-center gap-3.5 bg-white/[0.01] border border-white/8 p-4 sm:p-5 rounded-xl">
                 <Layers size={20} style={{ color: selectedService.color || 'var(--accent-cyan)' }} />
                 <div>
-                  <span className="text-[11px] font-mono text-zinc-500 block uppercase">Conversion Target Metric</span>
+                  <span className="text-[11px] font-mono text-zinc-500 block uppercase">Conversion Goal Metric</span>
                   <span className="text-[15px] font-semibold text-zinc-200">{selectedService.metrics}</span>
                 </div>
               </div>
