@@ -103,15 +103,7 @@ export default function ScrollVideoPlayer() {
       {/* Scroll Video Canvas Player */}
       <canvas
         ref={canvasRef}
-        className="fixed inset-0 w-full h-full -z-20 pointer-events-none block"
-      />
-      
-      {/* Soft Vignette Overlay to ensure text readability */}
-      <div 
-        className="fixed inset-0 -z-10 pointer-events-none bg-radial-gradient"
-        style={{
-          background: 'radial-gradient(circle, rgba(9,9,11,0.5) 0%, rgba(9,9,11,0.9) 100%)',
-        }}
+        className="fixed inset-0 w-full h-full z-10 pointer-events-none block"
       />
     </>
   );
