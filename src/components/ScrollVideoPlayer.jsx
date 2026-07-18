@@ -103,7 +103,7 @@ export default function ScrollVideoPlayer() {
       {/* Scroll Video Canvas Player */}
       <canvas
         ref={canvasRef}
-        className="fixed inset-0 w-full h-full z-10 pointer-events-none block"
+        className="fixed inset-0 w-full h-full -z-20 pointer-events-none block"
       />
     </>
   );
