@@ -13,14 +13,20 @@ export default function ScrollVideoPlayer() {
 
     for (let i = 1; i <= totalFrames; i++) {
       const img = new Image();
+      img.crossOrigin = "anonymous";
+      
       const paddedIndex = String(i).padStart(3, '0');
       img.src = `https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/scroller-images/ezgif-frame-${paddedIndex}.jpg`;
-      img.onload = () => {
+      
+      const handleLoadOrError = () => {
         loadedCount++;
         if (loadedCount === totalFrames) {
           setLoading(false);
         }
       };
+
+      img.onload = handleLoadOrError;
+      img.onerror = handleLoadOrError; // Prevent getting stuck on loading if a network call fails
       preloadedImages.push(img);
     }
     setImages(preloadedImages);
