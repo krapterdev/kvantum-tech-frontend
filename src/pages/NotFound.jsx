@@ -1,0 +1,34 @@
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ShieldAlert, ArrowLeft } from 'lucide-react';
+import Button from '@/components/ui/Button';
+import Badge from '@/components/ui/Badge';
+import GradientText from '@/components/ui/GradientText';
+
+export default function NotFound() {
+  const navigate = useNavigate();
+
+  return (
+    <div className="container mx-auto max-w-[1280px] px-6 py-32 text-center relative z-10 flex flex-col items-center gap-6 select-none">
+      <Badge className="mb-2 bg-red-500/10 border-red-500/20 text-red-400">
+        <ShieldAlert size={12} className="text-red-400" /> STATUS_404_NOT_FOUND
+      </Badge>
+      
+      <h1 className="text-5xl sm:text-7xl font-headline font-black text-zinc-100 tracking-tight leading-none">
+        Signal <GradientText className="bg-gradient-to-r from-red-400 to-amber-400">Dropped</GradientText>
+      </h1>
+
+      <p className="text-zinc-400 max-w-md mx-auto text-base sm:text-lg leading-relaxed mt-2">
+        The requested routing route does not contain any operational backend servers. Verify the URL parameters and retry.
+      </p>
+
+      <Button
+        onClick={() => navigate('/')}
+        variant="primary"
+        className="mt-6 gap-2"
+      >
+        <ArrowLeft size={16} /> Return to Home Portal
+      </Button>
+    </div>
+  );
+}
