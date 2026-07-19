@@ -114,7 +114,7 @@ export default function App() {
 
       // 6. SEO Settings (General Page SEO)
       try {
-        const data = await settingService.getSeoSettings();
+        const data = await seoService.getSeoSettings();
         setSeoSettings(data);
       } catch (err) {
         console.warn('[API CONNECTION] SEO settings list offline.');
@@ -133,15 +133,17 @@ export default function App() {
     const path = location.pathname;
 
     if (path === '/') {
-      if (seoSettings?.home) {
-        title = seoSettings.home.title || title;
-        description = seoSettings.home.description || description;
-        keywords = seoSettings.home.keywords || keywords;
+      const homeSeo = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'home') : null;
+      if (homeSeo) {
+        title = homeSeo.title || title;
+        description = homeSeo.description || description;
+        keywords = homeSeo.keywords || keywords;
       }
     } else if (path === '/services') {
-      title = seoSettings?.services?.title || 'Our Capabilities & Services | Studio Kvantum';
-      description = seoSettings?.services?.description || 'Explore Studio Kvantums core capabilities: SEO, custom chatbots, brand design, React web development, and mobile applications.';
-      keywords = seoSettings?.services?.keywords || 'react, app development, brand design';
+      const servicesSeo = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'services') : null;
+      title = servicesSeo?.title || 'Our Capabilities & Services | Studio Kvantum';
+      description = servicesSeo?.description || 'Explore Studio Kvantums core capabilities: SEO, custom chatbots, brand design, React web development, and mobile applications.';
+      keywords = servicesSeo?.keywords || 'react, app development, brand design';
     } else if (path.startsWith('/services/')) {
       const slug = path.split('/')[2];
       const activeService = services.find(s => s.id === slug);
@@ -150,13 +152,15 @@ export default function App() {
         description = activeService.metaDesc || activeService.shortDesc;
       }
     } else if (path === '/about') {
-      title = seoSettings?.about?.title || 'About Studio Kvantum | Delhi NCR';
-      description = seoSettings?.about?.description || 'Learn more about Studio Kvantum, a creative digital engineering agency based in Noida, Delhi NCR.';
-      keywords = seoSettings?.about?.keywords || 'noida agency, about kvantum';
+      const aboutSeo = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'about') : null;
+      title = aboutSeo?.title || 'About Studio Kvantum | Delhi NCR';
+      description = aboutSeo?.description || 'Learn more about Studio Kvantum, a creative digital engineering agency based in Noida, Delhi NCR.';
+      keywords = aboutSeo?.keywords || 'noida agency, about kvantum';
     } else if (path === '/projects') {
-      title = seoSettings?.projects?.title || 'Featured Projects | Studio Kvantum';
-      description = seoSettings?.projects?.description || 'Explore web products, apps, and custom platforms built for our clients.';
-      keywords = seoSettings?.projects?.keywords || 'case studies, portfolio';
+      const projectsSeo = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'projects') : null;
+      title = projectsSeo?.title || 'Featured Projects | Studio Kvantum';
+      description = projectsSeo?.description || 'Explore web products, apps, and custom platforms built for our clients.';
+      keywords = projectsSeo?.keywords || 'case studies, portfolio';
     } else if (path === '/blog') {
       title = 'Studio Kvantum Blog & Insights';
       description = 'Read the latest developer articles, design guides, and digital marketing insights from our team.';
@@ -168,9 +172,10 @@ export default function App() {
         description = activePost.metaDesc || activePost.summary;
       }
     } else if (path === '/contact') {
-      title = seoSettings?.contact?.title || 'Contact Studio Kvantum | Noida Sector 62';
-      description = seoSettings?.contact?.description || 'Get in touch with the development and design team at Studio Kvantum to start your project.';
-      keywords = seoSettings?.contact?.keywords || 'contact details, phone';
+      const contactSeo = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'contact') : null;
+      title = contactSeo?.title || 'Contact Studio Kvantum | Noida Sector 62';
+      description = contactSeo?.description || 'Get in touch with the development and design team at Studio Kvantum to start your project.';
+      keywords = contactSeo?.keywords || 'contact details, phone';
     } else if (path === '/admin') {
       title = 'Admin Portal | Studio Kvantum';
       description = 'Studio Kvantum Admin Portal to manage content, service items, blogs, and SEO details.';

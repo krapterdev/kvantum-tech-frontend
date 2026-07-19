@@ -1561,7 +1561,7 @@ export default function AdminPortalPage({
               </h2>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {seoSettings.map(setting => (
+                {Array.isArray(seoSettings) && seoSettings.map(setting => (
                   <Card key={setting.key} className="p-6 border flex flex-col justify-between items-start gap-4">
                     <div className="text-left w-full">
                       <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-zinc-800 text-zinc-300 font-bold uppercase block w-fit mb-3">
