@@ -40,7 +40,7 @@ export default function Navbar({ theme, toggleTheme }) {
         </div>
 
         {/* Desktop Navigation Links */}
-        <div className="hidden md:flex gap-8 items-center">
+        <div className="hidden lg:flex gap-6 items-center">
           <NavLink 
             to="/"
             className={({ isActive }) => 
@@ -108,7 +108,7 @@ export default function Navbar({ theme, toggleTheme }) {
         </div>
 
         {/* Controls */}
-        <div className="hidden md:flex items-center gap-5">
+        <div className="hidden lg:flex items-center gap-5">
           {/* Custom Theme Switch Toggle */}
           <label className="toggle-switch">
             <input 
@@ -131,7 +131,7 @@ export default function Navbar({ theme, toggleTheme }) {
         </div>
 
         {/* Mobile menu trigger */}
-        <div className="flex md:hidden items-center gap-4">
+        <div className="flex lg:hidden items-center gap-4">
           <label className="toggle-switch">
             <input 
               type="checkbox" 

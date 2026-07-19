@@ -19,7 +19,7 @@ export default function MobileMenu({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed top-[90px] left-5 right-5 rounded-[20px] p-6 flex flex-col gap-4.5 z-[99] glass-panel max-h-[calc(100vh-120px)] overflow-y-auto animate-fade-in md:hidden text-left">
+    <div className="fixed top-[90px] left-5 right-5 rounded-[20px] p-6 flex flex-col gap-4.5 z-[99] glass-panel max-h-[calc(100vh-120px)] overflow-y-auto animate-fade-in lg:hidden text-left">
       <NavLink
         to="/"
         onClick={onClose}

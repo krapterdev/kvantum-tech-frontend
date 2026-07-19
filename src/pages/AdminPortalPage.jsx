@@ -1555,7 +1555,7 @@ export default function AdminPortalPage({
             </div>
 
             {/* Section 2: Site-wide Settings */}
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-6 mt-12">
               <h2 className="text-xl font-bold font-headline text-zinc-200 flex items-center gap-2 border-t border-white/8 pt-8">
                 <Key size={18} className="text-purpleCustom" /> Dynamic SEO Configurations (Robots, Sitemap, Page Meta)
               </h2>
@@ -1595,7 +1595,7 @@ export default function AdminPortalPage({
             </div>
 
             {/* Section 3: Head & Body Custom Snippets Injector */}
-            <div className="flex flex-col gap-6 border-t border-white/8 pt-8">
+            <div className="flex flex-col gap-6 border-t border-white/8 pt-8 mt-12">
               <div className="flex justify-between items-center flex-wrap gap-4">
                 <div>
                   <h2 className="text-xl font-bold font-headline text-zinc-200 flex items-center gap-2">
