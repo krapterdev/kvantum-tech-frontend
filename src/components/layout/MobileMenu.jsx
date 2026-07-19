@@ -1,10 +1,21 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Link2 } from 'lucide-react';
 import Button from '../ui/Button';
+import { getAllServices } from '@/services/serviceService';
 
 export default function MobileMenu({ isOpen, onClose }) {
-  const [servicesOpen, setServicesOpen] = React.useState(false);
+  const [servicesOpen, setServicesOpen] = useState(false);
+  const [services, setServices] = useState([]);
+
+  useEffect(() => {
+    if (isOpen) {
+      getAllServices()
+        .then(data => setServices(data))
+        .catch(err => console.warn('[MOBILE MENU] Failed to fetch services list:', err.message));
+    }
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   return (
@@ -38,12 +49,16 @@ export default function MobileMenu({ isOpen, onClose }) {
         </button>
         {servicesOpen && (
           <div className="flex flex-col gap-2 pl-4 border-l border-white/8 mt-1">
-            <NavLink to="/services" onClick={onClose} className="text-sm text-zinc-400 hover:text-cyanCustom py-1">Web Dev</NavLink>
-            <NavLink to="/services" onClick={onClose} className="text-sm text-zinc-400 hover:text-cyanCustom py-1">App Dev</NavLink>
-            <NavLink to="/services" onClick={onClose} className="text-sm text-zinc-400 hover:text-cyanCustom py-1">UI/UX Design</NavLink>
-            <NavLink to="/services" onClick={onClose} className="text-sm text-zinc-400 hover:text-cyanCustom py-1">SEO & Marketing</NavLink>
-            <NavLink to="/services" onClick={onClose} className="text-sm text-zinc-400 hover:text-cyanCustom py-1">Custom Software</NavLink>
-            <NavLink to="/services" onClick={onClose} className="text-sm text-zinc-400 hover:text-cyanCustom py-1">IT Consulting</NavLink>
+            {services.map(ser => (
+              <NavLink 
+                key={ser.id} 
+                to={`/services/${ser.id}`} 
+                onClick={onClose} 
+                className="text-sm text-zinc-400 hover:text-cyanCustom py-1"
+              >
+                {ser.title}
+              </NavLink>
+            ))}
           </div>
         )}
       </div>

@@ -11,17 +11,17 @@ import CTA from '@/components/sections/CTA';
 import BlogPreview from '@/components/sections/BlogPreview';
 import HomeContact from '@/components/sections/HomeContact';
 
-export default function Home({ services = [], blogs = [] }) {
+export default function Home({ services = [], blogs = [], settings }) {
   return (
     <div className="fade-in-up">
       {/* 1. Hero Section */}
-      <Hero />
+      <Hero settings={settings} />
       
       {/* 2. Trusted By Client Logos (Marquee) */}
       <TrustedBy />
       
       {/* 3. About Us (Short version) */}
-      <About />
+      <About settings={settings} />
       
       {/* 4. Services Grid (6 cards) */}
       <Services services={services} />
@@ -33,10 +33,10 @@ export default function Home({ services = [], blogs = [] }) {
       <WhyChooseUs />
       
       {/* 7. Stats / Numbers */}
-      <Stats />
+      <Stats settings={settings} />
       
       {/* 8. Testimonials */}
-      <Testimonials />
+      <Testimonials settings={settings} />
       
       {/* 9. CTA Banner */}
       <CTA />

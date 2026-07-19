@@ -1,12 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Menu, X, Sun, Moon, Link2, ChevronDown } from 'lucide-react';
 import MobileMenu from './MobileMenu';
 import Button from '../ui/Button';
+import { getAllServices } from '@/services/serviceService';
 
 export default function Navbar({ theme, toggleTheme }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [services, setServices] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    getAllServices()
+      .then(data => setServices(data))
+      .catch(err => console.warn('[NAVBAR] Failed to fetch services list:', err.message));
+  }, []);
 
   const logoMark = theme === 'dark' 
     ? 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-LM.jpg' 
@@ -61,12 +69,15 @@ export default function Navbar({ theme, toggleTheme }) {
               Services <ChevronDown size={14} />
             </NavLink>
             <div className="absolute top-full left-0 mt-0 w-52 rounded-xl bg-zinc-950/95 border border-white/8 p-2 shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[110]">
-              <NavLink to="/services" className="block px-4 py-2.5 text-xs font-semibold text-zinc-400 hover:text-cyanCustom hover:bg-white/[0.02] rounded-lg">Web Dev</NavLink>
-              <NavLink to="/services" className="block px-4 py-2.5 text-xs font-semibold text-zinc-400 hover:text-cyanCustom hover:bg-white/[0.02] rounded-lg">App Dev</NavLink>
-              <NavLink to="/services" className="block px-4 py-2.5 text-xs font-semibold text-zinc-400 hover:text-cyanCustom hover:bg-white/[0.02] rounded-lg">UI/UX Design</NavLink>
-              <NavLink to="/services" className="block px-4 py-2.5 text-xs font-semibold text-zinc-400 hover:text-cyanCustom hover:bg-white/[0.02] rounded-lg">SEO & Marketing</NavLink>
-              <NavLink to="/services" className="block px-4 py-2.5 text-xs font-semibold text-zinc-400 hover:text-cyanCustom hover:bg-white/[0.02] rounded-lg">Custom Software</NavLink>
-              <NavLink to="/services" className="block px-4 py-2.5 text-xs font-semibold text-zinc-400 hover:text-cyanCustom hover:bg-white/[0.02] rounded-lg">IT Consulting</NavLink>
+              {services.map(ser => (
+                <NavLink 
+                  key={ser.id} 
+                  to={`/services/${ser.id}`} 
+                  className="block px-4 py-2.5 text-xs font-semibold text-zinc-400 hover:text-cyanCustom hover:bg-white/[0.02] rounded-lg"
+                >
+                  {ser.title}
+                </NavLink>
+              ))}
             </div>
           </div>
 

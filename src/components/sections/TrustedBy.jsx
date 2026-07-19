@@ -14,7 +14,7 @@ export default function TrustedBy() {
   const listItems = [...integrations, ...integrations, ...integrations, ...integrations];
 
   return (
-    <section className="bg-zinc-950/20 py-8 select-none overflow-hidden border-b border-white/5">
+    <section className="bg-zinc-950/20 py-8 select-none overflow-hidden">
       <div className="container mx-auto max-w-[1280px] px-6">
         <p className="text-zinc-500 font-mono text-[10px] text-center uppercase tracking-[0.2em] mb-5">
           Trusted by teams who expect more

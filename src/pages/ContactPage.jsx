@@ -6,7 +6,8 @@ import GradientText from '@/components/ui/GradientText';
 import Button from '@/components/ui/Button';
 import { submitContact } from '@/services/contactService';
 
-export default function ContactPage() {
+export default function ContactPage({ settings }) {
+  const contact = settings?.contact || {};
   const [formData, setFormData] = useState({ name: '', email: '', service: 'web', message: '' });
   const [status, setStatus] = useState('idle'); // 'idle', 'submitting', 'success', 'error'
 
@@ -185,7 +186,7 @@ export default function ContactPage() {
               <div>
                 <h4 className="text-sm font-semibold text-zinc-200 mb-1">Our Location</h4>
                 <p className="text-zinc-400 text-sm leading-relaxed">
-                  Noida Sector 62, Delhi NCR, India<br />
+                  {contact.address || 'Noida Sector 62, Delhi NCR, India'}<br />
                   <span className="text-[10px] font-mono text-zinc-500 block mt-1 uppercase tracking-wider">Sector 62 IT Hub</span>
                 </p>
               </div>
@@ -196,8 +197,8 @@ export default function ContactPage() {
               <div>
                 <h4 className="text-sm font-semibold text-zinc-200 mb-1">Email Support</h4>
                 <p className="text-zinc-400 text-sm">
-                  <a href="mailto:support@kvantumtechsolutions.com" className="hover:underline">
-                    support@kvantumtechsolutions.com
+                  <a href={`mailto:${contact.email || 'support@kvantumtechsolutions.com'}`} className="hover:underline">
+                    {contact.email || 'support@kvantumtechsolutions.com'}
                   </a>
                 </p>
               </div>

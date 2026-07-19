@@ -63,13 +63,26 @@ function StatCounter({ target, suffix = '', label }) {
   );
 }
 
-export default function Stats() {
-  const statsList = [
-    { target: "50", suffix: "+", label: "Projects Delivered" },
-    { target: "35", suffix: "+", label: "Happy Clients" },
-    { target: "3", suffix: "+", label: "Years of Chaos" },
-    { target: "99", suffix: "%", label: "Deadlines Hit" }
-  ];
+export default function Stats({ settings }) {
+  const customStats = settings?.stats;
+
+  const parseStat = (statItem) => {
+    const val = statItem.value || '';
+    const match = val.match(/^(\d+)(.*)$/);
+    if (match) {
+      return { target: match[1], suffix: match[2], label: statItem.label };
+    }
+    return { target: val, suffix: '', label: statItem.label };
+  };
+
+  const statsList = customStats && customStats.length > 0
+    ? customStats.map(parseStat)
+    : [
+        { target: "50", suffix: "+", label: "Projects Delivered" },
+        { target: "35", suffix: "+", label: "Happy Clients" },
+        { target: "3", suffix: "+", label: "Years of Chaos" },
+        { target: "99", suffix: "%", label: "Deadlines Hit" }
+      ];
 
   return (
     <section className="bg-zinc-950/30 py-20 px-6 select-none border-y border-white/5">

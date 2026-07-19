@@ -4,7 +4,7 @@ import Card from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
 import GradientText from '@/components/ui/GradientText';
 
-export default function AboutPage({ theme }) {
+export default function AboutPage({ theme, settings }) {
   const logoMark = theme === 'dark' 
     ? 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-LM.jpg' 
     : 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg';
@@ -20,7 +20,7 @@ export default function AboutPage({ theme }) {
     },
     {
       layer: "Backend",
-      tech: "Node.js, Express, MongoDB Atlas, REST APIs",
+      tech: "Node.js, Express, PostgreSQL / SQL queries",
       focus: "Structured query modeling and secure auth patterns",
       target: "Fast server processing and reliable endpoints",
       icon: Server,
@@ -43,6 +43,8 @@ export default function AboutPage({ theme }) {
       color: "text-purpleCustom"
     }
   ];
+
+  const aboutText = settings?.about?.description || 'Based in Delhi NCR, Studio Kvantum (Kvantum Tech Solutions) was founded to solve a major issue in modern web development: bloat. Overly complex frameworks, heavy page loaders, and chaotic stylesheets frequently degrade load times and impact search ranking visibility.';
 
   return (
     <div className="container mx-auto max-w-[1280px] px-6 py-20 relative z-[5] select-none">
@@ -67,7 +69,7 @@ export default function AboutPage({ theme }) {
             Our Mission: Build Fast, Clean, and Effective Web Products
           </h2>
           <p>
-            Based in Delhi NCR, Studio Kvantum (Kvantum Tech Solutions) was founded to solve a major issue in modern web development: bloat. Overly complex frameworks, heavy page loaders, and chaotic stylesheets frequently degrade load times and impact search ranking visibility.
+            {aboutText}
           </p>
           <p>
             We build web products that run quickly and look beautiful. By combining clean engineering with thoughtful layout design and smooth interactions, we construct digital spaces that help your business convert visitors into clients.

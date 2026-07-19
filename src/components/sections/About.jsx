@@ -5,8 +5,9 @@ import Card from '../ui/Card';
 import Badge from '../ui/Badge';
 import GradientText from '../ui/GradientText';
 
-export default function About() {
+export default function About({ settings }) {
   const navigate = useNavigate();
+  const about = settings?.about || {};
 
   return (
     <section className="bg-zinc-950/10 py-20 px-6 select-none">
@@ -25,15 +26,18 @@ export default function About() {
             </h2>
 
             <div className="text-zinc-400 text-sm sm:text-base leading-relaxed flex flex-col gap-5 mb-8">
-              <p>
-                We started Kvantum because we were tired of seeing businesses get burned by tech agencies who overpromise and underdeliver. Big presentations, buzzwords like "synergy" and "paradigm shift," and then… a website that looks like it's from 2012.
-              </p>
-              <p>
-                So we did things differently. Small team. No middlemen. Direct access to the people actually building your stuff. We pick up calls, we hit deadlines, and we don't disappear after launch day.
-              </p>
-              <p>
-                We're not a massive agency with 200 employees you'll never meet. We're a tight-knit crew who genuinely gives a damn about your project.
-              </p>
+              {about.description ? (
+                <p className="whitespace-pre-wrap">{about.description}</p>
+              ) : (
+                <>
+                  <p>
+                    We started Kvantum because we were tired of seeing businesses get burned by tech agencies who overpromise and underdeliver. Big presentations, buzzwords like "synergy" and "paradigm shift," and then… a website that looks like it's from 2012.
+                  </p>
+                  <p>
+                    So we did things differently. Small team. No middlemen. Direct access to the people actually building your stuff. We pick up calls, we hit deadlines, and we don't disappear after launch day.
+                  </p>
+                </>
+              )}
             </div>
 
             <button

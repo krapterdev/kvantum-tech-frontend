@@ -6,11 +6,13 @@ import Card from '../ui/Card';
 import Badge from '../ui/Badge';
 import GradientText from '../ui/GradientText';
 
-export default function Hero() {
+export default function Hero({ settings }) {
   const [pageSpeed, setPageSpeed] = useState(99);
   const [loadTime, setLoadTime] = useState(0.72);
   const [uptime, setUptime] = useState(99.99);
   const navigate = useNavigate();
+
+  const hero = settings?.hero || {};
 
   // Realistic statistics ticker
   useEffect(() => {
@@ -33,12 +35,11 @@ export default function Hero() {
           </Badge>
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-headline font-bold text-zinc-100 leading-[1.12] tracking-tight mb-6">
-            We Don't Just Build Tech. <br />
-            We Build What Your Business <GradientText className="from-pinkCustom to-purpleCustom">Actually Needs.</GradientText>
+            {hero.title || "We Don't Just Build Tech. We Build What Your Business Actually Needs."}
           </h1>
 
           <p className="text-zinc-450 text-base sm:text-lg leading-relaxed max-w-[600px] mb-9 font-sans">
-            Stop paying for fancy jargon. We're a team of real developers, designers, and problem-solvers who build websites, apps, and digital systems that make your life easier — not more complicated.
+            {hero.subtitle || "Stop paying for fancy jargon. We're a team of real developers, designers, and problem-solvers who build websites, apps, and digital systems that make your life easier — not more complicated."}
           </p>
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4.5 mb-4">
@@ -50,7 +51,7 @@ export default function Hero() {
               }}
               className="px-8 py-4 rounded-xl text-[15px] font-bold bg-pinkCustom text-white hover:bg-pink-600 transition-all duration-200 shadow-[0_0_20px_rgba(236,72,153,0.3)] hover:scale-[1.02] cursor-pointer"
             >
-              Start a Project
+              {hero.ctaText || "Start a Project"}
             </button>
             <Button
               onClick={() => navigate('/projects')}

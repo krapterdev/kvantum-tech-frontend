@@ -2,11 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import InteractiveCanvas from '../InteractiveCanvas';
 
-export default function Footer({ seoPages = [], theme }) {
+export default function Footer({ seoPages = [], theme, settings, services = [] }) {
   const currentYear = new Date().getFullYear();
+  const contact = settings?.contact || {};
+  const displayServices = services.slice(0, 6);
 
   return (
-    <footer className="glass-panel relative z-10 mt-[120px] border-t border-white/8 border-x-0 border-b-0 px-6 py-[60px] select-none text-center">
+    <footer className="glass-panel relative z-10 mt-[120px] px-6 py-[60px] select-none text-center">
       <div className="container mx-auto max-w-[1280px]">
         
         {/* Centered Globe Network Node */}
@@ -59,12 +61,20 @@ export default function Footer({ seoPages = [], theme }) {
               Services
             </h5>
             <ul className="flex flex-col gap-3 text-sm">
-              <li><Link to="/services" className="text-zinc-400 hover:text-pinkCustom transition-colors">Web Development</Link></li>
-              <li><Link to="/services" className="text-zinc-400 hover:text-pinkCustom transition-colors">App Development</Link></li>
-              <li><Link to="/services" className="text-zinc-400 hover:text-pinkCustom transition-colors">UI/UX Design</Link></li>
-              <li><Link to="/services" className="text-zinc-400 hover:text-pinkCustom transition-colors">SEO & Marketing</Link></li>
-              <li><Link to="/services" className="text-zinc-400 hover:text-pinkCustom transition-colors">Custom Software</Link></li>
-              <li><Link to="/services" className="text-zinc-400 hover:text-pinkCustom transition-colors">IT Consulting</Link></li>
+              {displayServices.map(ser => (
+                <li key={ser.id}>
+                  <Link to={`/services/${ser.id}`} className="text-zinc-400 hover:text-pinkCustom transition-colors">
+                    {ser.title}
+                  </Link>
+                </li>
+              ))}
+              {displayServices.length === 0 && (
+                <>
+                  <li><Link to="/services" className="text-zinc-400 hover:text-pinkCustom transition-colors">Web Development</Link></li>
+                  <li><Link to="/services" className="text-zinc-400 hover:text-pinkCustom transition-colors">App Development</Link></li>
+                  <li><Link to="/services" className="text-zinc-400 hover:text-pinkCustom transition-colors">UI/UX Design</Link></li>
+                </>
+              )}
             </ul>
           </div>
 
@@ -75,13 +85,13 @@ export default function Footer({ seoPages = [], theme }) {
             </h5>
             <ul className="flex flex-col gap-3 text-sm">
               <li>
-                <a href="mailto:info@kvantumtechsolutions.com" className="text-zinc-400 hover:text-pinkCustom transition-colors block break-all">
-                  info@kvantumtechsolutions.com
+                <a href={`mailto:${contact.email || 'info@kvantumtechsolutions.com'}`} className="text-zinc-400 hover:text-pinkCustom transition-colors block break-all">
+                  {contact.email || 'info@kvantumtechsolutions.com'}
                 </a>
               </li>
               <li>
-                <a href="tel:+919811661828" className="text-zinc-400 hover:text-pinkCustom transition-colors">
-                  +91 9811661828
+                <a href={`tel:${contact.phone || '+919811661828'}`} className="text-zinc-400 hover:text-pinkCustom transition-colors">
+                  {contact.phone || '+91 9811661828'}
                 </a>
               </li>
               <li>
@@ -95,7 +105,7 @@ export default function Footer({ seoPages = [], theme }) {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-white/8 pt-6 flex flex-wrap justify-between items-center text-[11px] font-mono text-zinc-500 gap-4">
+        <div className="pt-6 flex flex-wrap justify-between items-center text-[11px] font-mono text-zinc-500 gap-4">
           <div>
             &copy; {currentYear} Kvantum Tech Solutions. All rights reserved.
           </div>

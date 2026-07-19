@@ -1,20 +1,16 @@
-import React, { useState } from 'react';
-import { X, ArrowRight, Cpu, GitBranch, Layers } from 'lucide-react';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
 import Card from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
 import GradientText from '@/components/ui/GradientText';
 import LucideIcon from '@/components/ui/LucideIcon';
 
 export default function ServicesPage({ services = [] }) {
-  const [selectedService, setSelectedService] = useState(null);
+  const navigate = useNavigate();
 
   const handleCardClick = (service) => {
-    setSelectedService(service);
-  };
-
-  const handleClose = (e) => {
-    e.stopPropagation();
-    setSelectedService(null);
+    navigate(`/services/${service.id}`);
   };
 
   return (
@@ -90,77 +86,6 @@ export default function ServicesPage({ services = [] }) {
           ))}
         </div>
       </div>
-
-      {/* 3. Detail Popup Modal */}
-      {selectedService && (
-        <div className="dialog-overlay" onClick={handleClose}>
-          <div className="dialog-content" onClick={(e) => e.stopPropagation()}>
-            <button 
-              onClick={handleClose}
-              className="absolute top-5 right-5 bg-white/[0.02] border border-white/8 text-zinc-100 p-2 rounded-full hover:bg-white/[0.08] transition-colors"
-            >
-              <X size={20} />
-            </button>
-
-            <div className="p-8 sm:p-12 text-left">
-              {/* Icon & Title */}
-              <div className="flex items-center gap-5 mb-8">
-                <div 
-                  className="w-16 h-16 rounded-2xl bg-white/[0.02] border flex items-center justify-center shrink-0"
-                  style={{ 
-                    borderColor: selectedService.color || 'var(--accent-cyan)',
-                    color: selectedService.color || 'var(--accent-cyan)'
-                  }}
-                >
-                  <LucideIcon name={selectedService.iconName} size={28} />
-                </div>
-                <div>
-                  <h3 className="text-2xl text-zinc-100 font-extrabold font-headline">{selectedService.title}</h3>
-                  <span className="text-[11px] font-mono text-zinc-500 block uppercase mt-0.5">SERVICE ID: {selectedService.id.toUpperCase()}</span>
-                </div>
-              </div>
-
-              {/* Blueprint Description */}
-              <div className="mb-8">
-                <h4 className="text-sm font-mono text-zinc-100 uppercase tracking-widest mb-3 flex items-center gap-2">
-                  <Cpu size={16} style={{ color: selectedService.color || 'var(--accent-cyan)' }} /> Capability Profile
-                </h4>
-                <p className="text-zinc-400 text-[15px] leading-relaxed">
-                  {selectedService.longDesc}
-                </p>
-              </div>
-
-              {/* Technologies */}
-              <div className="mb-8">
-                <h4 className="text-sm font-mono text-zinc-100 uppercase tracking-widest mb-4 flex items-center gap-2">
-                  <GitBranch size={16} style={{ color: selectedService.color || 'var(--accent-cyan)' }} /> Technology Stack
-                </h4>
-                <div className="flex flex-wrap gap-2.5">
-                  {selectedService.techStack.split(',').map((tech, i) => (
-                    <span 
-                      key={i} 
-                      className="px-4 py-2 bg-white/[0.02] border border-white/8 rounded-lg text-xs font-mono text-zinc-300"
-                    >
-                      {tech.trim()}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Target Metrics */}
-              <div className="flex items-center gap-3.5 bg-white/[0.01] border border-white/8 p-4 sm:p-5 rounded-xl">
-                <Layers size={20} style={{ color: selectedService.color || 'var(--accent-cyan)' }} />
-                <div>
-                  <span className="text-[11px] font-mono text-zinc-500 block uppercase">Conversion Goal Metric</span>
-                  <span className="text-[15px] font-semibold text-zinc-200">{selectedService.metrics}</span>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </div>
-      )}
-
     </div>
   );
 }

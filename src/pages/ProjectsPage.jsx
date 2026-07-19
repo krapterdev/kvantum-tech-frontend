@@ -4,10 +4,13 @@ import Card from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
 import GradientText from '@/components/ui/GradientText';
 
-export default function ProjectsPage() {
+export default function ProjectsPage({ portfolios = [] }) {
   const [filter, setFilter] = useState('All');
 
-  const portfolios = [
+  const displayPortfolios = portfolios.length > 0 ? portfolios.map(p => ({
+    ...p,
+    tags: Array.isArray(p.tags) ? p.tags : (typeof p.tags === 'string' ? p.tags.split(',').map(t => t.trim()) : [])
+  })) : [
     {
       title: "Finova Pay Gateway",
       category: "Fintech",
@@ -40,11 +43,11 @@ export default function ProjectsPage() {
     }
   ];
 
-  const categories = ['All', 'Fintech', 'E-Commerce', 'AI Integration', 'Custom Systems'];
+  const categories = ['All', ...new Set(displayPortfolios.map(p => p.category))];
 
   const filteredPortfolios = filter === 'All' 
-    ? portfolios 
-    : portfolios.filter(p => p.category === filter);
+    ? displayPortfolios 
+    : displayPortfolios.filter(p => p.category === filter);
 
   return (
     <div className="container mx-auto max-w-[1280px] px-6 py-20 relative z-[5] select-none text-left">
