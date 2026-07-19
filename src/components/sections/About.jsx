@@ -4,7 +4,7 @@ import Card from '../ui/Card';
 
 export default function About() {
   return (
-    <section className="bg-zinc-950/10 border-y border-white/8 py-20 px-6 select-none">
+    <section className="bg-zinc-950/10 py-20 px-6 select-none">
       <div className="container mx-auto max-w-[1280px]">
         <div className="grid grid-cols-1 md:grid-cols-3 text-center gap-10">
           

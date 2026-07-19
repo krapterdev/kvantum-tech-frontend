@@ -14,12 +14,12 @@ export default function DynamicSeoPage({ seoPages = [] }) {
       <div className="container mx-auto max-w-[1280px] px-6 py-24 text-center relative z-10 select-none text-left">
         <Card className="max-w-[500px] mx-auto p-12 border text-center shadow-[0_20px_40px_rgba(0,0,0,0.3)]">
           <AlertTriangle size={48} className="text-red-400 mx-auto mb-6" />
-          <h2 className="text-zinc-100 text-xl font-bold font-headline mb-3">404 Node Not Found</h2>
+          <h2 className="text-zinc-100 text-xl font-bold font-headline mb-3">Page Not Found</h2>
           <p className="text-zinc-500 font-mono text-[13px] mb-8">
-            ERROR_SLUG_NOT_FOUND: /keyword/{slug}
+            The keyword page you are looking for does not exist.
           </p>
           <Link to="/">
-            <Button variant="primary">Return to Core Node</Button>
+            <Button variant="primary">Return to Home</Button>
           </Link>
         </Card>
       </div>
@@ -32,13 +32,13 @@ export default function DynamicSeoPage({ seoPages = [] }) {
       {/* 1. Header Banner */}
       <div className="mb-12">
         <Badge className="mb-4">
-          <ShieldCheck size={12} className="text-cyanCustom" /> SECURED GATEWAY LINK
+          <ShieldCheck size={12} className="text-cyanCustom" /> SEO Optimization
         </Badge>
         <h1 className="text-4xl sm:text-5xl font-headline font-bold text-zinc-100 mb-5 leading-tight">
           {page.title}
         </h1>
         <div className="flex gap-2 items-center text-xs sm:text-sm font-mono text-zinc-500">
-          <Key size={14} className="text-cyanCustom" /> INDEX_PATH: 
+          <Key size={14} className="text-cyanCustom" /> URL Path: 
           <span className="text-zinc-200">/keyword/{page.slug}</span>
         </div>
       </div>
@@ -49,7 +49,7 @@ export default function DynamicSeoPage({ seoPages = [] }) {
         {/* Left: Content Copy */}
         <Card className="p-9 sm:p-10 border text-left">
           <h3 className="text-zinc-100 text-lg font-bold font-headline mb-6 flex items-center gap-2">
-            <Cpu size={16} className="text-cyanCustom" /> Gateway Content Payload
+            <Cpu size={16} className="text-cyanCustom" /> Overview
           </h3>
           <div className="text-zinc-400 text-sm sm:text-base leading-relaxed flex flex-col gap-5">
             {page.content.split('\n\n').map((para, i) => (
@@ -60,12 +60,12 @@ export default function DynamicSeoPage({ seoPages = [] }) {
           <div className="flex flex-wrap gap-4 mt-10 border-t border-white/8 pt-8">
             <Link to="/contact">
               <Button variant="primary">
-                Initialize Handshake <Link2 size={16} />
+                Contact Us <Link2 size={16} />
               </Button>
             </Link>
             <Link to="/services">
               <Button variant="secondary">
-                View Capabilities Nodes
+                Our Services
               </Button>
             </Link>
           </div>

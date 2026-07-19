@@ -47,7 +47,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div id="contact-handshake" className="container mx-auto max-w-[1280px] px-6 py-20 relative z-[5] select-none text-left">
+    <div id="contact" className="container mx-auto max-w-[1280px] px-6 py-20 relative z-[5] select-none text-left">
       
       {/* Header */}
       <div className="text-center mb-16">

@@ -399,16 +399,16 @@ export default function AdminPortalPage({
           <div className="flex flex-col gap-6">
             <div className="text-center">
               <Lock size={36} className="text-cyanCustom mx-auto mb-4" />
-              <h2 className="text-zinc-100 text-xl font-bold font-headline">Secure Handshake Console</h2>
+              <h2 className="text-zinc-100 text-xl font-bold font-headline">Admin Dashboard Login</h2>
               <p className="text-zinc-500 text-xs mt-1.5 font-sans leading-relaxed">
-                Provide database administrative credentials to open management ports.
+                Provide administrative credentials to log in.
               </p>
             </div>
 
             <form onSubmit={handleLoginSubmit} className="flex flex-col gap-5">
               <div>
                 <label className="block text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-2">
-                  System E-Mail Address
+                  Email Address
                 </label>
                 <input 
                   type="email" 
@@ -1367,16 +1367,16 @@ export default function AdminPortalPage({
               </div>
 
               <div>
-                <label className="block text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-1.5">CRM Telemetry Status</label>
+                <label className="block text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-1.5">Lead Status</label>
                 <select 
                   value={crmItem.status}
                   onChange={(e) => setCrmItem(prev => ({ ...prev, status: e.target.value }))}
                   className="w-full bg-zinc-950 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm"
                 >
                   <option value="New">New (Pending Action)</option>
-                  <option value="Contacted">Contacted (E-Mail Transmitted)</option>
+                  <option value="Contacted">Contacted (Email Sent)</option>
                   <option value="In-Progress">In-Progress (Design / Call active)</option>
-                  <option value="Closed">Closed (Handshake Complete)</option>
+                  <option value="Closed">Closed (Converted)</option>
                 </select>
               </div>
 

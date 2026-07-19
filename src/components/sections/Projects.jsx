@@ -27,7 +27,7 @@ export default function Projects() {
   ];
 
   return (
-    <section className="container mx-auto max-w-[1280px] px-6 py-20 border-t border-white/8 select-none">
+    <section className="container mx-auto max-w-[1280px] px-6 py-20 select-none">
       <SectionHeading
         badge="Case Studies"
         title="Featured Work"

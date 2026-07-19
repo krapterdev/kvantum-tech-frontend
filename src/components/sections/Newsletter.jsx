@@ -25,7 +25,7 @@ export default function Newsletter() {
   };
 
   return (
-    <section className="container mx-auto max-w-[680px] px-6 py-20 border-t border-white/8 select-none">
+    <section className="container mx-auto max-w-[680px] px-6 py-20 select-none">
       <div className="text-center mb-10">
         <span className="tech-badge mb-4">Newsletter</span>
         <h2 className="text-3xl font-headline font-bold text-zinc-100 leading-tight">

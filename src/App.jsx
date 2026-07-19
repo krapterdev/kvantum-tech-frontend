@@ -99,14 +99,14 @@ export default function App() {
     const path = location.pathname;
 
     if (path === '/services') {
-      title = 'Our Capabilities Node Stack | Studio Kvantum';
-      description = 'Explore Kvantums core software capabilities: SEO, SMO, Chatbots, video shorts production, graphics branding, React web dev and native mobile apps.';
+      title = 'Our Capabilities & Services | Studio Kvantum';
+      description = 'Explore Studio Kvantums core capabilities: SEO, custom chatbots, brand design, React web development, and mobile applications.';
     } else if (path === '/about') {
-      title = 'About Studio Kvantum | Technical Stack Profile';
-      description = 'Eradicating digital latency. Review our history, vector models, and detailed core developer technologies in Noida, Delhi NCR.';
+      title = 'About Studio Kvantum | Delhi NCR';
+      description = 'Learn more about Studio Kvantum, a creative digital engineering agency based in Noida, Delhi NCR.';
     } else if (path === '/blog') {
-      title = 'Developer Knowledge Base Node Repository | Studio Kvantum';
-      description = 'In-depth developer guides, technical descriptions, and analytics detailing SEO algorithms, RAG database setups, and 3D rendering profiles.';
+      title = 'Studio Kvantum Blog & Insights';
+      description = 'Read the latest developer articles, design guides, and digital marketing insights from our team.';
     } else if (path.startsWith('/blog/')) {
       const slug = path.split('/')[2];
       const activePost = blogs.find(b => b.id === slug);
@@ -115,11 +115,11 @@ export default function App() {
         description = activePost.metaDesc || activePost.summary;
       }
     } else if (path === '/contact') {
-      title = 'Initialize Secured Telemetry Connection | Studio Kvantum';
-      description = 'Connect with Kvantum Tech Solutions developers in Sector 62. Secure handshake API inputs for custom software design queries.';
+      title = 'Contact Studio Kvantum | Noida Sector 62';
+      description = 'Get in touch with the development and design team at Studio Kvantum to start your project.';
     } else if (path === '/admin') {
-      title = 'CMS Portal Admin Node Control | Studio Kvantum';
-      description = 'Administrative portal database dashboard manager. Coordinate blogs, services, and dynamic SEO pages.';
+      title = 'Admin Portal | Studio Kvantum';
+      description = 'Studio Kvantum Admin Portal to manage content, service items, blogs, and SEO details.';
     } else if (path.startsWith('/keyword/')) {
       const slug = path.split('/')[2];
       const activePage = seoPages.find(p => p.slug === slug);
@@ -148,10 +148,8 @@ export default function App() {
       {/* Dynamic Scroll Video Frame Canvas Background */}
       <ScrollVideoPlayer />
       
-      {/* Cyber Grid overlay and ambient glowing background halos */}
-      <div className="cyber-grid" />
-      <div className="glow-orb top-[10%] left-[10%] w-[400px] h-[400px] bg-cyanCustom" />
-      <div className="glow-orb bottom-[25%] right-[5%] w-[450px] h-[450px] bg-purpleCustom" />
+      {/* Dark Overlay for Contrast & Text Readability */}
+      <div className="fixed inset-0 bg-black/65 backdrop-blur-[1px] -z-10 pointer-events-none" />
 
       {/* Auto Reset Scroll position */}
       <ScrollToTop />

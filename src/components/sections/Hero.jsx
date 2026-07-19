@@ -45,7 +45,7 @@ export default function Hero() {
           <div className="flex flex-wrap gap-4">
             <Button
               onClick={() => {
-                const el = document.getElementById('contact-handshake');
+                const el = document.getElementById('contact');
                 if (el) el.scrollIntoView({ behavior: 'smooth' });
                 else navigate('/contact');
               }}

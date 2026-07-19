@@ -87,7 +87,7 @@ export default function Navbar({ theme, toggleTheme }) {
             variant="primary"
             className="px-5 py-2.5 rounded-lg text-[13px]"
           >
-            Handshake <Link2 size={14} />
+            Contact <Link2 size={14} />
           </Button>
         </div>
 

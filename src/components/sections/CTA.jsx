@@ -7,7 +7,7 @@ export default function CTA() {
   const navigate = useNavigate();
 
   return (
-    <section className="container mx-auto max-w-[1280px] px-6 py-20 border-t border-white/8 select-none">
+    <section className="container mx-auto max-w-[1280px] px-6 py-20 select-none">
       <div className="glass-panel p-12 md:p-20 rounded-[30px] border border-white/8 text-center flex flex-col items-center gap-8 relative overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
         
         {/* Glow orbs within panel */}

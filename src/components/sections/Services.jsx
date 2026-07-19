@@ -10,7 +10,7 @@ export default function Services({ services = [] }) {
   const servicesPreview = services.slice(0, 3);
 
   return (
-    <section className="container mx-auto max-w-[1280px] px-6 py-20 border-t border-white/8 select-none bg-white/[0.002]">
+    <section className="container mx-auto max-w-[1280px] px-6 py-20 select-none bg-white/[0.002]">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
         <div className="text-left">
           <span className="tech-badge mb-4">What We Do</span>
