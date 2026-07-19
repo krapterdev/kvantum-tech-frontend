@@ -19,6 +19,7 @@ export default {
         },
         cyanCustom: '#00d2ff',
         purpleCustom: '#8a2be2',
+        pinkCustom: '#ec4899',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],

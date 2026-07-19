@@ -1,23 +1,23 @@
 export const testimonials = [
   {
     id: 1,
-    name: "Vikram Sethi",
-    role: "CTO, Finova Solutions",
-    quote: "Kvantum Tech Solutions redesigned our entire payment routing infrastructure. Response times dropped by 45%, and the 3D dashboard gives us real-time logs instantly.",
+    name: "Rajesh M.",
+    role: "Healthcare Startup",
+    quote: "They rebuilt our entire booking system in 6 weeks. Our old agency said it would take 6 months. Kvantum just… got it done.",
     avatar: "https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/web%20icons/svg/192%20dm.svg"
   },
   {
     id: 2,
-    name: "Aisha Sharma",
-    role: "Founder, Bloom Digital",
-    quote: "Our organic traffic grew 5x in less than 4 months thanks to KTS's Technical SEO implementation and custom programmatic landing pages. Highly recommended!",
+    name: "Priya S.",
+    role: "E-commerce Brand",
+    quote: "Finally, a tech team that returns calls. These guys are ridiculous — in a good way.",
     avatar: "https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/web%20icons/svg/192%20dm.svg"
   },
   {
     id: 3,
-    name: "Rajesh Pillai",
-    role: "Director of Product, Nexus Retail",
-    quote: "The RAG chatbot built by Studio Kvantum handles over 85% of customer queries automatically. Our support overhead reduced significantly.",
+    name: "Amit K.",
+    role: "Real Estate Firm",
+    quote: "They told us we DON'T need a custom app and saved us ₹8 lakhs. Who does that? Honest people, apparently.",
     avatar: "https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/web%20icons/svg/192%20dm.svg"
   }
 ];

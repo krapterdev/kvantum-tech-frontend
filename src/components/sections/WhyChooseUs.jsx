@@ -6,33 +6,45 @@ import SectionHeading from '../ui/SectionHeading';
 export default function WhyChooseUs() {
   const points = [
     {
-      title: "Tailored Engineering",
-      desc: "Every line of code is written specifically for your project. We don't use generic templates or rigid site builders.",
+      title: "No Ghosting",
+      desc: "Ever worked with a developer who vanished for a week? Yeah, we don't do that. You'll have direct access to your project team. Always.",
       icon: ShieldCheck,
+      color: "text-pinkCustom"
+    },
+    {
+      title: "We Speak Human",
+      desc: "No technical jargon dumps. We explain things in plain English so you actually understand what you're paying for.",
+      icon: Bot,
       color: "text-cyanCustom"
     },
     {
-      title: "Core Speed Focus",
-      desc: "We optimize code bundles and server response times to ensure your site passes Google's Core Web Vitals with flying colors.",
+      title: "Deadlines Are Real Here",
+      desc: "If we say Friday, we mean Friday. Not 'Friday next month.' We set realistic timelines and stick to them.",
       icon: Zap,
+      color: "text-purpleCustom"
+    },
+    {
+      title: "Post-Launch Support",
+      desc: "Most agencies hand over the keys and disappear. We stick around for support, fixes, and updates because relationships matter.",
+      icon: Star,
       color: "text-emerald-400"
     },
     {
-      title: "Smart API Integrations",
-      desc: "We integrate custom database systems and modern third-party APIs to automate your business workflows seamlessly.",
-      icon: Bot,
-      color: "text-purpleCustom"
+      title: "Honest Pricing",
+      desc: "No hidden fees. No 'that feature costs extra' surprises mid-project. You'll know exactly what you're paying for.",
+      icon: ShieldCheck,
+      color: "text-pinkCustom"
     }
   ];
 
   return (
     <section className="container mx-auto max-w-[1280px] px-6 py-20 select-none">
       <SectionHeading
-        badge="Our Approach"
-        title="Why Brands Partner with Kvantum"
-        subtitle="We build reliable, high-performance web products designed to scale with your business and keep visitors engaged."
+        badge="Why Us"
+        title="Why Companies Work With Us"
+        subtitle="And keep coming back for their next digital projects."
       />
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-center">
         {points.map((point, idx) => {
           const Icon = point.icon;
           return (

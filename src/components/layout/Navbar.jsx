@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Menu, X, Sun, Moon, Link2 } from 'lucide-react';
+import { Menu, X, Sun, Moon, Link2, ChevronDown } from 'lucide-react';
 import MobileMenu from './MobileMenu';
 import Button from '../ui/Button';
 
@@ -42,20 +42,41 @@ export default function Navbar({ theme, toggleTheme }) {
             Home
           </NavLink>
           <NavLink 
-            to="/services"
-            className={({ isActive }) => 
-              `text-[15px] font-semibold transition-colors duration-200 ${isActive ? 'text-cyanCustom font-bold' : 'text-zinc-400 hover:text-cyanCustom'}`
-            }
-          >
-            Services
-          </NavLink>
-          <NavLink 
             to="/about"
             className={({ isActive }) => 
               `text-[15px] font-semibold transition-colors duration-200 ${isActive ? 'text-cyanCustom font-bold' : 'text-zinc-400 hover:text-cyanCustom'}`
             }
           >
-            About Us
+            About
+          </NavLink>
+          
+          {/* Services Dropdown */}
+          <div className="relative group">
+            <NavLink 
+              to="/services"
+              className={({ isActive }) => 
+                `text-[15px] font-semibold transition-colors duration-200 flex items-center gap-1 py-2 ${isActive ? 'text-cyanCustom font-bold' : 'text-zinc-400 hover:text-cyanCustom'}`
+              }
+            >
+              Services <ChevronDown size={14} />
+            </NavLink>
+            <div className="absolute top-full left-0 mt-0 w-52 rounded-xl bg-zinc-950/95 border border-white/8 p-2 shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[110]">
+              <NavLink to="/services" className="block px-4 py-2.5 text-xs font-semibold text-zinc-400 hover:text-cyanCustom hover:bg-white/[0.02] rounded-lg">Web Dev</NavLink>
+              <NavLink to="/services" className="block px-4 py-2.5 text-xs font-semibold text-zinc-400 hover:text-cyanCustom hover:bg-white/[0.02] rounded-lg">App Dev</NavLink>
+              <NavLink to="/services" className="block px-4 py-2.5 text-xs font-semibold text-zinc-400 hover:text-cyanCustom hover:bg-white/[0.02] rounded-lg">UI/UX Design</NavLink>
+              <NavLink to="/services" className="block px-4 py-2.5 text-xs font-semibold text-zinc-400 hover:text-cyanCustom hover:bg-white/[0.02] rounded-lg">SEO & Marketing</NavLink>
+              <NavLink to="/services" className="block px-4 py-2.5 text-xs font-semibold text-zinc-400 hover:text-cyanCustom hover:bg-white/[0.02] rounded-lg">Custom Software</NavLink>
+              <NavLink to="/services" className="block px-4 py-2.5 text-xs font-semibold text-zinc-400 hover:text-cyanCustom hover:bg-white/[0.02] rounded-lg">IT Consulting</NavLink>
+            </div>
+          </div>
+
+          <NavLink 
+            to="/projects"
+            className={({ isActive }) => 
+              `text-[15px] font-semibold transition-colors duration-200 ${isActive ? 'text-cyanCustom font-bold' : 'text-zinc-400 hover:text-cyanCustom'}`
+            }
+          >
+            Portfolio
           </NavLink>
           <NavLink 
             to="/blog"
@@ -63,7 +84,15 @@ export default function Navbar({ theme, toggleTheme }) {
               `text-[15px] font-semibold transition-colors duration-200 ${isActive ? 'text-cyanCustom font-bold' : 'text-zinc-400 hover:text-cyanCustom'}`
             }
           >
-            Developer Blog
+            Blog
+          </NavLink>
+          <NavLink 
+            to="/contact"
+            className={({ isActive }) => 
+              `text-[15px] font-semibold transition-colors duration-200 ${isActive ? 'text-cyanCustom font-bold' : 'text-zinc-400 hover:text-cyanCustom'}`
+            }
+          >
+            Contact
           </NavLink>
         </div>
 
@@ -82,13 +111,12 @@ export default function Navbar({ theme, toggleTheme }) {
             </span>
           </label>
 
-          <Button 
+          <button 
             onClick={() => navigate('/contact')} 
-            variant="primary"
-            className="px-5 py-2.5 rounded-lg text-[13px]"
+            className="px-5 py-2.5 rounded-lg text-[13px] font-bold bg-pinkCustom text-white hover:bg-pink-600 transition-colors shadow-[0_0_15px_rgba(236,72,153,0.3)] cursor-pointer"
           >
-            Contact <Link2 size={14} />
-          </Button>
+            Let's Talk
+          </button>
         </div>
 
         {/* Mobile menu trigger */}

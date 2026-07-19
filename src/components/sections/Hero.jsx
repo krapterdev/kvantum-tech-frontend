@@ -28,38 +28,42 @@ export default function Hero() {
         
         {/* Left Side: Info & Actions */}
         <div className="flex flex-col items-start text-left">
-          <Badge className="mb-6 flex items-center gap-1.5">
-            <Activity size={12} className="animate-pulse text-cyanCustom" />
-            Studio Kvantum — Live Development
+          <Badge className="mb-6 flex items-center gap-1.5 bg-pinkCustom/10 border-pinkCustom/20 text-pinkCustom">
+            Building Tech That Actually Matters
           </Badge>
 
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-headline font-bold text-zinc-100 leading-[1.08] tracking-tight mb-6">
-            We build <GradientText>high-performance</GradientText> <br />
-            digital experiences.
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-headline font-bold text-zinc-100 leading-[1.12] tracking-tight mb-6">
+            We Don't Just Build Tech. <br />
+            We Build What Your Business <GradientText className="from-pinkCustom to-purpleCustom">Actually Needs.</GradientText>
           </h1>
 
-          <p className="text-zinc-400 text-base sm:text-lg leading-relaxed max-w-[600px] mb-9">
-            We partner with ambitious brands to design, engineer, and optimize websites, web applications, and custom software that load instantly, convert visitor attention, and scale cleanly.
+          <p className="text-zinc-450 text-base sm:text-lg leading-relaxed max-w-[600px] mb-9 font-sans">
+            Stop paying for fancy jargon. We're a team of real developers, designers, and problem-solvers who build websites, apps, and digital systems that make your life easier — not more complicated.
           </p>
 
-          <div className="flex flex-wrap gap-4">
-            <Button
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4.5 mb-4">
+            <button
               onClick={() => {
                 const el = document.getElementById('contact');
                 if (el) el.scrollIntoView({ behavior: 'smooth' });
                 else navigate('/contact');
               }}
-              variant="primary"
+              className="px-8 py-4 rounded-xl text-[15px] font-bold bg-pinkCustom text-white hover:bg-pink-600 transition-all duration-200 shadow-[0_0_20px_rgba(236,72,153,0.3)] hover:scale-[1.02] cursor-pointer"
             >
-              Start a Project <ArrowRight size={16} />
-            </Button>
+              Start a Project
+            </button>
             <Button
-              onClick={() => navigate('/services')}
+              onClick={() => navigate('/projects')}
               variant="secondary"
+              className="px-8 py-4 rounded-xl text-[15px]"
             >
-              Our Capabilities
+              See Our Work
             </Button>
           </div>
+          
+          <p className="text-zinc-500 text-xs font-mono tracking-wide mt-2">
+            No sales pressure. No generic PDF brochures. Just a real conversation.
+          </p>
         </div>
 
         {/* Right Side: Interactive Performance Metrics Card */}

@@ -158,7 +158,7 @@ export default function App() {
 
       <main className="relative z-10 pt-[100px] min-h-[75vh]">
         <Routes>
-          <Route path="/" element={<Home services={services} />} />
+          <Route path="/" element={<Home services={services} blogs={blogs} />} />
           <Route path="/about" element={<AboutPage theme={theme} />} />
           <Route path="/services" element={<ServicesPage services={services} />} />
           <Route path="/projects" element={<ProjectsPage />} />
