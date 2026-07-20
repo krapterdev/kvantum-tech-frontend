@@ -42,7 +42,7 @@ export default function Hero({ settings }) {
             {hero.subtitle || "Stop paying for fancy jargon. We're a team of real developers, designers, and problem-solvers who build websites, apps, and digital systems that make your life easier — not more complicated."}
           </p>
 
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4.5 mb-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4">
             <button
               onClick={() => {
                 const el = document.getElementById('contact');

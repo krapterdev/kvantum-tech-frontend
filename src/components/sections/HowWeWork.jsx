@@ -40,7 +40,7 @@ export default function HowWeWork() {
           <div key={idx} className="relative flex flex-col items-start text-left group">
             
             {/* Step card container */}
-            <Card className="p-8 border h-full w-full flex flex-col gap-4.5 relative z-10 hover:-translate-y-1.5 transition-all duration-300">
+            <Card className="p-8 border h-full w-full flex flex-col gap-4 relative z-10 hover:-translate-y-1.5 transition-all duration-300">
               <span className="text-4xl font-black font-headline text-pinkCustom/20 group-hover:text-pinkCustom transition-colors duration-300">
                 {step.num}
               </span>

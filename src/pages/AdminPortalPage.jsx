@@ -1057,9 +1057,9 @@ export default function AdminPortalPage({
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#090D1A] font-sans text-zinc-300 select-none text-left w-full">
+    <div className="min-h-screen flex flex-col bg-[#050811] font-sans text-zinc-300 select-none text-left w-full">
       {/* Top Premium Navbar */}
-      <header className="w-full h-16 bg-[#0E1526] border-b border-white/5 flex items-center justify-between px-6 z-30 shrink-0">
+      <header className="w-full h-16 bg-[#060b16] border-b border-white/5 flex items-center justify-between px-6 z-30 shrink-0">
         <div className="flex items-center gap-3">
           <span className="text-sm font-headline font-bold bg-gradient-to-r from-pinkCustom via-purpleCustom to-cyanCustom bg-clip-text text-transparent uppercase tracking-wider">
             Kvantum Tech Solutions
@@ -1104,7 +1104,7 @@ export default function AdminPortalPage({
       {/* Main Body */}
       <div className="flex flex-1 overflow-hidden h-[calc(100vh-64px)] w-full">
         {/* Sidebar Navigation */}
-        <aside className="w-64 bg-[#0E1526] border-r border-white/5 flex flex-col justify-between py-6 px-4 shrink-0 z-20">
+        <aside className="w-64 bg-[#060b16] border-r border-white/5 flex flex-col justify-between py-6 px-4 shrink-0 z-20">
           <div className="flex flex-col gap-8">
             <div>
               <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest px-3 block mb-4">
@@ -1246,7 +1246,7 @@ export default function AdminPortalPage({
         </aside>
 
         {/* Content Workspace Panel */}
-        <main className="flex-1 overflow-y-auto bg-[#090D1A] p-8 min-h-full">
+        <main className="flex-1 overflow-y-auto bg-[#050811] p-8 min-h-full">
 
       {/* ================================== TAB: LEADS CRM ================================== */}
       {activeTab === 'leads' && (currentUser.role === 'admin' || currentUser.role === 'sales') && (

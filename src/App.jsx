@@ -244,7 +244,7 @@ export default function App() {
   const isAdminPath = location.pathname.startsWith('/admin');
 
   return (
-    <div className={`relative min-h-screen text-zinc-100 ${isAdminPath ? 'bg-[#090D1A]' : 'overflow-hidden'}`}>
+    <div className={`relative min-h-screen text-zinc-100 ${isAdminPath ? 'bg-[#050811]' : 'overflow-hidden'}`}>
       {/* Background color layer behind the canvas */}
       {!isAdminPath && <div className="fixed inset-0 bg-background-dark -z-30 pointer-events-none" />}
       
