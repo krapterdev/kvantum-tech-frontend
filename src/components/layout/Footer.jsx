@@ -110,8 +110,8 @@ export default function Footer({ seoPages = [], theme, settings, services = [] }
             &copy; {currentYear} Kvantum Tech Solutions. All rights reserved.
           </div>
           <div className="flex gap-6">
-            <Link to="/about" className="hover:text-pinkCustom">Privacy Policy</Link>
-            <Link to="/about" className="hover:text-pinkCustom">Terms of Service</Link>
+            <Link to="/privacy" className="hover:text-pinkCustom">Privacy Policy</Link>
+            <Link to="/terms" className="hover:text-pinkCustom">Terms & Conditions</Link>
           </div>
         </div>
 

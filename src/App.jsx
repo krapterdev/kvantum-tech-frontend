@@ -15,6 +15,8 @@ import ContactPage from '@/pages/ContactPage';
 import BlogPage from '@/pages/BlogPage';
 import DynamicSeoPage from '@/pages/DynamicSeoPage';
 import AdminPortalPage from '@/pages/AdminPortalPage';
+import TermsPage from '@/pages/TermsPage';
+import PrivacyPage from '@/pages/PrivacyPage';
 import NotFound from '@/pages/NotFound';
 
 // API services
@@ -272,6 +274,9 @@ export default function App() {
           <Route path="/blog/:slug" element={<BlogPage blogs={blogs} />} />
           
           <Route path="/keyword/:slug" element={<DynamicSeoPage seoPages={seoPages} />} />
+          
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
           
           <Route path="/admin" element={
             <AdminPortalPage 
