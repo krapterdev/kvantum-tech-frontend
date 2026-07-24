@@ -164,8 +164,10 @@ export default function App() {
       description = projectsSeo?.description || 'Explore web products, apps, and custom platforms built for our clients.';
       keywords = projectsSeo?.keywords || 'case studies, portfolio';
     } else if (path === '/blog') {
-      title = 'Studio Kvantum Blog & Insights';
-      description = 'Read the latest developer articles, design guides, and digital marketing insights from our team.';
+      const blogSeo = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'blog') : null;
+      title = blogSeo?.title || 'Tech Blog | AI, SEO, Web Development & Digital Marketing | Kvantum Tech Solutions';
+      description = blogSeo?.description || 'Explore the Kvantum Tech Solutions blog for expert insights on AI, SEO, web development, digital marketing, software solutions, and the latest technology trends to grow your business.';
+      keywords = blogSeo?.keywords || 'tech blog, web development articles, software engineering insights';
     } else if (path.startsWith('/blog/')) {
       const slug = path.split('/')[2];
       const activePost = blogs.find(b => b.id === slug);
@@ -196,10 +198,76 @@ export default function App() {
     document.querySelector('meta[name="keywords"]')?.setAttribute('content', keywords);
     document.querySelector('meta[property="og:title"]')?.setAttribute('content', title);
     document.querySelector('meta[property="og:description"]')?.setAttribute('content', description);
+    document.querySelector('meta[property="og:url"]')?.setAttribute('content', `https://kvantumtechsolutions.com${path}`);
+    document.querySelector('meta[property="og:site_name"]')?.setAttribute('content', 'Kvantum Tech Solutions');
+    document.querySelector('meta[property="og:type"]')?.setAttribute('content', 'website');
     
     const canonical = document.querySelector('link[rel="canonical"]');
     if (canonical) {
-      canonical.setAttribute('href', `https://www.kvantumtechsolutions.com${path}`);
+      canonical.setAttribute('href', `https://kvantumtechsolutions.com${path}`);
+    }
+
+    // Clean old injected other SEO tags
+    const oldOtherTags = document.querySelectorAll('.kts-injected-other-seo');
+    oldOtherTags.forEach(el => el.remove());
+
+    // Inject active page's other tags
+    let activeSeoObj = null;
+    if (path === '/') {
+      activeSeoObj = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'home') : null;
+    } else if (path === '/services') {
+      activeSeoObj = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'services') : null;
+    } else if (path === '/about') {
+      activeSeoObj = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'about') : null;
+    } else if (path === '/blog') {
+      activeSeoObj = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'blog') : null;
+    } else if (path === '/contact') {
+      activeSeoObj = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'contact') : null;
+    } else if (path === '/projects') {
+      activeSeoObj = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'projects') : null;
+    }
+
+    if (activeSeoObj && activeSeoObj.other) {
+      try {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(`<div>${activeSeoObj.other}</div>`, 'text/html');
+        const elements = doc.body.firstChild.childNodes;
+        elements.forEach(node => {
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            const clone = document.createElement(node.tagName);
+            for (let i = 0; i < node.attributes.length; i++) {
+              clone.setAttribute(node.attributes[i].name, node.attributes[i].value);
+            }
+            clone.innerHTML = node.innerHTML;
+            clone.classList.add('kts-injected-other-seo');
+            
+            const nameAttr = node.getAttribute('name');
+            const propAttr = node.getAttribute('property');
+            const relAttr = node.getAttribute('rel');
+            if (relAttr === 'canonical') {
+              document.querySelector('link[rel="canonical"]')?.remove();
+            } else if (nameAttr === 'description') {
+              document.querySelector('meta[name="description"]')?.remove();
+            } else if (nameAttr === 'keywords') {
+              document.querySelector('meta[name="keywords"]')?.remove();
+            } else if (propAttr === 'og:title') {
+              document.querySelector('meta[property="og:title"]')?.remove();
+            } else if (propAttr === 'og:description') {
+              document.querySelector('meta[property="og:description"]')?.remove();
+            } else if (propAttr === 'og:url') {
+              document.querySelector('meta[property="og:url"]')?.remove();
+            } else if (propAttr === 'og:site_name') {
+              document.querySelector('meta[property="og:site_name"]')?.remove();
+            } else if (propAttr === 'og:type') {
+              document.querySelector('meta[property="og:type"]')?.remove();
+            }
+            
+            document.head.appendChild(clone);
+          }
+        });
+      } catch (err) {
+        console.warn('[SEO INJECTION] Error parsing/injecting header tags:', err.message);
+      }
     }
 
     // Dynamic Script Tag Injection
