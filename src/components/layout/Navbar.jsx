@@ -150,7 +150,7 @@ export default function Navbar({ theme, toggleTheme }) {
       </nav>
 
       {/* Mobile Menu Overlay Drawer */}
-      <MobileMenu isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
+      <MobileMenu isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} theme={theme} />
     </>
   );
 }
