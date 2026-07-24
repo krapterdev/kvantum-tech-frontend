@@ -202,10 +202,16 @@ export default function App() {
     document.querySelector('meta[property="og:site_name"]')?.setAttribute('content', 'Kvantum Tech Solutions');
     document.querySelector('meta[property="og:type"]')?.setAttribute('content', 'website');
     
-    const canonical = document.querySelector('link[rel="canonical"]');
-    if (canonical) {
-      canonical.setAttribute('href', `https://kvantumtechsolutions.com${path}`);
+    // Ensure base canonical tag exists
+    let canonicalEl = document.querySelector('link[rel="canonical"]');
+    if (!canonicalEl) {
+      canonicalEl = document.createElement('link');
+      canonicalEl.setAttribute('rel', 'canonical');
+      document.head.appendChild(canonicalEl);
     }
+    
+    // Set default canonical
+    let canonicalUrl = `https://kvantumtechsolutions.com${path}`;
 
     // Clean old injected other SEO tags
     const oldOtherTags = document.querySelectorAll('.kts-injected-other-seo');
@@ -234,6 +240,16 @@ export default function App() {
         const elements = doc.body.firstChild.childNodes;
         elements.forEach(node => {
           if (node.nodeType === Node.ELEMENT_NODE) {
+            const relAttr = node.getAttribute('rel');
+            if (relAttr === 'canonical') {
+              // Extract the custom canonical URL instead of appending a new element
+              const hrefVal = node.getAttribute('href');
+              if (hrefVal) {
+                canonicalUrl = hrefVal;
+              }
+              return; // Skip appending this node to avoid duplicate canonical tags
+            }
+
             const clone = document.createElement(node.tagName);
             for (let i = 0; i < node.attributes.length; i++) {
               clone.setAttribute(node.attributes[i].name, node.attributes[i].value);
@@ -243,10 +259,7 @@ export default function App() {
             
             const nameAttr = node.getAttribute('name');
             const propAttr = node.getAttribute('property');
-            const relAttr = node.getAttribute('rel');
-            if (relAttr === 'canonical') {
-              document.querySelector('link[rel="canonical"]')?.remove();
-            } else if (nameAttr === 'description') {
+            if (nameAttr === 'description') {
               document.querySelector('meta[name="description"]')?.remove();
             } else if (nameAttr === 'keywords') {
               document.querySelector('meta[name="keywords"]')?.remove();
@@ -269,6 +282,9 @@ export default function App() {
         console.warn('[SEO INJECTION] Error parsing/injecting header tags:', err.message);
       }
     }
+
+    // Apply the resolved canonical URL to the link element
+    canonicalEl.setAttribute('href', canonicalUrl);
 
     // Dynamic Script Tag Injection
     const oldScripts = document.querySelectorAll('.kts-injected-script');

@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/robots.txt",
+      "destination": "https://api.kvantumtechsolutions.com/robots.txt"
+    },
+    {
+      "source": "/sitemap.xml",
+      "destination": "https://api.kvantumtechsolutions.com/sitemap.xml"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
