@@ -16,17 +16,19 @@ export default function MobileMenu({ isOpen, onClose, theme }) {
     }
   }, [isOpen]);
 
-  if (!isOpen) return null;
-
   return (
     <div 
-      className="fixed top-[90px] left-5 right-5 rounded-[20px] p-6 flex flex-col gap-4 z-[99] max-h-[calc(100vh-120px)] overflow-y-auto animate-fade-in lg:hidden text-left shadow-[0_20px_50px_rgba(0,0,0,0.35)] transition-all duration-300"
+      className="fixed left-5 right-5 rounded-[20px] p-6 flex flex-col gap-4 z-[99] max-h-[calc(100vh-120px)] overflow-y-auto lg:hidden text-left shadow-[0_20px_50px_rgba(0,0,0,0.35)] transition-all duration-300 ease-out"
       style={{
         backgroundColor: 'var(--mobile-menu-bg)',
         border: '1px solid var(--mobile-menu-border)',
         color: 'var(--mobile-menu-text)',
         backdropFilter: 'blur(28px)',
         WebkitBackdropFilter: 'blur(28px)',
+        top: isOpen ? '90px' : '70px',
+        opacity: isOpen ? 1 : 0,
+        transform: isOpen ? 'scale(1)' : 'scale(0.95)',
+        pointerEvents: isOpen ? 'auto' : 'none',
       }}
     >
       <NavLink

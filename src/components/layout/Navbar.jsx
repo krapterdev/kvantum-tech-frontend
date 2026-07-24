@@ -142,7 +142,8 @@ export default function Navbar({ theme, toggleTheme }) {
           </label>
           <button 
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="bg-none border-none text-zinc-100 cursor-pointer"
+            className="bg-none border-none cursor-pointer transition-colors flex items-center justify-center"
+            style={{ color: 'var(--text-primary)' }}
           >
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
