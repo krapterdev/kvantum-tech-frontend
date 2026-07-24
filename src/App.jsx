@@ -143,26 +143,26 @@ export default function App() {
       }
     } else if (path === '/services') {
       const servicesSeo = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'services') : null;
-      title = servicesSeo?.title || 'Our Capabilities & Services | Studio Kvantum';
-      description = servicesSeo?.description || 'Explore Studio Kvantums core capabilities: SEO, custom chatbots, brand design, React web development, and mobile applications.';
-      keywords = servicesSeo?.keywords || 'react, app development, brand design';
+      title = servicesSeo?.title || 'IT Services | Web Development, SEO & AI Solutions | Kvantum Tech Solutions';
+      description = servicesSeo?.description || 'Explore Kvantum Tech Solutions\' expert IT services, including web development, SEO, digital marketing, AI chatbots, app development, UI/UX design, and scalable business solutions.';
+      keywords = servicesSeo?.keywords || 'software development, mobile app development, web design services, seo agency';
     } else if (path.startsWith('/services/')) {
       const slug = path.split('/')[2];
       const activeService = services.find(s => s.id === slug);
       if (activeService) {
-        title = activeService.metaTitle || `${activeService.title} | Studio Kvantum`;
+        title = activeService.metaTitle || `${activeService.title} | Kvantum Tech Solutions`;
         description = activeService.metaDesc || activeService.shortDesc;
       }
     } else if (path === '/about') {
       const aboutSeo = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'about') : null;
-      title = aboutSeo?.title || 'About Studio Kvantum | Delhi NCR';
-      description = aboutSeo?.description || 'Learn more about Studio Kvantum, a creative digital engineering agency based in Noida, Delhi NCR.';
-      keywords = aboutSeo?.keywords || 'noida agency, about kvantum';
+      title = aboutSeo?.title || 'About Kvantum Tech Solutions | IT & AI Innovation Experts';
+      description = aboutSeo?.description || 'Learn about Kvantum Tech Solutions, a trusted IT company delivering AI-powered solutions, web development, digital marketing, and enterprise technology services.';
+      keywords = aboutSeo?.keywords || 'about kvantum tech solutions, software development company, developer team';
     } else if (path === '/projects') {
       const projectsSeo = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'projects') : null;
-      title = projectsSeo?.title || 'Featured Projects | Studio Kvantum';
+      title = projectsSeo?.title || 'Featured Projects | Kvantum Tech Solutions';
       description = projectsSeo?.description || 'Explore web products, apps, and custom platforms built for our clients.';
-      keywords = projectsSeo?.keywords || 'case studies, portfolio';
+      keywords = projectsSeo?.keywords || 'web products, apps, and custom platforms';
     } else if (path === '/blog') {
       const blogSeo = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'blog') : null;
       title = blogSeo?.title || 'Tech Blog | AI, SEO, Web Development & Digital Marketing | Kvantum Tech Solutions';
@@ -177,12 +177,12 @@ export default function App() {
       }
     } else if (path === '/contact') {
       const contactSeo = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'contact') : null;
-      title = contactSeo?.title || 'Contact Studio Kvantum | Noida Sector 62';
-      description = contactSeo?.description || 'Get in touch with the development and design team at Studio Kvantum to start your project.';
-      keywords = contactSeo?.keywords || 'contact details, phone';
+      title = contactSeo?.title || 'Contact Kvantum Tech Solutions | Let\'s Build Your Digital Future';
+      description = contactSeo?.description || 'Get in touch with Kvantum Tech Solutions for web development, AI solutions, SEO, digital marketing, mobile apps, and enterprise IT services. Contact our experts today.';
+      keywords = contactSeo?.keywords || 'contact kvantum tech solutions, hire developers, start custom software project';
     } else if (path === '/admin') {
-      title = 'Admin Portal | Studio Kvantum';
-      description = 'Studio Kvantum Admin Portal to manage content, service items, blogs, and SEO details.';
+      title = 'Admin Portal | Kvantum Tech Solutions';
+      description = 'Kvantum Tech Solutions Admin Portal to manage content, service items, blogs, and SEO details.';
     } else if (path.startsWith('/keyword/')) {
       const slug = path.split('/')[2];
       const activePage = seoPages.find(p => p.slug === slug);
