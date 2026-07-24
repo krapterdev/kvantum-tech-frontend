@@ -18,37 +18,34 @@ export default function MobileMenu({ isOpen, onClose, theme }) {
 
   if (!isOpen) return null;
 
-  const isDark = theme === 'dark';
-
   return (
-    <div className={`fixed top-[90px] left-5 right-5 rounded-[20px] p-6 flex flex-col gap-4 z-[99] max-h-[calc(100vh-120px)] overflow-y-auto animate-fade-in lg:hidden text-left shadow-[0_20px_50px_rgba(0,0,0,0.3)] transition-all duration-300 ${
-      isDark 
-        ? 'bg-[#060b16]/98 border border-white/10 text-zinc-100 backdrop-blur-xl' 
-        : 'bg-white/98 border border-zinc-200/90 text-zinc-800 backdrop-blur-xl'
-    }`}>
+    <div 
+      className="fixed top-[90px] left-5 right-5 rounded-[20px] p-6 flex flex-col gap-4 z-[99] max-h-[calc(100vh-120px)] overflow-y-auto animate-fade-in lg:hidden text-left shadow-[0_20px_50px_rgba(0,0,0,0.35)] transition-all duration-300"
+      style={{
+        backgroundColor: 'var(--mobile-menu-bg)',
+        border: '1px solid var(--mobile-menu-border)',
+        color: 'var(--mobile-menu-text)',
+        backdropFilter: 'blur(28px)',
+        WebkitBackdropFilter: 'blur(28px)',
+      }}
+    >
       <NavLink
         to="/"
         onClick={onClose}
-        className={({ isActive }) =>
-          `text-base font-semibold transition-colors ${
-            isActive 
-              ? 'text-cyanCustom font-bold' 
-              : isDark ? 'text-zinc-100 hover:text-cyanCustom' : 'text-zinc-800 hover:text-cyanCustom'
-          }`
-        }
+        className="text-base font-semibold transition-colors flex items-center"
+        style={({ isActive }) => ({
+          color: isActive ? 'var(--accent-cyan)' : 'var(--mobile-menu-text)'
+        })}
       >
         Home
       </NavLink>
       <NavLink
         to="/about"
         onClick={onClose}
-        className={({ isActive }) =>
-          `text-base font-semibold transition-colors ${
-            isActive 
-              ? 'text-cyanCustom font-bold' 
-              : isDark ? 'text-zinc-100 hover:text-cyanCustom' : 'text-zinc-800 hover:text-cyanCustom'
-          }`
-        }
+        className="text-base font-semibold transition-colors flex items-center"
+        style={({ isActive }) => ({
+          color: isActive ? 'var(--accent-cyan)' : 'var(--mobile-menu-text)'
+        })}
       >
         About
       </NavLink>
@@ -57,24 +54,25 @@ export default function MobileMenu({ isOpen, onClose, theme }) {
       <div className="flex flex-col gap-2">
         <button 
           onClick={() => setServicesOpen(!servicesOpen)}
-          className={`text-base font-semibold flex items-center justify-between w-full bg-none border-none text-left cursor-pointer transition-colors ${
-            isDark ? 'text-zinc-100 hover:text-cyanCustom' : 'text-zinc-800 hover:text-cyanCustom'
-          }`}
+          className="text-base font-semibold flex items-center justify-between w-full bg-transparent border-none text-left cursor-pointer transition-colors"
+          style={{ color: 'var(--mobile-menu-text)' }}
         >
           Services <span>{servicesOpen ? '−' : '+'}</span>
         </button>
         {servicesOpen && (
-          <div className={`flex flex-col gap-2 pl-4 border-l mt-1 ${
-            isDark ? 'border-white/10' : 'border-zinc-200'
-          }`}>
+          <div 
+            className="flex flex-col gap-2 pl-4 border-l mt-1"
+            style={{ borderColor: 'var(--mobile-menu-border)' }}
+          >
             {services.map(ser => (
               <NavLink 
                 key={ser.id} 
                 to={`/services/${ser.id}`} 
                 onClick={onClose} 
-                className={`text-sm py-1 transition-colors ${
-                  isDark ? 'text-zinc-400 hover:text-cyanCustom' : 'text-zinc-500 hover:text-cyanCustom'
-                }`}
+                className="text-sm py-1 transition-colors flex items-center"
+                style={({ isActive }) => ({
+                  color: isActive ? 'var(--accent-cyan)' : 'var(--mobile-menu-subtext)'
+                })}
               >
                 {ser.title}
               </NavLink>
@@ -86,39 +84,30 @@ export default function MobileMenu({ isOpen, onClose, theme }) {
       <NavLink
         to="/projects"
         onClick={onClose}
-        className={({ isActive }) =>
-          `text-base font-semibold transition-colors ${
-            isActive 
-              ? 'text-cyanCustom font-bold' 
-              : isDark ? 'text-zinc-100 hover:text-cyanCustom' : 'text-zinc-800 hover:text-cyanCustom'
-          }`
-        }
+        className="text-base font-semibold transition-colors flex items-center"
+        style={({ isActive }) => ({
+          color: isActive ? 'var(--accent-cyan)' : 'var(--mobile-menu-text)'
+        })}
       >
         Portfolio
       </NavLink>
       <NavLink
         to="/blog"
         onClick={onClose}
-        className={({ isActive }) =>
-          `text-base font-semibold transition-colors ${
-            isActive 
-              ? 'text-cyanCustom font-bold' 
-              : isDark ? 'text-zinc-100 hover:text-cyanCustom' : 'text-zinc-800 hover:text-cyanCustom'
-          }`
-        }
+        className="text-base font-semibold transition-colors flex items-center"
+        style={({ isActive }) => ({
+          color: isActive ? 'var(--accent-cyan)' : 'var(--mobile-menu-text)'
+        })}
       >
         Blog
       </NavLink>
       <NavLink
         to="/contact"
         onClick={onClose}
-        className={({ isActive }) =>
-          `text-base font-semibold transition-colors ${
-            isActive 
-              ? 'text-cyanCustom font-bold' 
-              : isDark ? 'text-zinc-100 hover:text-cyanCustom' : 'text-zinc-800 hover:text-cyanCustom'
-          }`
-        }
+        className="text-base font-semibold transition-colors flex items-center"
+        style={({ isActive }) => ({
+          color: isActive ? 'var(--accent-cyan)' : 'var(--mobile-menu-text)'
+        })}
       >
         Contact
       </NavLink>
