@@ -254,7 +254,11 @@ export default function App() {
             for (let i = 0; i < node.attributes.length; i++) {
               clone.setAttribute(node.attributes[i].name, node.attributes[i].value);
             }
-            clone.innerHTML = node.innerHTML;
+            if (node.tagName === 'SCRIPT') {
+              clone.text = node.textContent;
+            } else {
+              clone.innerHTML = node.innerHTML;
+            }
             clone.classList.add('kts-injected-other-seo');
             
             const nameAttr = node.getAttribute('name');

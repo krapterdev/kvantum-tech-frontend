@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Plus, Edit2, Trash2, Save, X, Globe, Layers, BookOpen, Key, Link2, Eye, 
-  UserCheck, Image, Copy, Check, UploadCloud, LogOut, Lock, Mail, FileText, CheckCircle2, AlertTriangle, Settings 
+  UserCheck, Image, Copy, Check, UploadCloud, LogOut, Lock, Mail, FileText, CheckCircle2, AlertTriangle, Settings, Menu 
 } from 'lucide-react';
 import Card from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
@@ -72,6 +72,14 @@ export default function AdminPortalPage({
   // Server state indicators
   const [dbConnected, setDbConnected] = useState(false);
   const [serverEngine, setServerEngine] = useState('Checking...');
+
+  // Mobile menu toggle state
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setMobileMenuOpen(false);
+  };
 
   useEffect(() => {
     const fetchStatus = async () => {
@@ -1062,6 +1070,12 @@ export default function AdminPortalPage({
       {/* Top Premium Navbar */}
       <header className="w-full h-16 bg-[#060b16] border-b border-white/5 flex items-center justify-between px-6 z-30 shrink-0">
         <div className="flex items-center gap-3">
+          <button 
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-2 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/50 rounded-lg transition-colors mr-1 cursor-pointer flex items-center justify-center"
+          >
+            {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+          </button>
           <span className="text-sm font-headline font-bold bg-gradient-to-r from-pinkCustom via-purpleCustom to-cyanCustom bg-clip-text text-transparent uppercase tracking-wider">
             Kvantum Tech Solutions
           </span>
@@ -1104,8 +1118,16 @@ export default function AdminPortalPage({
 
       {/* Main Body */}
       <div className="flex flex-1 overflow-hidden h-[calc(100vh-64px)] w-full">
+        {/* Mobile Backdrop Overlay */}
+        {mobileMenuOpen && (
+          <div 
+            onClick={() => setMobileMenuOpen(false)}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden transition-all duration-300"
+          />
+        )}
+
         {/* Sidebar Navigation */}
-        <aside className="w-64 bg-[#060b16] border-r border-white/5 flex flex-col justify-between py-6 px-4 shrink-0 z-20">
+        <aside className={`fixed md:relative inset-y-0 left-0 w-64 bg-[#060b16] border-r border-white/5 flex flex-col justify-between py-6 px-4 shrink-0 z-50 transition-transform duration-300 md:translate-x-0 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
           <div className="flex flex-col gap-8">
             <div>
               <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest px-3 block mb-4">
@@ -1115,7 +1137,7 @@ export default function AdminPortalPage({
                 {/* Leads tab */}
                 {(currentUser.role === 'admin' || currentUser.role === 'sales') && (
                   <button
-                    onClick={() => setActiveTab('leads')}
+                    onClick={() => handleTabChange('leads')}
                     className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-all duration-200 cursor-pointer ${
                       activeTab === 'leads' 
                         ? 'bg-cyanCustom/10 text-cyanCustom border-l-2 border-cyanCustom shadow-[0_0_10px_rgba(0,210,255,0.05)]' 
@@ -1130,7 +1152,7 @@ export default function AdminPortalPage({
                 {/* Services CMS tab */}
                 {(currentUser.role === 'admin' || currentUser.role === 'seo') && (
                   <button
-                    onClick={() => setActiveTab('services')}
+                    onClick={() => handleTabChange('services')}
                     className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-all duration-200 cursor-pointer ${
                       activeTab === 'services' 
                         ? 'bg-cyanCustom/10 text-cyanCustom border-l-2 border-cyanCustom shadow-[0_0_10px_rgba(0,210,255,0.05)]' 
@@ -1145,7 +1167,7 @@ export default function AdminPortalPage({
                 {/* Portfolio CMS tab */}
                 {(currentUser.role === 'admin' || currentUser.role === 'seo') && (
                   <button
-                    onClick={() => setActiveTab('portfolio')}
+                    onClick={() => handleTabChange('portfolio')}
                     className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-all duration-200 cursor-pointer ${
                       activeTab === 'portfolio' 
                         ? 'bg-cyanCustom/10 text-cyanCustom border-l-2 border-cyanCustom shadow-[0_0_10px_rgba(0,210,255,0.05)]' 
@@ -1160,7 +1182,7 @@ export default function AdminPortalPage({
                 {/* Blogs CMS tab */}
                 {(currentUser.role === 'admin' || currentUser.role === 'seo') && (
                   <button
-                    onClick={() => setActiveTab('blogs')}
+                    onClick={() => handleTabChange('blogs')}
                     className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-all duration-200 cursor-pointer ${
                       activeTab === 'blogs' 
                         ? 'bg-cyanCustom/10 text-cyanCustom border-l-2 border-cyanCustom shadow-[0_0_10px_rgba(0,210,255,0.05)]' 
@@ -1175,7 +1197,7 @@ export default function AdminPortalPage({
                 {/* Programmatic SEO tab */}
                 {(currentUser.role === 'admin' || currentUser.role === 'seo') && (
                   <button
-                    onClick={() => setActiveTab('seo')}
+                    onClick={() => handleTabChange('seo')}
                     className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-all duration-200 cursor-pointer ${
                       activeTab === 'seo' 
                         ? 'bg-cyanCustom/10 text-cyanCustom border-l-2 border-cyanCustom shadow-[0_0_10px_rgba(0,210,255,0.05)]' 
@@ -1190,7 +1212,7 @@ export default function AdminPortalPage({
                 {/* Media Assets S3 tab */}
                 {(currentUser.role === 'admin' || currentUser.role === 'seo') && (
                   <button
-                    onClick={() => setActiveTab('assets')}
+                    onClick={() => handleTabChange('assets')}
                     className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-all duration-200 cursor-pointer ${
                       activeTab === 'assets' 
                         ? 'bg-cyanCustom/10 text-cyanCustom border-l-2 border-cyanCustom shadow-[0_0_10px_rgba(0,210,255,0.05)]' 
@@ -1205,7 +1227,7 @@ export default function AdminPortalPage({
                 {/* Staff Accounts tab */}
                 {currentUser.role === 'admin' && (
                   <button
-                    onClick={() => setActiveTab('users')}
+                    onClick={() => handleTabChange('users')}
                     className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-all duration-200 cursor-pointer ${
                       activeTab === 'users' 
                         ? 'bg-purpleCustom/15 text-purpleCustom border-l-2 border-purpleCustom shadow-[0_0_10px_rgba(138,43,226,0.1)]' 
@@ -1220,7 +1242,7 @@ export default function AdminPortalPage({
                 {/* Site Settings CMS tab */}
                 {(currentUser.role === 'admin' || currentUser.role === 'seo') && (
                   <button
-                    onClick={() => setActiveTab('settings')}
+                    onClick={() => handleTabChange('settings')}
                     className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-all duration-200 cursor-pointer ${
                       activeTab === 'settings' 
                         ? 'bg-cyanCustom/10 text-cyanCustom border-l-2 border-cyanCustom shadow-[0_0_10px_rgba(0,210,255,0.05)]' 
@@ -1561,23 +1583,29 @@ export default function AdminPortalPage({
                 <Key size={18} className="text-purpleCustom" /> Dynamic SEO Configurations (Robots, Sitemap, Page Meta)
               </h2>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {Array.isArray(seoSettings) && seoSettings.map(setting => (
-                  <Card key={setting.key} className="p-6 border flex flex-col justify-between items-start gap-4">
-                    <div className="text-left w-full">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-zinc-800 text-zinc-300 font-bold uppercase block w-fit mb-3">
-                        {setting.key}
-                      </span>
-                      {setting.key === 'robots' || setting.key === 'sitemap' ? (
-                        <div className="text-xs text-zinc-400 font-mono truncate w-full">
-                          {setting.content ? setting.content.substring(0, 100) : 'Standard defaults active'}
-                        </div>
-                      ) : (
-                        <div className="flex flex-col gap-1">
-                          <h4 className="text-zinc-200 text-sm font-semibold truncate">{setting.title || 'Untitled Page'}</h4>
-                          <p className="text-zinc-400 text-xs truncate">{setting.description || 'No description'}</p>
-                        </div>
-                      )}
+                  <Card key={setting.key} className="p-6 border flex flex-col justify-between items-start gap-4 h-full">
+                    <div className="text-left w-full flex flex-col justify-between flex-1">
+                      <div>
+                        <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-zinc-800 text-zinc-300 font-bold uppercase block w-fit mb-3">
+                          {setting.key}
+                        </span>
+                        {setting.key === 'robots' || setting.key === 'sitemap' ? (
+                          <div className="text-[11px] text-zinc-400 font-mono line-clamp-4 min-h-[5.5rem] bg-zinc-950/30 p-2.5 rounded-lg border border-white/5 whitespace-pre-wrap select-all">
+                            {setting.content ? setting.content.substring(0, 150) : 'Standard defaults active'}
+                          </div>
+                        ) : (
+                          <div className="flex flex-col gap-1.5 min-h-[5.5rem] justify-center">
+                            <h4 className="text-zinc-200 text-sm font-semibold line-clamp-1" title={setting.title || 'Untitled Page'}>
+                              {setting.title || 'Untitled Page'}
+                            </h4>
+                            <p className="text-zinc-400 text-xs line-clamp-3 leading-relaxed" title={setting.description || 'No description'}>
+                              {setting.description || 'No description'}
+                            </p>
+                          </div>
+                        )}
+                      </div>
                     </div>
                     
                     <Button 
@@ -1586,7 +1614,7 @@ export default function AdminPortalPage({
                         setIsEditingSeoSetting(true);
                       }}
                       variant="secondary"
-                      className="w-full py-2 text-xs rounded-lg mt-2"
+                      className="w-full py-2 text-xs rounded-lg mt-4 cursor-pointer"
                     >
                       Configure Node
                     </Button>

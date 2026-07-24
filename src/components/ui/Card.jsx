@@ -35,9 +35,13 @@ export default function Card({ children, className, scanline = false, tilt = fal
           className
         )}
       >
-        <div className={cn(tilt && 'tilt-inner')}>
-          {children}
-        </div>
+        {tilt ? (
+          <div className="tilt-inner">
+            {children}
+          </div>
+        ) : (
+          children
+        )}
       </div>
     </div>
   );
