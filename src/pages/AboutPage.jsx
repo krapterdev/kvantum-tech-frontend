@@ -5,9 +5,9 @@ import Badge from '@/components/ui/Badge';
 import GradientText from '@/components/ui/GradientText';
 
 export default function AboutPage({ theme, settings }) {
-  const logoMark = theme === 'dark' 
-    ? 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-LM.jpg' 
-    : 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg';
+  const logoMark = theme === 'light' 
+    ? '/logo-light.jpg' 
+    : '/logo-dark.jpg';
 
   const techStack = [
     {
