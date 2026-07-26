@@ -247,9 +247,15 @@ export default function HomeContact() {
               <Phone size={22} className="text-cyanCustom shrink-0 mt-0.5" />
               <div>
                 <h4 className="text-sm font-semibold text-zinc-200 mb-1">Phone</h4>
-                <p className="text-zinc-400 text-sm">
+                <p className="text-zinc-400 text-sm flex flex-col gap-1">
                   <a href="tel:+919811661828" className="hover:underline">
                     +91 9811661828
+                  </a>
+                  <a href="tel:+919811663433" className="hover:underline">
+                    +91 9811663433
+                  </a>
+                  <a href="tel:+919811663121" className="hover:underline">
+                    +91 9811663121
                   </a>
                 </p>
               </div>

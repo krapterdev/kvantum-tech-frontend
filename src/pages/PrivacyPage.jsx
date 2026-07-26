@@ -153,7 +153,7 @@ export default function PrivacyPage() {
             <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-4">In accordance with applicable law, we have designated a Grievance Officer to address any concerns regarding the processing of your personal data:</p>
             <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-4">Name/Designation: [Grievance Officer Name / Designation]</p>
             <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-4">Email: info@kvantumtechsolutions.com</p>
-            <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-4">Phone: +91-9811661828</p>
+            <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-4">Phone: +91 9811661828, +91 9811663433, +91 9811663121</p>
           </div>
         </section>
 
@@ -165,7 +165,7 @@ export default function PrivacyPage() {
             <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-4">If you have questions, concerns, or requests regarding this Privacy Policy or the handling of your personal information, please contact us at:</p>
             <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-4">Kvantum Tech Solutions</p>
             <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-4">Email: info@kvantumtechsolutions.com</p>
-            <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-4">Phone: +91-9811661828</p>
+            <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-4">Phone: +91 9811661828, +91 9811663433, +91 9811663121</p>
             <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-4">Website: www.kvantumtechsolutions.com</p>
           </div>
         </section>

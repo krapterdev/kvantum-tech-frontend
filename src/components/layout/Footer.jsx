@@ -89,9 +89,15 @@ export default function Footer({ seoPages = [], theme, settings, services = [] }
                   {contact.email || 'info@kvantumtechsolutions.com'}
                 </a>
               </li>
-              <li>
-                <a href={`tel:${contact.phone || '+919811661828'}`} className="text-zinc-400 hover:text-pinkCustom transition-colors">
-                  {contact.phone || '+91 9811661828'}
+              <li className="flex flex-col gap-2">
+                <a href="tel:+919811661828" className="text-zinc-400 hover:text-pinkCustom transition-colors block">
+                  +91 9811661828
+                </a>
+                <a href="tel:+919811663433" className="text-zinc-400 hover:text-pinkCustom transition-colors block">
+                  +91 9811663433
+                </a>
+                <a href="tel:+919811663121" className="text-zinc-400 hover:text-pinkCustom transition-colors block">
+                  +91 9811663121
                 </a>
               </li>
               <li>

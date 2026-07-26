@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Terminal as TerminalIcon, Send, CheckCircle2, RotateCcw, AlertTriangle, MapPin, Mail, Clock } from 'lucide-react';
+import { Terminal as TerminalIcon, Send, CheckCircle2, RotateCcw, AlertTriangle, MapPin, Mail, Clock, Phone } from 'lucide-react';
 import Card from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
 import GradientText from '@/components/ui/GradientText';
@@ -235,8 +235,8 @@ export default function ContactPage({ settings }) {
               <div>
                 <h4 className="text-sm font-semibold text-zinc-200 mb-1">Our Location</h4>
                 <p className="text-zinc-400 text-sm leading-relaxed">
-                  {contact.address || 'Noida Sector 62, Delhi NCR, India'}<br />
-                  <span className="text-[10px] font-mono text-zinc-500 block mt-1 uppercase tracking-wider">Sector 62 IT Hub</span>
+                  {contact.address || 'A33, 64, Tahirpur Rd, Priyadarshini Vihar, Taharpur Village, Dilshad Garden, Delhi, 110095'}<br />
+                  <span className="text-[10px] font-mono text-zinc-500 block mt-1 uppercase tracking-wider">Dilshad Garden, Delhi</span>
                 </p>
               </div>
             </div>
@@ -248,6 +248,24 @@ export default function ContactPage({ settings }) {
                 <p className="text-zinc-400 text-sm">
                   <a href={`mailto:${contact.email || 'support@kvantumtechsolutions.com'}`} className="hover:underline">
                     {contact.email || 'support@kvantumtechsolutions.com'}
+                  </a>
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-4 items-start">
+              <Phone size={22} className="text-cyanCustom shrink-0 mt-0.5" />
+              <div>
+                <h4 className="text-sm font-semibold text-zinc-200 mb-1">Phone</h4>
+                <p className="text-zinc-400 text-sm flex flex-col gap-1">
+                  <a href="tel:+919811661828" className="hover:underline">
+                    +91 9811661828
+                  </a>
+                  <a href="tel:+919811663433" className="hover:underline">
+                    +91 9811663433
+                  </a>
+                  <a href="tel:+919811663121" className="hover:underline">
+                    +91 9811663121
                   </a>
                 </p>
               </div>

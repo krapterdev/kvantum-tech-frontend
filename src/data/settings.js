@@ -19,9 +19,9 @@ export const fallbackSettings = {
     { name: 'Amit K.', role: 'Real Estate Firm', content: "They told us we DON'T need a custom app and saved us ₹8 lakhs. Who does that? Honest people, apparently.", rating: 5 }
   ],
   contact: {
-    phone: '+91 9811661828',
+    phone: '+91 9811661828, +91 9811663433, +91 9811663121',
     email: 'info@kvantumtechsolutions.com',
-    address: 'Sector 62, Noida, Uttar Pradesh, India',
+    address: 'A33, 64, Tahirpur Rd, Priyadarshini Vihar, Taharpur Village, Dilshad Garden, Delhi, 110095',
     linkedin: 'https://linkedin.com/company/kvantumtechsolutions',
     twitter: 'https://twitter.com/kvantumtech'
   }

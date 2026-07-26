@@ -35,12 +35,14 @@ export default function CTA() {
             Start a Conversation
           </button>
           
-          <a 
-            href="tel:+919811661828" 
-            className="text-white/80 hover:text-white hover:underline text-xs sm:text-sm font-mono tracking-wide mt-1 block"
-          >
-            Or just call us: +91 9811661828
-          </a>
+          <div className="text-white/80 text-xs sm:text-sm font-mono tracking-wide mt-2 flex flex-wrap justify-center gap-x-4 gap-y-1">
+            <span>Or call us:</span>
+            <a href="tel:+919811661828" className="hover:text-white hover:underline">+91 9811661828</a>
+            <span>•</span>
+            <a href="tel:+919811663433" className="hover:text-white hover:underline">+91 9811663433</a>
+            <span>•</span>
+            <a href="tel:+919811663121" className="hover:text-white hover:underline">+91 9811663121</a>
+          </div>
         </div>
       </div>
     </section>
