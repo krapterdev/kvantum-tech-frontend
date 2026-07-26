@@ -338,17 +338,17 @@ export default function App() {
       isAdminPath 
         ? 'bg-[#050811] text-zinc-100' 
         : theme === 'light' 
-          ? 'bg-[#f8fafc] text-zinc-900' 
+          ? 'text-zinc-900' 
           : 'text-zinc-100 overflow-hidden'
     }`}>
       {/* Background color layer behind the canvas */}
-      {!isAdminPath && theme === 'dark' && <div className="fixed inset-0 bg-background-dark -z-30 pointer-events-none" />}
+      {!isAdminPath && <div className={`fixed inset-0 -z-30 pointer-events-none transition-colors duration-300 ${theme === 'light' ? 'bg-[#f8fafc]' : 'bg-background-dark'}`} />}
       
       {/* Dynamic Scroll Video Frame Canvas Background */}
-      {!isAdminPath && theme === 'dark' && <ScrollVideoPlayer />}
+      {!isAdminPath && <ScrollVideoPlayer />}
       
-      {/* Dark Overlay for Contrast & Text Readability */}
-      {!isAdminPath && theme === 'dark' && <div className="fixed inset-0 bg-black/80 backdrop-blur-[2px] -z-10 pointer-events-none" />}
+      {/* Readability Overlay for Contrast */}
+      {!isAdminPath && <div className={`fixed inset-0 backdrop-blur-[2px] -z-10 pointer-events-none transition-colors duration-300 ${theme === 'light' ? 'bg-white/88' : 'bg-black/80'}`} />}
 
       {/* Auto Reset Scroll position */}
       <ScrollToTop />
