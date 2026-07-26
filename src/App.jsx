@@ -339,7 +339,7 @@ export default function App() {
         ? 'bg-[#050811] text-zinc-100' 
         : theme === 'light' 
           ? 'bg-[#f8fafc] text-zinc-900' 
-          : 'bg-[#050811] text-zinc-100 overflow-hidden'
+          : 'text-zinc-100 overflow-hidden'
     }`}>
       {/* Background color layer behind the canvas */}
       {!isAdminPath && theme === 'dark' && <div className="fixed inset-0 bg-background-dark -z-30 pointer-events-none" />}
