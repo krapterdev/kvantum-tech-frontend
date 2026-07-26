@@ -8,11 +8,29 @@ import { submitContact } from '@/services/contactService';
 
 export default function ContactPage({ settings }) {
   const contact = settings?.contact || {};
-  const [formData, setFormData] = useState({ name: '', email: '', service: 'web', message: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', service: 'web', message: '' });
   const [status, setStatus] = useState('idle'); // 'idle', 'submitting', 'success', 'error'
+  const [honeypot, setHoneypot] = useState('');
+  const [formLoadTime] = useState(Date.now());
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Anti-bot check 1: Honeypot field (bots fill this field, humans do not see it)
+    if (honeypot) {
+      console.warn('[ANTI-BOT] Spam submission blocked via honeypot.');
+      setStatus('success'); // Pretend success
+      return;
+    }
+
+    // Anti-bot check 2: Speed check (bots submit within 1-2 seconds, humans take longer)
+    const delay = Date.now() - formLoadTime;
+    if (delay < 2000) {
+      console.warn('[ANTI-BOT] Spam submission blocked via submission speed check:', delay, 'ms');
+      setStatus('success'); // Pretend success
+      return;
+    }
+
     if (!formData.name || !formData.email || !formData.message) {
       setStatus('error');
       return;
@@ -43,7 +61,8 @@ export default function ContactPage({ settings }) {
   };
 
   const handleReset = () => {
-    setFormData({ name: '', email: '', service: 'web', message: '' });
+    setFormData({ name: '', email: '', phone: '', service: 'web', message: '' });
+    setHoneypot('');
     setStatus('idle');
   };
 
@@ -104,19 +123,35 @@ export default function ContactPage({ settings }) {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-mono text-zinc-500 uppercase tracking-widest mb-2">
-                    Your Email
-                  </label>
-                  <input 
-                    type="email" 
-                    required
-                    placeholder="name@company.com"
-                    value={formData.email}
-                    onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                    className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-3.5 text-zinc-100 text-sm placeholder-zinc-650 outline-none focus:border-cyanCustom/40 transition-colors"
-                    disabled={status === 'submitting'}
-                  />
+                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-xs font-mono text-zinc-500 uppercase tracking-widest mb-2">
+                      Your Email
+                    </label>
+                    <input 
+                      type="email" 
+                      required
+                      placeholder="name@company.com"
+                      value={formData.email}
+                      onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                      className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-3.5 text-zinc-100 text-sm placeholder-zinc-650 outline-none focus:border-cyanCustom/40 transition-colors"
+                      disabled={status === 'submitting'}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-mono text-zinc-500 uppercase tracking-widest mb-2">
+                      Phone Number
+                    </label>
+                    <input 
+                      type="tel" 
+                      placeholder="+91 XXXXX XXXXX"
+                      value={formData.phone}
+                      onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                      className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-3.5 text-zinc-100 text-sm placeholder-zinc-650 outline-none focus:border-cyanCustom/40 transition-colors"
+                      disabled={status === 'submitting'}
+                    />
+                  </div>
                 </div>
 
                 <div>
@@ -129,12 +164,13 @@ export default function ContactPage({ settings }) {
                     className="w-full bg-zinc-950 border border-white/8 rounded-xl px-4 py-3.5 text-zinc-100 text-sm outline-none cursor-pointer focus:border-cyanCustom/40 transition-colors"
                     disabled={status === 'submitting'}
                   >
-                    <option value="web">Web Design & Development</option>
-                    <option value="seo">Search Engine Optimization (SEO)</option>
-                    <option value="chatbots">AI Integrations & Chatbots</option>
-                    <option value="graphics">Branding & Graphic Design</option>
-                    <option value="app">Mobile App Development</option>
-                    <option value="marketing">Digital Marketing</option>
+                    <option value="web">Web Development</option>
+                    <option value="app">App Development</option>
+                    <option value="ui">UI/UX Design</option>
+                    <option value="seo">SEO & Marketing</option>
+                    <option value="software">Custom Software</option>
+                    <option value="consulting">IT Consulting</option>
+                    <option value="not_sure">Not Sure Yet</option>
                   </select>
                 </div>
 
@@ -150,6 +186,19 @@ export default function ContactPage({ settings }) {
                     onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
                     className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-3.5 text-zinc-100 text-sm placeholder-zinc-655 outline-none resize-none focus:border-cyanCustom/40 transition-colors"
                     disabled={status === 'submitting'}
+                  />
+                </div>
+
+                {/* Honeypot field (anti-bot protection) */}
+                <div className="hidden" aria-hidden="true">
+                  <input 
+                    type="text" 
+                    name="website_confirm" 
+                    tabIndex={-1} 
+                    autoComplete="off"
+                    value={honeypot}
+                    onChange={(e) => setHoneypot(e.target.value)}
+                    placeholder="Leave this empty"
                   />
                 </div>
 
