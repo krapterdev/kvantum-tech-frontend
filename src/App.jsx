@@ -334,15 +334,21 @@ export default function App() {
   const isAdminPath = location.pathname.startsWith('/admin');
 
   return (
-    <div className={`relative min-h-screen text-zinc-100 ${isAdminPath ? 'bg-[#050811]' : 'overflow-hidden'}`}>
+    <div className={`relative min-h-screen transition-colors duration-300 ${
+      isAdminPath 
+        ? 'bg-[#050811] text-zinc-100' 
+        : theme === 'light' 
+          ? 'bg-[#f8fafc] text-zinc-900' 
+          : 'bg-[#050811] text-zinc-100 overflow-hidden'
+    }`}>
       {/* Background color layer behind the canvas */}
-      {!isAdminPath && <div className="fixed inset-0 bg-background-dark -z-30 pointer-events-none" />}
+      {!isAdminPath && theme === 'dark' && <div className="fixed inset-0 bg-background-dark -z-30 pointer-events-none" />}
       
       {/* Dynamic Scroll Video Frame Canvas Background */}
-      {!isAdminPath && <ScrollVideoPlayer />}
+      {!isAdminPath && theme === 'dark' && <ScrollVideoPlayer />}
       
       {/* Dark Overlay for Contrast & Text Readability */}
-      {!isAdminPath && <div className="fixed inset-0 bg-black/80 backdrop-blur-[2px] -z-10 pointer-events-none" />}
+      {!isAdminPath && theme === 'dark' && <div className="fixed inset-0 bg-black/80 backdrop-blur-[2px] -z-10 pointer-events-none" />}
 
       {/* Auto Reset Scroll position */}
       <ScrollToTop />

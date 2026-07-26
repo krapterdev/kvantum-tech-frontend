@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Send, CheckCircle2, RotateCcw, AlertTriangle, MapPin, Mail, Clock } from 'lucide-react';
+import { Send, CheckCircle2, RotateCcw, AlertTriangle, MapPin, Mail, Clock, Phone } from 'lucide-react';
 import Card from '../ui/Card';
 import Badge from '../ui/Badge';
 import GradientText from '../ui/GradientText';
@@ -9,9 +9,27 @@ import { submitContact } from '@/services/contactService';
 export default function HomeContact() {
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', service: 'web', message: '' });
   const [status, setStatus] = useState('idle'); // 'idle', 'submitting', 'success', 'error'
+  const [honeypot, setHoneypot] = useState('');
+  const [formLoadTime] = useState(Date.now());
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Anti-bot check 1: Honeypot field (bots fill this field, humans do not see it)
+    if (honeypot) {
+      console.warn('[ANTI-BOT] Spam submission blocked via honeypot.');
+      setStatus('success'); // Pretend success so bots do not try other forms
+      return;
+    }
+
+    // Anti-bot check 2: Speed check (bots submit within 1-2 seconds, humans take longer)
+    const timeSpent = Date.now() - formLoadTime;
+    if (timeSpent < 2000) {
+      console.warn('[ANTI-BOT] Spam submission blocked via submission speed check:', timeSpent, 'ms');
+      setStatus('success'); // Pretend success
+      return;
+    }
+
     if (!formData.name || !formData.email || !formData.message) {
       setStatus('error');
       return;
@@ -43,6 +61,7 @@ export default function HomeContact() {
 
   const handleReset = () => {
     setFormData({ name: '', email: '', phone: '', service: 'web', message: '' });
+    setHoneypot('');
     setStatus('idle');
   };
 
@@ -169,6 +188,19 @@ export default function HomeContact() {
                   />
                 </div>
 
+                {/* Honeypot field (anti-bot protection) */}
+                <div className="hidden" aria-hidden="true">
+                  <input 
+                    type="text" 
+                    name="website_confirm" 
+                    tabIndex={-1} 
+                    autoComplete="off"
+                    value={honeypot}
+                    onChange={(e) => setHoneypot(e.target.value)}
+                    placeholder="Leave this empty"
+                  />
+                </div>
+
                 {status === 'error' && (
                   <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 px-4 py-3 rounded-lg text-red-400 text-xs font-mono">
                     <AlertTriangle size={14} /> Please fill in all required fields correctly.
@@ -212,7 +244,7 @@ export default function HomeContact() {
             </div>
 
             <div className="flex gap-4 items-start">
-              <Mail size={22} className="text-cyanCustom shrink-0 mt-0.5 opacity-0 pointer-events-none" style={{ width: 0 }} />
+              <Phone size={22} className="text-cyanCustom shrink-0 mt-0.5" />
               <div>
                 <h4 className="text-sm font-semibold text-zinc-200 mb-1">Phone</h4>
                 <p className="text-zinc-400 text-sm">

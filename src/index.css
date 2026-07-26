@@ -27,7 +27,7 @@
   --bg-primary: #050811;
   --bg-secondary: #0a0f1d;
   --bg-tertiary: #10172a;
-  --nav-bg: rgba(5, 8, 17, 0.45);
+  --nav-bg: rgba(5, 8, 17, 0.95);
   --card-bg: rgba(15, 23, 42, 0.3);
   --card-hover-bg: rgba(20, 30, 55, 0.45);
   --text-primary: #f8fafc;
@@ -539,3 +539,52 @@ input:checked + .slider:before {
   width: max-content;
   animation: marquee 24s linear infinite;
 }
+
+/* Light theme specific overrides for Tailwind text color classes to ensure high readability */
+.light-mode .text-zinc-100 {
+  color: #0f172a !important; /* Dark Slate for headers */
+}
+.light-mode .text-zinc-200 {
+  color: #1e293b !important; /* Slate-800 for sub-headers */
+}
+.light-mode .text-zinc-300 {
+  color: #334155 !important; /* Slate-700 for body text */
+}
+.light-mode .text-zinc-400 {
+  color: #475569 !important; /* Slate-600 for secondary descriptors */
+}
+.light-mode .text-zinc-450 {
+  color: #475569 !important;
+}
+.light-mode .text-zinc-500 {
+  color: #64748b !important; /* Slate-500 for monospaced elements */
+}
+
+/* Light-mode border replacements to make card borders visible */
+.light-mode .border-white\/8,
+.light-mode .border-white\/10,
+.light-mode .border-white\/5 {
+  border-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+/* Light-mode card backgrounds to look clean and premium */
+.light-mode .glass-card,
+.light-mode .bg-zinc-900\/10,
+.light-mode .bg-zinc-950\/10,
+.light-mode .bg-zinc-950\/20,
+.light-mode .bg-zinc-950\/30,
+.light-mode .bg-zinc-950\/40 {
+  background-color: #ffffff !important;
+  border-color: rgba(15, 23, 42, 0.08) !important;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Light-mode input placeholder overrides */
+.light-mode ::placeholder {
+  color: #94a3b8 !important;
+}
+.light-mode select {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+

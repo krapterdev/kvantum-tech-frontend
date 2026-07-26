@@ -86,7 +86,7 @@ export default function About({ settings }) {
                 </div>
 
                 {/* Sub-label */}
-                <div className="border-t border-white/8 pt-4.5 mt-2 flex justify-between items-center text-xs font-mono text-zinc-500">
+                <div className="border-t border-white/8 pt-4 mt-3.5 flex justify-between items-center text-xs font-mono text-zinc-500">
                   <span>EST. NCR, IND</span>
                   <span className="text-pinkCustom">BUILDING TECH</span>
                 </div>
