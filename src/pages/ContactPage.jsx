@@ -235,7 +235,9 @@ export default function ContactPage({ settings }) {
               <div>
                 <h4 className="text-sm font-semibold text-zinc-200 mb-1">Our Location</h4>
                 <p className="text-zinc-400 text-sm leading-relaxed">
-                  {contact.address || 'A33, 64, Tahirpur Rd, Priyadarshini Vihar, Taharpur Village, Dilshad Garden, Delhi, 110095'}<br />
+                  {!contact.address || contact.address.includes('Noida') || contact.address.includes('Sector 62')
+                    ? 'A33, 64, Tahirpur Rd, Priyadarshini Vihar, Taharpur Village, Dilshad Garden, Delhi, 110095'
+                    : contact.address}<br />
                   <span className="text-[10px] font-mono text-zinc-500 block mt-1 uppercase tracking-wider">Dilshad Garden, Delhi</span>
                 </p>
               </div>

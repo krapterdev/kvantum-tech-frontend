@@ -229,6 +229,16 @@ export default function HomeContact() {
             </h3>
 
             <div className="flex gap-4 items-start">
+              <MapPin size={22} className="text-cyanCustom shrink-0 mt-0.5" />
+              <div>
+                <h4 className="text-sm font-semibold text-zinc-200 mb-1">Our Location</h4>
+                <p className="text-zinc-400 text-sm leading-relaxed">
+                  A33, 64, Tahirpur Rd, Priyadarshini Vihar, Taharpur Village, Dilshad Garden, Delhi, 110095
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-4 items-start">
               <Mail size={22} className="text-pinkCustom shrink-0 mt-0.5" />
               <div>
                 <h4 className="text-sm font-semibold text-zinc-200 mb-1">Email</h4>
