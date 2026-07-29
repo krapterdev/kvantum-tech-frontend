@@ -13,12 +13,15 @@ export default function Services({ services = [] }) {
   return (
     <section className="container mx-auto max-w-[1280px] px-6 py-20 select-none bg-white/[0.002]">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
-        <div className="text-left">
-          <span className="tech-badge mb-4">What We Do</span>
-          <h2 className="text-3xl sm:text-4xl font-headline font-bold text-zinc-100 leading-tight">
-            What We Actually Do <br />
-            <span className="gradient-text">(No Buzzwords, We Promise)</span>
+        <div className="text-left max-w-2xl">
+          <span className="tech-badge mb-4">Our Services</span>
+          <h2 className="text-3xl sm:text-4xl font-headline font-bold text-zinc-100 leading-tight mb-4">
+            Powerful Software Development Services <br />
+            <span className="gradient-text">Designed for Modern Businesses</span>
           </h2>
+          <p className="text-zinc-400 text-sm sm:text-base leading-relaxed">
+            Whether you're looking to automate workflows, manage customers, improve employee productivity, or launch a scalable digital platform, our team builds software tailored to your business goals.
+          </p>
         </div>
         <Button
           onClick={() => navigate('/services')}

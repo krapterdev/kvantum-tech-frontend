@@ -14,10 +14,13 @@ export default function TrustedBy() {
   const listItems = [...integrations, ...integrations, ...integrations, ...integrations];
 
   return (
-    <section className="bg-zinc-950/20 py-8 select-none overflow-hidden">
-      <div className="container mx-auto max-w-[1280px] px-6">
-        <p className="text-zinc-500 font-mono text-[10px] text-center uppercase tracking-[0.2em] mb-5">
-          Trusted by teams who expect more
+    <section className="bg-zinc-950/20 py-16 select-none overflow-hidden border-y border-white/5">
+      <div className="container mx-auto max-w-[1280px] px-6 text-center">
+        <h2 className="text-2xl sm:text-3xl font-headline font-bold text-zinc-100 mb-4">
+          Trusted by Growing Businesses Across India
+        </h2>
+        <p className="text-zinc-400 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed mb-10">
+          From startups to established enterprises, businesses trust Kvantum Tech Solutions for reliable software development, business automation, CRM implementation, and digital transformation solutions.
         </p>
         
         <div className="w-full overflow-hidden relative flex py-2 MaskImage">

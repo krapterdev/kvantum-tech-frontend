@@ -31,40 +31,62 @@ export default function Hero({ settings }) {
         {/* Left Side: Info & Actions */}
         <div className="flex flex-col items-start text-left">
           <Badge className="mb-6 flex items-center gap-1.5 bg-pinkCustom/10 border-pinkCustom/20 text-pinkCustom">
-            Building Tech That Actually Matters
+            Business Automation & Custom Software Development
           </Badge>
 
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-headline font-bold text-zinc-100 leading-[1.12] tracking-tight mb-6">
-            {hero.title || "We Don't Just Build Tech. We Build What Your Business Actually Needs."}
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-headline font-bold text-zinc-100 leading-[1.15] tracking-tight mb-6">
+            {hero.title || "Custom Software Development & Business Automation Solutions for Growing Businesses"}
           </h1>
 
-          <p className="text-zinc-450 text-base sm:text-lg leading-relaxed max-w-[600px] mb-9 font-sans">
-            {hero.subtitle || "Stop paying for fancy jargon. We're a team of real developers, designers, and problem-solvers who build websites, apps, and digital systems that make your life easier — not more complicated."}
+          <p className="text-zinc-400 text-sm sm:text-base leading-relaxed max-w-[600px] mb-8 font-sans">
+            {hero.subtitle || "Transform your business with intelligent automation, powerful CRM software, WhatsApp automation, HRMS, ERP solutions, and custom web & mobile applications. Kvantum Tech Solutions helps businesses streamline operations, improve productivity, and accelerate growth through scalable software solutions."}
           </p>
 
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mb-4 w-full sm:w-auto">
             <button
               onClick={() => {
                 const el = document.getElementById('contact');
                 if (el) el.scrollIntoView({ behavior: 'smooth' });
                 else navigate('/contact');
               }}
-              className="px-8 py-4 rounded-xl text-[15px] font-bold bg-pinkCustom text-white hover:bg-pink-600 transition-all duration-200 shadow-[0_0_20px_rgba(236,72,153,0.3)] hover:scale-[1.02] cursor-pointer"
+              className="px-6 py-3.5 rounded-xl text-sm font-bold bg-pinkCustom text-white hover:bg-pink-600 transition-all duration-200 shadow-[0_0_20px_rgba(236,72,153,0.3)] hover:scale-[1.02] cursor-pointer text-center"
             >
-              {hero.ctaText || "Start a Project"}
+              {hero.ctaText || "Request Free Consultation"}
             </button>
             <Button
-              onClick={() => navigate('/projects')}
+              onClick={() => {
+                const el = document.getElementById('contact');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+                else navigate('/contact');
+              }}
               variant="secondary"
-              className="px-8 py-4 rounded-xl text-[15px]"
+              className="px-6 py-3.5 rounded-xl text-sm text-center"
             >
-              See Our Work
+              Book Live Demo
             </Button>
           </div>
           
-          <p className="text-zinc-500 text-xs font-mono tracking-wide mt-2">
-            No sales pressure. No generic PDF brochures. Just a real conversation.
-          </p>
+          {/* Trust Text Grid */}
+          <div className="grid grid-cols-2 gap-x-6 gap-y-2.5 mt-6 text-[11px] sm:text-xs font-mono text-zinc-450 border-t border-white/5 pt-6 w-full">
+            <div className="flex items-center gap-2">
+              <span className="text-cyanCustom">✔</span> Custom CRM Development
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-cyanCustom">✔</span> Business Automation
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-cyanCustom">✔</span> HRMS Software
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-cyanCustom">✔</span> WhatsApp Automation
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-cyanCustom">✔</span> ERP Solutions
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-cyanCustom">✔</span> Mobile & Web Applications
+            </div>
+          </div>
         </div>
 
         {/* Right Side: Interactive Performance Metrics Card */}

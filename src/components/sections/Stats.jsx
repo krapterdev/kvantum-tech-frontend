@@ -80,10 +80,11 @@ export default function Stats({ settings }) {
   const statsList = customStats && customStats.length > 0
     ? customStats.map(parseStat)
     : [
-        { target: "50", suffix: "+", label: "Projects Delivered" },
-        { target: "35", suffix: "+", label: "Happy Clients" },
-        { target: "3", suffix: "+", label: "Years of Chaos" },
-        { target: "99", suffix: "%", label: "Deadlines Hit" }
+        { target: "250", suffix: "+", label: "Projects Delivered" },
+        { target: "100", suffix: "+", label: "Happy Clients" },
+        { target: "20", suffix: "+", label: "Business Solutions" },
+        { target: "99", suffix: "%", label: "Client Satisfaction" },
+        { target: "24", suffix: "×7", label: "Support Available" }
       ];
 
   return (
