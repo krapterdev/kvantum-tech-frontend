@@ -1,6 +1,7 @@
 import React from 'react';
 import Hero from '@/components/sections/Hero';
 import TrustedBy from '@/components/sections/TrustedBy';
+import About from '@/components/sections/About';
 import Services from '@/components/sections/Services';
 import BusinessAutomationHighlight from '@/components/sections/BusinessAutomationHighlight';
 import SoftwareProducts from '@/components/sections/SoftwareProducts';
@@ -26,6 +27,9 @@ export default function Home({ services = [], blogs = [], settings }) {
 
       {/* 2. Trusted By / Social Proof Banner */}
       <TrustedBy />
+
+      {/* 3. About Kvantum Tech Solutions */}
+      <About settings={settings} />
 
       {/* 3. Core Services Grid (6 cards) */}
       <Services services={services} />
