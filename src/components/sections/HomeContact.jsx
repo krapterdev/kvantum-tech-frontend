@@ -7,7 +7,7 @@ import Button from '../ui/Button';
 import { submitContact } from '@/services/contactService';
 
 export default function HomeContact() {
-  const [formData, setFormData] = useState({ name: '', email: '', phone: '', service: 'web', message: '' });
+  const [formData, setFormData] = useState({ name: '', company: '', email: '', phone: '', industry: '', service: 'custom-software', budget: '', timeline: '', message: '' });
   const [status, setStatus] = useState('idle'); // 'idle', 'submitting', 'success', 'error'
   const [honeypot, setHoneypot] = useState('');
   const [formLoadTime] = useState(Date.now());
@@ -60,7 +60,7 @@ export default function HomeContact() {
   };
 
   const handleReset = () => {
-    setFormData({ name: '', email: '', phone: '', service: 'web', message: '' });
+    setFormData({ name: '', company: '', email: '', phone: '', industry: '', service: 'custom-software', budget: '', timeline: '', message: '' });
     setHoneypot('');
     setStatus('idle');
   };
@@ -70,12 +70,12 @@ export default function HomeContact() {
       
       {/* Header */}
       <div className="text-center mb-16">
-        <Badge className="mb-4 bg-pinkCustom/10 border-pinkCustom/20 text-pinkCustom">Get in Touch</Badge>
+        <Badge className="mb-4 bg-pinkCustom/10 border-pinkCustom/20 text-pinkCustom">Contact Us</Badge>
         <h2 className="text-3xl sm:text-4xl font-headline font-bold text-zinc-100 mb-4">
-          Let's Build <GradientText className="from-pinkCustom to-purpleCustom">Something Together</GradientText>
+          Let's Discuss <GradientText className="from-pinkCustom to-purpleCustom">Your Project</GradientText>
         </h2>
         <p className="text-zinc-400 max-w-xl mx-auto text-base sm:text-lg leading-relaxed">
-          Whether you have a fully mapped blueprint or a rough idea, we're here to help build what you need.
+          Ready to transform your business with innovative software solutions? Fill out the form below and our experts will get in touch with you shortly.
         </p>
       </div>
 
@@ -122,6 +122,21 @@ export default function HomeContact() {
                   />
                 </div>
 
+                {/* Company Name */}
+                <div>
+                  <label className="block text-xs font-mono text-zinc-500 uppercase tracking-widest mb-2">
+                    Company Name
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Your company name"
+                    value={formData.company}
+                    onChange={(e) => setFormData(prev => ({ ...prev, company: e.target.value }))}
+                    className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-3.5 text-zinc-100 text-sm placeholder-zinc-600 outline-none focus:border-pinkCustom/40 transition-colors"
+                    disabled={status === 'submitting'}
+                  />
+                </div>
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-xs font-mono text-zinc-500 uppercase tracking-widest mb-2">
@@ -153,24 +168,94 @@ export default function HomeContact() {
                   </div>
                 </div>
 
+                {/* Service */}
                 <div>
                   <label className="block text-xs font-mono text-zinc-500 uppercase tracking-widest mb-2">
-                    What Service Do You Need?
+                    Service Interested In
                   </label>
-                  <select 
+                  <select
                     value={formData.service}
                     onChange={(e) => setFormData(prev => ({ ...prev, service: e.target.value }))}
                     className="w-full bg-zinc-950 border border-white/8 rounded-xl px-4 py-3.5 text-zinc-100 text-sm outline-none cursor-pointer focus:border-pinkCustom/40 transition-colors"
                     disabled={status === 'submitting'}
                   >
-                    <option value="web">Web Development</option>
-                    <option value="app">App Development</option>
-                    <option value="ui">UI/UX Design</option>
-                    <option value="seo">SEO & Marketing</option>
-                    <option value="software">Custom Software</option>
-                    <option value="consulting">IT Consulting</option>
+                    <option value="custom-software">Custom Software Development</option>
+                    <option value="crm">CRM Software</option>
+                    <option value="hrms">HRMS Software</option>
+                    <option value="erp">ERP Software</option>
+                    <option value="automation">Business Automation</option>
+                    <option value="whatsapp">WhatsApp Automation</option>
+                    <option value="web">Web Application Development</option>
+                    <option value="app">Mobile App Development</option>
                     <option value="not_sure">Not Sure Yet</option>
                   </select>
+                </div>
+
+                {/* Industry */}
+                <div>
+                  <label className="block text-xs font-mono text-zinc-500 uppercase tracking-widest mb-2">
+                    Business Industry
+                  </label>
+                  <select
+                    value={formData.industry}
+                    onChange={(e) => setFormData(prev => ({ ...prev, industry: e.target.value }))}
+                    className="w-full bg-zinc-950 border border-white/8 rounded-xl px-4 py-3.5 text-zinc-100 text-sm outline-none cursor-pointer focus:border-pinkCustom/40 transition-colors"
+                    disabled={status === 'submitting'}
+                  >
+                    <option value="">Select your industry</option>
+                    <option value="manufacturing">Manufacturing</option>
+                    <option value="healthcare">Healthcare</option>
+                    <option value="hospitality">Hotels & Hospitality</option>
+                    <option value="real-estate">Real Estate</option>
+                    <option value="education">Education</option>
+                    <option value="retail">Retail & Ecommerce</option>
+                    <option value="logistics">Logistics & Transport</option>
+                    <option value="construction">Construction</option>
+                    <option value="finance">Finance & Accounting</option>
+                    <option value="startup">Startup</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+
+                {/* Budget + Timeline */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-mono text-zinc-500 uppercase tracking-widest mb-2">
+                      Project Budget
+                    </label>
+                    <select
+                      value={formData.budget}
+                      onChange={(e) => setFormData(prev => ({ ...prev, budget: e.target.value }))}
+                      className="w-full bg-zinc-950 border border-white/8 rounded-xl px-4 py-3.5 text-zinc-100 text-sm outline-none cursor-pointer focus:border-pinkCustom/40 transition-colors"
+                      disabled={status === 'submitting'}
+                    >
+                      <option value="">Select budget range</option>
+                      <option value="under-25k">Under ₹25,000</option>
+                      <option value="25k-75k">₹25,000 – ₹75,000</option>
+                      <option value="75k-2l">₹75,000 – ₹2,00,000</option>
+                      <option value="2l-5l">₹2,00,000 – ₹5,00,000</option>
+                      <option value="5l-plus">₹5,00,000+</option>
+                      <option value="discuss">Let's Discuss</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-mono text-zinc-500 uppercase tracking-widest mb-2">
+                      Project Timeline
+                    </label>
+                    <select
+                      value={formData.timeline}
+                      onChange={(e) => setFormData(prev => ({ ...prev, timeline: e.target.value }))}
+                      className="w-full bg-zinc-950 border border-white/8 rounded-xl px-4 py-3.5 text-zinc-100 text-sm outline-none cursor-pointer focus:border-pinkCustom/40 transition-colors"
+                      disabled={status === 'submitting'}
+                    >
+                      <option value="">Select timeline</option>
+                      <option value="urgent">ASAP / Urgent</option>
+                      <option value="1-3months">1 – 3 Months</option>
+                      <option value="3-6months">3 – 6 Months</option>
+                      <option value="6plus">6+ Months</option>
+                      <option value="flexible">Flexible</option>
+                    </select>
+                  </div>
                 </div>
 
                 <div>
@@ -180,7 +265,7 @@ export default function HomeContact() {
                   <textarea 
                     required
                     rows={4}
-                    placeholder="Tell us about your project..."
+                    placeholder="Tell us about your project requirements, goals, and any specific features you need..."
                     value={formData.message}
                     onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
                     className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-3.5 text-zinc-100 text-sm placeholder-zinc-600 outline-none resize-none focus:border-pinkCustom/40 transition-colors"
@@ -212,7 +297,7 @@ export default function HomeContact() {
                   className="w-full py-4 rounded-xl text-[15px] font-bold bg-pinkCustom text-white hover:bg-pink-600 transition-colors shadow-[0_0_15px_rgba(236,72,153,0.35)] flex items-center justify-center gap-2 cursor-pointer"
                   disabled={status === 'submitting'}
                 >
-                  {status === 'submitting' ? 'Sending...' : 'Send Message'} <Send size={16} />
+                  {status === 'submitting' ? 'Sending...' : 'Submit Your Inquiry'} <Send size={16} />
                 </button>
 
               </form>
