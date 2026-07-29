@@ -1,61 +1,74 @@
 import React from 'react';
-import { ArrowUpRight } from 'lucide-react';
-import Card from '../ui/Card';
-import SectionHeading from '../ui/SectionHeading';
+import { useNavigate } from 'react-router-dom';
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import Badge from '../ui/Badge';
 
+const expertiseAreas = [
+  'Custom CRM Platforms',
+  'Business Automation Systems',
+  'HRMS Software',
+  'ERP Applications',
+  'Hotel Management Software',
+  'Healthcare Solutions',
+  'Inventory Management Systems',
+  'Ecommerce Platforms',
+  'Mobile Applications',
+  'Customer Portals',
+  'Employee Portals',
+  'Enterprise Web Applications',
+  'Workflow Automation Systems',
+  'WhatsApp Automation Platforms',
+];
+
 export default function Projects() {
-  const portfolios = [
-    {
-      title: "Finova Pay Gateway",
-      category: "Fintech Platform",
-      desc: "Designed and built a custom payment gateway handling thousands of secure API calls per minute under sub-second load times.",
-      tags: ["Node.js", "PostgreSQL", "Docker"]
-    },
-    {
-      title: "NovaStore Headless Shop",
-      category: "E-Commerce Ecosystem",
-      desc: "Created a modern headless e-commerce store with dynamic catalog filtering, resulting in a 35% increase in purchase conversions.",
-      tags: ["React", "Vite", "Stripe API"]
-    },
-    {
-      title: "DexAI Support Assistant",
-      category: "AI Integration",
-      desc: "Developed a context-aware customer support chatbot that uses retrieval-augmented generation to handle client queries in real-time.",
-      tags: ["LLM Agents", "RAG", "Websockets"]
-    }
-  ];
+  const navigate = useNavigate();
 
   return (
-    <section className="container mx-auto max-w-[1280px] px-6 py-20 select-none">
-      <SectionHeading
-        badge="Case Studies"
-        title="Featured Work"
-        subtitle="Recent web applications and custom platforms launched for our clients."
-      />
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {portfolios.map((p, idx) => (
-          <Card key={idx} className="p-8 flex flex-col justify-between min-h-[300px] border text-left hover:-translate-y-1 transition-all duration-300">
-            <div className="flex flex-col gap-4">
-              <span className="text-[11px] font-mono text-cyanCustom uppercase tracking-wider block">
-                {p.category}
-              </span>
-              <h4 className="text-zinc-100 text-xl font-headline font-bold flex justify-between items-center group cursor-pointer">
-                {p.title}
-                <ArrowUpRight size={18} className="text-zinc-500 group-hover:text-cyanCustom transition-colors" />
-              </h4>
-              <p className="text-zinc-400 text-sm leading-relaxed">{p.desc}</p>
-            </div>
-            
-            <div className="flex flex-wrap gap-2 mt-6">
-              {p.tags.map((t, tIdx) => (
-                <span key={tIdx} className="text-[10px] font-mono bg-white/[0.02] border border-white/8 px-2.5 py-1 rounded-md text-zinc-400">
-                  {t}
-                </span>
-              ))}
-            </div>
-          </Card>
-        ))}
+    <section className="container mx-auto max-w-[1280px] px-6 py-24 select-none">
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+
+        {/* Left: Copy */}
+        <div className="flex flex-col items-start text-left">
+          <Badge className="mb-5 bg-cyanCustom/10 border-cyanCustom/20 text-cyanCustom">
+            Portfolio & Case Studies
+          </Badge>
+          <h2 className="text-3xl sm:text-4xl font-headline font-bold text-zinc-100 leading-tight mb-5">
+            Real Projects. <br />
+            <span className="gradient-text">Real Business Impact.</span>
+          </h2>
+          <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-4">
+            Over the years, we've helped businesses across multiple industries streamline operations, improve customer engagement, and accelerate growth through innovative software solutions.
+          </p>
+          <p className="text-zinc-500 text-sm leading-relaxed mb-8">
+            Each project is developed with a focus on performance, scalability, security, and long-term business value.
+          </p>
+          <button
+            onClick={() => navigate('/projects')}
+            className="flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold bg-pinkCustom text-white hover:bg-pink-600 transition-all duration-200 shadow-[0_0_20px_rgba(236,72,153,0.3)] hover:scale-[1.02] cursor-pointer"
+          >
+            Explore Our Portfolio <ArrowRight size={15} />
+          </button>
+        </div>
+
+        {/* Right: Expertise Grid */}
+        <div>
+          <h3 className="text-zinc-300 text-sm font-mono uppercase tracking-widest mb-6 border-b border-white/5 pb-3">
+            Our Expertise Includes
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {expertiseAreas.map((area, idx) => (
+              <div
+                key={idx}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/[0.02] border border-white/8 hover:border-cyanCustom/30 hover:bg-cyanCustom/5 transition-all duration-200 group"
+              >
+                <CheckCircle2 size={14} className="text-cyanCustom shrink-0" />
+                <span className="text-zinc-300 text-xs sm:text-sm group-hover:text-zinc-100 transition-colors">{area}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
       </div>
     </section>
   );

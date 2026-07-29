@@ -9,6 +9,7 @@ import AutomationFeatures from '@/components/sections/AutomationFeatures';
 import Industries from '@/components/sections/Industries';
 import WhyChooseUs from '@/components/sections/WhyChooseUs';
 import HowWeWork from '@/components/sections/HowWeWork';
+import Projects from '@/components/sections/Projects';
 import LiveDemo from '@/components/sections/LiveDemo';
 import Stats from '@/components/sections/Stats';
 import Testimonials from '@/components/sections/Testimonials';
@@ -31,7 +32,7 @@ export default function Home({ services = [], blogs = [], settings }) {
       {/* 3. About Kvantum Tech Solutions */}
       <About settings={settings} />
 
-      {/* 3. Core Services Grid (6 cards) */}
+      {/* 4. Core Services Grid (6 cards) */}
       <Services services={services} />
 
       {/* 4. Business Automation Highlight */}
@@ -52,7 +53,10 @@ export default function Home({ services = [], blogs = [], settings }) {
       {/* 9. How We Work (Process Timeline) */}
       <HowWeWork />
 
-      {/* 10. Live Demo CTA Banner */}
+      {/* 10. Portfolio / Case Studies */}
+      <Projects />
+
+      {/* 11. Live Demo */}
       <LiveDemo />
 
       {/* 11. Stats / Counters */}

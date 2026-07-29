@@ -1,30 +1,81 @@
 import React from 'react';
 import {
-  Factory, Heart, Home, ShoppingBag, UtensilsCrossed,
-  Briefcase, GraduationCap, Truck, Building2, Pill,
-  Wrench, Layers, Hotel, BarChart2, Users, Package, Globe, Scissors
+  Factory, Heart, Hotel, Home, GraduationCap, ShoppingBag,
+  Truck, Building2, Briefcase, Rocket
 } from 'lucide-react';
 import Badge from '../ui/Badge';
 
 const industries = [
-  { icon: Factory, name: 'Manufacturing', desc: 'Production tracking, inventory, quality management' },
-  { icon: Heart, name: 'Healthcare', desc: 'Patient records, appointments, billing, staff management' },
-  { icon: Home, name: 'Real Estate', desc: 'Lead tracking, property listings, buyer journey' },
-  { icon: Hotel, name: 'Hotels & Hospitality', desc: 'Reservations, housekeeping, guest management' },
-  { icon: ShoppingBag, name: 'Ecommerce & Retail', desc: 'Orders, inventory, returns, customer notifications' },
-  { icon: Package, name: 'Wholesale & Distribution', desc: 'Purchase orders, supplier payments, stock control' },
-  { icon: UtensilsCrossed, name: 'Food & Restaurants', desc: 'POS, table management, supplier tracking' },
-  { icon: Truck, name: 'Logistics & Transport', desc: 'Fleet, delivery tracking, driver management' },
-  { icon: Briefcase, name: 'Finance & Accounting', desc: 'Billing, invoicing, GST compliance, ledgers' },
-  { icon: GraduationCap, name: 'Education', desc: 'Student records, fees, attendance, LMS' },
-  { icon: Building2, name: 'Construction', desc: 'Project tracking, material costs, contractor management' },
-  { icon: Pill, name: 'Pharma & Medical', desc: 'Drug inventory, expiry tracking, sales reporting' },
-  { icon: Wrench, name: 'Services & Maintenance', desc: 'Job scheduling, technician dispatch, AMC contracts' },
-  { icon: Scissors, name: 'Beauty & Wellness', desc: 'Bookings, client history, staff payroll' },
-  { icon: Globe, name: 'IT & Startups', desc: 'Team workflows, client portals, project billing' },
-  { icon: Users, name: 'Staffing & Recruitment', desc: 'Candidate pipeline, client tracking, placements' },
-  { icon: BarChart2, name: 'Marketing & Agencies', desc: 'Campaign tracking, client reporting, lead pipelines' },
-  { icon: Layers, name: 'Any Business', desc: 'We build custom solutions for any industry vertical' },
+  {
+    icon: Factory,
+    name: 'Manufacturing',
+    color: 'text-cyanCustom',
+    bgColor: 'bg-cyanCustom/10 border-cyanCustom/20',
+    desc: 'Digitize production, inventory, procurement, vendor management, quality control, and reporting with custom manufacturing software.'
+  },
+  {
+    icon: Heart,
+    name: 'Healthcare',
+    color: 'text-pinkCustom',
+    bgColor: 'bg-pinkCustom/10 border-pinkCustom/20',
+    desc: 'Develop secure healthcare software, patient management systems, appointment booking, hospital CRM, billing, and staff management solutions.'
+  },
+  {
+    icon: Hotel,
+    name: 'Hotels & Hospitality',
+    color: 'text-purpleCustom',
+    bgColor: 'bg-purpleCustom/10 border-purpleCustom/20',
+    desc: 'Automate reservations, room management, guest communication, billing, housekeeping, and hotel operations with smart hospitality software.'
+  },
+  {
+    icon: Home,
+    name: 'Real Estate',
+    color: 'text-cyanCustom',
+    bgColor: 'bg-cyanCustom/10 border-cyanCustom/20',
+    desc: 'Manage leads, properties, site visits, follow-ups, customer communication, documentation, and sales using real estate CRM software.'
+  },
+  {
+    icon: GraduationCap,
+    name: 'Education',
+    color: 'text-pinkCustom',
+    bgColor: 'bg-pinkCustom/10 border-pinkCustom/20',
+    desc: 'Build school ERP systems, student management software, attendance systems, fee management, online learning platforms, and staff management solutions.'
+  },
+  {
+    icon: ShoppingBag,
+    name: 'Retail & Ecommerce',
+    color: 'text-purpleCustom',
+    bgColor: 'bg-purpleCustom/10 border-purpleCustom/20',
+    desc: 'Manage products, orders, customers, inventory, billing, warehouses, and online stores with integrated retail software.'
+  },
+  {
+    icon: Truck,
+    name: 'Logistics & Transportation',
+    color: 'text-cyanCustom',
+    bgColor: 'bg-cyanCustom/10 border-cyanCustom/20',
+    desc: 'Track shipments, vehicles, drivers, deliveries, warehouses, invoices, and operational workflows from one centralized dashboard.'
+  },
+  {
+    icon: Building2,
+    name: 'Construction',
+    color: 'text-pinkCustom',
+    bgColor: 'bg-pinkCustom/10 border-pinkCustom/20',
+    desc: 'Manage projects, contractors, vendors, materials, equipment, budgeting, and site operations digitally.'
+  },
+  {
+    icon: Briefcase,
+    name: 'Finance & Professional Services',
+    color: 'text-purpleCustom',
+    bgColor: 'bg-purpleCustom/10 border-purpleCustom/20',
+    desc: 'Automate customer onboarding, documentation, approvals, billing, compliance, and reporting through secure business applications.'
+  },
+  {
+    icon: Rocket,
+    name: 'Startups & Enterprises',
+    color: 'text-cyanCustom',
+    bgColor: 'bg-cyanCustom/10 border-cyanCustom/20',
+    desc: 'Launch scalable SaaS products, internal management systems, CRM platforms, HRMS software, ERP applications, and automation tools built for growth.'
+  },
 ];
 
 export default function Industries() {
@@ -38,29 +89,32 @@ export default function Industries() {
             Industries We Serve
           </Badge>
           <h2 className="text-3xl sm:text-4xl font-headline font-bold text-zinc-100 leading-tight mb-5">
-            Software Solutions Built for <br />
-            <span className="gradient-text">Every Industry</span>
+            Empowering Every Industry with Smart <br />
+            <span className="gradient-text">Software Solutions & Business Automation</span>
           </h2>
-          <p className="text-zinc-400 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
-            We've built software for businesses across every sector. No matter your industry, we design solutions that align with your workflows, regulations, and operational needs.
+          <p className="text-zinc-400 max-w-3xl mx-auto text-sm sm:text-base leading-relaxed mb-4">
+            Every industry has unique challenges, workflows, and operational requirements. At Kvantum Tech Solutions, we don't believe in one-size-fits-all software. We develop industry-specific custom software, CRM systems, HRMS platforms, ERP solutions, web applications, mobile apps, and business automation software that align perfectly with your business processes.
+          </p>
+          <p className="text-zinc-500 max-w-2xl mx-auto text-sm leading-relaxed">
+            Whether you're looking to automate operations, improve customer experience, manage employees, or streamline business workflows, our solutions are designed to help you work smarter, faster, and more efficiently.
           </p>
         </div>
 
         {/* Industries Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {industries.map((industry, idx) => {
             const Icon = industry.icon;
             return (
               <div
                 key={idx}
-                className="flex flex-col items-center text-center gap-3 p-5 rounded-xl bg-white/[0.02] border border-white/5 hover:border-pinkCustom/30 hover:bg-pinkCustom/5 hover:-translate-y-1 transition-all duration-300 cursor-default group"
+                className="flex flex-col gap-4 p-7 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/15 hover:-translate-y-1.5 transition-all duration-300 cursor-default group text-left"
               >
-                <div className="w-11 h-11 rounded-xl bg-white/[0.03] border border-white/8 flex items-center justify-center group-hover:border-pinkCustom/30 transition-colors duration-300">
-                  <Icon size={20} className="text-pinkCustom" />
+                <div className={`w-12 h-12 rounded-xl ${industry.bgColor} border flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300`}>
+                  <Icon size={22} className={industry.color} />
                 </div>
                 <div>
-                  <h4 className="text-zinc-100 text-xs font-bold font-headline mb-1 leading-tight">{industry.name}</h4>
-                  <p className="text-zinc-500 text-[10px] leading-relaxed">{industry.desc}</p>
+                  <h3 className="text-zinc-100 font-bold font-headline text-base mb-2">{industry.name}</h3>
+                  <p className="text-zinc-500 text-xs sm:text-sm leading-relaxed">{industry.desc}</p>
                 </div>
               </div>
             );
