@@ -1,28 +1,32 @@
 export const fallbackSettings = {
   hero: {
-    title: 'IT Solutions Company in Delhi NCR',
-    subtitle: 'Kvantum Tech Solutions delivers next-generation web products, custom software, and search optimizations.',
-    ctaText: "Let's Talk"
+    title: 'Custom Software Development & Business Automation Solutions for Growing Businesses',
+    subtitle: 'Transform your business with intelligent automation, powerful CRM software, WhatsApp automation, HRMS, ERP solutions, and custom web & mobile applications. Kvantum Tech Solutions helps businesses streamline operations, improve productivity, and accelerate growth through scalable software solutions.',
+    ctaText: 'Book Free Consultation'
   },
   about: {
-    description: 'We are a creative digital engineering agency focused on building fast, secure, and responsive web platforms. No page builders, just pure clean code.',
-    experience: '8+ Years'
+    description: 'Kvantum Tech Solutions is a custom software development company dedicated to helping businesses streamline operations, reduce manual workload, and grow faster through intelligent digital solutions.',
+    experience: '10+ Years'
   },
   stats: [
-    { value: '99%', label: 'Client Satisfaction' },
-    { value: '150+', label: 'Projects Completed' },
-    { value: '24/7', label: 'Support Available' }
+    { value: '250+', label: 'Successful Projects Delivered' },
+    { value: '100+', label: 'Happy Clients' },
+    { value: '15+', label: 'Industries Served' },
+    { value: '98%', label: 'Client Satisfaction Rate' },
+    { value: '24/7', label: 'Technical Support' }
   ],
   testimonials: [
-    { name: 'Rajesh M.', role: 'Healthcare Startup', content: 'They rebuilt our entire booking system in 6 weeks. Our old agency said it would take 6 months. Kvantum just… got it done.', rating: 5 },
-    { name: 'Priya S.', role: 'E-commerce Brand', content: 'Finally, a tech team that returns calls. These guys are ridiculous — in a good way.', rating: 5 },
-    { name: 'Amit K.', role: 'Real Estate Firm', content: "They told us we DON'T need a custom app and saved us ₹8 lakhs. Who does that? Honest people, apparently.", rating: 5 }
+    { name: 'Sales Director', role: 'Manufacturing Company', title: 'Exceptional CRM Development', content: 'Kvantum Tech Solutions developed a custom CRM tailored to our sales process. Our team now manages leads, follow-ups, and customer communication far more efficiently.', rating: 5 },
+    { name: 'Operations Manager', role: 'Logistics Firm', title: 'Business Automation That Saved Us Time', content: 'Our manual workflows were slowing us down. Kvantum Tech Solutions automated approvals, notifications, and internal processes, significantly improving productivity.', rating: 5 },
+    { name: 'Founder & CEO', role: 'Healthcare Startup', title: 'Professional Software Development Team', content: 'The team understood our business requirements and delivered a secure, scalable web application within the committed timeline.', rating: 5 }
   ],
   contact: {
     phone: '+91 9811661828, +91 9811663433, +91 9811663121',
     email: 'info@kvantumtechsolutions.com',
     address: 'A33, 64, Tahirpur Rd, Priyadarshini Vihar, Taharpur Village, Dilshad Garden, Delhi, 110095',
-    linkedin: 'https://linkedin.com/company/kvantumtechsolutions',
+    instagram: 'https://www.instagram.com/kvantumtechsolutions/',
+    linkedin: 'https://www.linkedin.com/in/kvantum-tech-solutions-75916a41b',
+    facebook: 'https://facebook.com/kvantumtechsolutions',
     twitter: 'https://twitter.com/kvantumtech'
   }
 };

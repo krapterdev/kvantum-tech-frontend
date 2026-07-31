@@ -1,20 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Menu, X, Sun, Moon, Link2, ChevronDown } from 'lucide-react';
+import { Menu, X, Sun, Moon, ChevronDown } from 'lucide-react';
 import MobileMenu from './MobileMenu';
-import Button from '../ui/Button';
-import { getAllServices } from '@/services/serviceService';
+import { InstagramIcon, LinkedinIcon, FacebookIcon } from '../ui/SocialIcons';
 
-export default function Navbar({ theme, toggleTheme }) {
+export default function Navbar({ theme, toggleTheme, settings }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [services, setServices] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    getAllServices()
-      .then(data => setServices(data))
-      .catch(err => console.warn('[NAVBAR] Failed to fetch services list:', err.message));
-  }, []);
+  const contact = settings?.contact || {};
+  const instagramUrl = contact.instagram || 'https://www.instagram.com/kvantumtechsolutions/';
+  const linkedinUrl = contact.linkedin || 'https://www.linkedin.com/in/kvantum-tech-solutions-75916a41b';
+  const facebookUrl = contact.facebook || 'https://facebook.com/kvantumtechsolutions';
 
   const logoMark = theme === 'light' 
     ? '/logo-light.jpg' 
@@ -30,7 +27,7 @@ export default function Navbar({ theme, toggleTheme }) {
             setMobileMenuOpen(false);
             navigate('/');
           }} 
-          className="flex items-center cursor-pointer"
+          className="flex items-center cursor-pointer gap-3"
         >
           <img 
             src={logoMark} 
@@ -58,28 +55,14 @@ export default function Navbar({ theme, toggleTheme }) {
             About
           </NavLink>
           
-          {/* Services Dropdown */}
-          <div className="relative group">
-            <NavLink 
-              to="/services"
-              className={({ isActive }) => 
-                `text-[15px] font-semibold transition-colors duration-200 flex items-center gap-1 py-2 ${isActive ? 'text-cyanCustom font-bold' : 'text-zinc-400 hover:text-cyanCustom'}`
-              }
-            >
-              Services <ChevronDown size={14} />
-            </NavLink>
-            <div className="absolute top-full left-0 mt-0 w-52 rounded-xl bg-zinc-950/95 border border-white/8 p-2 shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-[110]">
-              {services.map(ser => (
-                <NavLink 
-                  key={ser.id} 
-                  to={`/services/${ser.id}`} 
-                  className="block px-4 py-2.5 text-xs font-semibold text-zinc-400 hover:text-cyanCustom hover:bg-white/[0.02] rounded-lg"
-                >
-                  {ser.title}
-                </NavLink>
-              ))}
-            </div>
-          </div>
+          <NavLink 
+            to="/services"
+            className={({ isActive }) => 
+              `text-[15px] font-semibold transition-colors duration-200 ${isActive ? 'text-cyanCustom font-bold' : 'text-zinc-400 hover:text-cyanCustom'}`
+            }
+          >
+            Services
+          </NavLink>
 
           <NavLink 
             to="/projects"
@@ -89,6 +72,7 @@ export default function Navbar({ theme, toggleTheme }) {
           >
             Portfolio
           </NavLink>
+
           <NavLink 
             to="/blog"
             className={({ isActive }) => 
@@ -97,6 +81,7 @@ export default function Navbar({ theme, toggleTheme }) {
           >
             Blog
           </NavLink>
+
           <NavLink 
             to="/contact"
             className={({ isActive }) => 
@@ -107,9 +92,41 @@ export default function Navbar({ theme, toggleTheme }) {
           </NavLink>
         </div>
 
-        {/* Controls */}
-        <div className="hidden lg:flex items-center gap-5">
-          {/* Custom Theme Switch Toggle */}
+        {/* Controls & Social Links */}
+        <div className="hidden lg:flex items-center gap-4">
+          
+          {/* Social Links Icons */}
+          <div className="flex items-center gap-2 border-r border-white/10 pr-4">
+            <a
+              href={instagramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-1.5 rounded-lg text-zinc-400 hover:text-pinkCustom hover:bg-white/5 transition-colors"
+              title="Instagram"
+            >
+              <InstagramIcon size={17} />
+            </a>
+            <a
+              href={linkedinUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-1.5 rounded-lg text-zinc-400 hover:text-cyanCustom hover:bg-white/5 transition-colors"
+              title="LinkedIn"
+            >
+              <LinkedinIcon size={17} />
+            </a>
+            <a
+              href={facebookUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-1.5 rounded-lg text-zinc-400 hover:text-blue-400 hover:bg-white/5 transition-colors"
+              title="Facebook"
+            >
+              <FacebookIcon size={17} />
+            </a>
+          </div>
+
+          {/* Theme Switcher Toggle */}
           <label className="toggle-switch">
             <input 
               type="checkbox" 
@@ -151,7 +168,7 @@ export default function Navbar({ theme, toggleTheme }) {
       </nav>
 
       {/* Mobile Menu Overlay Drawer */}
-      <MobileMenu isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} theme={theme} />
+      <MobileMenu isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} theme={theme} settings={settings} />
     </>
   );
 }

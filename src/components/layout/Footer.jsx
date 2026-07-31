@@ -1,17 +1,20 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import EarthGlobe from '../sections/EarthGlobe';
+import { InstagramIcon, LinkedinIcon, FacebookIcon } from '../ui/SocialIcons';
 
 export default function Footer({ seoPages = [], theme, settings, services = [] }) {
   const currentYear = new Date().getFullYear();
   const contact = settings?.contact || {};
-  const displayServices = services.slice(0, 6);
+  const instagramUrl = contact.instagram || 'https://www.instagram.com/kvantumtechsolutions/';
+  const linkedinUrl = contact.linkedin || 'https://www.linkedin.com/in/kvantum-tech-solutions-75916a41b';
+  const facebookUrl = contact.facebook || 'https://facebook.com/kvantumtechsolutions';
 
   return (
     <footer className="glass-panel relative z-10 mt-[100px] px-6 py-[60px] select-none text-center border-t border-white/10">
       <div className="container mx-auto max-w-[1280px]">
         
-        {/* 360 Degree Earth Globe Canvas (GitHub style) */}
+        {/* 360 Degree Rotating Real 3D Earth Globe Canvas (GitHub style) */}
         <div className="flex flex-col items-center justify-center mb-10 overflow-hidden">
           <div className="w-full max-w-[650px]">
             <EarthGlobe />
@@ -29,6 +32,36 @@ export default function Footer({ seoPages = [], theme, settings, services = [] }
             <p className="text-zinc-400 text-sm leading-relaxed max-w-[300px]">
               Empowering businesses through Custom Software Development, Business Automation, CRM, HRMS, ERP, and Scalable Digital Solutions.
             </p>
+            {/* Social Icons Bar */}
+            <div className="flex items-center gap-3 mt-2">
+              <a
+                href={instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-zinc-400 hover:text-pinkCustom hover:border-pinkCustom/40 hover:bg-pinkCustom/10 transition-all duration-300"
+                title="Instagram"
+              >
+                <InstagramIcon size={18} />
+              </a>
+              <a
+                href={linkedinUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-zinc-400 hover:text-cyanCustom hover:border-cyanCustom/40 hover:bg-cyanCustom/10 transition-all duration-300"
+                title="LinkedIn"
+              >
+                <LinkedinIcon size={18} />
+              </a>
+              <a
+                href={facebookUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-zinc-400 hover:text-blue-400 hover:border-blue-400/40 hover:bg-blue-400/10 transition-all duration-300"
+                title="Facebook"
+              >
+                <FacebookIcon size={18} />
+              </a>
+            </div>
           </div>
 
           {/* Links 1: Quick Links */}

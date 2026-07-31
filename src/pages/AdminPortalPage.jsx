@@ -2104,7 +2104,9 @@ export default function AdminPortalPage({
                       phone: e.target.contactPhone.value,
                       email: e.target.contactEmail.value,
                       address: e.target.contactAddress.value,
+                      instagram: e.target.contactInstagram.value,
                       linkedin: e.target.contactLinkedin.value,
+                      facebook: e.target.contactFacebook.value,
                       twitter: e.target.contactTwitter.value
                     };
                     await settingService.updateSetting('contact', val);
@@ -2146,22 +2148,31 @@ export default function AdminPortalPage({
                       className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono"
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-wider mb-1 font-bold">Instagram URL</label>
+                      <input 
+                        type="text" 
+                        name="contactInstagram"
+                        defaultValue={settings?.contact?.instagram || 'https://www.instagram.com/kvantumtechsolutions/'}
+                        className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono"
+                      />
+                    </div>
                     <div>
                       <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-wider mb-1 font-bold">LinkedIn URL Link</label>
                       <input 
                         type="text" 
                         name="contactLinkedin"
-                        defaultValue={settings?.contact?.linkedin || ''}
+                        defaultValue={settings?.contact?.linkedin || 'https://www.linkedin.com/in/kvantum-tech-solutions-75916a41b'}
                         className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono"
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-wider mb-1 font-bold">Twitter/X URL Link</label>
+                      <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-wider mb-1 font-bold">Facebook URL Link</label>
                       <input 
                         type="text" 
-                        name="contactTwitter"
-                        defaultValue={settings?.contact?.twitter || ''}
+                        name="contactFacebook"
+                        defaultValue={settings?.contact?.facebook || 'https://facebook.com/kvantumtechsolutions'}
                         className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono"
                       />
                     </div>

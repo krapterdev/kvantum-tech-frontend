@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Link2 } from 'lucide-react';
-import Button from '../ui/Button';
 import { getAllServices } from '@/services/serviceService';
+import { InstagramIcon, LinkedinIcon, FacebookIcon } from '../ui/SocialIcons';
 
-export default function MobileMenu({ isOpen, onClose, theme }) {
+export default function MobileMenu({ isOpen, onClose, theme, settings }) {
   const [servicesOpen, setServicesOpen] = useState(false);
   const [services, setServices] = useState([]);
+
+  const contact = settings?.contact || {};
+  const instagramUrl = contact.instagram || 'https://www.instagram.com/kvantumtechsolutions/';
+  const linkedinUrl = contact.linkedin || 'https://www.linkedin.com/in/kvantum-tech-solutions-75916a41b';
+  const facebookUrl = contact.facebook || 'https://facebook.com/kvantumtechsolutions';
 
   useEffect(() => {
     if (isOpen) {
@@ -114,10 +118,23 @@ export default function MobileMenu({ isOpen, onClose, theme }) {
         Contact
       </NavLink>
 
+      {/* Social Links Row in Mobile Drawer */}
+      <div className="flex items-center gap-3 py-2 border-t border-white/10 mt-1">
+        <a href={instagramUrl} target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-white/5 text-pinkCustom">
+          <InstagramIcon size={18} />
+        </a>
+        <a href={linkedinUrl} target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-white/5 text-cyanCustom">
+          <LinkedinIcon size={18} />
+        </a>
+        <a href={facebookUrl} target="_blank" rel="noopener noreferrer" className="p-2 rounded-lg bg-white/5 text-blue-400">
+          <FacebookIcon size={18} />
+        </a>
+      </div>
+
       <NavLink
         to="/contact"
         onClick={onClose}
-        className="w-full mt-2"
+        className="w-full"
       >
         <button className="w-full py-3 rounded-xl text-sm font-bold bg-pinkCustom text-white hover:bg-pink-600 transition-colors shadow-[0_0_15px_rgba(236,72,153,0.3)] cursor-pointer">
           Let's Talk

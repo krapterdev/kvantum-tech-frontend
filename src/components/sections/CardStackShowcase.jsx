@@ -1,7 +1,6 @@
 import React from 'react';
-import { Users, Code, Palette, Search, Share2, TrendingUp, Award, CheckCircle2, User } from 'lucide-react';
+import { Users, Code, Palette, Search, Share2, TrendingUp, Award, CheckCircle2 } from 'lucide-react';
 import Badge from '../ui/Badge';
-import Card from '../ui/Card';
 
 const teamMembers = [
   {
@@ -80,7 +79,7 @@ const teamMembers = [
 
 export default function CardStackShowcase() {
   return (
-    <section className="container mx-auto max-w-[1280px] px-6 py-24 select-none text-left">
+    <section id="team" className="container mx-auto max-w-[1280px] px-6 py-24 select-none text-left relative z-20">
 
       {/* Header */}
       <div className="text-center mb-16">
@@ -103,12 +102,12 @@ export default function CardStackShowcase() {
           return (
             <div
               key={member.id}
-              className="p-7 rounded-3xl bg-zinc-950/80 border border-white/10 hover:border-pinkCustom/40 hover:bg-zinc-900/60 transition-all duration-300 flex flex-col justify-between gap-6 cursor-default group backdrop-blur-xl hover:-translate-y-1.5 shadow-lg"
+              className="p-7 rounded-3xl bg-zinc-950/90 border border-white/12 hover:border-pinkCustom/40 hover:bg-zinc-900/80 transition-all duration-300 flex flex-col justify-between gap-6 cursor-default group backdrop-blur-2xl hover:-translate-y-1.5 shadow-xl relative z-10"
             >
               {/* Member Top */}
               <div>
                 <div className="flex justify-between items-start mb-5">
-                  <div className="w-12 h-12 rounded-2xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-pinkCustom group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-12 h-12 rounded-2xl bg-white/[0.05] border border-white/12 flex items-center justify-center text-pinkCustom group-hover:scale-110 transition-transform duration-300 shadow-inner">
                     <Icon size={22} />
                   </div>
                   <span className={`text-[10px] font-mono font-bold uppercase tracking-wider px-3 py-1 rounded-full border ${member.tagColor}`}>
@@ -137,7 +136,7 @@ export default function CardStackShowcase() {
                   {member.skills.map((skill, sIdx) => (
                     <span
                       key={sIdx}
-                      className="text-[11px] font-mono text-zinc-300 bg-white/[0.03] border border-white/8 px-2.5 py-1 rounded-lg flex items-center gap-1.5"
+                      className="text-[11px] font-mono text-zinc-300 bg-white/[0.04] border border-white/10 px-2.5 py-1 rounded-lg flex items-center gap-1.5"
                     >
                       <Award size={11} className="text-cyanCustom" />
                       {skill}
