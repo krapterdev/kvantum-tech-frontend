@@ -5,6 +5,7 @@ import Footer from '@/components/layout/Footer';
 import ScrollToTop from '@/components/layout/ScrollToTop';
 import ScrollVideoPlayer from '@/components/ScrollVideoPlayer';
 import FloatingQuickActions from '@/components/sections/FloatingQuickActions';
+import PageLoader from '@/components/ui/PageLoader';
 
 // Page components
 import Home from '@/pages/Home';
@@ -342,6 +343,9 @@ export default function App() {
           ? 'bg-[#f8fafc] text-zinc-900' 
           : 'text-zinc-100 overflow-hidden'
     }`}>
+      {/* Website Loading Screen (Image 2 style official logo reveal) */}
+      <PageLoader />
+
       {/* Background color layer behind the canvas */}
       {!isAdminPath && theme === 'dark' && <div className="fixed inset-0 bg-background-dark -z-30 pointer-events-none" />}
       

@@ -1,11 +1,29 @@
-import React, { useState } from 'react';
-import { MessageSquare, Phone, X, Send, CheckCircle2, Sparkles, Headphones } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { MessageSquare, Phone, X, Send, CheckCircle2, ArrowUp, Headphones } from 'lucide-react';
 import { submitContact } from '@/services/contactService';
 
 export default function FloatingQuickActions() {
   const [isOpen, setIsOpen] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const [formData, setFormData] = useState({ name: '', phone: '', service: 'custom-software' });
-  const [status, setStatus] = useState('idle'); // 'idle', 'submitting', 'success'
+  const [status, setStatus] = useState('idle');
+
+  // Track scroll position to show Scroll-to-Top button
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 300) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,6 +58,17 @@ export default function FloatingQuickActions() {
     <>
       {/* Floating Buttons Stack (Fixed Bottom-Right) */}
       <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end gap-3 select-none">
+
+        {/* Scroll To Top Button (Appears when scrolled down) */}
+        {showScrollTop && (
+          <button
+            onClick={scrollToTop}
+            className="group relative flex items-center justify-center w-11 h-11 rounded-full bg-zinc-900 hover:bg-zinc-800 text-zinc-100 border border-white/20 shadow-[0_10px_25px_rgba(0,0,0,0.5)] transition-all duration-300 hover:scale-110 cursor-pointer"
+            title="Scroll to Top"
+          >
+            <ArrowUp size={18} className="group-hover:-translate-y-1 transition-transform" />
+          </button>
+        )}
 
         {/* WhatsApp Direct Chat Button */}
         <a

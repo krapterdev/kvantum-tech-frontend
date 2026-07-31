@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { Menu, X, Sun, Moon, ChevronDown } from 'lucide-react';
 import MobileMenu from './MobileMenu';
 import { InstagramIcon, LinkedinIcon, FacebookIcon } from '../ui/SocialIcons';
+import KvantumLogo from '../ui/KvantumLogo';
 
 export default function Navbar({ theme, toggleTheme, settings }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -13,27 +14,19 @@ export default function Navbar({ theme, toggleTheme, settings }) {
   const linkedinUrl = contact.linkedin || 'https://www.linkedin.com/in/kvantum-tech-solutions-75916a41b';
   const facebookUrl = contact.facebook || 'https://facebook.com/kvantumtechsolutions';
 
-  const logoMark = theme === 'light' 
-    ? '/logo-light.jpg' 
-    : '/logo-dark.jpg';
-
   return (
     <>
-      <nav className="fixed top-5 left-1/2 -translate-x-1/2 w-[calc(100%-40px)] max-w-[1280px] z-[100] rounded-[20px] px-7 py-3.5 flex items-center justify-between glass-panel select-none">
+      <nav className="fixed top-5 left-1/2 -translate-x-1/2 w-[calc(100%-40px)] max-w-[1280px] z-[100] rounded-[20px] px-6 sm:px-8 py-3.5 flex items-center justify-between glass-panel select-none">
         
-        {/* Brand Logo Section */}
+        {/* Official Brand Logo Section (Image 2) */}
         <div 
           onClick={() => {
             setMobileMenuOpen(false);
             navigate('/');
           }} 
-          className="flex items-center cursor-pointer gap-3"
+          className="flex items-center cursor-pointer py-1"
         >
-          <img 
-            src={logoMark} 
-            alt="Kvantum Logo" 
-            className="h-[38px] w-[38px] object-contain rounded-lg border border-white/8 hover:rotate-12 hover:scale-105 transition-transform duration-300"
-          />
+          <KvantumLogo className="h-7 sm:h-9" variant="full" />
         </div>
 
         {/* Desktop Navigation Links */}
@@ -159,8 +152,7 @@ export default function Navbar({ theme, toggleTheme, settings }) {
           </label>
           <button 
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="bg-none border-none cursor-pointer transition-colors flex items-center justify-center"
-            style={{ color: 'var(--text-primary)' }}
+            className="bg-none border-none cursor-pointer transition-colors flex items-center justify-center text-zinc-200"
           >
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
