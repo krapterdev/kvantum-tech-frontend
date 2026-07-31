@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import {
-  Users, Sparkles, Code, Palette, Search, Share2, TrendingUp, Award, CheckCircle2
-} from 'lucide-react';
+import React from 'react';
+import { Users, Code, Palette, Search, Share2, TrendingUp, Award, CheckCircle2, User } from 'lucide-react';
 import Badge from '../ui/Badge';
+import Card from '../ui/Card';
 
-const teamCards = [
+const teamMembers = [
   {
     id: 1,
     name: 'Sahil Kumar',
@@ -13,7 +12,7 @@ const teamCards = [
     badge: 'Web Architecture & UI',
     tagColor: 'text-pinkCustom bg-pinkCustom/10 border-pinkCustom/30',
     icon: Code,
-    gradient: 'from-pink-500/20 via-purple-500/10 to-transparent',
+    gradient: 'from-pink-500/10 via-purple-500/5 to-transparent',
     bio: 'Leads custom software architecture, full-stack web application engineering, and responsive UI design.',
     skills: ['Web Architecture', 'React & Full-Stack', 'UI/UX Engineering'],
   },
@@ -25,7 +24,7 @@ const teamCards = [
     badge: 'Enterprise Growth',
     tagColor: 'text-cyanCustom bg-cyanCustom/10 border-cyanCustom/30',
     icon: TrendingUp,
-    gradient: 'from-cyan-500/20 via-blue-500/10 to-transparent',
+    gradient: 'from-cyan-500/10 via-blue-500/5 to-transparent',
     bio: 'Drives enterprise sales strategy, client consulting, and strategic business growth solutions.',
     skills: ['Business Development', 'Client Consulting', 'Growth Strategy'],
   },
@@ -37,7 +36,7 @@ const teamCards = [
     badge: 'Social Media & Branding',
     tagColor: 'text-purpleCustom bg-purpleCustom/10 border-purpleCustom/30',
     icon: Share2,
-    gradient: 'from-purple-500/20 via-pink-500/10 to-transparent',
+    gradient: 'from-purple-500/10 via-pink-500/5 to-transparent',
     bio: 'Spearheads brand positioning, multi-channel social media campaigns, and community engagement.',
     skills: ['SMO Strategy', 'Brand Campaigns', 'Audience Growth'],
   },
@@ -49,7 +48,7 @@ const teamCards = [
     badge: 'Search Engine Optimization',
     tagColor: 'text-emerald-400 bg-emerald-400/10 border-emerald-400/30',
     icon: Search,
-    gradient: 'from-emerald-500/20 via-teal-500/10 to-transparent',
+    gradient: 'from-emerald-500/10 via-teal-500/5 to-transparent',
     bio: 'Specializes in technical SEO auditing, high-converting keyword architecture, and search visibility.',
     skills: ['Technical SEO', 'Keyword Architecture', 'Organic Traffic'],
   },
@@ -61,7 +60,7 @@ const teamCards = [
     badge: 'Creative & Visual Design',
     tagColor: 'text-amber-400 bg-amber-400/10 border-amber-400/30',
     icon: Palette,
-    gradient: 'from-amber-500/20 via-orange-500/10 to-transparent',
+    gradient: 'from-amber-500/10 via-orange-500/5 to-transparent',
     bio: 'Oversees visual identity design, brand aesthetics, UI graphics, and marketing media assets.',
     skills: ['Graphic Design', 'Brand Identity', 'UI Visuals & Assets'],
   },
@@ -73,119 +72,84 @@ const teamCards = [
     badge: 'Client Relations & Sales',
     tagColor: 'text-pinkCustom bg-pinkCustom/10 border-pinkCustom/30',
     icon: Users,
-    gradient: 'from-pink-500/20 via-rose-500/10 to-transparent',
+    gradient: 'from-pink-500/10 via-rose-500/5 to-transparent',
     bio: 'Manages client onboarding, initial project consultations, and daily sales coordination.',
     skills: ['Client Onboarding', 'Sales Support', 'Requirements Gathering'],
   },
 ];
 
 export default function CardStackShowcase() {
-  const [isHovered, setIsHovered] = useState(false);
-
   return (
-    <section className="container mx-auto max-w-[1280px] px-6 py-24 select-none overflow-hidden">
+    <section className="container mx-auto max-w-[1280px] px-6 py-24 select-none text-left">
 
       {/* Header */}
-      <div className="text-center mb-14">
+      <div className="text-center mb-16">
         <Badge className="mb-5 mx-auto inline-flex items-center gap-1.5 bg-pinkCustom/10 border-pinkCustom/20 text-pinkCustom">
           <Users size={14} className="animate-pulse" /> Meet Our Leadership & Core Team
         </Badge>
         <h2 className="text-3xl sm:text-4xl font-headline font-bold text-zinc-100 leading-tight mb-5">
-          In-House Experts & Department Heads <br />
-          <span className="gradient-text">Hover or Touch Below to Spread Our Team Deck</span>
+          In-House Experts & <br />
+          <span className="gradient-text">Department Heads</span>
         </h2>
         <p className="text-zinc-400 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
-          Hover over or tap the card stack to expand our leadership team across 90% width of the screen.
+          No middlemen or outsourced resellers. Real experienced engineers, designers, and growth heads building your custom software.
         </p>
       </div>
 
-      {/* Interactive Card Fan-Out Container (90% Width Spread) */}
-      <div
-        className="relative min-h-[460px] sm:min-h-[500px] w-full flex items-center justify-center py-8 cursor-pointer"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        onClick={() => setIsHovered(!isHovered)}
-      >
-
-        {/* Ambient Glow */}
-        <div className="absolute inset-0 bg-gradient-to-r from-pinkCustom/10 via-purpleCustom/10 to-cyanCustom/10 blur-3xl pointer-events-none rounded-full" />
-
-        {/* 90% Width Cards Fan-Out Wrapper */}
-        <div className="relative w-full max-w-[90%] mx-auto flex justify-center items-center h-[420px]">
-          {teamCards.map((card, idx) => {
-            const Icon = card.icon;
-
-            const total = teamCards.length;
-            const centerIdx = (total - 1) / 2;
-            const offset = idx - centerIdx;
-
-            // 90% spread offsets across 6 cards
-            // When hovered: Spread out horizontally across container width (~180px gap between cards)
-            // When collapsed: Stacked neatly in center with slight offset
-            const rotateDeg = isHovered ? offset * 4 : offset * -2;
-            const translateX = isHovered ? offset * 180 : offset * 14;
-            const translateY = isHovered ? (Math.abs(offset) === 2.5 ? 12 : 0) : offset * 6;
-            const scale = isHovered ? 1 : 1 - Math.abs(offset) * 0.03;
-            const zIndex = isHovered ? 10 + idx : total - Math.abs(offset);
-
-            return (
-              <div
-                key={card.id}
-                style={{
-                  transform: `translateX(${translateX}px) translateY(${translateY}px) rotate(${rotateDeg}deg) scale(${scale})`,
-                  zIndex: zIndex,
-                  transition: 'all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                }}
-                className="absolute w-[260px] sm:w-[290px] p-6 sm:p-7 rounded-3xl bg-zinc-950/95 border border-white/15 shadow-[0_25px_60px_rgba(0,0,0,0.8)] backdrop-blur-2xl flex flex-col justify-between text-left h-[420px] hover:border-pinkCustom/60 transition-colors duration-300 group"
-              >
-                {/* Background Gradient */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${card.gradient} rounded-3xl opacity-40 pointer-events-none`} />
-
-                {/* Top Badge & Icon */}
-                <div className="relative z-10 flex justify-between items-start">
-                  <span className={`text-[10px] font-mono font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${card.tagColor}`}>
-                    {card.badge}
+      {/* Super Readable 6-Card Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {teamMembers.map((member) => {
+          const Icon = member.icon;
+          return (
+            <div
+              key={member.id}
+              className="p-7 rounded-3xl bg-zinc-950/80 border border-white/10 hover:border-pinkCustom/40 hover:bg-zinc-900/60 transition-all duration-300 flex flex-col justify-between gap-6 cursor-default group backdrop-blur-xl hover:-translate-y-1.5 shadow-lg"
+            >
+              {/* Member Top */}
+              <div>
+                <div className="flex justify-between items-start mb-5">
+                  <div className="w-12 h-12 rounded-2xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-pinkCustom group-hover:scale-110 transition-transform duration-300">
+                    <Icon size={22} />
+                  </div>
+                  <span className={`text-[10px] font-mono font-bold uppercase tracking-wider px-3 py-1 rounded-full border ${member.tagColor}`}>
+                    {member.badge}
                   </span>
-                  <div className="p-2 bg-white/5 border border-white/10 rounded-xl text-zinc-200 shrink-0">
-                    <Icon size={16} />
-                  </div>
                 </div>
 
-                {/* Team Info */}
-                <div className="relative z-10 my-auto">
-                  <div className="flex justify-between items-baseline mb-1">
-                    <h3 className="text-lg font-headline font-bold text-zinc-100 leading-snug">
-                      {card.name}
-                    </h3>
-                    <span className="text-[10px] font-mono text-pinkCustom font-bold shrink-0">{card.experience}</span>
-                  </div>
-                  <span className="text-xs font-mono text-cyanCustom block mb-2.5 font-semibold leading-snug">{card.role}</span>
-                  <p className="text-zinc-400 text-xs leading-relaxed">
-                    {card.bio}
-                  </p>
+                <div className="flex justify-between items-baseline mb-1">
+                  <h3 className="text-xl font-headline font-bold text-zinc-100 group-hover:text-pinkCustom transition-colors">
+                    {member.name}
+                  </h3>
+                  <span className="text-[11px] font-mono text-pinkCustom font-bold shrink-0">{member.experience}</span>
                 </div>
 
-                {/* Core Expertise Skills */}
-                <div className="relative z-10 space-y-1 border-t border-white/8 pt-3 mt-2">
-                  <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest block mb-1">Expertise:</span>
-                  {card.skills.map((skill, sIdx) => (
-                    <div key={sIdx} className="flex items-center gap-1.5 text-[11px] text-zinc-300">
-                      <Award size={12} className="text-cyanCustom shrink-0" />
-                      <span>{skill}</span>
-                    </div>
+                <span className="text-xs font-mono text-cyanCustom block mb-3 font-semibold">{member.role}</span>
+                
+                <p className="text-zinc-400 text-xs sm:text-sm leading-relaxed mb-4">
+                  {member.bio}
+                </p>
+              </div>
+
+              {/* Member Skills */}
+              <div className="space-y-2 border-t border-white/8 pt-4 mt-auto">
+                <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest block mb-1.5">Core Domain Expertise:</span>
+                <div className="flex flex-wrap gap-2">
+                  {member.skills.map((skill, sIdx) => (
+                    <span
+                      key={sIdx}
+                      className="text-[11px] font-mono text-zinc-300 bg-white/[0.03] border border-white/8 px-2.5 py-1 rounded-lg flex items-center gap-1.5"
+                    >
+                      <Award size={11} className="text-cyanCustom" />
+                      {skill}
+                    </span>
                   ))}
                 </div>
-
               </div>
-            );
-          })}
-        </div>
 
+            </div>
+          );
+        })}
       </div>
-
-      <p className="text-center text-zinc-500 font-mono text-xs mt-6">
-        {isHovered ? '✨ 90% Width Spread Active — Leadership & Department Heads' : '💡 Hover over or tap the deck to spread our team cards across the screen'}
-      </p>
 
     </section>
   );

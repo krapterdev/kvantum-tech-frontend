@@ -8,7 +8,6 @@ import AutomationCalculator from '@/components/sections/AutomationCalculator';
 import SoftwareProducts from '@/components/sections/SoftwareProducts';
 import InteractiveDashboardMockup from '@/components/sections/InteractiveDashboardMockup';
 import CardStackShowcase from '@/components/sections/CardStackShowcase';
-import AutomationFeatures from '@/components/sections/AutomationFeatures';
 import Industries from '@/components/sections/Industries';
 import WhyChooseUs from '@/components/sections/WhyChooseUs';
 import Technologies from '@/components/sections/Technologies';
@@ -27,76 +26,73 @@ import SeoSchema from '@/components/sections/SeoSchema';
 export default function Home({ services = [], blogs = [], settings }) {
   return (
     <div className="fade-in-up">
-      {/* JSON-LD Rich Snippet SEO Schema */}
+      {/* Rich Snippet JSON-LD SEO Schema */}
       <SeoSchema />
 
       {/* 1. Hero Banner */}
       <Hero settings={settings} />
 
-      {/* 2. Trusted By / Social Proof */}
+      {/* 2. Trusted By / Social Proof Marquee */}
       <TrustedBy />
 
       {/* 3. About Kvantum Tech Solutions */}
       <About settings={settings} />
 
-      {/* 4. Core Services */}
+      {/* 4. Core Services & Custom Software */}
       <Services services={services} />
 
-      {/* 5. Business Automation Solutions (Main Highlight) */}
+      {/* 5. Business Automation Highlight */}
       <BusinessAutomationHighlight />
 
       {/* 6. Interactive ROI & Time-Saved Calculator */}
       <AutomationCalculator />
 
-      {/* 7. Software Products */}
+      {/* 7. Software Products Suite */}
       <SoftwareProducts />
 
-      {/* 8. Interactive Live Dashboard Previews */}
+      {/* 8. Interactive System Dashboard Previews */}
       <InteractiveDashboardMockup />
 
-      {/* 9. Interactive 3D Card Stack Fan-Out Showcase */}
-      <CardStackShowcase />
-
-      {/* 10. Automation Features Checklist */}
-      <AutomationFeatures />
-
-      {/* 11. Industries We Serve */}
+      {/* 9. Industries We Serve */}
       <Industries />
 
-      {/* 12. Why Choose Kvantum Tech Solutions */}
+      {/* 10. Why Choose Kvantum Tech Solutions */}
       <WhyChooseUs />
 
-      {/* 13. Technologies We Use */}
+      {/* 11. Technologies We Use */}
       <Technologies />
 
-      {/* 14. Our Process / How We Work */}
+      {/* 12. Our Development Process */}
       <HowWeWork />
 
-      {/* 15. Portfolio / Case Studies */}
+      {/* 13. Meet Our Leadership & Core Team */}
+      <CardStackShowcase />
+
+      {/* 14. Portfolio & Case Studies */}
       <Projects />
 
-      {/* 16. Live Demo */}
+      {/* 15. Live Demo CTA */}
       <LiveDemo />
 
-      {/* 17. Success Metrics */}
+      {/* 16. Success Metrics */}
       <Stats settings={settings} />
 
-      {/* 18. Client Testimonials */}
+      {/* 17. Client Testimonials */}
       <Testimonials settings={settings} />
 
-      {/* 19. Pricing Plans */}
+      {/* 18. Pricing Plans */}
       <Pricing />
 
-      {/* 20. FAQs (15 Questions) */}
+      {/* 19. FAQs (15 SEO Questions) */}
       <FAQ />
 
-      {/* 21. Latest Blogs */}
+      {/* 20. Latest Blogs & Resources */}
       <BlogPreview blogs={blogs} />
 
-      {/* 22. Free Consultation CTA */}
+      {/* 21. Free Consultation CTA */}
       <CTA />
 
-      {/* 23. Contact Form */}
+      {/* 22. Contact Form */}
       <HomeContact />
 
     </div>
