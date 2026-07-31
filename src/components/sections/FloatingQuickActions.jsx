@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MessageSquare, Phone, X, Send, CheckCircle2, Sparkles } from 'lucide-react';
+import { MessageSquare, Phone, X, Send, CheckCircle2, Sparkles, Headphones } from 'lucide-react';
 import { submitContact } from '@/services/contactService';
 
 export default function FloatingQuickActions() {
@@ -22,7 +22,6 @@ export default function FloatingQuickActions() {
       });
       setStatus('success');
     } catch (err) {
-      // Fallback lead store
       const saved = localStorage.getItem('kts_local_leads');
       const list = saved ? JSON.parse(saved) : [];
       list.push({
@@ -39,40 +38,51 @@ export default function FloatingQuickActions() {
 
   return (
     <>
-      {/* Floating Buttons Bar (Fixed Bottom-Right) */}
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3 select-none">
+      {/* Floating Buttons Stack (Fixed Bottom-Right) */}
+      <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end gap-3 select-none">
 
         {/* WhatsApp Direct Chat Button */}
         <a
           href="https://wa.me/919811661828?text=Hi%20Kvantum%20Tech%20Team,%20I%20want%20to%20know%20more%20about%20your%20software%20and%20automation%20services."
           target="_blank"
           rel="noopener noreferrer"
-          className="w-13 h-13 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white shadow-[0_0_25px_rgba(16,185,129,0.5)] flex items-center justify-center transition-all duration-300 hover:scale-110 group cursor-pointer"
+          className="group relative flex items-center gap-2.5 px-4 py-3 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white shadow-[0_10px_25px_rgba(16,185,129,0.4)] transition-all duration-300 hover:scale-105 cursor-pointer border border-emerald-400/30"
           title="Chat on WhatsApp"
         >
-          <MessageSquare size={22} className="fill-white text-emerald-500 group-hover:rotate-12 transition-transform" />
+          <MessageSquare size={20} className="fill-white text-emerald-500 group-hover:rotate-12 transition-transform shrink-0" />
+          <span className="text-xs font-bold font-headline hidden sm:inline-block pr-1">WhatsApp Us</span>
         </a>
 
-        {/* Floating Quick Callback Toggle Button */}
+        {/* Floating Call / Quick Request Button */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="w-13 h-13 rounded-full bg-pinkCustom hover:bg-pink-600 text-white shadow-[0_0_25px_rgba(236,72,153,0.5)] flex items-center justify-center transition-all duration-300 hover:scale-110 cursor-pointer relative"
+          className="group relative flex items-center gap-2.5 px-4 py-3 rounded-full bg-pinkCustom hover:bg-pink-600 text-white shadow-[0_10px_25px_rgba(236,72,153,0.4)] transition-all duration-300 hover:scale-105 cursor-pointer border border-pink-400/30"
           title="Request Quick Callback"
         >
-          {isOpen ? <X size={22} /> : <Phone size={20} className="animate-bounce" />}
+          {isOpen ? (
+            <>
+              <X size={20} className="shrink-0" />
+              <span className="text-xs font-bold font-headline hidden sm:inline-block pr-1">Close Form</span>
+            </>
+          ) : (
+            <>
+              <Phone size={18} className="animate-bounce shrink-0" />
+              <span className="text-xs font-bold font-headline hidden sm:inline-block pr-1">Book Callback</span>
+            </>
+          )}
         </button>
 
       </div>
 
       {/* Quick Callback Modal Pop-up */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 z-50 w-[320px] sm:w-[360px] p-6 rounded-3xl bg-zinc-950/95 border border-white/15 shadow-[0_25px_60px_rgba(0,0,0,0.8)] backdrop-blur-2xl text-left select-none animate-in fade-in slide-in-from-bottom-4 duration-300">
+        <div className="fixed bottom-24 right-6 z-[9999] w-[320px] sm:w-[360px] p-6 rounded-3xl bg-zinc-950/95 border border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.85)] backdrop-blur-2xl text-left select-none animate-in fade-in slide-in-from-bottom-4 duration-300">
           
           <div className="flex justify-between items-center mb-4">
-            <span className="text-xs font-mono font-bold uppercase tracking-wider text-pinkCustom bg-pinkCustom/10 border border-pinkCustom/20 px-3 py-1 rounded-full flex items-center gap-1">
-              <Sparkles size={12} /> Quick Callback
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-pinkCustom bg-pinkCustom/10 border border-pinkCustom/20 px-3 py-1 rounded-full flex items-center gap-1.5">
+              <Headphones size={13} /> Quick Callback
             </span>
-            <button onClick={() => setIsOpen(false)} className="text-zinc-400 hover:text-white cursor-pointer">
+            <button onClick={() => setIsOpen(false)} className="text-zinc-400 hover:text-white cursor-pointer p-1">
               <X size={18} />
             </button>
           </div>
@@ -80,9 +90,9 @@ export default function FloatingQuickActions() {
           {status === 'success' ? (
             <div className="py-6 text-center flex flex-col items-center gap-3">
               <CheckCircle2 size={48} className="text-pinkCustom" />
-              <h4 className="text-zinc-100 font-bold font-headline">Callback Requested!</h4>
+              <h4 className="text-zinc-100 font-bold font-headline text-base">Callback Requested!</h4>
               <p className="text-zinc-400 text-xs leading-relaxed">
-                Our technical team will call you at <strong className="text-zinc-200">{formData.phone}</strong> shortly.
+                Our technical team will call you at <strong className="text-zinc-200">{formData.phone}</strong> within 15 minutes.
               </p>
               <button
                 onClick={() => { setStatus('idle'); setIsOpen(false); }}
@@ -136,7 +146,7 @@ export default function FloatingQuickActions() {
               <button
                 type="submit"
                 disabled={status === 'submitting'}
-                className="w-full mt-2 py-3 rounded-xl text-xs font-bold bg-pinkCustom text-white hover:bg-pink-600 transition-colors flex items-center justify-center gap-1.5 shadow-[0_0_15px_rgba(236,72,153,0.3)] cursor-pointer"
+                className="w-full mt-2 py-3 rounded-xl text-xs font-bold bg-pinkCustom text-white hover:bg-pink-600 transition-colors flex items-center justify-center gap-1.5 shadow-[0_0_15px_rgba(236,72,153,0.35)] cursor-pointer"
               >
                 {status === 'submitting' ? 'Submitting...' : 'Call Me Back'} <Send size={13} />
               </button>
