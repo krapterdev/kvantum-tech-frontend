@@ -4,6 +4,7 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import ScrollToTop from '@/components/layout/ScrollToTop';
 import ScrollVideoPlayer from '@/components/ScrollVideoPlayer';
+import FloatingQuickActions from '@/components/sections/FloatingQuickActions';
 
 // Page components
 import Home from '@/pages/Home';
@@ -394,6 +395,7 @@ export default function App() {
       </main>
 
       {!isAdminPath && <Footer seoPages={seoPages} theme={theme} settings={settings} services={services} />}
+      {!isAdminPath && <FloatingQuickActions />}
     </div>
   );
 }

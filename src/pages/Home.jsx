@@ -4,7 +4,10 @@ import TrustedBy from '@/components/sections/TrustedBy';
 import About from '@/components/sections/About';
 import Services from '@/components/sections/Services';
 import BusinessAutomationHighlight from '@/components/sections/BusinessAutomationHighlight';
+import AutomationCalculator from '@/components/sections/AutomationCalculator';
 import SoftwareProducts from '@/components/sections/SoftwareProducts';
+import InteractiveDashboardMockup from '@/components/sections/InteractiveDashboardMockup';
+import CardStackShowcase from '@/components/sections/CardStackShowcase';
 import AutomationFeatures from '@/components/sections/AutomationFeatures';
 import Industries from '@/components/sections/Industries';
 import WhyChooseUs from '@/components/sections/WhyChooseUs';
@@ -19,10 +22,13 @@ import FAQ from '@/components/sections/FAQ';
 import BlogPreview from '@/components/sections/BlogPreview';
 import CTA from '@/components/sections/CTA';
 import HomeContact from '@/components/sections/HomeContact';
+import SeoSchema from '@/components/sections/SeoSchema';
 
 export default function Home({ services = [], blogs = [], settings }) {
   return (
     <div className="fade-in-up">
+      {/* JSON-LD Rich Snippet SEO Schema */}
+      <SeoSchema />
 
       {/* 1. Hero Banner */}
       <Hero settings={settings} />
@@ -39,49 +45,58 @@ export default function Home({ services = [], blogs = [], settings }) {
       {/* 5. Business Automation Solutions (Main Highlight) */}
       <BusinessAutomationHighlight />
 
-      {/* 6. Software Products */}
+      {/* 6. Interactive ROI & Time-Saved Calculator */}
+      <AutomationCalculator />
+
+      {/* 7. Software Products */}
       <SoftwareProducts />
 
-      {/* 7. Automation Features */}
+      {/* 8. Interactive Live Dashboard Previews */}
+      <InteractiveDashboardMockup />
+
+      {/* 9. Interactive 3D Card Stack Fan-Out Showcase */}
+      <CardStackShowcase />
+
+      {/* 10. Automation Features Checklist */}
       <AutomationFeatures />
 
-      {/* 8. Industries We Serve */}
+      {/* 11. Industries We Serve */}
       <Industries />
 
-      {/* 9. Why Choose Kvantum Tech Solutions */}
+      {/* 12. Why Choose Kvantum Tech Solutions */}
       <WhyChooseUs />
 
-      {/* 10. Technologies We Use */}
+      {/* 13. Technologies We Use */}
       <Technologies />
 
-      {/* 11. Our Process / How We Work */}
+      {/* 14. Our Process / How We Work */}
       <HowWeWork />
 
-      {/* 12. Portfolio / Case Studies */}
+      {/* 15. Portfolio / Case Studies */}
       <Projects />
 
-      {/* 13. Live Demo */}
+      {/* 16. Live Demo */}
       <LiveDemo />
 
-      {/* 14. Success Metrics */}
+      {/* 17. Success Metrics */}
       <Stats settings={settings} />
 
-      {/* 15. Client Testimonials */}
+      {/* 18. Client Testimonials */}
       <Testimonials settings={settings} />
 
-      {/* 16. Pricing Plans */}
+      {/* 19. Pricing Plans */}
       <Pricing />
 
-      {/* 17. FAQs (15 Questions) */}
+      {/* 20. FAQs (15 Questions) */}
       <FAQ />
 
-      {/* 18. Latest Blogs */}
+      {/* 21. Latest Blogs */}
       <BlogPreview blogs={blogs} />
 
-      {/* 19. Free Consultation CTA */}
+      {/* 22. Free Consultation CTA */}
       <CTA />
 
-      {/* 20. Contact Form */}
+      {/* 23. Contact Form */}
       <HomeContact />
 
     </div>
