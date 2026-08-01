@@ -70,6 +70,18 @@ export default function AdminPortalPage({
   const [isEditingSeoSetting, setIsEditingSeoSetting] = useState(false);
   const [editingSeoSettingItem, setEditingSeoSettingItem] = useState(null);
 
+  // Blog touched state for real-time auto-fill
+  const [blogTouched, setBlogTouched] = useState({
+    slug: false,
+    metaTitle: false,
+    metaDesc: false,
+    ogTitle: false,
+    ogDesc: false,
+    ogImage: false,
+    twitterTitle: false,
+    twitterDesc: false,
+  });
+
   // Server state indicators
   const [dbConnected, setDbConnected] = useState(false);
   const [serverEngine, setServerEngine] = useState('Checking...');
@@ -534,18 +546,6 @@ export default function AdminPortalPage({
       <form onSubmit={handleSaveItem} className="flex flex-col gap-6 bg-zinc-900/20 border border-white/5 p-8 rounded-2xl">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-1.5 font-bold">URL Target Slug</label>
-            <input 
-              type="text" 
-              required 
-              disabled={!!editItem._id}
-              placeholder="e.g. nextjs-seo-guide"
-              value={editItem.id || ''}
-              onChange={(e) => setEditItem(prev => ({ ...prev, id: slugify(e.target.value) }))}
-              className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm disabled:opacity-50 outline-none focus:border-cyanCustom/40 font-mono"
-            />
-          </div>
-          <div>
             <label className="block text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-1.5 font-bold font-headline">Document Title</label>
             <input 
               type="text" 
@@ -553,12 +553,40 @@ export default function AdminPortalPage({
               placeholder="Title name of the article..."
               value={editItem.title || ''}
               onChange={(e) => {
-                setEditItem(prev => ({ ...prev, title: e.target.value }));
-                if (!editItem._id) {
-                  setEditItem(prev => ({ ...prev, id: slugify(e.target.value) }));
-                }
+                const newTitle = e.target.value;
+                setEditItem(prev => {
+                  const updated = { ...prev, title: newTitle };
+                  if (!blogTouched.slug && !prev._id) {
+                    const newSlug = slugify(newTitle);
+                    updated.id = newSlug;
+                    updated.canonical = `https://kvantumtechsolutions.com/blog/${newSlug}`;
+                  }
+                  if (!blogTouched.metaTitle) updated.metaTitle = newTitle;
+                  if (!blogTouched.ogTitle) updated.ogTitle = newTitle;
+                  if (!blogTouched.twitterTitle) updated.twitterTitle = newTitle;
+                  return updated;
+                });
               }}
-              className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
+              className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-bold"
+            />
+          </div>
+          <div>
+            <label className="block text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-1.5 font-bold">URL Target Slug</label>
+            <input 
+              type="text" 
+              required 
+              placeholder="e.g. nextjs-seo-guide"
+              value={editItem.id || ''}
+              onChange={(e) => {
+                const newSlug = slugify(e.target.value);
+                setBlogTouched(prev => ({ ...prev, slug: true }));
+                setEditItem(prev => ({ 
+                  ...prev, 
+                  id: newSlug,
+                  canonical: `https://kvantumtechsolutions.com/blog/${newSlug}`
+                }));
+              }}
+              className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono"
             />
           </div>
         </div>
@@ -606,7 +634,16 @@ export default function AdminPortalPage({
             required 
             placeholder="Brief tagline shown on blog listing cards..."
             value={editItem.summary || ''}
-            onChange={(e) => setEditItem(prev => ({ ...prev, summary: e.target.value }))}
+            onChange={(e) => {
+              const newSummary = e.target.value;
+              setEditItem(prev => {
+                const updated = { ...prev, summary: newSummary };
+                if (!blogTouched.metaDesc) updated.metaDesc = newSummary;
+                if (!blogTouched.ogDesc) updated.ogDesc = newSummary;
+                if (!blogTouched.twitterDesc) updated.twitterDesc = newSummary;
+                return updated;
+              });
+            }}
             className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
           />
         </div>
@@ -628,7 +665,14 @@ export default function AdminPortalPage({
               type="url"
               placeholder="https://images.unsplash.com/... or S3 CDN URL"
               value={editItem.image || ''}
-              onChange={(e) => setEditItem(prev => ({ ...prev, image: e.target.value }))}
+              onChange={(e) => {
+                const newImg = e.target.value;
+                setEditItem(prev => {
+                  const updated = { ...prev, image: newImg };
+                  if (!blogTouched.ogImage) updated.ogImage = newImg;
+                  return updated;
+                });
+              }}
               className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono"
             />
           </div>
@@ -651,27 +695,33 @@ export default function AdminPortalPage({
 
         {/* SEO & Meta Tags Panel */}
         <div className="border border-white/8 rounded-2xl p-6 bg-zinc-950/30 flex flex-col gap-5">
-          <h3 className="text-xs font-mono text-cyanCustom uppercase tracking-widest font-bold border-b border-white/8 pb-3">🔍 SEO & Meta Tags — Auto-fills from Title & Summary</h3>
+          <h3 className="text-xs font-mono text-cyanCustom uppercase tracking-widest font-bold border-b border-white/8 pb-3">🔍 SEO & Meta Tags — Real-Time Auto-Fills (Independent Customization Supported)</h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1 font-bold">Meta Title <span className="text-zinc-600">(auto-fill from title)</span></label>
+              <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1 font-bold">Meta Title <span className="text-zinc-600">(Separate from Document Title)</span></label>
               <input
                 type="text"
                 placeholder="Google SERP title override..."
                 value={editItem.metaTitle || ''}
-                onChange={(e) => setEditItem(prev => ({ ...prev, metaTitle: e.target.value }))}
+                onChange={(e) => {
+                  setBlogTouched(prev => ({ ...prev, metaTitle: true }));
+                  setEditItem(prev => ({ ...prev, metaTitle: e.target.value }));
+                }}
                 className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
               />
               <span className="text-[10px] text-zinc-600 font-mono mt-1 block">{(editItem.metaTitle || '').length}/60 chars</span>
             </div>
             <div>
-              <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1 font-bold">Meta Description <span className="text-zinc-600">(auto-fill from summary)</span></label>
+              <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1 font-bold">Meta Description <span className="text-zinc-600">(Separate from Summary)</span></label>
               <input
                 type="text"
                 placeholder="Google SERP description override..."
                 value={editItem.metaDesc || ''}
-                onChange={(e) => setEditItem(prev => ({ ...prev, metaDesc: e.target.value }))}
+                onChange={(e) => {
+                  setBlogTouched(prev => ({ ...prev, metaDesc: true }));
+                  setEditItem(prev => ({ ...prev, metaDesc: e.target.value }));
+                }}
                 className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
               />
               <span className="text-[10px] text-zinc-600 font-mono mt-1 block">{(editItem.metaDesc || '').length}/160 chars</span>
@@ -690,7 +740,7 @@ export default function AdminPortalPage({
           </div>
 
           <div>
-            <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1 font-bold">Canonical URL <span className="text-zinc-600">(auto-set to /blog/slug)</span></label>
+            <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1 font-bold">Canonical URL</label>
             <input
               type="url"
               placeholder={`https://kvantumtechsolutions.com/blog/${editItem.id || 'your-slug'}`}
@@ -703,34 +753,43 @@ export default function AdminPortalPage({
           <h4 className="text-[10px] font-mono text-pinkCustom uppercase tracking-widest font-bold border-b border-white/8 pb-2">Open Graph Tags (Facebook / LinkedIn / WhatsApp)</h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1 font-bold">OG Title <span className="text-zinc-600">(auto-fill from Meta Title)</span></label>
+              <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1 font-bold">OG Title</label>
               <input
                 type="text"
                 placeholder="Open Graph title..."
                 value={editItem.ogTitle || ''}
-                onChange={(e) => setEditItem(prev => ({ ...prev, ogTitle: e.target.value }))}
+                onChange={(e) => {
+                  setBlogTouched(prev => ({ ...prev, ogTitle: true }));
+                  setEditItem(prev => ({ ...prev, ogTitle: e.target.value }));
+                }}
                 className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
               />
             </div>
             <div>
-              <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1 font-bold">OG Description <span className="text-zinc-600">(auto-fill from Meta Desc)</span></label>
+              <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1 font-bold">OG Description</label>
               <input
                 type="text"
                 placeholder="Open Graph description..."
                 value={editItem.ogDesc || ''}
-                onChange={(e) => setEditItem(prev => ({ ...prev, ogDesc: e.target.value }))}
+                onChange={(e) => {
+                  setBlogTouched(prev => ({ ...prev, ogDesc: true }));
+                  setEditItem(prev => ({ ...prev, ogDesc: e.target.value }));
+                }}
                 className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
               />
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1 font-bold">OG Image URL <span className="text-zinc-600">(auto-fill from Cover Image)</span></label>
+              <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1 font-bold">OG Image URL</label>
               <input
                 type="url"
                 placeholder="https://... Open Graph share image"
                 value={editItem.ogImage || ''}
-                onChange={(e) => setEditItem(prev => ({ ...prev, ogImage: e.target.value }))}
+                onChange={(e) => {
+                  setBlogTouched(prev => ({ ...prev, ogImage: true }));
+                  setEditItem(prev => ({ ...prev, ogImage: e.target.value }));
+                }}
                 className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono"
               />
             </div>
@@ -750,12 +809,15 @@ export default function AdminPortalPage({
           <h4 className="text-[10px] font-mono text-sky-400 uppercase tracking-widest font-bold border-b border-white/8 pb-2">Twitter Card Tags</h4>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             <div>
-              <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1 font-bold">Twitter Title <span className="text-zinc-600">(auto-fill)</span></label>
+              <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1 font-bold">Twitter Title</label>
               <input
                 type="text"
                 placeholder="Twitter card title..."
                 value={editItem.twitterTitle || ''}
-                onChange={(e) => setEditItem(prev => ({ ...prev, twitterTitle: e.target.value }))}
+                onChange={(e) => {
+                  setBlogTouched(prev => ({ ...prev, twitterTitle: true }));
+                  setEditItem(prev => ({ ...prev, twitterTitle: e.target.value }));
+                }}
                 className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
               />
             </div>
@@ -765,7 +827,10 @@ export default function AdminPortalPage({
                 type="text"
                 placeholder="Twitter card description..."
                 value={editItem.twitterDesc || ''}
-                onChange={(e) => setEditItem(prev => ({ ...prev, twitterDesc: e.target.value }))}
+                onChange={(e) => {
+                  setBlogTouched(prev => ({ ...prev, twitterDesc: true }));
+                  setEditItem(prev => ({ ...prev, twitterDesc: e.target.value }));
+                }}
                 className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
               />
             </div>
@@ -781,33 +846,6 @@ export default function AdminPortalPage({
               </select>
             </div>
           </div>
-
-          {/* Auto-fill Helper Button */}
-          <button
-            type="button"
-            onClick={() => {
-              const title = editItem.title || '';
-              const summary = editItem.summary || '';
-              const image = editItem.image || '';
-              const slug = editItem.id || '';
-              setEditItem(prev => ({
-                ...prev,
-                metaTitle: prev.metaTitle || title,
-                metaDesc: prev.metaDesc || summary,
-                canonical: prev.canonical || `https://kvantumtechsolutions.com/blog/${slug}`,
-                ogTitle: prev.ogTitle || prev.metaTitle || title,
-                ogDesc: prev.ogDesc || prev.metaDesc || summary,
-                ogImage: prev.ogImage || image,
-                ogType: prev.ogType || 'article',
-                twitterTitle: prev.twitterTitle || prev.ogTitle || prev.metaTitle || title,
-                twitterDesc: prev.twitterDesc || prev.ogDesc || prev.metaDesc || summary,
-                twitterCard: prev.twitterCard || 'summary_large_image',
-              }));
-            }}
-            className="w-full py-2.5 rounded-xl bg-cyanCustom/10 border border-cyanCustom/20 text-cyanCustom text-xs font-mono font-bold hover:bg-cyanCustom/20 transition-colors cursor-pointer"
-          >
-            ⚡ Auto-Fill All SEO Fields from Title & Summary
-          </button>
         </div>
 
         <Button type="submit" variant="primary" className="py-3 mt-4 self-start px-8 gap-2">
@@ -1004,13 +1042,56 @@ export default function AdminPortalPage({
     setIsEditing(true);
     if (item) {
       setEditItem({ ...item });
-      setOriginalId(item.id || item.slug || null);
+      setOriginalId(item.id || item._id || item.slug || null);
+      if (type === 'blog') {
+        setBlogTouched({
+          slug: true,
+          metaTitle: true,
+          metaDesc: true,
+          ogTitle: true,
+          ogDesc: true,
+          ogImage: true,
+          twitterTitle: true,
+          twitterDesc: true,
+        });
+      }
     } else {
       setOriginalId(null);
       if (type === 'service') {
         setEditItem({ id: '', iconName: 'Code', title: '', shortDesc: '', longDesc: '', color: 'var(--accent-cyan)', techStack: '', metrics: '', metaTitle: '', metaDesc: '' });
       } else if (type === 'blog') {
-        setEditItem({ id: '', category: 'AI & Chatbots', title: '', summary: '', content: '', readTime: '5 min read', date: new Date().toLocaleDateString(), metaTitle: '', metaDesc: '' });
+        setBlogTouched({
+          slug: false,
+          metaTitle: false,
+          metaDesc: false,
+          ogTitle: false,
+          ogDesc: false,
+          ogImage: false,
+          twitterTitle: false,
+          twitterDesc: false,
+        });
+        setEditItem({
+          id: '',
+          category: 'AI & Chatbots',
+          title: '',
+          summary: '',
+          content: '',
+          readTime: '5 min read',
+          date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+          author: 'Kvantum Tech Team',
+          image: '',
+          keywords: '',
+          canonical: '',
+          metaTitle: '',
+          metaDesc: '',
+          ogTitle: '',
+          ogDesc: '',
+          ogImage: '',
+          ogType: 'article',
+          twitterTitle: '',
+          twitterDesc: '',
+          twitterCard: 'summary_large_image'
+        });
       } else if (type === 'seo') {
         setEditItem({ slug: '', title: '', content: '', metaTitle: '', metaDesc: '', metaKeywords: '' });
       } else if (type === 'portfolio') {
@@ -1035,14 +1116,27 @@ export default function AdminPortalPage({
         }
       } else if (editType === 'blog') {
         const payloadId = editItem.id || slugify(editItem.title);
-        const completeItem = { ...editItem, id: payloadId };
+        const completeItem = {
+          ...editItem,
+          id: payloadId,
+          _id: payloadId,
+          metaTitle: editItem.metaTitle || editItem.title,
+          metaDesc: editItem.metaDesc || editItem.summary,
+          ogTitle: editItem.ogTitle || editItem.metaTitle || editItem.title,
+          ogDesc: editItem.ogDesc || editItem.metaDesc || editItem.summary,
+          ogImage: editItem.ogImage || editItem.image,
+          twitterTitle: editItem.twitterTitle || editItem.ogTitle || editItem.metaTitle || editItem.title,
+          twitterDesc: editItem.twitterDesc || editItem.ogDesc || editItem.metaDesc || editItem.summary,
+          twitterCard: editItem.twitterCard || 'summary_large_image',
+          canonical: editItem.canonical || `https://kvantumtechsolutions.com/blog/${payloadId}`
+        };
         
         if (originalId) {
           await blogService.updateBlog(originalId, completeItem);
-          setBlogs(prev => prev.map(b => b.id === originalId ? completeItem : b));
+          setBlogs(prev => prev.map(b => (b.id === originalId || b._id === originalId || b.slug === originalId) ? completeItem : b));
         } else {
           const created = await blogService.createBlog(completeItem);
-          setBlogs(prev => [...prev, created]);
+          setBlogs(prev => [created, ...prev]);
         }
       } else if (editType === 'seo') {
         if (originalId) {
@@ -1085,11 +1179,12 @@ export default function AdminPortalPage({
     }
   };
 
-  const handleDeleteBlog = async (id) => {
+  const handleDeleteBlog = async (rawId) => {
+    if (!rawId) return;
     if (window.confirm('Delete this blog document node?')) {
       try {
-        await blogService.deleteBlog(id);
-        setBlogs(prev => prev.filter(b => b.id !== id));
+        await blogService.deleteBlog(rawId);
+        setBlogs(prev => prev.filter(b => b.id !== rawId && b._id !== rawId && b.slug !== rawId));
         alert('[SUCCESS] Blog deleted.');
       } catch (err) {
         alert('[ERROR] Delete failed: ' + (err.response?.data?.error || err.message));
@@ -1816,32 +1911,35 @@ export default function AdminPortalPage({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/8 text-zinc-400 bg-zinc-900/10">
-                  {blogs.map(blog => (
-                    <tr key={blog.id} className="hover:bg-white/[0.01]">
-                      <td className="px-5 py-4">
-                        <span className="tech-badge">{blog.category}</span>
-                      </td>
-                      <td className="px-5 py-4 font-bold text-zinc-200 truncate max-w-[250px]" title={blog.title}>
-                        {blog.title}
-                      </td>
-                      <td className="px-5 py-4 font-mono text-xs text-cyanCustom">/{blog.id}</td>
-                      <td className="px-5 py-4 font-mono text-xs">{blog.readTime}</td>
-                      <td className="px-5 py-4 text-right flex justify-end gap-2">
-                        <button 
-                          onClick={() => openEditor('blog', blog)}
-                          className="p-2 bg-white/[0.02] border border-white/8 rounded-lg hover:border-cyanCustom/30 hover:text-cyanCustom transition-colors"
-                        >
-                          <Edit2 size={14} />
-                        </button>
-                        <button 
-                          onClick={() => handleDeleteBlog(blog.id)}
-                          className="p-2 bg-white/[0.02] border border-white/8 rounded-lg hover:border-red-500/30 hover:text-red-400 transition-colors"
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                  {(Array.isArray(blogs) ? blogs : []).map(blog => {
+                    const blogKey = blog.id || blog._id || blog.slug;
+                    return (
+                      <tr key={blogKey} className="hover:bg-white/[0.01]">
+                        <td className="px-5 py-4">
+                          <span className="tech-badge">{blog.category || 'Web & App Dev'}</span>
+                        </td>
+                        <td className="px-5 py-4 font-bold text-zinc-200 truncate max-w-[250px]" title={blog.title}>
+                          {blog.title}
+                        </td>
+                        <td className="px-5 py-4 font-mono text-xs text-cyanCustom">/{blogKey}</td>
+                        <td className="px-5 py-4 font-mono text-xs">{blog.readTime || '5 min read'}</td>
+                        <td className="px-5 py-4 text-right flex justify-end gap-2">
+                          <button 
+                            onClick={() => openEditor('blog', blog)}
+                            className="p-2 bg-white/[0.02] border border-white/8 rounded-lg hover:border-cyanCustom/30 hover:text-cyanCustom transition-colors"
+                          >
+                            <Edit2 size={14} />
+                          </button>
+                          <button 
+                            onClick={() => handleDeleteBlog(blogKey)}
+                            className="p-2 bg-white/[0.02] border border-white/8 rounded-lg hover:border-red-500/30 hover:text-red-400 transition-colors"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
