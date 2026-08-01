@@ -1,99 +1,92 @@
-import React from 'react';
-import Card from '../ui/Card';
+import React, { useState } from 'react';
+import { ArrowRight, CheckCircle2, Search, Target, Palette, Code, Cpu, Rocket, Headphones } from 'lucide-react';
 import Badge from '../ui/Badge';
 
 const steps = [
-  {
-    num: '01',
-    title: 'Discovery & Consultation',
-    text: 'We understand your business, identify challenges, gather detailed requirements, and define clear project goals. This helps us build a solution that truly fits your operations.',
-    accent: 'text-cyanCustom',
-    border: 'group-hover:border-cyanCustom/30',
-  },
-  {
-    num: '02',
-    title: 'Planning & Strategy',
-    text: 'Our experts prepare system architecture, user flow diagrams, technology stack recommendations, project timeline, and a structured development roadmap for your approval.',
-    accent: 'text-pinkCustom',
-    border: 'group-hover:border-pinkCustom/30',
-  },
-  {
-    num: '03',
-    title: 'UI/UX Design',
-    text: 'We design intuitive, responsive, and user-friendly interfaces that deliver an exceptional user experience across all devices — desktop, tablet, and mobile.',
-    accent: 'text-purpleCustom',
-    border: 'group-hover:border-purpleCustom/30',
-  },
-  {
-    num: '04',
-    title: 'Development',
-    text: 'Our developers build secure, scalable, and high-performance web applications, mobile apps, CRM systems, ERP platforms, and automation software using modern technology stacks.',
-    accent: 'text-cyanCustom',
-    border: 'group-hover:border-cyanCustom/30',
-  },
-  {
-    num: '05',
-    title: 'Testing & Quality Assurance',
-    text: 'Every module undergoes functional testing, security checks, performance testing, and quality assurance reviews before deployment to ensure a bug-free experience.',
-    accent: 'text-pinkCustom',
-    border: 'group-hover:border-pinkCustom/30',
-  },
-  {
-    num: '06',
-    title: 'Deployment',
-    text: 'We deploy your software on secure cloud or on-premise infrastructure with minimal downtime, proper configuration, and thorough go-live checks.',
-    accent: 'text-purpleCustom',
-    border: 'group-hover:border-purpleCustom/30',
-  },
-  {
-    num: '07',
-    title: 'Training & Support',
-    text: 'Our team provides comprehensive user training, documentation, maintenance, updates, and long-term technical support to ensure your team gets the most out of the software.',
-    accent: 'text-cyanCustom',
-    border: 'group-hover:border-cyanCustom/30',
-  },
+  { step: '01', title: 'DISCOVER', icon: Search, color: 'text-pinkCustom', desc: 'In-depth requirement analysis & mapping your existing operational workflows.' },
+  { step: '02', title: 'STRATEGY', icon: Target, color: 'text-cyanCustom', desc: 'Designing system architecture, database schemas, and automation blueprints.' },
+  { step: '03', title: 'DESIGN', icon: Palette, color: 'text-purpleCustom', desc: 'Crafting responsive UI/UX prototypes, dashboard wireframes, and design tokens.' },
+  { step: '04', title: 'DEVELOPMENT', icon: Code, color: 'text-emerald-400', desc: 'Agile full-stack engineering with clean modular code & secure APIs.' },
+  { step: '05', title: 'AUTOMATION', icon: Cpu, color: 'text-amber-400', desc: 'Integrating WhatsApp bots, CRM triggers, and automated notification engines.' },
+  { step: '06', title: 'LAUNCH', icon: Rocket, color: 'text-pinkCustom', desc: 'Rigorous QA testing, cloud server deployment, and team onboarding.' },
+  { step: '07', title: 'SUPPORT', icon: Headphones, color: 'text-cyanCustom', desc: '24/7 system monitoring, rapid bug-fixes, and continuous feature updates.' },
 ];
 
 export default function HowWeWork() {
+  const [activeStep, setActiveStep] = useState(steps[0]);
+
   return (
-    <section className="bg-zinc-950/20 border-y border-white/5 py-24 px-6 select-none">
-      <div className="container mx-auto max-w-[1280px]">
+    <section className="container mx-auto max-w-[1280px] px-6 py-24 select-none text-left relative z-10">
 
-        {/* Header */}
-        <div className="text-center mb-16">
-          <Badge className="mb-5 mx-auto inline-flex items-center gap-1.5 bg-pinkCustom/10 border-pinkCustom/20 text-pinkCustom">
-            Our Process
-          </Badge>
-          <h2 className="text-3xl sm:text-4xl font-headline font-bold text-zinc-100 leading-tight mb-5">
-            Our Proven Software <br />
-            <span className="gradient-text">Development Process</span>
-          </h2>
-          <p className="text-zinc-400 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
-            We follow a structured development methodology that ensures every project is delivered on time, within budget, and aligned with your business objectives.
-          </p>
-        </div>
-
-        {/* Steps Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {steps.map((step, idx) => (
-            <div key={idx} className="relative flex flex-col items-start text-left group">
-              <Card className={`p-7 border h-full w-full flex flex-col gap-4 hover:-translate-y-1.5 transition-all duration-300 ${step.border}`}>
-                <span className={`text-4xl font-black font-headline ${step.accent} opacity-30 group-hover:opacity-100 transition-opacity duration-300`}>
-                  {step.num}
-                </span>
-                <div>
-                  <h3 className="text-base font-headline font-bold text-zinc-100 mb-2">{step.title}</h3>
-                  <p className="text-zinc-400 text-xs sm:text-sm leading-relaxed">{step.text}</p>
-                </div>
-              </Card>
-              {/* Connector line — visible on lg only, except last two items */}
-              {idx < 3 && (
-                <div className="hidden lg:block absolute top-[12%] left-[92%] w-[35%] h-[1px] border-t-2 border-dashed border-white/8 z-0 group-hover:border-white/15 transition-colors duration-300" />
-              )}
-            </div>
-          ))}
-        </div>
+      {/* Header */}
+      <div className="text-center mb-16">
+        <Badge className="mb-5 mx-auto inline-flex items-center gap-1.5 bg-purpleCustom/10 border-purpleCustom/20 text-purpleCustom">
+          Our Development Process
+        </Badge>
+        <h2 className="text-3xl sm:text-4xl font-headline font-bold text-zinc-100 leading-tight mb-5">
+          How We Work — <br />
+          <span className="gradient-text">7-Step Agile Software Delivery</span>
+        </h2>
+        <p className="text-zinc-400 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
+          From initial discovery to final deployment and 24/7 support, our structured workflow ensures transparent execution and zero delays.
+        </p>
       </div>
+
+      {/* Horizontal Process Steps Bar */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-10">
+        {steps.map((item) => {
+          const Icon = item.icon;
+          const isActive = activeStep.step === item.step;
+
+          return (
+            <div
+              key={item.step}
+              onMouseEnter={() => setActiveStep(item)}
+              onClick={() => setActiveStep(item)}
+              className={`p-5 rounded-2xl border transition-all duration-300 cursor-pointer flex flex-col justify-between text-left ${
+                isActive
+                  ? 'bg-white/10 border-pinkCustom/60 shadow-[0_0_20px_rgba(236,72,153,0.3)] scale-[1.03] z-20'
+                  : 'bg-white/[0.02] border-white/8 hover:border-white/20 z-10'
+              }`}
+            >
+              <div>
+                <span className={`text-xs font-mono font-extrabold block mb-2 ${item.color}`}>{item.step}</span>
+                <h4 className="text-xs font-headline font-bold text-zinc-100 mb-2 leading-snug">{item.title}</h4>
+              </div>
+              <div className={`p-2 rounded-xl bg-white/5 border border-white/10 w-fit ${item.color}`}>
+                <Icon size={16} />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Active Step Expansion Panel */}
+      <div className="p-8 rounded-3xl bg-zinc-950/90 border border-white/15 backdrop-blur-2xl flex flex-col sm:flex-row justify-between items-center gap-6 shadow-xl">
+        <div className="flex items-start gap-4">
+          <div className="p-3.5 rounded-2xl bg-white/10 text-white shrink-0">
+            <activeStep.icon size={28} className={activeStep.color} />
+          </div>
+          <div>
+            <span className={`text-xs font-mono font-bold uppercase tracking-wider ${activeStep.color}`}>
+              Phase {activeStep.step} Detail Breakdown:
+            </span>
+            <h3 className="text-2xl font-headline font-bold text-zinc-100 mt-0.5 mb-1">{activeStep.title}</h3>
+            <p className="text-zinc-300 text-sm leading-relaxed max-w-2xl">{activeStep.desc}</p>
+          </div>
+        </div>
+
+        <button
+          onClick={() => {
+            const el = document.getElementById('contact');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }}
+          className="px-6 py-3.5 rounded-xl text-xs font-bold bg-pinkCustom text-white hover:bg-pink-600 transition-colors shadow-[0_0_15px_rgba(236,72,153,0.35)] shrink-0 cursor-pointer"
+        >
+          Discuss Your Project Phase →
+        </button>
+      </div>
+
     </section>
   );
 }

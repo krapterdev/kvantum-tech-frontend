@@ -1,127 +1,127 @@
-import React from 'react';
-import {
-  Factory, Heart, Hotel, Home, GraduationCap, ShoppingBag,
-  Truck, Building2, Briefcase, Rocket
-} from 'lucide-react';
+import React, { useState } from 'react';
+import { Building2, Hotel, Heart, Factory, GraduationCap, ShoppingBag, Truck, HardHat, ArrowRight } from 'lucide-react';
 import Badge from '../ui/Badge';
 
-const industries = [
+const industryList = [
   {
-    icon: Factory,
-    name: 'Manufacturing',
-    color: 'text-cyanCustom',
-    bgColor: 'bg-cyanCustom/10 border-cyanCustom/20',
-    desc: 'Digitize production, inventory, procurement, vendor management, quality control, and reporting with custom manufacturing software.'
-  },
-  {
-    icon: Heart,
-    name: 'Healthcare',
-    color: 'text-pinkCustom',
-    bgColor: 'bg-pinkCustom/10 border-pinkCustom/20',
-    desc: 'Develop secure healthcare software, patient management systems, appointment booking, hospital CRM, billing, and staff management solutions.'
-  },
-  {
+    id: 'hotels',
+    name: 'HOTELS & HOSPITALITY',
+    tag: 'Hotel Automation',
     icon: Hotel,
-    name: 'Hotels & Hospitality',
-    color: 'text-purpleCustom',
-    bgColor: 'bg-purpleCustom/10 border-purpleCustom/20',
-    desc: 'Automate reservations, room management, guest communication, billing, housekeeping, and hotel operations with smart hospitality software.'
-  },
-  {
-    icon: Home,
-    name: 'Real Estate',
-    color: 'text-cyanCustom',
-    bgColor: 'bg-cyanCustom/10 border-cyanCustom/20',
-    desc: 'Manage leads, properties, site visits, follow-ups, customer communication, documentation, and sales using real estate CRM software.'
-  },
-  {
-    icon: GraduationCap,
-    name: 'Education',
     color: 'text-pinkCustom',
-    bgColor: 'bg-pinkCustom/10 border-pinkCustom/20',
-    desc: 'Build school ERP systems, student management software, attendance systems, fee management, online learning platforms, and staff management solutions.'
+    desc: 'Automated room reservations, guest check-in, billing, restaurant POS, and WhatsApp feedback loops.',
+    highlights: ['Room & Booking Engine', 'Restaurant POS Sync', 'Guest CRM & Billing'],
   },
   {
-    icon: ShoppingBag,
-    name: 'Retail & Ecommerce',
-    color: 'text-purpleCustom',
-    bgColor: 'bg-purpleCustom/10 border-purpleCustom/20',
-    desc: 'Manage products, orders, customers, inventory, billing, warehouses, and online stores with integrated retail software.'
-  },
-  {
-    icon: Truck,
-    name: 'Logistics & Transportation',
-    color: 'text-cyanCustom',
-    bgColor: 'bg-cyanCustom/10 border-cyanCustom/20',
-    desc: 'Track shipments, vehicles, drivers, deliveries, warehouses, invoices, and operational workflows from one centralized dashboard.'
-  },
-  {
+    id: 'real-estate',
+    name: 'REAL ESTATE',
+    tag: 'Property CRM',
     icon: Building2,
-    name: 'Construction',
-    color: 'text-pinkCustom',
-    bgColor: 'bg-pinkCustom/10 border-pinkCustom/20',
-    desc: 'Manage projects, contractors, vendors, materials, equipment, budgeting, and site operations digitally.'
-  },
-  {
-    icon: Briefcase,
-    name: 'Finance & Professional Services',
-    color: 'text-purpleCustom',
-    bgColor: 'bg-purpleCustom/10 border-purpleCustom/20',
-    desc: 'Automate customer onboarding, documentation, approvals, billing, compliance, and reporting through secure business applications.'
-  },
-  {
-    icon: Rocket,
-    name: 'Startups & Enterprises',
     color: 'text-cyanCustom',
-    bgColor: 'bg-cyanCustom/10 border-cyanCustom/20',
-    desc: 'Launch scalable SaaS products, internal management systems, CRM platforms, HRMS software, ERP applications, and automation tools built for growth.'
+    desc: 'Lead capture from portals, automated site visit scheduling, agent pipeline tracking, and buyer follow-ups.',
+    highlights: ['Site Visit Automation', 'Agent Performance', 'Property Catalog'],
+  },
+  {
+    id: 'healthcare',
+    name: 'HEALTHCARE & CLINICS',
+    tag: 'Medical Systems',
+    icon: Heart,
+    color: 'text-purpleCustom',
+    desc: 'OPD/IPD patient management, lab report dispatch via WhatsApp, pharmacy inventory, and doctor booking.',
+    highlights: ['Patient Health Records', 'WhatsApp Lab Reports', 'Pharmacy POS'],
+  },
+  {
+    id: 'manufacturing',
+    name: 'MANUFACTURING',
+    tag: 'Industrial ERP',
+    icon: Factory,
+    color: 'text-emerald-400',
+    desc: 'Procurement tracking, raw material stock alerts, production line logging, and vendor ledger management.',
+    highlights: ['Raw Material Control', 'Vendor PO System', 'Production P&L'],
+  },
+  {
+    id: 'education',
+    name: 'EDUCATION & INSTITUTES',
+    tag: 'School & Institute ERP',
+    icon: GraduationCap,
+    color: 'text-amber-400',
+    desc: 'Student admission funnels, fee payment reminders, attendance tracking, and parent communication apps.',
+    highlights: ['Online Fee Gateway', 'Parent WhatsApp Bot', 'LMS & Exams'],
+  },
+  {
+    id: 'ecommerce',
+    name: 'RETAIL & ECOMMERCE',
+    tag: 'Ecommerce Automation',
+    icon: ShoppingBag,
+    color: 'text-pinkCustom',
+    desc: 'Multi-channel order fulfillment, abandoned cart recovery, stock sync across marketplaces, and shipping APIs.',
+    highlights: ['Cart Recovery Bot', 'Multi-Store Sync', 'Automated Invoicing'],
   },
 ];
 
 export default function Industries() {
+  const [activeInd, setActiveInd] = useState(industryList[0]);
+
   return (
-    <section className="bg-zinc-950/30 border-y border-white/5 py-24 select-none">
-      <div className="container mx-auto max-w-[1280px] px-6">
+    <section className="container mx-auto max-w-[1280px] px-6 py-24 select-none text-left relative z-10">
 
-        {/* Header */}
-        <div className="text-center mb-16">
-          <Badge className="mb-5 mx-auto inline-flex items-center gap-1.5 bg-pinkCustom/10 border-pinkCustom/20 text-pinkCustom">
-            Industries We Serve
-          </Badge>
-          <h2 className="text-3xl sm:text-4xl font-headline font-bold text-zinc-100 leading-tight mb-5">
-            Empowering Every Industry with Smart <br />
-            <span className="gradient-text">Software Solutions & Business Automation</span>
-          </h2>
-          <p className="text-zinc-400 max-w-3xl mx-auto text-sm sm:text-base leading-relaxed mb-4">
-            Every industry has unique challenges, workflows, and operational requirements. At Kvantum Tech Solutions, we don't believe in one-size-fits-all software. We develop industry-specific custom software, CRM systems, HRMS platforms, ERP solutions, web applications, mobile apps, and business automation software that align perfectly with your business processes.
-          </p>
-          <p className="text-zinc-500 max-w-2xl mx-auto text-sm leading-relaxed">
-            Whether you're looking to automate operations, improve customer experience, manage employees, or streamline business workflows, our solutions are designed to help you work smarter, faster, and more efficiently.
-          </p>
-        </div>
+      {/* Section Header */}
+      <div className="text-center mb-16">
+        <Badge className="mb-5 mx-auto inline-flex items-center gap-1.5 bg-cyanCustom/10 border-cyanCustom/20 text-cyanCustom">
+          Industries We Serve
+        </Badge>
+        <h2 className="text-3xl sm:text-4xl font-headline font-bold text-zinc-100 leading-tight mb-5">
+          Empowering Every Industry with <br />
+          <span className="gradient-text">Custom Software & Automation</span>
+        </h2>
+        <p className="text-zinc-400 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
+          We build industry-specific custom software, CRM platforms, HRMS platforms, and ERP solutions tailored to your unique operational requirements.
+        </p>
+      </div>
 
-        {/* Industries Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {industries.map((industry, idx) => {
-            const Icon = industry.icon;
-            return (
-              <div
-                key={idx}
-                className="flex flex-col gap-4 p-7 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/15 hover:-translate-y-1.5 transition-all duration-300 cursor-default group text-left"
-              >
-                <div className={`w-12 h-12 rounded-xl ${industry.bgColor} border flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300`}>
-                  <Icon size={22} className={industry.color} />
+      {/* Industry Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {industryList.map((ind) => {
+          const Icon = ind.icon;
+          return (
+            <div
+              key={ind.id}
+              className="p-8 rounded-3xl bg-zinc-950/80 border border-white/10 hover:border-cyanCustom/40 hover:bg-zinc-900/60 transition-all duration-300 flex flex-col justify-between gap-6 cursor-pointer group backdrop-blur-xl hover:-translate-y-1.5 shadow-xl"
+            >
+              <div>
+                <div className="flex justify-between items-center mb-5">
+                  <div className={`w-12 h-12 rounded-2xl bg-white/[0.04] border border-white/10 flex items-center justify-center ${ind.color} group-hover:scale-110 transition-transform duration-300`}>
+                    <Icon size={22} />
+                  </div>
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-white/10 text-zinc-400 bg-white/5">
+                    {ind.tag}
+                  </span>
                 </div>
-                <div>
-                  <h3 className="text-zinc-100 font-bold font-headline text-base mb-2">{industry.name}</h3>
-                  <p className="text-zinc-500 text-xs sm:text-sm leading-relaxed">{industry.desc}</p>
+
+                <h3 className="text-xl font-headline font-bold text-zinc-100 mb-2 leading-snug group-hover:text-cyanCustom transition-colors">
+                  {ind.name}
+                </h3>
+                <p className="text-zinc-400 text-xs sm:text-sm leading-relaxed mb-4">
+                  {ind.desc}
+                </p>
+              </div>
+
+              <div className="space-y-2 border-t border-white/8 pt-4">
+                <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest block mb-1">Modules Automated:</span>
+                <div className="flex flex-wrap gap-2">
+                  {ind.highlights.map((h, hIdx) => (
+                    <span key={hIdx} className="text-[11px] font-mono text-zinc-300 bg-white/[0.03] border border-white/8 px-2.5 py-1 rounded-lg">
+                      • {h}
+                    </span>
+                  ))}
                 </div>
               </div>
-            );
-          })}
-        </div>
 
+            </div>
+          );
+        })}
       </div>
+
     </section>
   );
 }

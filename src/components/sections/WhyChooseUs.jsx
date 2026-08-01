@@ -1,135 +1,109 @@
 import React from 'react';
-import {
-  Settings, Cpu, Layers, Shield, Zap, Link2,
-  HeadphonesIcon, MessageSquare, TrendingUp, Users
-} from 'lucide-react';
-import Card from '../ui/Card';
+import { ShieldCheck, Cpu, Clock, Headphones, Zap, Code } from 'lucide-react';
 import Badge from '../ui/Badge';
-import SectionHeading from '../ui/SectionHeading';
-
-const reasons = [
-  {
-    num: '01',
-    icon: Settings,
-    color: 'text-cyanCustom',
-    bg: 'bg-cyanCustom/10 border-cyanCustom/20',
-    title: 'Fully Custom Software Development',
-    desc: 'Every business is different. We build software tailored specifically to your workflows, goals, and operational requirements — no templates, no cookie-cutter solutions.'
-  },
-  {
-    num: '02',
-    icon: Cpu,
-    color: 'text-pinkCustom',
-    bg: 'bg-pinkCustom/10 border-pinkCustom/20',
-    title: 'Business Automation Experts',
-    desc: 'We automate repetitive tasks, manual processes, approvals, notifications, customer communication, and internal operations to improve team efficiency and save time.'
-  },
-  {
-    num: '03',
-    icon: Layers,
-    color: 'text-purpleCustom',
-    bg: 'bg-purpleCustom/10 border-purpleCustom/20',
-    title: 'Scalable Architecture',
-    desc: 'Our software is designed to grow with your business, allowing you to add new features, users, and modules whenever required — without costly rewrites.'
-  },
-  {
-    num: '04',
-    icon: Zap,
-    color: 'text-cyanCustom',
-    bg: 'bg-cyanCustom/10 border-cyanCustom/20',
-    title: 'Modern Technology Stack',
-    desc: 'We use the latest technologies including Laravel, PHP, React, Node.js, Flutter, MySQL, REST APIs, cloud infrastructure, and modern UI/UX practices to build future-ready software.'
-  },
-  {
-    num: '05',
-    icon: Shield,
-    color: 'text-pinkCustom',
-    bg: 'bg-pinkCustom/10 border-pinkCustom/20',
-    title: 'Enterprise-Level Security',
-    desc: 'Data protection is our priority. We implement secure authentication, role-based access, encrypted data handling, and regular security best practices across every application.'
-  },
-  {
-    num: '06',
-    icon: TrendingUp,
-    color: 'text-purpleCustom',
-    bg: 'bg-purpleCustom/10 border-purpleCustom/20',
-    title: 'Faster Development & Deployment',
-    desc: 'Using agile development methodologies, we deliver projects efficiently while maintaining high quality standards and clear milestone-based communication.'
-  },
-  {
-    num: '07',
-    icon: Link2,
-    color: 'text-cyanCustom',
-    bg: 'bg-cyanCustom/10 border-cyanCustom/20',
-    title: 'Seamless Third-Party Integrations',
-    desc: 'Connect your software with payment gateways, WhatsApp Business API, SMS, Email, ERP, accounting software, cloud services, and custom APIs for a fully connected ecosystem.'
-  },
-  {
-    num: '08',
-    icon: HeadphonesIcon,
-    color: 'text-pinkCustom',
-    bg: 'bg-pinkCustom/10 border-pinkCustom/20',
-    title: 'Dedicated Support & Maintenance',
-    desc: 'Our relationship doesn\'t end after deployment. We provide continuous updates, maintenance, monitoring, and technical support to keep your software running perfectly.'
-  },
-  {
-    num: '09',
-    icon: MessageSquare,
-    color: 'text-purpleCustom',
-    bg: 'bg-purpleCustom/10 border-purpleCustom/20',
-    title: 'Transparent Communication',
-    desc: 'Stay informed throughout the project with regular progress updates, milestone tracking, collaborative planning sessions, and direct access to your dedicated project team.'
-  },
-  {
-    num: '10',
-    icon: Users,
-    color: 'text-cyanCustom',
-    bg: 'bg-cyanCustom/10 border-cyanCustom/20',
-    title: 'Long-Term Technology Partner',
-    desc: 'We focus on building long-term relationships by delivering reliable software solutions that support your business growth — project after project.'
-  },
-];
 
 export default function WhyChooseUs() {
   return (
-    <section className="container mx-auto max-w-[1280px] px-6 py-24 select-none">
+    <section className="container mx-auto max-w-[1280px] px-6 py-24 select-none text-left relative z-10">
 
-      {/* Header */}
+      {/* Section Header */}
       <div className="text-center mb-16">
-        <Badge className="mb-5 mx-auto inline-flex items-center gap-1.5 bg-cyanCustom/10 border-cyanCustom/20 text-cyanCustom">
-          Why Choose Us
+        <Badge className="mb-5 mx-auto inline-flex items-center gap-1.5 bg-pinkCustom/10 border-pinkCustom/20 text-pinkCustom">
+          Why Kvantum Tech Solutions
         </Badge>
         <h2 className="text-3xl sm:text-4xl font-headline font-bold text-zinc-100 leading-tight mb-5">
-          Why Businesses Choose Kvantum Tech Solutions <br />
-          <span className="gradient-text">for Software Development & Automation</span>
+          Engineering Excellence & <br />
+          <span className="gradient-text">Automation-First Approach</span>
         </h2>
-        <p className="text-zinc-400 max-w-3xl mx-auto text-sm sm:text-base leading-relaxed">
-          Choosing the right technology partner is one of the most important decisions for any business. At Kvantum Tech Solutions, we combine innovation, technical expertise, and business understanding to build software that delivers measurable results.
+        <p className="text-zinc-400 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
+          Why businesses trust Kvantum Tech Solutions to build secure, scalable, and reliable software tailored to their operational needs.
         </p>
       </div>
 
-      {/* Reasons Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {reasons.map((reason, idx) => {
-          const Icon = reason.icon;
-          return (
-            <Card
-              key={idx}
-              className="p-7 flex flex-col gap-4 border hover:-translate-y-1.5 hover:border-white/20 transition-all duration-300 text-left group"
-            >
-              <div className="flex items-start justify-between">
-                <div className={`w-11 h-11 rounded-xl ${reason.bg} border flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300`}>
-                  <Icon size={20} className={reason.color} />
-                </div>
-                <span className="text-[11px] font-mono text-zinc-600 font-bold">{reason.num}</span>
-              </div>
-              <div>
-                <h3 className="text-zinc-100 font-bold font-headline text-base mb-2">{reason.title}</h3>
-                <p className="text-zinc-400 text-xs sm:text-sm leading-relaxed">{reason.desc}</p>
-              </div>
-            </Card>
-          );
-        })}
+      {/* Bento Grid Layout (Section 06 Blueprint) */}
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
+        {/* Bento Card 1 (Large - 2 cols) */}
+        <div className="md:col-span-2 p-8 rounded-3xl bg-gradient-to-br from-pinkCustom/15 via-purpleCustom/10 to-transparent border border-white/12 flex flex-col justify-between gap-6 backdrop-blur-2xl shadow-xl">
+          <div>
+            <div className="w-12 h-12 rounded-2xl bg-pinkCustom/10 border border-pinkCustom/20 text-pinkCustom flex items-center justify-center mb-4">
+              <Code size={24} />
+            </div>
+            <span className="text-xs font-mono text-pinkCustom uppercase font-bold tracking-widest block mb-1">100% Custom Source Code</span>
+            <h3 className="text-2xl font-headline font-bold text-zinc-100 mb-3">Custom Built — Zero Generic Templates</h3>
+            <p className="text-zinc-300 text-sm leading-relaxed">
+              We write pure, clean, maintainable code specifically for your business processes. You retain full source code ownership with zero recurring third-party platform lock-in.
+            </p>
+          </div>
+          <div className="flex gap-4 text-xs font-mono text-zinc-400 border-t border-white/8 pt-4">
+            <span>• Full Code Ownership</span>
+            <span>• Scalable Architecture</span>
+            <span>• Zero License Fees</span>
+          </div>
+        </div>
+
+        {/* Bento Card 2 (Standard - 1 col) */}
+        <div className="p-8 rounded-3xl bg-zinc-950/80 border border-white/10 flex flex-col justify-between gap-6 backdrop-blur-2xl shadow-xl">
+          <div>
+            <div className="w-12 h-12 rounded-2xl bg-cyanCustom/10 border border-cyanCustom/20 text-cyanCustom flex items-center justify-center mb-4">
+              <Headphones size={24} />
+            </div>
+            <span className="text-xs font-mono text-cyanCustom uppercase font-bold tracking-widest block mb-1">Dedicated Support</span>
+            <h3 className="text-xl font-headline font-bold text-zinc-100 mb-2">24/7 Support</h3>
+            <p className="text-zinc-400 text-xs sm:text-sm leading-relaxed">
+              Direct developer access, rapid resolution SLAs, and continuous system monitoring for peace of mind.
+            </p>
+          </div>
+        </div>
+
+        {/* Bento Card 3 (Standard - 1 col) */}
+        <div className="p-8 rounded-3xl bg-zinc-950/80 border border-white/10 flex flex-col justify-between gap-6 backdrop-blur-2xl shadow-xl">
+          <div>
+            <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mb-4">
+              <Clock size={24} />
+            </div>
+            <span className="text-xs font-mono text-emerald-400 uppercase font-bold tracking-widest block mb-1">Agile Delivery</span>
+            <h3 className="text-xl font-headline font-bold text-zinc-100 mb-2">Fast Setup</h3>
+            <p className="text-zinc-400 text-xs sm:text-sm leading-relaxed">
+              Sprint-based development cycles ensuring your custom software goes live in weeks, not months.
+            </p>
+          </div>
+        </div>
+
+        {/* Bento Card 4 (Standard - 1 col) */}
+        <div className="p-8 rounded-3xl bg-zinc-950/80 border border-white/10 flex flex-col justify-between gap-6 backdrop-blur-2xl shadow-xl">
+          <div>
+            <div className="w-12 h-12 rounded-2xl bg-purpleCustom/10 border border-purpleCustom/20 text-purpleCustom flex items-center justify-center mb-4">
+              <Cpu size={24} />
+            </div>
+            <span className="text-xs font-mono text-purpleCustom uppercase font-bold tracking-widest block mb-1">Automation First</span>
+            <h3 className="text-xl font-headline font-bold text-zinc-100 mb-2">Automation First</h3>
+            <p className="text-zinc-400 text-xs sm:text-sm leading-relaxed">
+              Every system is built to automate repetitive manual work, saving your team hundreds of hours each month.
+            </p>
+          </div>
+        </div>
+
+        {/* Bento Card 5 (Large - 3 cols) */}
+        <div className="md:col-span-3 p-8 rounded-3xl bg-gradient-to-r from-cyanCustom/15 via-purpleCustom/15 to-pinkCustom/15 border border-white/12 flex flex-col sm:flex-row justify-between items-center gap-6 backdrop-blur-2xl shadow-xl">
+          <div>
+            <span className="text-xs font-mono text-cyanCustom uppercase font-bold tracking-widest block mb-1">Built to Scale</span>
+            <h3 className="text-2xl font-headline font-bold text-zinc-100 mb-2">Scalable & Enterprise Ready</h3>
+            <p className="text-zinc-300 text-sm max-w-2xl leading-relaxed">
+              Our software architectures seamlessly handle high transaction volumes, multi-branch data synchronization, and enterprise integrations.
+            </p>
+          </div>
+          <button
+            onClick={() => {
+              const el = document.getElementById('contact');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="px-7 py-3.5 rounded-xl text-xs font-bold bg-pinkCustom text-white hover:bg-pink-600 transition-all duration-200 shadow-[0_0_20px_rgba(236,72,153,0.35)] shrink-0 cursor-pointer"
+          >
+            Start Building Today →
+          </button>
+        </div>
+
       </div>
 
     </section>

@@ -1,92 +1,50 @@
 import React from 'react';
-import Badge from '../ui/Badge';
 
-const techGroups = [
-  {
-    label: 'Backend Development',
-    techs: ['PHP', 'Laravel', 'Node.js', 'Express.js'],
-    color: 'text-cyanCustom',
-  },
-  {
-    label: 'Frontend Development',
-    techs: ['React.js', 'Next.js', 'HTML5', 'CSS3', 'JavaScript', 'Bootstrap', 'Tailwind CSS'],
-    color: 'text-pinkCustom',
-  },
-  {
-    label: 'Mobile Development',
-    techs: ['Flutter', 'React Native'],
-    color: 'text-purpleCustom',
-  },
-  {
-    label: 'Database Technologies',
-    techs: ['MySQL', 'PostgreSQL', 'MongoDB', 'Redis'],
-    color: 'text-cyanCustom',
-  },
-  {
-    label: 'Cloud & DevOps',
-    techs: ['AWS', 'Docker', 'Nginx', 'Linux'],
-    color: 'text-pinkCustom',
-  },
-  {
-    label: 'APIs & Integrations',
-    techs: ['REST APIs', 'Payment Gateway Integration', 'WhatsApp Integration', 'SMS Gateway', 'Email Services', 'Third-Party APIs'],
-    color: 'text-purpleCustom',
-  },
-  {
-    label: 'UI / UX Design',
-    techs: ['Figma', 'Adobe XD', 'Responsive Design', 'Modern User Experience'],
-    color: 'text-cyanCustom',
-  },
+const techRow1 = [
+  'REACT.JS', 'NODE.JS', 'PHP', 'LARAVEL', 'MYSQL', 'THREE.JS', 'AWS CLOUD', 'DOCKER', 'MONGODB', 'POSTGRESQL'
+];
+
+const techRow2 = [
+  'TYPESCRIPT', 'PYTHON', 'EXPRESS.JS', 'REDIS', 'NGINX', 'FLUTTER', 'META WHATSAPP API', 'REST APIS', 'GIT', 'TAILWIND CSS'
 ];
 
 export default function Technologies() {
   return (
-    <section className="bg-zinc-950/20 border-y border-white/5 py-24 select-none">
-      <div className="container mx-auto max-w-[1280px] px-6">
+    <section className="bg-zinc-950/90 border-y border-white/8 py-16 select-none overflow-hidden text-center">
+      <div className="container mx-auto max-w-[1280px] px-6 mb-8">
+        <span className="text-[11px] font-mono uppercase tracking-[0.3em] text-zinc-400 font-bold block">
+          MODERN TECH STACK & CLOUD INFRASTRUCTURE WE USE
+        </span>
+      </div>
 
-        {/* Header */}
-        <div className="text-center mb-16">
-          <Badge className="mb-5 mx-auto inline-flex items-center gap-1.5 bg-pinkCustom/10 border-pinkCustom/20 text-pinkCustom">
-            Technology Stack
-          </Badge>
-          <h2 className="text-3xl sm:text-4xl font-headline font-bold text-zinc-100 leading-tight mb-5">
-            Modern Technologies Powering <br />
-            <span className="gradient-text">Every Solution</span>
-          </h2>
-          <p className="text-zinc-400 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
-            At Kvantum Tech Solutions, we leverage modern technologies and industry best practices to build secure, scalable, and high-performance software solutions.
-          </p>
-        </div>
-
-        {/* Tech Groups */}
-        <div className="space-y-5">
-          {techGroups.map((group, gIdx) => (
-            <div
-              key={gIdx}
-              className="grid grid-cols-1 sm:grid-cols-[180px_1fr] gap-4 items-start p-5 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-all duration-200"
+      {/* Row 1 Marquee */}
+      <div className="flex overflow-hidden whitespace-nowrap mb-4 opacity-80 hover:opacity-100 transition-opacity">
+        <div className="flex animate-marquee-left space-x-8 shrink-0">
+          {techRow1.concat(techRow1).map((tech, idx) => (
+            <span
+              key={idx}
+              className="px-6 py-2.5 rounded-xl bg-white/[0.02] border border-white/8 font-mono text-xs font-bold text-zinc-300 tracking-widest hover:text-cyanCustom hover:border-cyanCustom/40 transition-colors"
             >
-              {/* Label */}
-              <div className="flex items-center sm:items-start">
-                <span className={`text-[10px] font-mono uppercase tracking-widest font-bold ${group.color} sm:pt-1`}>
-                  {group.label}
-                </span>
-              </div>
-              {/* Tech Pills */}
-              <div className="flex flex-wrap gap-2.5">
-                {group.techs.map((tech, tIdx) => (
-                  <span
-                    key={tIdx}
-                    className={`px-4 py-2 rounded-xl bg-white/[0.03] border border-white/8 text-zinc-300 text-xs sm:text-sm font-mono hover:${group.color} hover:border-current/40 hover:bg-white/5 transition-all duration-200 cursor-default`}
-                  >
-                    {tech}
-                  </span>
-                ))}
-              </div>
-            </div>
+              • {tech}
+            </span>
           ))}
         </div>
-
       </div>
+
+      {/* Row 2 Marquee */}
+      <div className="flex overflow-hidden whitespace-nowrap opacity-80 hover:opacity-100 transition-opacity">
+        <div className="flex animate-marquee-right space-x-8 shrink-0">
+          {techRow2.concat(techRow2).map((tech, idx) => (
+            <span
+              key={idx}
+              className="px-6 py-2.5 rounded-xl bg-white/[0.02] border border-white/8 font-mono text-xs font-bold text-zinc-300 tracking-widest hover:text-pinkCustom hover:border-pinkCustom/40 transition-colors"
+            >
+              • {tech}
+            </span>
+          ))}
+        </div>
+      </div>
+
     </section>
   );
 }

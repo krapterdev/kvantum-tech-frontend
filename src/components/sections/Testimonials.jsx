@@ -1,110 +1,80 @@
 import React from 'react';
-import Card from '../ui/Card';
+import { Star, Quote } from 'lucide-react';
 import Badge from '../ui/Badge';
-import { Star } from 'lucide-react';
 
-const defaultTestimonials = [
-  {
-    title: 'Exceptional CRM Development',
-    content: 'Kvantum Tech Solutions developed a custom CRM tailored to our sales process. Our team now manages leads, follow-ups, and customer communication far more efficiently. Their expertise and support exceeded our expectations.',
-    name: 'Sales Director',
-    role: 'Manufacturing Company',
-    rating: 5
-  },
-  {
-    title: 'Business Automation That Saved Us Time',
-    content: 'Our manual workflows were slowing us down. Kvantum Tech Solutions automated approvals, notifications, and internal processes, significantly improving productivity across our entire organization.',
-    name: 'Operations Manager',
-    role: 'Logistics Firm',
-    rating: 5
-  },
-  {
-    title: 'Professional Software Development Team',
-    content: 'The team understood our business requirements and delivered a secure, scalable web application within the committed timeline. We highly recommend their software development services.',
-    name: 'Founder & CEO',
-    role: 'Healthcare Startup',
-    rating: 5
-  },
-  {
-    title: 'Reliable Long-Term Technology Partner',
-    content: 'From planning to deployment and ongoing support, Kvantum Tech Solutions has been an excellent technology partner for our growing business. They truly care about delivering results.',
-    name: 'Business Owner',
-    role: 'Real Estate Company',
-    rating: 5
-  },
+const row1Reviews = [
+  { name: 'Rajesh M.', role: 'Sales Director, Manufacturing', quote: 'Kvantum developed a custom CRM tailored to our sales process. Our team now manages leads, follow-ups, and quotes 3x faster.' },
+  { name: 'Priya S.', role: 'Operations Manager, Logistics Firm', quote: 'Our manual workflows were slowing us down. Kvantum automated approvals and WhatsApp alerts, saving us over 400 hours a month.' },
+  { name: 'Amit K.', role: 'Founder, Healthcare Startup', quote: 'They built our patient booking and WhatsApp lab report system in weeks. Highly professional team and clean code.' },
 ];
 
-export default function Testimonials({ settings }) {
-  const list = settings?.testimonials || [];
-  const displayList = list.length > 0
-    ? list.map(t => ({
-        title: t.title || 'Client Review',
-        content: t.content || t.quote || '',
-        name: t.name,
-        role: t.role,
-        rating: 5,
-        avatar: t.avatar
-      }))
-    : defaultTestimonials;
+const row2Reviews = [
+  { name: 'Vikram R.', role: 'General Manager, Luxe Hotels', quote: 'The hotel reservation POS & billing automation system Kvantum delivered transformed our front desk operations.' },
+  { name: 'Neha G.', role: 'HR Head, Tech Enterprise', quote: 'The biometric attendance & auto-payroll HRMS module solved all our multi-branch compliance headaches.' },
+  { name: 'Sanjay P.', role: 'Managing Director, Real Estate', quote: 'Site visit scheduling and buyer WhatsApp follow-up automation doubled our sales conversion rate in 60 days.' },
+];
 
+export default function Testimonials() {
   return (
-    <section className="container mx-auto max-w-[1280px] px-6 py-24 select-none">
-
-      {/* Header */}
-      <div className="text-center mb-16">
-        <Badge className="mb-5 mx-auto inline-flex items-center gap-1.5 bg-cyanCustom/10 border-cyanCustom/20 text-cyanCustom">
-          Client Reviews
+    <section className="bg-zinc-950/90 border-y border-white/8 py-24 select-none overflow-hidden text-left relative z-10">
+      
+      {/* Section Header */}
+      <div className="container mx-auto max-w-[1280px] px-6 text-center mb-14">
+        <Badge className="mb-5 mx-auto inline-flex items-center gap-1.5 bg-pinkCustom/10 border-pinkCustom/20 text-pinkCustom">
+          Client Feedback
         </Badge>
         <h2 className="text-3xl sm:text-4xl font-headline font-bold text-zinc-100 leading-tight mb-4">
-          What Our <span className="gradient-text">Clients Say</span>
+          Trusted by Industry Leaders <br />
+          <span className="gradient-text">What Our Clients Say About Kvantum</span>
         </h2>
-        <p className="text-zinc-400 max-w-xl mx-auto text-sm sm:text-base leading-relaxed">
-          Businesses across industries share their experience working with Kvantum Tech Solutions.
-        </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {displayList.map((t, idx) => (
-          <Card key={idx} className="p-8 flex flex-col gap-5 border text-left hover:-translate-y-1 transition-all duration-300">
-
-            {/* Stars */}
-            <div className="flex gap-1">
-              {Array.from({ length: t.rating || 5 }).map((_, i) => (
-                <Star key={i} size={14} className="text-amber-400 fill-amber-400" />
-              ))}
-            </div>
-
-            {/* Title */}
-            {t.title && (
-              <h4 className="text-zinc-100 font-headline font-bold text-base">{t.title}</h4>
-            )}
-
-            {/* Content */}
-            <p className="text-zinc-400 text-sm leading-relaxed flex-1">
-              "{t.content || t.quote}"
-            </p>
-
-            {/* Author */}
-            <div className="flex items-center gap-3 border-t border-white/5 pt-4">
-              {t.avatar ? (
-                <img
-                  src={t.avatar}
-                  alt={t.name}
-                  className="w-10 h-10 rounded-full border border-white/8 object-cover bg-zinc-900"
-                />
-              ) : (
-                <div className="w-10 h-10 rounded-full border border-white/8 bg-gradient-to-br from-pinkCustom/30 to-purpleCustom/30 flex items-center justify-center text-zinc-100 text-sm font-bold font-headline">
-                  {(t.name || 'C')[0]}
-                </div>
-              )}
-              <div>
-                <h5 className="text-zinc-100 text-sm font-headline font-bold">— {t.name}</h5>
-                <span className="text-zinc-500 text-[11px] font-mono block">{t.role}</span>
+      {/* Row 1 Marquee */}
+      <div className="flex overflow-hidden whitespace-nowrap mb-6 opacity-85 hover:opacity-100 transition-opacity">
+        <div className="flex animate-marquee-left space-x-6 shrink-0">
+          {row1Reviews.concat(row1Reviews).map((rev, idx) => (
+            <div
+              key={idx}
+              className="w-[380px] p-6 rounded-2xl bg-zinc-900/80 border border-white/10 flex flex-col justify-between gap-4 backdrop-blur-xl whitespace-normal cursor-pointer hover:border-pinkCustom/40 transition-colors"
+            >
+              <div className="flex items-center gap-1 text-amber-400">
+                {[...Array(5)].map((_, s) => (
+                  <Star key={s} size={14} fill="currentColor" />
+                ))}
+              </div>
+              <p className="text-zinc-300 text-xs leading-relaxed italic">"{rev.quote}"</p>
+              <div className="border-t border-white/8 pt-3 mt-1">
+                <h4 className="text-xs font-bold font-headline text-zinc-100">{rev.name}</h4>
+                <span className="text-[10px] font-mono text-zinc-500">{rev.role}</span>
               </div>
             </div>
-          </Card>
-        ))}
+          ))}
+        </div>
       </div>
+
+      {/* Row 2 Marquee */}
+      <div className="flex overflow-hidden whitespace-nowrap opacity-85 hover:opacity-100 transition-opacity">
+        <div className="flex animate-marquee-right space-x-6 shrink-0">
+          {row2Reviews.concat(row2Reviews).map((rev, idx) => (
+            <div
+              key={idx}
+              className="w-[380px] p-6 rounded-2xl bg-zinc-900/80 border border-white/10 flex flex-col justify-between gap-4 backdrop-blur-xl whitespace-normal cursor-pointer hover:border-cyanCustom/40 transition-colors"
+            >
+              <div className="flex items-center gap-1 text-amber-400">
+                {[...Array(5)].map((_, s) => (
+                  <Star key={s} size={14} fill="currentColor" />
+                ))}
+              </div>
+              <p className="text-zinc-300 text-xs leading-relaxed italic">"{rev.quote}"</p>
+              <div className="border-t border-white/8 pt-3 mt-1">
+                <h4 className="text-xs font-bold font-headline text-zinc-100">{rev.name}</h4>
+                <span className="text-[10px] font-mono text-zinc-500">{rev.role}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
     </section>
   );
 }

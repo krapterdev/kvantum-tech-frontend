@@ -1,137 +1,181 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowRight, ShieldCheck, Cpu, Zap } from 'lucide-react';
-import Button from '../ui/Button';
-import Card from '../ui/Card';
+import React, { useEffect, useRef } from 'react';
+import { ArrowRight, Sparkles, Play, CheckCircle2 } from 'lucide-react';
 import Badge from '../ui/Badge';
 
 export default function Hero({ settings }) {
-  const navigate = useNavigate();
-  const hero = settings?.hero || {};
+  const canvasRef = useRef(null);
 
-  const trustPoints = [
-    'Custom Software Development',
-    'CRM & ERP Solutions',
-    'HRMS Software',
-    'Business Automation',
-    'WhatsApp Automation',
-    'Web & Mobile App Development',
-    'Cloud-Based Business Applications',
-    'Secure & Scalable Solutions',
-  ];
+  // WebGL / Canvas Liquid Displacement & Digital Mesh background effect
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let animationId;
+
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+
+    let mouseX = width / 2;
+    let mouseY = height / 2;
+
+    const handleMouseMove = (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+
+    // Mesh Grid Points
+    const cols = 28;
+    const rows = 16;
+    const points = [];
+
+    for (let r = 0; r <= rows; r++) {
+      for (let c = 0; c <= cols; c++) {
+        const x = (c / cols) * width;
+        const y = (r / rows) * height;
+        points.push({ originX: x, originY: y, x, y, vx: 0, vy: 0 });
+      }
+    }
+
+    let time = 0;
+    const render = () => {
+      time += 0.03;
+      ctx.clearRect(0, 0, width, height);
+
+      // Ambient Cyber Mesh Rendering
+      ctx.strokeStyle = 'rgba(236, 72, 153, 0.08)';
+      ctx.lineWidth = 1;
+
+      for (let i = 0; i < points.length; i++) {
+        const p = points[i];
+
+        // Mouse displacement liquid wave math
+        const dx = mouseX - p.originX;
+        const dy = mouseY - p.originY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const maxDist = 220;
+
+        let force = 0;
+        if (dist < maxDist) {
+          force = (1 - dist / maxDist) * 35;
+        }
+
+        const angle = Math.atan2(dy, dx);
+        p.x = p.originX - Math.cos(angle) * force + Math.sin(time + p.originX * 0.01) * 8;
+        p.y = p.originY - Math.sin(angle) * force + Math.cos(time + p.originY * 0.01) * 8;
+      }
+
+      // Draw Grid Mesh Lines
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const idx = r * (cols + 1) + c;
+          const p1 = points[idx];
+          const p2 = points[idx + 1];
+          const p3 = points[idx + (cols + 1)];
+
+          ctx.beginPath();
+          ctx.moveTo(p1.x, p1.y);
+          ctx.lineTo(p2.x, p2.y);
+          ctx.lineTo(p3.x, p3.y);
+          ctx.strokeStyle = `rgba(59, 130, 246, ${0.05 + Math.sin(time + c) * 0.03})`;
+          ctx.stroke();
+        }
+      }
+
+      animationId = requestAnimationFrame(render);
+    };
+
+    render();
+
+    const handleResize = () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    };
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      cancelAnimationFrame(animationId);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   return (
-    <section className="container mx-auto max-w-[1280px] px-6 py-14 md:py-24 select-none">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full">
+    <section className="relative min-h-[90vh] flex flex-col justify-center items-center text-center select-none overflow-hidden pt-28 pb-16 px-6">
+      {/* Background Interactive Mesh Canvas */}
+      <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none z-0 opacity-60" />
 
-        {/* Left Side: Copy & CTAs */}
-        <div className="flex flex-col items-start text-left">
-          <Badge className="mb-6 flex items-center gap-1.5 bg-pinkCustom/10 border-pinkCustom/20 text-pinkCustom">
-            Business Automation & Custom Software Development
-          </Badge>
+      {/* Radial Ambient Glows */}
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-gradient-to-r from-pinkCustom/20 via-purpleCustom/20 to-cyanCustom/20 blur-3xl rounded-full pointer-events-none z-0" />
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-headline font-bold text-zinc-100 leading-[1.15] tracking-tight mb-6">
-            {hero.title || 'Custom Software Development & Business Automation Solutions for Modern Businesses'}
-          </h1>
+      <div className="relative z-10 container mx-auto max-w-[1280px]">
 
-          <p className="text-zinc-400 text-sm sm:text-base leading-relaxed max-w-[620px] mb-5 font-sans">
-            {hero.subtitle ||
-              'Empower your business with intelligent software solutions designed to simplify operations, improve productivity, and accelerate growth. Kvantum Tech Solutions specializes in Custom Software Development, CRM Software, HRMS Software, Business Automation, WhatsApp Automation, Web Application Development, Mobile App Development, ERP Solutions, and Enterprise Software Development tailored to your unique business needs.'}
-          </p>
-          <p className="text-zinc-500 text-sm leading-relaxed max-w-[620px] mb-9 font-sans">
-            Whether you're a startup, SME, or enterprise, we build scalable digital solutions that automate repetitive tasks, streamline workflows, improve customer relationships, and help your business operate more efficiently.
-          </p>
+        {/* Top Tag Badge */}
+        <Badge className="mb-6 mx-auto inline-flex items-center gap-2 bg-pinkCustom/10 border-pinkCustom/20 text-pinkCustom">
+          <Sparkles size={14} className="animate-pulse" /> Software & Automation Built For Modern Businesses
+        </Badge>
 
-          {/* CTAs */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mb-10 w-full sm:w-auto">
-            <button
-              onClick={() => {
-                const el = document.getElementById('contact');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-                else navigate('/contact');
-              }}
-              className="px-7 py-3.5 rounded-xl text-sm font-bold bg-pinkCustom text-white hover:bg-pink-600 transition-all duration-200 shadow-[0_0_25px_rgba(236,72,153,0.35)] hover:scale-[1.02] cursor-pointer text-center"
-            >
-              {hero.ctaText || 'Book Free Consultation'}
-            </button>
-            <Button
-              onClick={() => {
-                const el = document.getElementById('contact');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-                else navigate('/contact');
-              }}
-              variant="secondary"
-              className="px-7 py-3.5 rounded-xl text-sm text-center"
-            >
-              Request Live Demo
-            </Button>
-          </div>
+        {/* 2026 Style Oversized Typography Header */}
+        <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black font-headline tracking-tight text-white uppercase leading-[0.95] mb-6">
+          AUTOMATE. <br className="hidden sm:inline" />
+          <span className="gradient-text">SCALE. </span>
+          TRANSFORM.
+        </h1>
 
-          {/* Trust Points Grid */}
-          <div className="grid grid-cols-2 gap-x-8 gap-y-2.5 text-[11px] sm:text-xs font-mono text-zinc-400 border-t border-white/5 pt-7 w-full">
-            {trustPoints.map((point, idx) => (
-              <div key={idx} className="flex items-center gap-2">
-                <span className="text-cyanCustom font-bold">✔</span>
-                <span>{point}</span>
-              </div>
-            ))}
-          </div>
+        {/* Subtitle */}
+        <p className="text-zinc-300 max-w-3xl mx-auto text-base sm:text-xl leading-relaxed mb-10 font-sans font-medium">
+          Empower your business with intelligent software solutions designed to simplify operations, improve productivity, and accelerate growth. Custom CRM, HRMS, ERP, and WhatsApp Automation.
+        </p>
+
+        {/* CTAs Row */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14">
+          <button
+            onClick={() => {
+              const el = document.getElementById('contact');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="w-full sm:w-auto px-9 py-4 rounded-xl text-sm font-bold bg-pinkCustom text-white hover:bg-pink-600 transition-all duration-200 shadow-[0_0_30px_rgba(236,72,153,0.4)] hover:scale-[1.03] cursor-pointer flex items-center justify-center gap-2"
+          >
+            Explore Solutions <ArrowRight size={16} />
+          </button>
+          <button
+            onClick={() => {
+              const el = document.getElementById('contact');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="w-full sm:w-auto px-8 py-4 rounded-xl text-sm font-bold bg-white/10 hover:bg-white/15 text-white border border-white/20 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2"
+          >
+            <Play size={15} fill="currentColor" /> Book Free Demo
+          </button>
         </div>
 
-        {/* Right Side: Live Stats Card */}
-        <div className="flex justify-center w-full">
-          <Card
-            tilt
-            scanline
-            className="w-full max-w-[440px] p-9 shadow-[0_20px_50px_rgba(0,0,0,0.45)]"
-          >
-            <div className="flex flex-col gap-6">
-
-              {/* Card Header */}
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-2.5">
-                  <div className="p-2 bg-cyanCustom/10 rounded-lg">
-                    <Cpu size={18} className="text-cyanCustom" />
-                  </div>
-                  <div>
-                    <h4 className="text-zinc-100 text-sm font-semibold">Business Software Platform</h4>
-                    <span className="text-zinc-500 text-[11px] font-mono block">System Status: Active & Running</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981] animate-pulse"></div>
-                  <span className="text-[11px] font-mono text-zinc-400">LIVE</span>
-                </div>
-              </div>
-
-              {/* Metrics */}
-              <div className="grid grid-cols-2 gap-4">
-                {[
-                  { value: '250+', label: 'Projects Delivered', color: 'text-pinkCustom' },
-                  { value: '100+', label: 'Happy Clients', color: 'text-cyanCustom' },
-                  { value: '15+', label: 'Industries Served', color: 'text-purpleCustom' },
-                  { value: '99%', label: 'Client Satisfaction', color: 'text-emerald-400' },
-                ].map((m, i) => (
-                  <div key={i} className="bg-white/[0.02] border border-white/8 rounded-xl p-4 text-center">
-                    <div className={`text-2xl font-extrabold font-headline ${m.color}`}>{m.value}</div>
-                    <div className="text-zinc-500 text-[10px] font-mono uppercase tracking-wider mt-1">{m.label}</div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Security Badge */}
-              <div className="flex items-center gap-2.5 bg-white/[0.01] p-3 rounded-lg border border-white/8">
-                <ShieldCheck size={16} className="text-cyanCustom shrink-0" />
-                <span className="text-[11px] font-mono text-zinc-400">
-                  100% Source Code Ownership — No License Fees — Secure Architecture
-                </span>
-              </div>
-
-            </div>
-          </Card>
+        {/* 4 Trust Checkpoints */}
+        <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-3 text-xs sm:text-sm text-zinc-300 font-mono">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 size={15} className="text-cyanCustom" />
+            <span>Custom CRM Systems</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <CheckCircle2 size={15} className="text-pinkCustom" />
+            <span>Business Process Automation</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <CheckCircle2 size={15} className="text-purpleCustom" />
+            <span>HRMS & ERP Solutions</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <CheckCircle2 size={15} className="text-emerald-400" />
+            <span>WhatsApp Business API</span>
+          </div>
         </div>
 
       </div>
+
+      {/* Bottom Marquee Hint */}
+      <div className="absolute bottom-3 text-[10px] font-mono text-zinc-500 uppercase tracking-[0.3em]">
+        DRAG • EXPLORE • AUTOMATE
+      </div>
+
     </section>
   );
 }

@@ -12,9 +12,20 @@ export default function Footer({ seoPages = [], theme, settings, services = [] }
   const facebookUrl = contact.facebook || 'https://facebook.com/kvantumtechsolutions';
 
   return (
-    <footer className="glass-panel relative z-10 mt-[120px] px-6 py-[70px] select-none text-center border-t border-white/10 bg-zinc-950/90">
+    <footer className="glass-panel relative z-10 mt-[120px] px-6 py-[70px] select-none text-center border-t border-white/10 bg-zinc-950/95 overflow-hidden">
       <div className="container mx-auto max-w-[1280px]">
         
+        {/* Top Huge Heading CTA Banner */}
+        <div className="text-center mb-14 border-b border-white/8 pb-12">
+          <span className="text-[11px] font-mono text-cyanCustom uppercase tracking-[0.3em] font-bold block mb-2">READY TO AUTOMATE YOUR BUSINESS?</span>
+          <h2 className="text-4xl sm:text-6xl font-black font-headline text-white tracking-tight uppercase">
+            LET'S TALK SOLUTIONS.
+          </h2>
+          <a href="mailto:info@kvantumtechsolutions.com" className="text-pinkCustom text-lg sm:text-2xl font-mono font-bold hover:underline mt-2 inline-block">
+            info@kvantumtechsolutions.com
+          </a>
+        </div>
+
         {/* 360 Degree Rotating Real 3D Earth Planet (GitHub Style) */}
         <div className="flex flex-col items-center justify-center mb-14 overflow-hidden">
           <div className="w-full max-w-[650px]">
@@ -132,25 +143,15 @@ export default function Footer({ seoPages = [], theme, settings, services = [] }
 
         </div>
 
-        {/* Dynamic Local SEO Landing Pages Bar */}
-        {seoPages.length > 0 && (
-          <div className="border-t border-white/8 pt-6 pb-6 text-left">
-            <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest block mb-3">
-              Locations & Specialized Solutions:
-            </span>
-            <div className="flex flex-wrap gap-2 text-xs">
-              {seoPages.slice(0, 10).map((page) => (
-                <Link
-                  key={page.slug}
-                  to={`/keyword/${page.slug}`}
-                  className="text-zinc-400 hover:text-pinkCustom font-mono text-[11px] bg-white/[0.02] border border-white/5 px-2.5 py-1 rounded-md transition-colors"
-                >
-                  {page.title}
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
+        {/* Section 20 Mega Typography Footer */}
+        <div className="border-t border-white/10 pt-10 pb-6 overflow-hidden select-none">
+          <h1 className="text-4xl sm:text-7xl md:text-8xl lg:text-[10rem] font-black font-headline text-white/10 tracking-[0.08em] uppercase leading-none whitespace-nowrap">
+            K V A N T U M
+          </h1>
+          <span className="text-xs sm:text-sm font-mono text-zinc-500 tracking-[0.4em] uppercase block mt-2 font-bold">
+            TECH SOLUTIONS — ENTERPRISE DIGITAL ENGINEERING
+          </span>
+        </div>
 
         {/* Footer Bottom Bar with robots.txt & sitemap.xml links */}
         <div className="border-t border-white/8 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-mono text-zinc-500">
