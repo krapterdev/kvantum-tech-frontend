@@ -148,11 +148,19 @@ export default function ProjectsPage({ portfolios = [] }) {
               {/* Tech Tags */}
               <div className="space-y-3 border-t border-slate-100 dark:border-zinc-800 pt-4 mt-auto">
                 <div className="flex flex-wrap gap-2">
-                  {(project.tags || ['React', 'Node.js', 'PostgreSQL']).map((tag, tIdx) => (
-                    <span key={tIdx} className="text-[10px] font-mono text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-zinc-800/80 border border-slate-200 dark:border-zinc-700 px-2.5 py-1 rounded-lg">
-                      {tag}
-                    </span>
-                  ))}
+                  {(() => {
+                    let tagsList = ['React', 'Node.js', 'PostgreSQL'];
+                    if (Array.isArray(project.tags) && project.tags.length > 0) {
+                      tagsList = project.tags;
+                    } else if (typeof project.tags === 'string' && project.tags.trim()) {
+                      tagsList = project.tags.split(',').map(t => t.trim());
+                    }
+                    return tagsList.map((tag, tIdx) => (
+                      <span key={tIdx} className="text-[10px] font-mono text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-zinc-800/80 border border-slate-200 dark:border-zinc-700 px-2.5 py-1 rounded-lg">
+                        {tag}
+                      </span>
+                    ));
+                  })()}
                 </div>
 
                 <a

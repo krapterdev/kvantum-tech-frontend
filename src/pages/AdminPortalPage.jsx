@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Plus, Edit2, Trash2, Save, X, Globe, Layers, BookOpen, Key, Link2, Eye, 
-  UserCheck, Image, Copy, Check, UploadCloud, LogOut, Lock, Mail, FileText, CheckCircle2, AlertTriangle, Settings, Menu 
+  UserCheck, Image, Copy, Check, UploadCloud, LogOut, Lock, Mail, FileText, CheckCircle2, AlertTriangle, Settings, Menu, Activity 
 } from 'lucide-react';
 import Card from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
