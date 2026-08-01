@@ -7,6 +7,7 @@ import Card from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
 import GradientText from '@/components/ui/GradientText';
 import Button from '@/components/ui/Button';
+import RichTextEditor from '@/components/ui/RichTextEditor';
 
 // Import service layers
 import * as userService from '@/services/userService';
@@ -638,39 +639,175 @@ export default function AdminPortalPage({
           </div>
         )}
 
+        {/* HTML Rich Content Editor */}
         <div>
-          <label className="block text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-1.5 font-bold font-mono">HTML Content Body</label>
-          <textarea 
-            required 
-            rows={10}
-            placeholder="<p>Write your detailed blog post content using paragraph tags...</p>"
+          <label className="block text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-1.5 font-bold">Content Body (Rich Editor)</label>
+          <RichTextEditor
             value={editItem.content || ''}
-            onChange={(e) => setEditItem(prev => ({ ...prev, content: e.target.value }))}
-            className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-3 text-zinc-100 text-sm resize-none font-mono outline-none focus:border-cyanCustom/40"
+            onChange={(html) => setEditItem(prev => ({ ...prev, content: html }))}
+            placeholder="Write your detailed blog content here... Use H2/H3 for subheadings, Bold for emphasis, and lists for structured content."
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* SEO & Meta Tags Panel */}
+        <div className="border border-white/8 rounded-2xl p-6 bg-zinc-950/30 flex flex-col gap-5">
+          <h3 className="text-xs font-mono text-cyanCustom uppercase tracking-widest font-bold border-b border-white/8 pb-3">🔍 SEO & Meta Tags — Auto-fills from Title & Summary</h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1 font-bold">Meta Title <span className="text-zinc-600">(auto-fill from title)</span></label>
+              <input
+                type="text"
+                placeholder="Google SERP title override..."
+                value={editItem.metaTitle || ''}
+                onChange={(e) => setEditItem(prev => ({ ...prev, metaTitle: e.target.value }))}
+                className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
+              />
+              <span className="text-[10px] text-zinc-600 font-mono mt-1 block">{(editItem.metaTitle || '').length}/60 chars</span>
+            </div>
+            <div>
+              <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1 font-bold">Meta Description <span className="text-zinc-600">(auto-fill from summary)</span></label>
+              <input
+                type="text"
+                placeholder="Google SERP description override..."
+                value={editItem.metaDesc || ''}
+                onChange={(e) => setEditItem(prev => ({ ...prev, metaDesc: e.target.value }))}
+                className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
+              />
+              <span className="text-[10px] text-zinc-600 font-mono mt-1 block">{(editItem.metaDesc || '').length}/160 chars</span>
+            </div>
+          </div>
+
           <div>
-            <label className="block text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-1.5 font-bold">Google SERP Meta Title</label>
-            <input 
-              type="text" 
-              placeholder="SEO meta title override..."
-              value={editItem.metaTitle || ''}
-              onChange={(e) => setEditItem(prev => ({ ...prev, metaTitle: e.target.value }))}
-              className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
+            <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1 font-bold">Focus Keywords <span className="text-zinc-600">(comma separated)</span></label>
+            <input
+              type="text"
+              placeholder="e.g. IT solutions Delhi, custom software development, CRM software"
+              value={editItem.keywords || ''}
+              onChange={(e) => setEditItem(prev => ({ ...prev, keywords: e.target.value }))}
+              className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono"
             />
           </div>
+
           <div>
-            <label className="block text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-1.5 font-bold">Google SERP Meta Description</label>
-            <input 
-              type="text" 
-              placeholder="SEO meta description override..."
-              value={editItem.metaDesc || ''}
-              onChange={(e) => setEditItem(prev => ({ ...prev, metaDesc: e.target.value }))}
-              className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
+            <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1 font-bold">Canonical URL <span className="text-zinc-600">(auto-set to /blog/slug)</span></label>
+            <input
+              type="url"
+              placeholder={`https://kvantumtechsolutions.com/blog/${editItem.id || 'your-slug'}`}
+              value={editItem.canonical || ''}
+              onChange={(e) => setEditItem(prev => ({ ...prev, canonical: e.target.value }))}
+              className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono"
             />
           </div>
+
+          <h4 className="text-[10px] font-mono text-pinkCustom uppercase tracking-widest font-bold border-b border-white/8 pb-2">Open Graph Tags (Facebook / LinkedIn / WhatsApp)</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1 font-bold">OG Title <span className="text-zinc-600">(auto-fill from Meta Title)</span></label>
+              <input
+                type="text"
+                placeholder="Open Graph title..."
+                value={editItem.ogTitle || ''}
+                onChange={(e) => setEditItem(prev => ({ ...prev, ogTitle: e.target.value }))}
+                className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
+              />
+            </div>
+            <div>
+              <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1 font-bold">OG Description <span className="text-zinc-600">(auto-fill from Meta Desc)</span></label>
+              <input
+                type="text"
+                placeholder="Open Graph description..."
+                value={editItem.ogDesc || ''}
+                onChange={(e) => setEditItem(prev => ({ ...prev, ogDesc: e.target.value }))}
+                className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1 font-bold">OG Image URL <span className="text-zinc-600">(auto-fill from Cover Image)</span></label>
+              <input
+                type="url"
+                placeholder="https://... Open Graph share image"
+                value={editItem.ogImage || ''}
+                onChange={(e) => setEditItem(prev => ({ ...prev, ogImage: e.target.value }))}
+                className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono"
+              />
+            </div>
+            <div>
+              <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1 font-bold">OG Type</label>
+              <select
+                value={editItem.ogType || 'article'}
+                onChange={(e) => setEditItem(prev => ({ ...prev, ogType: e.target.value }))}
+                className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono"
+              >
+                <option value="article">article</option>
+                <option value="website">website</option>
+              </select>
+            </div>
+          </div>
+
+          <h4 className="text-[10px] font-mono text-sky-400 uppercase tracking-widest font-bold border-b border-white/8 pb-2">Twitter Card Tags</h4>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div>
+              <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1 font-bold">Twitter Title <span className="text-zinc-600">(auto-fill)</span></label>
+              <input
+                type="text"
+                placeholder="Twitter card title..."
+                value={editItem.twitterTitle || ''}
+                onChange={(e) => setEditItem(prev => ({ ...prev, twitterTitle: e.target.value }))}
+                className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
+              />
+            </div>
+            <div>
+              <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1 font-bold">Twitter Description</label>
+              <input
+                type="text"
+                placeholder="Twitter card description..."
+                value={editItem.twitterDesc || ''}
+                onChange={(e) => setEditItem(prev => ({ ...prev, twitterDesc: e.target.value }))}
+                className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
+              />
+            </div>
+            <div>
+              <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1 font-bold">Twitter Card Type</label>
+              <select
+                value={editItem.twitterCard || 'summary_large_image'}
+                onChange={(e) => setEditItem(prev => ({ ...prev, twitterCard: e.target.value }))}
+                className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono"
+              >
+                <option value="summary_large_image">summary_large_image</option>
+                <option value="summary">summary</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Auto-fill Helper Button */}
+          <button
+            type="button"
+            onClick={() => {
+              const title = editItem.title || '';
+              const summary = editItem.summary || '';
+              const image = editItem.image || '';
+              const slug = editItem.id || '';
+              setEditItem(prev => ({
+                ...prev,
+                metaTitle: prev.metaTitle || title,
+                metaDesc: prev.metaDesc || summary,
+                canonical: prev.canonical || `https://kvantumtechsolutions.com/blog/${slug}`,
+                ogTitle: prev.ogTitle || prev.metaTitle || title,
+                ogDesc: prev.ogDesc || prev.metaDesc || summary,
+                ogImage: prev.ogImage || image,
+                ogType: prev.ogType || 'article',
+                twitterTitle: prev.twitterTitle || prev.ogTitle || prev.metaTitle || title,
+                twitterDesc: prev.twitterDesc || prev.ogDesc || prev.metaDesc || summary,
+                twitterCard: prev.twitterCard || 'summary_large_image',
+              }));
+            }}
+            className="w-full py-2.5 rounded-xl bg-cyanCustom/10 border border-cyanCustom/20 text-cyanCustom text-xs font-mono font-bold hover:bg-cyanCustom/20 transition-colors cursor-pointer"
+          >
+            ⚡ Auto-Fill All SEO Fields from Title & Summary
+          </button>
         </div>
 
         <Button type="submit" variant="primary" className="py-3 mt-4 self-start px-8 gap-2">

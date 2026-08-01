@@ -399,7 +399,7 @@ export default function App() {
         </Routes>
       </main>
 
-      {!isAdminPath && <Footer seoPages={seoPages} theme={theme} settings={settings} services={services} />}
+      {!isAdminPath && <Footer seoPages={seoPages} theme={theme} settings={settings} services={services} blogs={blogs} />}
       
       {/* Floating Action Buttons */}
       {!isAdminPath && <FloatingQuickActions />}

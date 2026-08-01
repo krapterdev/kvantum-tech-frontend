@@ -5,7 +5,7 @@ import { InstagramIcon, LinkedinIcon, FacebookIcon } from '../ui/SocialIcons';
 import KvantumLogo from '../ui/KvantumLogo';
 import { MapPin, Phone, Mail, Globe, ShieldCheck, Share2 } from 'lucide-react';
 
-export default function Footer({ seoPages = [], theme, settings, services = [] }) {
+export default function Footer({ seoPages = [], theme, settings, services = [], blogs = [] }) {
   const currentYear = new Date().getFullYear();
   const contact = settings?.contact || {};
   
@@ -126,18 +126,36 @@ export default function Footer({ seoPages = [], theme, settings, services = [] }
             </ul>
           </div>
 
-          {/* Column 4: Quick Links */}
+          {/* Column 4: Latest Blog Articles */}
           <div className="flex flex-col gap-3">
             <h5 className="text-slate-900 dark:text-zinc-100 text-xs font-mono uppercase tracking-widest font-bold border-b border-slate-200 dark:border-white/8 pb-2">
-              Quick Links
+              Latest Articles
             </h5>
-            <ul className="flex flex-col gap-2 text-xs">
-              <li><Link to="/" className="text-slate-600 dark:text-zinc-400 hover:text-pink-500 transition-colors">Home Page</Link></li>
-              <li><Link to="/about" className="text-slate-600 dark:text-zinc-400 hover:text-pink-500 transition-colors">About Kvantum</Link></li>
-              <li><Link to="/projects" className="text-slate-600 dark:text-zinc-400 hover:text-pink-500 transition-colors">Portfolio & Case Studies</Link></li>
-              <li><Link to="/blog" className="text-slate-600 dark:text-zinc-400 hover:text-pink-500 transition-colors">Blog & Articles</Link></li>
-              <li><Link to="/contact" className="text-slate-600 dark:text-zinc-400 hover:text-pink-500 transition-colors">Contact Us</Link></li>
-            </ul>
+            {blogs.length > 0 ? (
+              <ul className="flex flex-col gap-2 text-xs">
+                {blogs.slice(0, 4).map((blog) => (
+                  <li key={blog.id || blog._id}>
+                    <Link
+                      to={`/blog/${blog.id || blog.slug || blog._id}`}
+                      className="text-slate-600 dark:text-zinc-400 hover:text-pink-500 transition-colors line-clamp-2 leading-snug"
+                    >
+                      {blog.title}
+                    </Link>
+                  </li>
+                ))}
+                <li>
+                  <Link to="/blog" className="text-sky-500 hover:text-sky-600 font-bold transition-colors mt-1 inline-block">
+                    View All Articles →
+                  </Link>
+                </li>
+              </ul>
+            ) : (
+              <ul className="flex flex-col gap-2 text-xs">
+                <li><Link to="/blog" className="text-slate-600 dark:text-zinc-400 hover:text-pink-500 transition-colors">Blog & Articles</Link></li>
+                <li><Link to="/blog" className="text-slate-600 dark:text-zinc-400 hover:text-pink-500 transition-colors">Engineering Insights</Link></li>
+                <li><Link to="/blog" className="text-slate-600 dark:text-zinc-400 hover:text-pink-500 transition-colors">Business Automation Guides</Link></li>
+              </ul>
+            )}
           </div>
 
           {/* Column 5: Cities & Target Regions */}

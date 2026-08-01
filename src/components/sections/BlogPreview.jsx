@@ -3,41 +3,10 @@ import { Link } from 'react-router-dom';
 import { BookOpen, Calendar, Clock, ArrowRight, User } from 'lucide-react';
 import Badge from '../ui/Badge';
 
-const defaultBlogs = [
-  {
-    id: 'why-kvantum-tech-solutions-is-the-best-it-solutions-company-in-delhi-ncr',
-    title: 'Why Kvantum Tech Solutions Is the Best IT Solutions Company in Delhi NCR',
-    category: 'IT Solutions',
-    readTime: '6 min read',
-    date: 'August 1, 2026',
-    author: 'Kvantum Tech Team',
-    summary: 'In today’s digital world, every business really needs reliable technology to stay competitive. Learn why Kvantum Tech Solutions is the leading IT solutions & services company in Delhi NCR.',
-    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80',
-  },
-  {
-    id: 'custom-software-vs-saas-2026',
-    title: 'Custom Software vs Off-the-Shelf SaaS: Why Growing Businesses Need Custom Code in 2026',
-    category: 'Custom Software',
-    readTime: '5 min read',
-    date: 'July 30, 2026',
-    author: 'Sahil Kumar (Head of Tech)',
-    summary: 'Discover how custom software eliminates recurring subscription bloat, locks in 100% data privacy, and scales tailored to your exact business workflows.',
-    image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop&q=80',
-  },
-  {
-    id: 'whatsapp-business-api-automation-guide',
-    title: 'How WhatsApp Business API Automation Can Double Sales Conversion Under 5 Seconds',
-    category: 'WhatsApp Automation',
-    readTime: '6 min read',
-    date: 'July 28, 2026',
-    author: 'Anil Thapa (Head of SMO)',
-    summary: 'Learn how automated WhatsApp lead qualification bots, instant PDF quotation triggers, and 24/7 drip messaging turn ad clicks into paying clients.',
-    image: 'https://images.unsplash.com/photo-1611746872915-64382b5c76da?w=800&auto=format&fit=crop&q=80',
-  },
-];
-
 export default function BlogPreview({ blogs = [] }) {
-  const displayBlogs = blogs.length >= 3 ? blogs.slice(0, 3) : defaultBlogs;
+  const displayBlogs = blogs.slice(0, 3);
+  if (displayBlogs.length === 0) return null;
+
 
   return (
     <section id="blog" className="container mx-auto max-w-[1280px] px-6 py-24 select-none text-left relative z-10">
@@ -63,7 +32,7 @@ export default function BlogPreview({ blogs = [] }) {
             {/* Image Thumbnail */}
             <div className="relative h-48 w-full overflow-hidden">
               <img
-                src={post.image || defaultBlogs[0].image}
+                src={post.image || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80'}
                 alt={post.title}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
