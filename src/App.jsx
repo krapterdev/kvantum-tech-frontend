@@ -344,8 +344,7 @@ export default function App() {
           ? 'bg-[#f8fafc] text-zinc-900' 
           : 'text-zinc-100 overflow-hidden'
     }`}>
-      {/* Website Loading Screen (Image 2 style official logo reveal) */}
-      <PageLoader />
+      {/* Auto Reset Scroll position */}
 
       {/* Background color layer behind the canvas */}
       {!isAdminPath && theme === 'dark' && <div className="fixed inset-0 bg-background-dark -z-30 pointer-events-none" />}
@@ -368,6 +367,7 @@ export default function App() {
           <Route path="/services" element={<ServicesPage services={services} />} />
           <Route path="/services/:id" element={<ServiceDetailPage services={services} />} />
           <Route path="/projects" element={<ProjectsPage portfolios={portfolios} />} />
+          <Route path="/portfolio" element={<ProjectsPage portfolios={portfolios} />} />
           <Route path="/contact" element={<ContactPage settings={settings} />} />
           
           <Route path="/blog" element={<BlogPage blogs={blogs} />} />
