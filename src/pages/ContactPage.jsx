@@ -232,7 +232,7 @@ export default function ContactPage() {
       <div className="w-full h-[380px] rounded-3xl overflow-hidden border border-slate-200 dark:border-zinc-800 shadow-xl">
         <iframe
           title="Kvantum Office Map"
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3499.747867204919!2d77.3082!3d28.6973!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cfb7b6c59b6c1%3A0x7d87d90390f7a5b1!2sDilshad%20Garden%2C%20Delhi%2C%20110095!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3500.07981103231!2d77.31714817631126!3d28.687259075634913!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x25c5e1dca1c46e7d%3A0x50a81aafe13b66c0!2sKvantum%20Tech%20Solutions!5e0!3m2!1sen!2sin!4v1785574819803!5m2!1sen!2sin"
           width="100%"
           height="100%"
           style={{ border: 0 }}
