@@ -172,7 +172,7 @@ export default function Footer({ seoPages = [], theme, settings, services = [] }
                 <a href="tel:+919811663121" className="hover:text-pink-500 transition-colors">+91 9811663121</a>
               </li>
               <li className="text-[11px] text-slate-500 dark:text-zinc-500 font-mono leading-relaxed mt-1">
-                A33, 64, Tahirpur Rd, Priyadarshini Vihar, Dilshad Garden, Delhi, 110095
+                Kvantum Tech Solutions, A33, 64, Tahirpur Rd, Priyadarshini Vihar, Taharpur Village, Dilshad Garden, Delhi, 110095
               </li>
             </ul>
           </div>

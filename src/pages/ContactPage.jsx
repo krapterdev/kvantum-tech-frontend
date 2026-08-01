@@ -94,7 +94,7 @@ export default function ContactPage() {
                 <div>
                   <span className="text-xs font-mono text-slate-400 block uppercase">Office Address</span>
                   <p className="text-sm font-bold text-slate-900 dark:text-white leading-relaxed mt-1">
-                    A33, 64, Tahirpur Rd, Priyadarshini Vihar, Taharpur Village, Dilshad Garden, Delhi, 110095
+                    Kvantum Tech Solutions, A33, 64, Tahirpur Rd, Priyadarshini Vihar, Taharpur Village, Dilshad Garden, Delhi, 110095
                   </p>
                 </div>
               </div>

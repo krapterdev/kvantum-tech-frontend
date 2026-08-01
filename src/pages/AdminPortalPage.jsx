@@ -115,6 +115,32 @@ export default function AdminPortalPage({
     }
   }, [currentUser]);
 
+  // 15-Minute Inactivity Security Auto-Logout System
+  useEffect(() => {
+    if (!currentUser) return;
+
+    let inactivityTimer;
+
+    const resetTimer = () => {
+      clearTimeout(inactivityTimer);
+      // Auto-logout after 15 minutes of zero interaction (900,000ms)
+      inactivityTimer = setTimeout(() => {
+        handleLogout();
+        alert('🔒 [SECURITY AUTO-LOCK] You have been automatically logged out due to 15 minutes of inactivity for system security.');
+      }, 900000);
+    };
+
+    const events = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'];
+    events.forEach(ev => window.addEventListener(ev, resetTimer));
+
+    resetTimer();
+
+    return () => {
+      clearTimeout(inactivityTimer);
+      events.forEach(ev => window.removeEventListener(ev, resetTimer));
+    };
+  }, [currentUser]);
+
   // Fetch contextual collections upon active tab switches
   useEffect(() => {
     if (!token || !currentUser) return;
@@ -1059,28 +1085,13 @@ export default function AdminPortalPage({
                 className="w-full py-3.5"
                 disabled={loggingIn}
               >
-                {loggingIn ? 'Authenticating...' : 'Authorize Login Connection'}
+                {loggingIn ? 'Authenticating Credentials...' : 'Authorize Secure Connection'}
               </Button>
 
               <div className="border-t border-white/8 pt-4 text-center">
-                <button
-                  type="button"
-                  onClick={() => {
-                    const demoUser = {
-                      _id: 'admin_1',
-                      name: 'Sahil Kumar (Super Admin)',
-                      email: 'admin@kvantumtechsolutions.com',
-                      role: 'admin'
-                    };
-                    localStorage.setItem('kts_admin_user', JSON.stringify(demoUser));
-                    localStorage.setItem('kts_admin_token', 'demo_token_123');
-                    setCurrentUser(demoUser);
-                    setToken('demo_token_123');
-                  }}
-                  className="text-xs font-mono text-cyanCustom hover:underline cursor-pointer"
-                >
-                  ⚡ Click Here to Auto-Login as Super Admin
-                </button>
+                <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest block">
+                  🔒 256-Bit Encrypted • 15-Min Auto-Lock Protected
+                </span>
               </div>
             </form>
           </div>
