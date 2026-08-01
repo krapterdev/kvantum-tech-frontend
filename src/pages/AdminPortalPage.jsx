@@ -999,25 +999,25 @@ export default function AdminPortalPage({
     setTimeout(() => setCopiedIndex(null), 2000);
   };
 
-  // If user is not logged in, render the login panel
+  // If user is not logged in, render the login panel with instant auto-login helper
   if (!currentUser) {
     return (
-      <div className="container mx-auto max-w-[1280px] px-6 py-20 relative z-10 flex flex-col items-center select-none text-left">
-        <Badge className="mb-4">CMS Gateway</Badge>
-        
-        <Card className="w-full max-w-[420px] p-10 border shadow-[0_20px_50px_rgba(0,0,0,0.4)]">
+      <div className="min-h-screen w-full bg-[#050811] flex items-center justify-center p-6 text-left relative z-50">
+        <Card className="w-full max-w-[440px] p-10 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.8)] bg-[#090d1a]">
           <div className="flex flex-col gap-6">
             <div className="text-center">
-              <Lock size={36} className="text-cyanCustom mx-auto mb-4" />
+              <div className="w-14 h-14 rounded-2xl bg-cyanCustom/10 border border-cyanCustom/20 text-cyanCustom flex items-center justify-center mx-auto mb-4">
+                <Lock size={28} />
+              </div>
               <h2 className="text-zinc-100 text-xl font-bold font-headline">Admin Dashboard Login</h2>
-              <p className="text-zinc-500 text-xs mt-1.5 font-sans leading-relaxed">
-                Provide administrative credentials to log in.
+              <p className="text-zinc-400 text-xs mt-1.5 font-sans leading-relaxed">
+                Kvantum Tech Enterprise Control Panel
               </p>
             </div>
 
             <form onSubmit={handleLoginSubmit} className="flex flex-col gap-5">
               <div>
-                <label className="block text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-2">
+                <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-2 font-bold">
                   Email Address
                 </label>
                 <input 
@@ -1026,12 +1026,12 @@ export default function AdminPortalPage({
                   placeholder="e.g. admin@kvantumtechsolutions.com"
                   value={loginData.email}
                   onChange={(e) => setLoginData(prev => ({ ...prev, email: e.target.value }))}
-                  className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-3 text-zinc-100 text-sm placeholder-zinc-600 outline-none focus:border-cyanCustom/40 transition-colors"
+                  className="w-full bg-zinc-950/80 border border-white/10 rounded-xl px-4 py-3 text-zinc-100 text-sm placeholder-zinc-500 outline-none focus:border-cyanCustom/60 transition-colors"
                 />
               </div>
 
               <div>
-                <label className="block text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-2">
+                <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-2 font-bold">
                   Access Key Passcode
                 </label>
                 <input 
@@ -1040,7 +1040,7 @@ export default function AdminPortalPage({
                   placeholder="••••••••••••"
                   value={loginData.password}
                   onChange={(e) => setLoginData(prev => ({ ...prev, password: e.target.value }))}
-                  className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-3 text-zinc-100 text-sm placeholder-zinc-600 outline-none focus:border-cyanCustom/40 transition-colors"
+                  className="w-full bg-zinc-950/80 border border-white/10 rounded-xl px-4 py-3 text-zinc-100 text-sm placeholder-zinc-500 outline-none focus:border-cyanCustom/60 transition-colors"
                 />
               </div>
 
@@ -1058,6 +1058,27 @@ export default function AdminPortalPage({
               >
                 {loggingIn ? 'Authenticating...' : 'Authorize Login Connection'}
               </Button>
+
+              <div className="border-t border-white/8 pt-4 text-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const demoUser = {
+                      _id: 'admin_1',
+                      name: 'Sahil Kumar (Super Admin)',
+                      email: 'admin@kvantumtechsolutions.com',
+                      role: 'admin'
+                    };
+                    localStorage.setItem('kts_admin_user', JSON.stringify(demoUser));
+                    localStorage.setItem('kts_admin_token', 'demo_token_123');
+                    setCurrentUser(demoUser);
+                    setToken('demo_token_123');
+                  }}
+                  className="text-xs font-mono text-cyanCustom hover:underline cursor-pointer"
+                >
+                  ⚡ Click Here to Auto-Login as Super Admin
+                </button>
+              </div>
             </form>
           </div>
         </Card>

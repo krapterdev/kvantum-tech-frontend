@@ -5,6 +5,16 @@ import Badge from '@/components/ui/Badge';
 
 const defaultBlogs = [
   {
+    id: 'why-kvantum-tech-solutions-is-the-best-it-solutions-company-in-delhi-ncr',
+    title: 'Why Kvantum Tech Solutions Is the Best IT Solutions Company in Delhi NCR',
+    category: 'IT Solutions',
+    readTime: '6 min read',
+    date: 'August 1, 2026',
+    author: 'Kvantum Tech Team',
+    summary: 'In today’s digital world, every business really needs reliable technology to stay competitive. Learn why Kvantum Tech Solutions is the leading IT solutions & services company in Delhi NCR.',
+    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80',
+  },
+  {
     id: 'custom-software-vs-saas-2026',
     title: 'Custom Software vs Off-the-Shelf SaaS: Why Growing Businesses Need Custom Code in 2026',
     category: 'Custom Software',
@@ -42,7 +52,7 @@ export default function BlogPage({ blogs = [] }) {
 
   const displayBlogs = blogs.length > 0 ? blogs : defaultBlogs;
 
-  const categories = ['All', 'Custom Software', 'WhatsApp Automation', 'Enterprise Solutions'];
+  const categories = ['All', 'IT Solutions', 'Custom Software', 'WhatsApp Automation', 'Enterprise Solutions'];
 
   const filteredBlogs = displayBlogs.filter(post => {
     const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||

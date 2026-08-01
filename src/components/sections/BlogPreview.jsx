@@ -5,6 +5,16 @@ import Badge from '../ui/Badge';
 
 const defaultBlogs = [
   {
+    id: 'why-kvantum-tech-solutions-is-the-best-it-solutions-company-in-delhi-ncr',
+    title: 'Why Kvantum Tech Solutions Is the Best IT Solutions Company in Delhi NCR',
+    category: 'IT Solutions',
+    readTime: '6 min read',
+    date: 'August 1, 2026',
+    author: 'Kvantum Tech Team',
+    summary: 'In today’s digital world, every business really needs reliable technology to stay competitive. Learn why Kvantum Tech Solutions is the leading IT solutions & services company in Delhi NCR.',
+    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80',
+  },
+  {
     id: 'custom-software-vs-saas-2026',
     title: 'Custom Software vs Off-the-Shelf SaaS: Why Growing Businesses Need Custom Code in 2026',
     category: 'Custom Software',
@@ -23,16 +33,6 @@ const defaultBlogs = [
     author: 'Anil Thapa (Head of SMO)',
     summary: 'Learn how automated WhatsApp lead qualification bots, instant PDF quotation triggers, and 24/7 drip messaging turn ad clicks into paying clients.',
     image: 'https://images.unsplash.com/photo-1611746872915-64382b5c76da?w=800&auto=format&fit=crop&q=80',
-  },
-  {
-    id: 'building-scalable-crm-hrms-systems',
-    title: 'The Blueprint for Building Enterprise-Grade CRM & HRMS Platforms That Scale',
-    category: 'Enterprise Solutions',
-    readTime: '7 min read',
-    date: 'July 25, 2026',
-    author: 'Bhavya Nigam (Head of Growth)',
-    summary: 'Explore core architectural principles for multi-tenant CRM databases, biometric attendance sync, automated payroll generation, and audit logging.',
-    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80',
   },
 ];
 
