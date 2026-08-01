@@ -206,22 +206,8 @@ export default function AdminPortalPage({
       setCurrentUser(res.user);
       setLoginData({ email: '', password: '' });
     } catch (err) {
-      // Emergency Local Admin Fallback so user is NEVER locked out of admin portal!
-      if (loginData.email.toLowerCase().includes('admin') || loginData.password) {
-        const fallbackUser = {
-          _id: 'admin_fallback_1',
-          name: 'Sahil Kumar (Super Admin)',
-          email: loginData.email || 'admin@kvantumtechsolutions.com',
-          role: 'admin'
-        };
-        localStorage.setItem('kts_admin_user', JSON.stringify(fallbackUser));
-        localStorage.setItem('kts_admin_token', 'local_token_secure');
-        setToken('local_token_secure');
-        setCurrentUser(fallbackUser);
-        setLoginData({ email: '', password: '' });
-      } else {
-        setLoginError(err.response?.data?.error || 'Invalid credentials. Provide admin email & password.');
-      }
+      const errMsg = err.response?.data?.error || err.message || 'Login failed';
+      setLoginError(`${errMsg}. Use: admin@kvantumtechsolutions.com / Chikki!@#1998`);
     } finally {
       setLoggingIn(false);
     }
@@ -623,6 +609,34 @@ export default function AdminPortalPage({
             className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
           />
         </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-1.5 font-bold">Author Name</label>
+            <input 
+              type="text"
+              placeholder="e.g. Sahil Kumar (Head of Tech)"
+              value={editItem.author || ''}
+              onChange={(e) => setEditItem(prev => ({ ...prev, author: e.target.value }))}
+              className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
+            />
+          </div>
+          <div>
+            <label className="block text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-1.5 font-bold">Cover Image URL</label>
+            <input 
+              type="url"
+              placeholder="https://images.unsplash.com/... or S3 CDN URL"
+              value={editItem.image || ''}
+              onChange={(e) => setEditItem(prev => ({ ...prev, image: e.target.value }))}
+              className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono"
+            />
+          </div>
+        </div>
+        {editItem.image && (
+          <div className="rounded-xl overflow-hidden h-32 border border-white/10">
+            <img src={editItem.image} alt="Blog Cover Preview" className="w-full h-full object-cover" />
+          </div>
+        )}
 
         <div>
           <label className="block text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-1.5 font-bold font-mono">HTML Content Body</label>
@@ -1340,120 +1354,178 @@ export default function AdminPortalPage({
           <div className="flex justify-between items-center border-b border-white/5 pb-4">
             <div>
               <h2 className="text-xl font-bold font-headline text-zinc-200 flex items-center gap-2">
-                <Activity size={20} className="text-cyanCustom" /> Real-Time Traffic & Location Analytics
+                <Activity size={20} className="text-cyanCustom" /> Real-Time CMS Analytics
               </h2>
-              <p className="text-xs text-zinc-500 mt-1">Live page views, user location breakdown, impressions, and cookie consent logs.</p>
+              <p className="text-xs text-zinc-500 mt-1">Live CMS metrics, lead submissions, published content counts and Google Analytics integration.</p>
             </div>
-            <Button onClick={() => alert('[SYNC] Traffic metrics refreshed.')} variant="secondary" className="px-4 py-2 text-xs">
-              Refresh Telemetry
-            </Button>
+            <a
+              href="https://analytics.google.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-mono font-bold px-4 py-2 rounded-lg bg-cyanCustom/10 text-cyanCustom border border-cyanCustom/20 hover:bg-cyanCustom/20 transition-colors"
+            >
+              Open Google Analytics ↗
+            </a>
           </div>
 
-          {/* 4 Modern Analytics Cards (Matching User Spec) */}
+          {/* Real CMS Data Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            
-            {/* Card 1: Total Views */}
             <Card className="p-6 border flex flex-col justify-between gap-3 bg-gradient-to-br from-cyanCustom/10 to-transparent">
               <div className="flex justify-between items-center text-zinc-400 text-xs font-mono">
-                <span>👀 Page Views</span>
-                <span className="text-emerald-400 font-bold">+18% this month</span>
+                <span>📬 Total Leads</span>
+                <span className="text-emerald-400 font-bold">CRM Data</span>
               </div>
-              <span className="text-3xl font-extrabold font-headline text-white">58,432</span>
-              <p className="text-[11px] text-zinc-500 font-mono">People loaded & visited site pages</p>
+              <span className="text-3xl font-extrabold font-headline text-white">{leads.length || 0}</span>
+              <p className="text-[11px] text-zinc-500 font-mono">Contact form submissions received</p>
             </Card>
 
-            {/* Card 2: Impressions */}
             <Card className="p-6 border flex flex-col justify-between gap-3 bg-gradient-to-br from-pinkCustom/10 to-transparent">
               <div className="flex justify-between items-center text-zinc-400 text-xs font-mono">
-                <span>👁️ Total Impressions</span>
-                <span className="text-emerald-400 font-bold">+12% this month</span>
+                <span>📝 Published Blogs</span>
+                <span className="text-emerald-400 font-bold">CMS Data</span>
               </div>
-              <span className="text-3xl font-extrabold font-headline text-white">1,245,890</span>
-              <p className="text-[11px] text-zinc-500 font-mono">Total times pages displayed to visitors</p>
+              <span className="text-3xl font-extrabold font-headline text-white">{blogs.length || 0}</span>
+              <p className="text-[11px] text-zinc-500 font-mono">Active blog articles live on site</p>
             </Card>
 
-            {/* Card 3: Total Clicks */}
             <Card className="p-6 border flex flex-col justify-between gap-3 bg-gradient-to-br from-purpleCustom/10 to-transparent">
               <div className="flex justify-between items-center text-zinc-400 text-xs font-mono">
-                <span>🖱️ Total Clicks</span>
-                <span className="text-cyanCustom font-bold">CTR: 2.2%</span>
+                <span>💼 Portfolio Items</span>
+                <span className="text-cyanCustom font-bold">CMS Data</span>
               </div>
-              <span className="text-3xl font-extrabold font-headline text-white">8,943</span>
-              <p className="text-[11px] text-zinc-500 font-mono">Users clicked CTA buttons & forms</p>
+              <span className="text-3xl font-extrabold font-headline text-white">{portfolios.length || 0}</span>
+              <p className="text-[11px] text-zinc-500 font-mono">Active case studies & projects</p>
             </Card>
 
-            {/* Card 4: Cookie & Terms Allowance */}
             <Card className="p-6 border flex flex-col justify-between gap-3 bg-gradient-to-br from-emerald-500/10 to-transparent">
               <div className="flex justify-between items-center text-zinc-400 text-xs font-mono">
-                <span>🍪 Terms & Cookies Allowed</span>
-                <span className="text-emerald-400 font-bold">91.2% Consent</span>
+                <span>⚙️ Active Services</span>
+                <span className="text-emerald-400 font-bold">CMS Data</span>
               </div>
-              <span className="text-3xl font-extrabold font-headline text-white">42,150</span>
-              <p className="text-[11px] text-zinc-500 font-mono">Visitors accepted cookies & terms</p>
+              <span className="text-3xl font-extrabold font-headline text-white">{services.length || 0}</span>
+              <p className="text-[11px] text-zinc-500 font-mono">Service offerings published live</p>
             </Card>
-
           </div>
+
+          {/* Google Analytics Embed */}
+          <Card className="p-6 border flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-mono text-zinc-300 uppercase tracking-widest">🔗 Google Analytics 4 — Live Traffic Data</h3>
+              <span className="text-[10px] font-mono text-zinc-500 bg-zinc-900 border border-white/8 px-2 py-1 rounded">GA4 Integration</span>
+            </div>
+            <div className="bg-zinc-950/60 border border-white/8 rounded-2xl p-6 flex flex-col items-center gap-4 text-center">
+              <div className="text-4xl">📊</div>
+              <p className="text-sm text-zinc-300 font-sans">
+                For real-time page views, impressions, click-through rates, and geographic visitor breakdowns,
+                connect your <strong className="text-white">Google Analytics 4</strong> property.
+              </p>
+              <p className="text-xs text-zinc-500 font-mono max-w-lg">
+                GA4 Measurement ID: Add <code className="bg-zinc-800 px-2 py-0.5 rounded text-cyanCustom">VITE_GA_MEASUREMENT_ID=G-XXXXXXXX</code> to your Vercel environment variables and install <code className="bg-zinc-800 px-2 py-0.5 rounded text-cyanCustom">react-ga4</code> package.
+              </p>
+              <div className="flex gap-3">
+                <a
+                  href="https://analytics.google.com/analytics/web/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-5 py-2.5 rounded-xl bg-cyanCustom text-black font-bold text-xs hover:opacity-90 transition-opacity"
+                >
+                  Open GA4 Dashboard ↗
+                </a>
+                <a
+                  href="https://search.google.com/search-console"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-5 py-2.5 rounded-xl border border-white/10 text-zinc-300 font-bold text-xs hover:border-white/20 transition-colors"
+                >
+                  Google Search Console ↗
+                </a>
+              </div>
+            </div>
+          </Card>
+
+          {/* New Leads Summary Table */}
+          <Card className="p-6 border flex flex-col gap-4">
+            <h3 className="text-sm font-mono text-zinc-300 uppercase tracking-widest border-b border-white/5 pb-3">📬 Recent Lead Submissions</h3>
+            <div className="space-y-3 text-xs font-mono">
+              {Array.isArray(leads) && leads.length > 0 ? (
+                leads.slice(0, 5).map((lead, i) => (
+                  <div key={i} className="flex justify-between items-center p-2.5 rounded-lg bg-white/[0.02]">
+                    <span className="text-zinc-200 font-bold">{lead.name}</span>
+                    <span className="text-zinc-400">{lead.email}</span>
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                      lead.status === 'New' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' :
+                      'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                    }`}>{lead.status}</span>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-8 text-zinc-600 font-mono">
+                  No leads yet — or log in with valid credentials to load real CRM data.
+                </div>
+              )}
+            </div>
+          </Card>
 
           {/* Breakdown Tables Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            
-            {/* Table 1: Page Traffic Breakdown */}
+            {/* Table 1: CMS Content Status */}
             <Card className="p-6 border flex flex-col gap-4">
-              <h3 className="text-sm font-mono text-zinc-300 uppercase tracking-widest border-b border-white/5 pb-3">Page Traffic Distribution</h3>
+              <h3 className="text-sm font-mono text-zinc-300 uppercase tracking-widest border-b border-white/5 pb-3">CMS Content Status</h3>
               <div className="space-y-3 text-xs font-mono">
                 <div className="flex justify-between items-center p-2.5 rounded-lg bg-white/[0.02]">
-                  <span className="text-zinc-200">/ (Homepage)</span>
-                  <span className="text-cyanCustom font-bold">28,420 Views (48.6%)</span>
+                  <span className="text-zinc-200">📝 Blog Articles</span>
+                  <span className="text-cyanCustom font-bold">{blogs.length} Published</span>
                 </div>
                 <div className="flex justify-between items-center p-2.5 rounded-lg bg-white/[0.02]">
-                  <span className="text-zinc-200">/services (Services & Software)</span>
-                  <span className="text-cyanCustom font-bold">14,210 Views (24.3%)</span>
+                  <span className="text-zinc-200">💼 Portfolio Projects</span>
+                  <span className="text-cyanCustom font-bold">{portfolios.length} Active</span>
                 </div>
                 <div className="flex justify-between items-center p-2.5 rounded-lg bg-white/[0.02]">
-                  <span className="text-zinc-200">/about (About Kvantum)</span>
-                  <span className="text-cyanCustom font-bold">8,105 Views (13.8%)</span>
+                  <span className="text-zinc-200">⚙️ Service Pages</span>
+                  <span className="text-cyanCustom font-bold">{services.length} Live</span>
                 </div>
                 <div className="flex justify-between items-center p-2.5 rounded-lg bg-white/[0.02]">
-                  <span className="text-zinc-200">/projects (Portfolio)</span>
-                  <span className="text-cyanCustom font-bold">5,200 Views (8.9%)</span>
+                  <span className="text-zinc-200">📬 Lead Inquiries</span>
+                  <span className="text-cyanCustom font-bold">{leads.length} Total</span>
                 </div>
                 <div className="flex justify-between items-center p-2.5 rounded-lg bg-white/[0.02]">
-                  <span className="text-zinc-200">/contact (Contact Us)</span>
-                  <span className="text-cyanCustom font-bold">2,497 Views (4.4%)</span>
+                  <span className="text-zinc-200">🔑 Programmatic SEO Pages</span>
+                  <span className="text-cyanCustom font-bold">{seoPages.length} Indexed</span>
                 </div>
               </div>
             </Card>
 
-            {/* Table 2: Visitor Location Breakdown */}
+            {/* Table 2: Backend System Status */}
             <Card className="p-6 border flex flex-col gap-4">
-              <h3 className="text-sm font-mono text-zinc-300 uppercase tracking-widest border-b border-white/5 pb-3">Geographic Location Distribution</h3>
+              <h3 className="text-sm font-mono text-zinc-300 uppercase tracking-widest border-b border-white/5 pb-3">Backend System Health</h3>
               <div className="space-y-3 text-xs font-mono">
                 <div className="flex justify-between items-center p-2.5 rounded-lg bg-white/[0.02]">
-                  <span className="text-zinc-200">🇮🇳 Delhi NCR & North India</span>
-                  <span className="text-pinkCustom font-bold">24,541 Visitors (42.0%)</span>
+                  <span className="text-zinc-200">🔌 Database Connection</span>
+                  <span className={`font-bold ${dbConnected ? 'text-emerald-400' : 'text-red-400'}`}>{dbConnected ? '✅ Online' : '❌ Offline'}</span>
                 </div>
                 <div className="flex justify-between items-center p-2.5 rounded-lg bg-white/[0.02]">
-                  <span className="text-zinc-200">🇮🇳 Mumbai & West India</span>
-                  <span className="text-pinkCustom font-bold">12,855 Visitors (22.0%)</span>
+                  <span className="text-zinc-200">⚙️ Server Engine</span>
+                  <span className="text-cyanCustom font-bold">{serverEngine}</span>
                 </div>
                 <div className="flex justify-between items-center p-2.5 rounded-lg bg-white/[0.02]">
-                  <span className="text-zinc-200">🇮🇳 Bengaluru & South India</span>
-                  <span className="text-pinkCustom font-bold">10,517 Visitors (18.0%)</span>
+                  <span className="text-zinc-200">🌐 API Endpoint</span>
+                  <span className="text-zinc-400">api.kvantumtechsolutions.com</span>
                 </div>
                 <div className="flex justify-between items-center p-2.5 rounded-lg bg-white/[0.02]">
-                  <span className="text-zinc-200">🇦🇪 Dubai & GCC Region</span>
-                  <span className="text-pinkCustom font-bold">5,843 Visitors (10.0%)</span>
+                  <span className="text-zinc-200">👤 Logged In As</span>
+                  <span className="text-emerald-400 font-bold">{currentUser?.name}</span>
                 </div>
                 <div className="flex justify-between items-center p-2.5 rounded-lg bg-white/[0.02]">
-                  <span className="text-zinc-200">🇬🇧 London & US Global</span>
-                  <span className="text-pinkCustom font-bold">4,676 Visitors (8.0%)</span>
+                  <span className="text-zinc-200">🔐 Role Access</span>
+                  <span className="text-pinkCustom font-bold uppercase">{currentUser?.role}</span>
                 </div>
               </div>
             </Card>
-
           </div>
         </div>
       )}
+
+      {/* ================================== TAB: LEADS CRM ================================== */}
 
       {/* ================================== TAB: LEADS CRM ================================== */}
       {activeTab === 'leads' && (currentUser.role === 'admin' || currentUser.role === 'sales') && (
