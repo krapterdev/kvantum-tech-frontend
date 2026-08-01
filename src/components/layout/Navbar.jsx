@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Menu, X, Sun, Moon, ChevronDown } from 'lucide-react';
+import { Menu, X, Sun, Moon, ArrowRight } from 'lucide-react';
 import MobileMenu from './MobileMenu';
 import { InstagramIcon, LinkedinIcon, FacebookIcon } from '../ui/SocialIcons';
 import KvantumLogo from '../ui/KvantumLogo';
@@ -16,150 +16,125 @@ export default function Navbar({ theme, toggleTheme, settings }) {
 
   return (
     <>
-      <nav className="fixed top-5 left-1/2 -translate-x-1/2 w-[calc(100%-40px)] max-w-[1280px] z-[100] rounded-[20px] px-6 sm:px-8 py-3.5 flex items-center justify-between glass-panel select-none">
-        
-        {/* Official Brand Logo Section (Image 2) */}
-        <div 
-          onClick={() => {
-            setMobileMenuOpen(false);
-            navigate('/');
-          }} 
-          className="flex items-center cursor-pointer py-1"
-        >
-          <KvantumLogo className="h-10 sm:h-12" theme={theme} />
-        </div>
-
-        {/* Desktop Navigation Links */}
-        <div className="hidden lg:flex gap-6 items-center">
-          <NavLink 
-            to="/"
-            className={({ isActive }) => 
-              `text-[15px] font-semibold transition-colors duration-200 ${isActive ? 'text-cyanCustom font-bold' : 'text-zinc-400 hover:text-cyanCustom'}`
-            }
-          >
-            Home
-          </NavLink>
-          <NavLink 
-            to="/about"
-            className={({ isActive }) => 
-              `text-[15px] font-semibold transition-colors duration-200 ${isActive ? 'text-cyanCustom font-bold' : 'text-zinc-400 hover:text-cyanCustom'}`
-            }
-          >
-            About
-          </NavLink>
+      <header className="fixed top-4 left-1/2 -translate-x-1/2 w-[calc(100%-32px)] max-w-[1280px] z-[100]">
+        <nav className="w-full rounded-2xl px-6 py-3 flex items-center justify-between bg-white/90 dark:bg-zinc-950/85 border border-slate-200/80 dark:border-white/10 backdrop-blur-xl shadow-lg dark:shadow-2xl select-none transition-colors duration-300">
           
-          <NavLink 
-            to="/services"
-            className={({ isActive }) => 
-              `text-[15px] font-semibold transition-colors duration-200 ${isActive ? 'text-cyanCustom font-bold' : 'text-zinc-400 hover:text-cyanCustom'}`
-            }
+          {/* Logo */}
+          <div 
+            onClick={() => {
+              setMobileMenuOpen(false);
+              navigate('/');
+            }} 
+            className="flex items-center cursor-pointer py-1"
           >
-            Services
-          </NavLink>
-
-          <NavLink 
-            to="/projects"
-            className={({ isActive }) => 
-              `text-[15px] font-semibold transition-colors duration-200 ${isActive ? 'text-cyanCustom font-bold' : 'text-zinc-400 hover:text-cyanCustom'}`
-            }
-          >
-            Portfolio
-          </NavLink>
-
-          <NavLink 
-            to="/blog"
-            className={({ isActive }) => 
-              `text-[15px] font-semibold transition-colors duration-200 ${isActive ? 'text-cyanCustom font-bold' : 'text-zinc-400 hover:text-cyanCustom'}`
-            }
-          >
-            Blog
-          </NavLink>
-
-          <NavLink 
-            to="/contact"
-            className={({ isActive }) => 
-              `text-[15px] font-semibold transition-colors duration-200 ${isActive ? 'text-cyanCustom font-bold' : 'text-zinc-400 hover:text-cyanCustom'}`
-            }
-          >
-            Contact
-          </NavLink>
-        </div>
-
-        {/* Controls & Social Links */}
-        <div className="hidden lg:flex items-center gap-4">
-          
-          {/* Social Links Icons */}
-          <div className="flex items-center gap-2 border-r border-white/10 pr-4">
-            <a
-              href={instagramUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-1.5 rounded-lg text-zinc-400 hover:text-pinkCustom hover:bg-white/5 transition-colors"
-              title="Instagram"
-            >
-              <InstagramIcon size={17} />
-            </a>
-            <a
-              href={linkedinUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-1.5 rounded-lg text-zinc-400 hover:text-cyanCustom hover:bg-white/5 transition-colors"
-              title="LinkedIn"
-            >
-              <LinkedinIcon size={17} />
-            </a>
-            <a
-              href={facebookUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-1.5 rounded-lg text-zinc-400 hover:text-blue-400 hover:bg-white/5 transition-colors"
-              title="Facebook"
-            >
-              <FacebookIcon size={17} />
-            </a>
+            <KvantumLogo className="h-10 sm:h-12" theme={theme} />
           </div>
 
-          {/* Theme Switcher Toggle */}
-          <label className="toggle-switch">
-            <input 
-              type="checkbox" 
-              checked={theme === 'light'} 
-              onChange={toggleTheme} 
-            />
-            <span className="slider">
-              <Sun size={12} color="#ffffff" style={{ marginLeft: '4px', opacity: theme === 'light' ? 0 : 0.6 }} />
-              <Moon size={12} color="#ffffff" style={{ marginRight: '4px', opacity: theme === 'light' ? 0.6 : 0 }} />
-            </span>
-          </label>
+          {/* Desktop Navigation Links */}
+          <div className="hidden lg:flex gap-7 items-center">
+            <NavLink 
+              to="/"
+              className={({ isActive }) => 
+                `text-sm font-medium transition-colors duration-200 ${isActive ? 'text-cyan-600 dark:text-cyan-400 font-bold' : 'text-slate-600 dark:text-slate-300 hover:text-cyan-500'}`
+              }
+            >
+              Home
+            </NavLink>
+            <NavLink 
+              to="/about"
+              className={({ isActive }) => 
+                `text-sm font-medium transition-colors duration-200 ${isActive ? 'text-cyan-600 dark:text-cyan-400 font-bold' : 'text-slate-600 dark:text-slate-300 hover:text-cyan-500'}`
+              }
+            >
+              About
+            </NavLink>
+            <NavLink 
+              to="/services"
+              className={({ isActive }) => 
+                `text-sm font-medium transition-colors duration-200 ${isActive ? 'text-cyan-600 dark:text-cyan-400 font-bold' : 'text-slate-600 dark:text-slate-300 hover:text-cyan-500'}`
+              }
+            >
+              Services
+            </NavLink>
+            <NavLink 
+              to="/projects"
+              className={({ isActive }) => 
+                `text-sm font-medium transition-colors duration-200 ${isActive ? 'text-cyan-600 dark:text-cyan-400 font-bold' : 'text-slate-600 dark:text-slate-300 hover:text-cyan-500'}`
+              }
+            >
+              Portfolio
+            </NavLink>
+            <NavLink 
+              to="/blog"
+              className={({ isActive }) => 
+                `text-sm font-medium transition-colors duration-200 ${isActive ? 'text-cyan-600 dark:text-cyan-400 font-bold' : 'text-slate-600 dark:text-slate-300 hover:text-cyan-500'}`
+              }
+            >
+              Blog
+            </NavLink>
+            <NavLink 
+              to="/contact"
+              className={({ isActive }) => 
+                `text-sm font-medium transition-colors duration-200 ${isActive ? 'text-cyan-600 dark:text-cyan-400 font-bold' : 'text-slate-600 dark:text-slate-300 hover:text-cyan-500'}`
+              }
+            >
+              Contact
+            </NavLink>
+          </div>
 
-          <button 
-            onClick={() => navigate('/contact')} 
-            className="px-5 py-2.5 rounded-lg text-[13px] font-bold bg-pinkCustom text-white hover:bg-pink-600 transition-colors shadow-[0_0_15px_rgba(236,72,153,0.3)] cursor-pointer"
-          >
-            Let's Talk
-          </button>
-        </div>
+          {/* Social Links & Controls */}
+          <div className="hidden lg:flex items-center gap-4">
+            <div className="flex items-center gap-2 border-r border-slate-200 dark:border-white/10 pr-4">
+              <a href={instagramUrl} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-pink-500 transition-colors">
+                <InstagramIcon size={16} />
+              </a>
+              <a href={linkedinUrl} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-cyan-500 transition-colors">
+                <LinkedinIcon size={16} />
+              </a>
+              <a href={facebookUrl} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-blue-500 transition-colors">
+                <FacebookIcon size={16} />
+              </a>
+            </div>
 
-        {/* Mobile menu trigger */}
-        <div className="flex lg:hidden items-center gap-4">
-          <label className="toggle-switch">
-            <input 
-              type="checkbox" 
-              checked={theme === 'light'} 
-              onChange={toggleTheme} 
-            />
-            <span className="slider"></span>
-          </label>
-          <button 
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="bg-none border-none cursor-pointer transition-colors flex items-center justify-center text-zinc-200"
-          >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
-      </nav>
+            {/* Theme Toggle Button */}
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-xl bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-white/15 transition-colors cursor-pointer"
+              title="Toggle Light / Dark Mode"
+            >
+              {theme === 'dark' ? <Sun size={17} className="text-amber-400" /> : <Moon size={17} className="text-slate-700" />}
+            </button>
 
-      {/* Mobile Menu Overlay Drawer */}
+            {/* Contact CTA Button */}
+            <button
+              onClick={() => navigate('/contact')}
+              className="px-5 py-2.5 rounded-xl text-xs font-bold bg-pink-500 hover:bg-pink-600 text-white transition-all duration-200 shadow-md hover:shadow-pink-500/25 cursor-pointer flex items-center gap-1.5"
+            >
+              Let's Talk <ArrowRight size={14} />
+            </button>
+          </div>
+
+          {/* Mobile Right Bar */}
+          <div className="flex lg:hidden items-center gap-3">
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-xl bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-200"
+            >
+              {theme === 'dark' ? <Sun size={18} className="text-amber-400" /> : <Moon size={18} />}
+            </button>
+
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2.5 rounded-xl bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-200"
+            >
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
+
+        </nav>
+      </header>
+
+      {/* Mobile Drawer Menu */}
       <MobileMenu isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} theme={theme} settings={settings} />
     </>
   );

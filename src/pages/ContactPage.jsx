@@ -1,293 +1,245 @@
 import React, { useState } from 'react';
-import { Terminal as TerminalIcon, Send, CheckCircle2, RotateCcw, AlertTriangle, MapPin, Mail, Clock, Phone } from 'lucide-react';
-import Card from '@/components/ui/Card';
+import { Mail, Phone, MapPin, Send, CheckCircle, Clock, ShieldCheck, Sparkles } from 'lucide-react';
 import Badge from '@/components/ui/Badge';
-import GradientText from '@/components/ui/GradientText';
-import Button from '@/components/ui/Button';
 import { submitContact } from '@/services/contactService';
 
-export default function ContactPage({ settings }) {
-  const contact = settings?.contact || {};
-  const [formData, setFormData] = useState({ name: '', email: '', phone: '', service: 'web', message: '' });
-  const [status, setStatus] = useState('idle'); // 'idle', 'submitting', 'success', 'error'
-  const [honeypot, setHoneypot] = useState('');
-  const [formLoadTime] = useState(Date.now());
+export default function ContactPage() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    company: '',
+    service: 'custom-software',
+    message: '',
+  });
+
+  const [status, setStatus] = useState({ loading: false, success: false, error: '' });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setStatus({ loading: true, success: false, error: '' });
 
-    // Anti-bot check 1: Honeypot field (bots fill this field, humans do not see it)
-    if (honeypot) {
-      console.warn('[ANTI-BOT] Spam submission blocked via honeypot.');
-      setStatus('success'); // Pretend success
-      return;
-    }
-
-    // Anti-bot check 2: Speed check (bots submit within 1-2 seconds, humans take longer)
-    const delay = Date.now() - formLoadTime;
-    if (delay < 2000) {
-      console.warn('[ANTI-BOT] Spam submission blocked via submission speed check:', delay, 'ms');
-      setStatus('success'); // Pretend success
-      return;
-    }
-
-    if (!formData.name || !formData.email || !formData.message) {
-      setStatus('error');
-      return;
-    }
-
-    setStatus('submitting');
     try {
-      await submitContact(formData);
-      setStatus('success');
+      await submitContact({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        service: formData.service,
+        notes: `Company: ${formData.company} | Message: ${formData.message}`,
+      });
+
+      setStatus({ loading: false, success: true, error: '' });
+      setFormData({ name: '', email: '', phone: '', company: '', service: 'custom-software', message: '' });
     } catch (err) {
-      console.warn('[CONTACT API] Backend connection failed. Falling back to local storage.');
-      
-      const saved = localStorage.getItem('kts_local_leads');
-      const list = saved ? JSON.parse(saved) : [];
-      const localItem = {
-        _id: 'local_' + Math.random().toString(36).substr(2, 9),
-        ...formData,
-        status: 'New',
-        quality: 'Warm',
-        notes: 'Backup record. MongoDB server was offline during submit.',
-        createdAt: new Date().toISOString()
-      };
-      list.push(localItem);
-      localStorage.setItem('kts_local_leads', JSON.stringify(list));
-
-      setStatus('success');
+      setStatus({ loading: false, success: false, error: err.response?.data?.message || 'Failed to send message.' });
     }
-  };
-
-  const handleReset = () => {
-    setFormData({ name: '', email: '', phone: '', service: 'web', message: '' });
-    setHoneypot('');
-    setStatus('idle');
   };
 
   return (
-    <div id="contact" className="container mx-auto max-w-[1280px] px-6 py-20 relative z-[5] select-none text-left">
+    <div className="container mx-auto max-w-[1280px] px-6 py-12 text-left select-none">
       
-      {/* Header */}
+      {/* Page Title */}
       <div className="text-center mb-16">
-        <Badge className="mb-4">Get In Touch</Badge>
-        <h1 className="text-4xl sm:text-5xl font-headline font-bold text-zinc-100 mb-4">
-          Contact <GradientText>Our Team</GradientText>
+        <Badge className="mb-4 mx-auto inline-flex items-center gap-1.5 bg-pink-500/10 border-pink-500/20 text-pink-600 dark:text-pink-400">
+          <Sparkles size={14} /> Direct Technical Contact
+        </Badge>
+        <h1 className="text-4xl sm:text-6xl font-black font-headline text-slate-900 dark:text-white uppercase leading-tight mb-4">
+          LET'S DISCUSS YOUR <br />
+          <span className="gradient-text">SOFTWARE & AUTOMATION PROJECT</span>
         </h1>
-        <p className="text-zinc-400 max-w-xl mx-auto text-base sm:text-lg leading-relaxed">
-          Have a project in mind or want to explore how we can help your brand grow? Drop us a message below.
+        <p className="text-slate-600 dark:text-slate-300 max-w-2xl mx-auto text-base">
+          Connect directly with our engineering team to map out your software architecture, request project quotes, or schedule a 1-on-1 demo.
         </p>
       </div>
 
-      {/* Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-stretch">
-        
-        {/* Form Card */}
-        <div className="flex flex-col">
-          <Card 
-            className={`p-9 border h-full flex flex-col justify-center transition-all duration-300 ${
-              status === 'success' ? 'shadow-[0_10px_40px_-10px_rgba(16,185,129,0.2)] border-emerald-500/30' : ''
-            }`}
-          >
-            {status === 'success' ? (
-              <div className="text-center py-6 flex flex-col items-center gap-5">
-                <CheckCircle2 size={60} className="text-emerald-500 drop-shadow-[0_0_8px_rgba(16,185,129,0.3)]" />
-                <h2 className="text-zinc-100 text-xl font-bold font-headline">Message Sent</h2>
-                <p className="text-zinc-400 text-sm leading-relaxed max-w-[340px]">
-                  Thank you for reaching out. We have received your request and our team will get back to you shortly.
-                </p>
-                <Button 
-                  onClick={handleReset}
-                  variant="secondary"
-                  className="mt-5 gap-2 px-5 py-2.5 rounded-lg text-xs"
-                >
-                  <RotateCcw size={14} /> Send Another Message
-                </Button>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-                
+      {/* Split Screen Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+
+        {/* Left Column: Direct Info Cards */}
+        <div className="flex flex-col gap-6">
+          <div className="p-8 rounded-3xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 shadow-lg">
+            <h3 className="text-xl font-headline font-bold text-slate-900 dark:text-white mb-6">Contact Matrix</h3>
+            
+            <div className="space-y-6">
+              <div className="flex items-start gap-4">
+                <div className="p-3 rounded-2xl bg-sky-500/10 text-sky-500 border border-sky-500/20 shrink-0">
+                  <Mail size={20} />
+                </div>
                 <div>
-                  <label className="block text-xs font-mono text-zinc-500 uppercase tracking-widest mb-2">
-                    Your Name
-                  </label>
-                  <input 
-                    type="text" 
+                  <span className="text-xs font-mono text-slate-400 block uppercase">Email Support</span>
+                  <a href="mailto:info@kvantumtechsolutions.com" className="text-base font-bold text-slate-900 dark:text-white hover:text-sky-500 transition-colors">
+                    info@kvantumtechsolutions.com
+                  </a>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="p-3 rounded-2xl bg-pink-500/10 text-pink-500 border border-pink-500/20 shrink-0">
+                  <Phone size={20} />
+                </div>
+                <div>
+                  <span className="text-xs font-mono text-slate-400 block uppercase">Direct Hotlines</span>
+                  <div className="flex flex-col gap-1 text-sm font-bold text-slate-900 dark:text-white mt-1">
+                    <a href="tel:+919811661828" className="hover:text-pink-500 transition-colors">+91 9811661828</a>
+                    <a href="tel:+919811663433" className="hover:text-pink-500 transition-colors">+91 9811663433</a>
+                    <a href="tel:+919811663121" className="hover:text-pink-500 transition-colors">+91 9811663121</a>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="p-3 rounded-2xl bg-purple-500/10 text-purple-500 border border-purple-500/20 shrink-0">
+                  <MapPin size={20} />
+                </div>
+                <div>
+                  <span className="text-xs font-mono text-slate-400 block uppercase">Office Address</span>
+                  <p className="text-sm font-bold text-slate-900 dark:text-white leading-relaxed mt-1">
+                    A33, 64, Tahirpur Rd, Priyadarshini Vihar, Taharpur Village, Dilshad Garden, Delhi, 110095
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-8 rounded-3xl bg-slate-50 dark:bg-zinc-950/60 border border-slate-200 dark:border-zinc-800 flex items-center gap-4">
+            <Clock size={28} className="text-emerald-500 shrink-0" />
+            <div>
+              <h4 className="text-sm font-headline font-bold text-slate-900 dark:text-white">Rapid Response SLA</h4>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                All client inquiries submitted through this form are assigned to a senior engineer within 2 hours during business hours.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Form Card */}
+        <div className="p-8 sm:p-10 rounded-3xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 shadow-xl">
+          {status.success ? (
+            <div className="text-center py-12 flex flex-col items-center gap-4">
+              <CheckCircle size={48} className="text-emerald-500" />
+              <h3 className="text-2xl font-bold font-headline text-slate-900 dark:text-white">Inquiry Submitted!</h3>
+              <p className="text-slate-600 dark:text-slate-300 text-sm max-w-md">
+                Thank you. Our technical lead will review your software requirement and get back to you shortly.
+              </p>
+              <button
+                onClick={() => setStatus({ loading: false, success: false, error: '' })}
+                className="mt-4 px-6 py-2.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-white/10 text-slate-900 dark:text-white"
+              >
+                Submit Another Message
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+              <h3 className="text-xl font-headline font-bold text-slate-900 dark:text-white mb-1">Send a Direct Message</h3>
+
+              {status.error && (
+                <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-500 text-xs">
+                  {status.error}
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-mono text-slate-500 dark:text-slate-400 mb-1.5 font-bold">Your Name *</label>
+                  <input
+                    type="text"
                     required
-                    placeholder="Enter your name"
+                    placeholder="Sahil Kumar"
                     value={formData.name}
-                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                    className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-3.5 text-zinc-100 text-sm placeholder-zinc-650 outline-none focus:border-cyanCustom/40 transition-colors"
-                    disabled={status === 'submitting'}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-zinc-950/60 border border-slate-200 dark:border-zinc-800 text-slate-900 dark:text-white text-sm outline-none focus:border-sky-500"
                   />
                 </div>
-
-                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-xs font-mono text-zinc-500 uppercase tracking-widest mb-2">
-                      Your Email
-                    </label>
-                    <input 
-                      type="email" 
-                      required
-                      placeholder="name@company.com"
-                      value={formData.email}
-                      onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                      className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-3.5 text-zinc-100 text-sm placeholder-zinc-650 outline-none focus:border-cyanCustom/40 transition-colors"
-                      disabled={status === 'submitting'}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-mono text-zinc-500 uppercase tracking-widest mb-2">
-                      Phone Number
-                    </label>
-                    <input 
-                      type="tel" 
-                      placeholder="+91 XXXXX XXXXX"
-                      value={formData.phone}
-                      onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                      className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-3.5 text-zinc-100 text-sm placeholder-zinc-650 outline-none focus:border-cyanCustom/40 transition-colors"
-                      disabled={status === 'submitting'}
-                    />
-                  </div>
-                </div>
-
                 <div>
-                  <label className="block text-xs font-mono text-zinc-500 uppercase tracking-widest mb-2">
-                    What Service Do You Need?
-                  </label>
-                  <select 
-                    value={formData.service}
-                    onChange={(e) => setFormData(prev => ({ ...prev, service: e.target.value }))}
-                    className="w-full bg-zinc-950 border border-white/8 rounded-xl px-4 py-3.5 text-zinc-100 text-sm outline-none cursor-pointer focus:border-cyanCustom/40 transition-colors"
-                    disabled={status === 'submitting'}
-                  >
-                    <option value="web">Web Development</option>
-                    <option value="app">App Development</option>
-                    <option value="ui">UI/UX Design</option>
-                    <option value="seo">SEO & Marketing</option>
-                    <option value="software">Custom Software</option>
-                    <option value="consulting">IT Consulting</option>
-                    <option value="not_sure">Not Sure Yet</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-mono text-zinc-500 uppercase tracking-widest mb-2">
-                    Your Message
-                  </label>
-                  <textarea 
+                  <label className="block text-xs font-mono text-slate-500 dark:text-slate-400 mb-1.5 font-bold">Email Address *</label>
+                  <input
+                    type="email"
                     required
-                    rows={4}
-                    placeholder="Tell us about your project requirements..."
-                    value={formData.message}
-                    onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
-                    className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-3.5 text-zinc-100 text-sm placeholder-zinc-655 outline-none resize-none focus:border-cyanCustom/40 transition-colors"
-                    disabled={status === 'submitting'}
+                    placeholder="name@company.com"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-zinc-950/60 border border-slate-200 dark:border-zinc-800 text-slate-900 dark:text-white text-sm outline-none focus:border-sky-500"
                   />
                 </div>
+              </div>
 
-                {/* Honeypot field (anti-bot protection) */}
-                <div className="hidden" aria-hidden="true">
-                  <input 
-                    type="text" 
-                    name="website_confirm" 
-                    tabIndex={-1} 
-                    autoComplete="off"
-                    value={honeypot}
-                    onChange={(e) => setHoneypot(e.target.value)}
-                    placeholder="Leave this empty"
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-mono text-slate-500 dark:text-slate-400 mb-1.5 font-bold">Phone Number *</label>
+                  <input
+                    type="tel"
+                    required
+                    placeholder="+91 9811661828"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-zinc-950/60 border border-slate-200 dark:border-zinc-800 text-slate-900 dark:text-white text-sm outline-none focus:border-sky-500"
                   />
                 </div>
+                <div>
+                  <label className="block text-xs font-mono text-slate-500 dark:text-slate-400 mb-1.5 font-bold">Company Name</label>
+                  <input
+                    type="text"
+                    placeholder="Company Ltd"
+                    value={formData.company}
+                    onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-zinc-950/60 border border-slate-200 dark:border-zinc-800 text-slate-900 dark:text-white text-sm outline-none focus:border-sky-500"
+                  />
+                </div>
+              </div>
 
-                {status === 'error' && (
-                  <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 px-4 py-3 rounded-lg text-red-400 text-xs font-mono">
-                    <AlertTriangle size={14} /> Please fill in all required fields correctly.
-                  </div>
-                )}
-
-                <Button 
-                  type="submit" 
-                  variant="primary"
-                  className="w-full py-4 text-[15px]"
-                  disabled={status === 'submitting'}
+              <div>
+                <label className="block text-xs font-mono text-slate-500 dark:text-slate-400 mb-1.5 font-bold">Requirement Category</label>
+                <select
+                  value={formData.service}
+                  onChange={(e) => setFormData({ ...formData, service: e.target.value })}
+                  className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-zinc-950/60 border border-slate-200 dark:border-zinc-800 text-slate-900 dark:text-white text-sm outline-none focus:border-sky-500"
                 >
-                  {status === 'submitting' ? 'Sending...' : 'Send Message'} <Send size={16} />
-                </Button>
+                  <option value="custom-software">Custom Software Development</option>
+                  <option value="business-automation">Business Process Automation</option>
+                  <option value="crm-systems">CRM Software System</option>
+                  <option value="hrms-payroll">HRMS & Payroll System</option>
+                  <option value="whatsapp-api">WhatsApp Business API</option>
+                  <option value="web-mobile-apps">Web & Mobile Apps</option>
+                </select>
+              </div>
 
-              </form>
-            )}
-          </Card>
+              <div>
+                <label className="block text-xs font-mono text-slate-500 dark:text-slate-400 mb-1.5 font-bold">Project / Automation Details</label>
+                <textarea
+                  rows={4}
+                  required
+                  placeholder="Tell us about your requirements, current workflows, or software goals..."
+                  value={formData.message}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-zinc-950/60 border border-slate-200 dark:border-zinc-800 text-slate-900 dark:text-white text-sm outline-none focus:border-sky-500 resize-none"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={status.loading}
+                className="w-full py-4 rounded-xl text-sm font-bold bg-pink-500 text-white hover:bg-pink-600 transition-colors shadow-md flex items-center justify-center gap-2 cursor-pointer"
+              >
+                {status.loading ? 'Submitting...' : 'SEND INQUIRY →'}
+              </button>
+            </form>
+          )}
         </div>
 
-        {/* Location Info & Contact Details */}
-        <div className="flex flex-col justify-between gap-6 h-full">
-          
-          <Card className="p-9 border flex flex-col gap-8 text-left h-full justify-center">
-            <h3 className="text-xl text-zinc-100 font-headline font-bold border-b border-white/8 pb-4">
-              Office Details
-            </h3>
+      </div>
 
-            <div className="flex gap-4 items-start">
-              <MapPin size={22} className="text-cyanCustom shrink-0 mt-0.5" />
-              <div>
-                <h4 className="text-sm font-semibold text-zinc-200 mb-1">Our Location</h4>
-                <p className="text-zinc-400 text-sm leading-relaxed">
-                  {!contact.address || contact.address.includes('Noida') || contact.address.includes('Sector 62')
-                    ? 'A33, 64, Tahirpur Rd, Priyadarshini Vihar, Taharpur Village, Dilshad Garden, Delhi, 110095'
-                    : contact.address}<br />
-                  <span className="text-[10px] font-mono text-zinc-500 block mt-1 uppercase tracking-wider">Dilshad Garden, Delhi</span>
-                </p>
-              </div>
-            </div>
-
-            <div className="flex gap-4 items-start">
-              <Mail size={22} className="text-purpleCustom shrink-0 mt-0.5" />
-              <div>
-                <h4 className="text-sm font-semibold text-zinc-200 mb-1">Email Support</h4>
-                <p className="text-zinc-400 text-sm">
-                  <a href={`mailto:${contact.email || 'support@kvantumtechsolutions.com'}`} className="hover:underline">
-                    {contact.email || 'support@kvantumtechsolutions.com'}
-                  </a>
-                </p>
-              </div>
-            </div>
-
-            <div className="flex gap-4 items-start">
-              <Phone size={22} className="text-cyanCustom shrink-0 mt-0.5" />
-              <div>
-                <h4 className="text-sm font-semibold text-zinc-200 mb-1">Phone</h4>
-                <p className="text-zinc-400 text-sm flex flex-col gap-1">
-                  <a href="tel:+919811661828" className="hover:underline">
-                    +91 9811661828
-                  </a>
-                  <a href="tel:+919811663433" className="hover:underline">
-                    +91 9811663433
-                  </a>
-                  <a href="tel:+919811663121" className="hover:underline">
-                    +91 9811663121
-                  </a>
-                </p>
-              </div>
-            </div>
-
-            <div className="flex gap-4 items-start">
-              <Clock size={22} className="text-cyanCustom shrink-0 mt-0.5" />
-              <div>
-                <h4 className="text-sm font-semibold text-zinc-200 mb-1">Working Hours</h4>
-                <p className="text-zinc-400 text-sm leading-relaxed">
-                  Monday - Friday: 09:00 - 18:00 IST<br />
-                  <span className="text-[10px] font-mono text-zinc-500 block mt-1 uppercase tracking-wider">Closed on Weekends & Public Holidays</span>
-                </p>
-              </div>
-            </div>
-
-          </Card>
-
-        </div>
-
+      {/* Embedded Google Map */}
+      <div className="w-full h-[380px] rounded-3xl overflow-hidden border border-slate-200 dark:border-zinc-800 shadow-xl">
+        <iframe
+          title="Kvantum Office Map"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3499.747867204919!2d77.3082!3d28.6973!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cfb7b6c59b6c1%3A0x7d87d90390f7a5b1!2sDilshad%20Garden%2C%20Delhi%2C%20110095!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+          width="100%"
+          height="100%"
+          style={{ border: 0 }}
+          allowFullScreen=""
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+        />
       </div>
 
     </div>

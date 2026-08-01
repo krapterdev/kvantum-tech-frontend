@@ -20,6 +20,7 @@ import Pricing from '@/components/sections/Pricing';
 import FAQ from '@/components/sections/FAQ';
 import BlogPreview from '@/components/sections/BlogPreview';
 import CTA from '@/components/sections/CTA';
+import VisitorOdometerCounter from '@/components/sections/VisitorOdometerCounter';
 import HomeContact from '@/components/sections/HomeContact';
 import SeoSchema from '@/components/sections/SeoSchema';
 
@@ -92,7 +93,10 @@ export default function Home({ services = [], blogs = [], settings }) {
       {/* 21. Free Consultation CTA */}
       <CTA />
 
-      {/* 22. Contact Form */}
+      {/* 22. Live Visitor Speedometer & Odometer Counter */}
+      <VisitorOdometerCounter />
+
+      {/* 23. Contact Form */}
       <HomeContact />
 
     </div>

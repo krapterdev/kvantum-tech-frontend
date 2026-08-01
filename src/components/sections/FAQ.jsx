@@ -1,122 +1,100 @@
 import React, { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { Plus, Minus, HelpCircle } from 'lucide-react';
 import Badge from '../ui/Badge';
 
-const faqs = [
+const faqItems = [
   {
-    q: '1. What software development services do you offer?',
-    a: 'We provide custom software development, CRM software, HRMS software, ERP solutions, business automation, web application development, mobile app development, SaaS platforms, and enterprise software solutions tailored to your business.'
+    num: '01',
+    question: 'What custom software and business automation solutions does Kvantum Tech build?',
+    answer: 'We specialize in Custom Software Development, CRM Systems, HRMS & Payroll Software, ERP Platforms, Business Process Automation, WhatsApp Business API, Web Applications, and Mobile Apps tailored specifically to your business operations.'
   },
   {
-    q: '2. Can you build fully customized software?',
-    a: 'Yes. Every solution we develop is customized according to your business processes, operational requirements, and future growth plans. We do not use one-size-fits-all templates.'
+    num: '02',
+    question: 'Do we get 100% source code ownership with zero recurring license fees?',
+    answer: 'Yes! All custom software and automation solutions built by Kvantum Tech Solutions come with 100% full source code ownership. You never pay recurring software license fees or get locked into proprietary reseller platforms.'
   },
   {
-    q: '3. Do you provide CRM software?',
-    a: 'Yes. We develop fully customized CRM systems for sales management, lead tracking, customer support, follow-ups, quotations, pipeline management, and detailed reporting dashboards.'
+    num: '03',
+    question: 'How long does it take to develop and deploy a custom CRM or ERP system?',
+    answer: 'Our sprint-driven development process delivers initial MVP releases within 2 to 4 weeks. Full-scale custom enterprise CRM or ERP platforms typically take 6 to 12 weeks depending on module complexity.'
   },
   {
-    q: '4. What is Business Automation?',
-    a: 'Business automation eliminates repetitive manual work by automating workflows, approvals, notifications, customer communication, reporting, invoice generation, and business processes — saving time and improving efficiency.'
+    num: '04',
+    question: 'Can Kvantum integrate WhatsApp Business API with our existing CRM/ERP database?',
+    answer: 'Absolutely. We build direct Meta WhatsApp API integrations with automated lead response, instant quotation dispatch, payment reminders, order status updates, and 24/7 interactive chat bots.'
   },
   {
-    q: '5. Do you develop HRMS software?',
-    a: 'Yes. Our HRMS solutions include employee attendance management, payroll processing, leave management, recruitment workflows, employee records, onboarding, and performance management modules.'
-  },
-  {
-    q: '6. Can you develop ERP software?',
-    a: 'Absolutely. We build scalable ERP systems covering finance, inventory management, procurement, HR operations, sales tracking, production, and real-time business reporting.'
-  },
-  {
-    q: '7. Do you develop mobile applications?',
-    a: 'Yes. We build Android, iOS, and cross-platform mobile applications using modern frameworks including Flutter and React Native — for customers, field teams, and internal operations.'
-  },
-  {
-    q: '8. Can your software integrate with existing systems?',
-    a: 'Yes. We integrate payment gateways, WhatsApp Business API, SMS, email services, accounting software, ERP systems, REST APIs, and third-party platforms seamlessly into your solution.'
-  },
-  {
-    q: '9. How long does software development take?',
-    a: 'Project timelines depend on complexity, features, integrations, and business requirements. Basic modules typically take 4–8 weeks. After a free consultation, we provide a detailed project roadmap with clear milestones.'
-  },
-  {
-    q: '10. Is my business data secure?',
-    a: 'Absolutely. We follow secure coding standards, encrypted communication protocols, role-based access control, multi-factor authentication, and regular security auditing practices across every application we build.'
-  },
-  {
-    q: '11. Do you provide post-launch support?',
-    a: 'Yes. We provide maintenance, updates, monitoring, bug fixes, performance optimization, and dedicated technical support after deployment. All plans include a structured post-launch support period.'
-  },
-  {
-    q: '12. Can software be upgraded later?',
-    a: 'Yes. Our solutions are built with scalability in mind, allowing new modules, user roles, integrations, and features to be added as your business grows — without expensive rewrites.'
-  },
-  {
-    q: '13. Do you provide cloud deployment?',
-    a: 'Yes. We deploy software on secure cloud infrastructure (AWS, DigitalOcean, GCP) as well as on-premise servers based on your business requirements and data sensitivity.'
-  },
-  {
-    q: '14. Which industries do you serve?',
-    a: 'We serve manufacturing, healthcare, hospitality, education, logistics, finance, real estate, retail, ecommerce, construction, startups, SMEs, and large enterprises across India and beyond.'
-  },
-  {
-    q: '15. How can I get started?',
-    a: 'Simply book a free consultation using our contact form or call us directly. Our experts will understand your requirements, analyze your workflows, and recommend the best software solution for your business — with no commitment required.'
+    num: '05',
+    question: 'What post-launch maintenance and SLA support options do you provide?',
+    answer: 'We offer 24/7 continuous system monitoring, rapid bug resolution SLAs, daily backups, cloud server maintenance, and dedicated developer support across our monthly engagement plans.'
   },
 ];
 
 export default function FAQ() {
-  const [open, setOpen] = useState(null);
+  const [openIndex, setOpenIndex] = useState(0);
+
+  const toggleFAQ = (index) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
 
   return (
-    <section className="bg-zinc-950/20 border-y border-white/5 py-24 select-none">
-      <div className="container mx-auto max-w-[1280px] px-6">
+    <section id="faq" className="container mx-auto max-w-[960px] px-6 py-24 select-none text-left relative z-10">
+      
+      {/* Header */}
+      <div className="text-center mb-16">
+        <Badge className="mb-4 mx-auto inline-flex items-center gap-1.5 bg-pink-500/10 border-pink-500/20 text-pink-600 dark:text-pink-400 font-mono text-xs">
+          <HelpCircle size={14} /> Frequently Asked Questions
+        </Badge>
+        <h2 className="text-3xl sm:text-4xl font-headline font-bold text-slate-900 dark:text-white leading-tight mb-4">
+          Everything You Need to Know <br />
+          <span className="gradient-text">About Our Software & Process</span>
+        </h2>
+      </div>
 
-        {/* Header */}
-        <div className="text-center mb-16">
-          <Badge className="mb-5 mx-auto inline-flex items-center gap-1.5 bg-pinkCustom/10 border-pinkCustom/20 text-pinkCustom">
-            FAQs
-          </Badge>
-          <h2 className="text-3xl sm:text-4xl font-headline font-bold text-zinc-100 leading-tight mb-5">
-            Frequently Asked <br />
-            <span className="gradient-text">Questions</span>
-          </h2>
-          <p className="text-zinc-400 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
-            Everything you need to know about our software development services, pricing, process, and support.
-          </p>
-        </div>
-
-        {/* Accordion */}
-        <div className="max-w-4xl mx-auto grid grid-cols-1 gap-3">
-          {faqs.map((faq, idx) => (
+      {/* Accordion List */}
+      <div className="space-y-4">
+        {faqItems.map((item, idx) => {
+          const isOpen = openIndex === idx;
+          return (
             <div
               key={idx}
-              className={`border rounded-xl transition-all duration-300 overflow-hidden ${
-                open === idx
-                  ? 'border-pinkCustom/30 bg-pinkCustom/5'
-                  : 'border-white/8 bg-white/[0.02] hover:border-white/15'
+              className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
+                isOpen
+                  ? 'bg-white dark:bg-zinc-900 border-cyan-500 shadow-md'
+                  : 'bg-slate-50 dark:bg-zinc-950/70 border-slate-200 dark:border-zinc-800 hover:border-slate-300 dark:hover:border-zinc-700'
               }`}
             >
               <button
-                className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left cursor-pointer"
-                onClick={() => setOpen(open === idx ? null : idx)}
+                onClick={() => toggleFAQ(idx)}
+                className="w-full p-6 text-left flex items-center justify-between gap-4 cursor-pointer"
               >
-                <span className="text-sm sm:text-base font-medium text-zinc-100">{faq.q}</span>
-                <ChevronDown
-                  size={18}
-                  className={`text-zinc-400 shrink-0 transition-transform duration-300 ${open === idx ? 'rotate-180 text-pinkCustom' : ''}`}
-                />
+                <div className="flex items-center gap-4">
+                  <span className={`text-xs font-mono font-bold px-2.5 py-1 rounded-lg border ${
+                    isOpen ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-600 dark:text-cyan-400' : 'bg-slate-200 dark:bg-zinc-800 border-slate-300 dark:border-zinc-700 text-slate-600 dark:text-zinc-400'
+                  }`}>
+                    {item.num}
+                  </span>
+                  <h3 className="text-base sm:text-lg font-headline font-bold text-slate-900 dark:text-white">
+                    {item.question}
+                  </h3>
+                </div>
+                <div className={`p-2 rounded-xl border transition-transform duration-300 shrink-0 ${
+                  isOpen ? 'bg-cyan-500 text-slate-950 border-cyan-500 rotate-180' : 'bg-slate-100 dark:bg-zinc-800 border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400'
+                }`}>
+                  {isOpen ? <Minus size={16} /> : <Plus size={16} />}
+                </div>
               </button>
-              {open === idx && (
-                <div className="px-6 pb-6">
-                  <p className="text-zinc-400 text-sm leading-relaxed">{faq.a}</p>
+
+              {isOpen && (
+                <div className="px-6 pb-6 pt-1 text-slate-600 dark:text-zinc-300 text-xs sm:text-sm leading-relaxed border-t border-slate-100 dark:border-zinc-800 font-sans">
+                  {item.answer}
                 </div>
               )}
             </div>
-          ))}
-        </div>
-
+          );
+        })}
       </div>
+
     </section>
   );
 }

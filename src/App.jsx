@@ -6,6 +6,7 @@ import ScrollToTop from '@/components/layout/ScrollToTop';
 import ScrollVideoPlayer from '@/components/ScrollVideoPlayer';
 import FloatingQuickActions from '@/components/sections/FloatingQuickActions';
 import PageLoader from '@/components/ui/PageLoader';
+import CookieConsent from '@/components/ui/CookieConsent';
 
 // Page components
 import Home from '@/pages/Home';
@@ -399,7 +400,12 @@ export default function App() {
       </main>
 
       {!isAdminPath && <Footer seoPages={seoPages} theme={theme} settings={settings} services={services} />}
+      
+      {/* Floating Action Buttons */}
       {!isAdminPath && <FloatingQuickActions />}
+
+      {/* Cookie & Terms Consent Modal */}
+      {!isAdminPath && <CookieConsent />}
     </div>
   );
 }
