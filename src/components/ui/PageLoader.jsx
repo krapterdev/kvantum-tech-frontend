@@ -28,9 +28,9 @@ export default function PageLoader() {
       {/* Ambient background glow */}
       <div className="absolute w-[500px] h-[250px] bg-gradient-to-r from-blue-600/20 via-pink-500/15 to-cyan-500/20 blur-3xl rounded-full pointer-events-none" />
 
-      {/* Official KVANTUM Logo Banner (Image 2) */}
+      {/* Official KVANTUM Logo Banner */}
       <div className="relative z-10 animate-pulse mb-8">
-        <KvantumLogo className="h-12 sm:h-16 md:h-20" variant="full" />
+        <KvantumLogo className="h-16 sm:h-24" theme="dark" />
       </div>
 
       {/* Progress Bar & Counter */}

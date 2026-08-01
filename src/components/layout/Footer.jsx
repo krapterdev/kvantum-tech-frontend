@@ -39,7 +39,7 @@ export default function Footer({ seoPages = [], theme, settings, services = [] }
           {/* Column 1: Logo & Brand Summary */}
           <div className="flex flex-col gap-4 lg:col-span-1">
             <div className="mb-2">
-              <KvantumLogo className="h-9 sm:h-11" variant="full" />
+              <KvantumLogo className="h-12 sm:h-14" theme="dark" />
             </div>
             <p className="text-zinc-400 text-xs sm:text-sm leading-relaxed">
               Kvantum Tech Solutions delivers custom software development, business automation, CRM systems, HRMS platforms, ERP solutions, and web & mobile applications.
