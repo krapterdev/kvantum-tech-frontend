@@ -16,10 +16,18 @@ export const logoutAdmin = () => {
   localStorage.removeItem('kts_admin_user');
 };
 
-// Local storage session accessor
+// Crash-proof local storage session accessor
 export const getCurrentUser = () => {
-  const user = localStorage.getItem('kts_admin_user');
-  return user ? JSON.parse(user) : null;
+  try {
+    const user = localStorage.getItem('kts_admin_user');
+    if (!user || user === 'undefined' || user === 'null') return null;
+    const parsed = JSON.parse(user);
+    if (parsed && typeof parsed === 'object') return parsed;
+    return null;
+  } catch (e) {
+    localStorage.removeItem('kts_admin_user');
+    return null;
+  }
 };
 
 // List all staff members (admin only)
