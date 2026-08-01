@@ -133,34 +133,37 @@ export default function AdminPortalPage({
   const fetchLeadsList = async () => {
     try {
       const data = await contactService.getLeads();
-      setLeads(data);
+      setLeads(Array.isArray(data) ? data : []);
     } catch (err) {
       console.warn('[ADMIN PORTAL] Leads fetch failed or unauthorized.');
+      setLeads([]);
     }
   };
 
   const fetchAssetsList = async () => {
     try {
       const data = await assetService.listAssets();
-      setAssets(data);
+      setAssets(Array.isArray(data) ? data : []);
     } catch (err) {
       console.warn('[ADMIN PORTAL] Assets fetch failed or unauthorized.');
+      setAssets([]);
     }
   };
 
   const fetchUsersList = async () => {
     try {
       const data = await userService.listUsers();
-      setUsersList(data);
+      setUsersList(Array.isArray(data) ? data : []);
     } catch (err) {
       console.warn('[ADMIN PORTAL] Users fetch failed or unauthorized.');
+      setUsersList([]);
     }
   };
 
   const fetchSeoSettingsList = async () => {
     try {
       const data = await seoService.getSeoSettings();
-      setSeoSettings(data);
+      setSeoSettings(data || {});
     } catch (err) {
       console.warn('[ADMIN PORTAL] SEO settings fetch failed.');
     }
@@ -1455,7 +1458,7 @@ export default function AdminPortalPage({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/8 text-zinc-400 bg-zinc-900/10">
-                  {leads.length > 0 ? (
+                  {Array.isArray(leads) && leads.length > 0 ? (
                     leads.map((lead) => (
                       <tr key={lead._id} className="hover:bg-white/[0.01]">
                         <td className="px-5 py-4 text-xs font-mono text-zinc-500 whitespace-nowrap">
@@ -1523,7 +1526,7 @@ export default function AdminPortalPage({
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {services.map(ser => (
+              {(Array.isArray(services) ? services : []).map(ser => (
                 <Card key={ser.id} className="p-6 border flex justify-between items-start gap-4">
                   <div className="text-left flex flex-col gap-2">
                     <span className="text-[10px] font-mono text-zinc-500 uppercase">NODE_ID: {ser.id}</span>
@@ -1905,7 +1908,7 @@ export default function AdminPortalPage({
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {assets.map((asset, idx) => (
+            {(Array.isArray(assets) ? assets : []).map((asset, idx) => (
               <Card key={idx} className="p-4 border flex flex-col justify-between items-start gap-4">
                 
                 {/* Image Thumbnail preview */}
@@ -2054,7 +2057,7 @@ export default function AdminPortalPage({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/8 text-zinc-400 bg-zinc-900/10">
-                  {usersList.map(usr => (
+                  {(Array.isArray(usersList) ? usersList : []).map(usr => (
                     <tr key={usr._id} className="hover:bg-white/[0.01]">
                       <td className="px-5 py-4 font-bold text-zinc-200">{usr.name}</td>
                       <td className="px-5 py-4 font-mono text-xs">{usr.email}</td>
