@@ -32,7 +32,7 @@ export default function BlogPreview({ blogs = [] }) {
             {/* Image Thumbnail */}
             <div className="relative h-48 w-full overflow-hidden">
               <img
-                src={post.image || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80'}
+                src={post.image || post.ogImage || post.coverImage || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80'}
                 alt={post.title}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />

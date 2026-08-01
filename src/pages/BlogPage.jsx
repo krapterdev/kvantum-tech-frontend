@@ -135,7 +135,7 @@ function BlogDetail({ post }) {
       </div>
 
       <div className="w-full h-[380px] rounded-3xl overflow-hidden shadow-xl border border-slate-200 dark:border-zinc-800">
-        <img src={post.image || FALLBACK_IMG} alt={post.title} className="w-full h-full object-cover" />
+        <img src={post.image || post.ogImage || post.coverImage || FALLBACK_IMG} alt={post.title} className="w-full h-full object-cover" />
       </div>
 
       <div
@@ -257,7 +257,7 @@ export default function BlogPage({ blogs = [] }) {
             >
               <div className="relative h-48 w-full overflow-hidden">
                 <img
-                  src={post.image || FALLBACK_IMG}
+                  src={post.image || post.ogImage || post.coverImage || FALLBACK_IMG}
                   alt={post.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
