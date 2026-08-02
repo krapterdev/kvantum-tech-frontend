@@ -135,7 +135,7 @@ function BlogDetail({ post }) {
         </div>
       </div>
 
-      <div className="w-full h-[380px] rounded-3xl overflow-hidden shadow-xl border border-slate-200 dark:border-zinc-800">
+      <div className="w-full aspect-[16/9] max-h-[520px] rounded-3xl overflow-hidden shadow-xl border border-slate-200 dark:border-zinc-800 bg-slate-900">
         <img 
           src={post.image || post.ogImage || post.coverImage || FALLBACK_IMG} 
           alt={post.imageAlt || post.keywords || post.title} 
