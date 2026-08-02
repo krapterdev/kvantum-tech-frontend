@@ -1,7 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import EarthGlobe from '../sections/EarthGlobe';
-import { InstagramIcon, LinkedinIcon, FacebookIcon } from '../ui/SocialIcons';
+import { 
+  InstagramIcon, LinkedinIcon, FacebookIcon, TwitterIcon, 
+  WhatsappIcon, YoutubeIcon, GithubIcon, PinterestIcon, TelegramIcon 
+} from '../ui/SocialIcons';
 import KvantumLogo from '../ui/KvantumLogo';
 import { MapPin, Phone, Mail, Globe, ShieldCheck, Share2 } from 'lucide-react';
 
@@ -9,16 +12,19 @@ export default function Footer({ seoPages = [], theme, settings, services = [], 
   const currentYear = new Date().getFullYear();
   const contact = settings?.contact || {};
   
-  // Dynamic Social Media Links with Visible / Hide Filter
+  // Dynamic Social Media Links with Active / Inactive Filter
   const defaultSocials = [
-    { id: 'insta', platform: 'Instagram', url: contact.instagram || 'https://www.instagram.com/kvantumtechsolutions/', visible: contact.instagramVisible !== false, icon: InstagramIcon },
-    { id: 'linkedin', platform: 'LinkedIn', url: contact.linkedin || 'https://www.linkedin.com/in/kvantum-tech-solutions-75916a41b', visible: contact.linkedinVisible !== false, icon: LinkedinIcon },
-    { id: 'fb', platform: 'Facebook', url: contact.facebook || 'https://facebook.com/kvantumtechsolutions', visible: contact.facebookVisible !== false, icon: FacebookIcon },
-    { id: 'tw', platform: 'Twitter', url: contact.twitter || 'https://twitter.com/kvantumtech', visible: contact.twitterVisible !== false, icon: Share2 },
+    { id: 'insta', platform: 'Instagram', url: contact.instagram || 'https://www.instagram.com/kvantumtechsolutions/', active: contact.instagramActive !== false && contact.instagramVisible !== false, icon: InstagramIcon },
+    { id: 'linkedin', platform: 'LinkedIn', url: contact.linkedin || 'https://www.linkedin.com/in/kvantum-tech-solutions-75916a41b', active: contact.linkedinActive !== false && contact.linkedinVisible !== false, icon: LinkedinIcon },
+    { id: 'fb', platform: 'Facebook', url: contact.facebook || 'https://facebook.com/kvantumtechsolutions', active: contact.facebookActive !== false && contact.facebookVisible !== false, icon: FacebookIcon },
+    { id: 'tw', platform: 'Twitter / X', url: contact.twitter || 'https://twitter.com/kvantumtech', active: contact.twitterActive !== false && contact.twitterVisible !== false, icon: TwitterIcon },
+    { id: 'wa', platform: 'WhatsApp', url: contact.whatsapp || 'https://wa.me/919811661828', active: contact.whatsappActive === true, icon: WhatsappIcon },
+    { id: 'yt', platform: 'YouTube', url: contact.youtube || '', active: contact.youtubeActive === true, icon: YoutubeIcon },
+    { id: 'gh', platform: 'GitHub', url: contact.github || '', active: contact.githubActive === true, icon: GithubIcon },
+    { id: 'pin', platform: 'Pinterest', url: contact.pinterest || '', active: contact.pinterestActive === true, icon: PinterestIcon },
   ];
 
-  const socialLinks = (contact.socialLinks && contact.socialLinks.length > 0 ? contact.socialLinks : defaultSocials)
-    .filter(s => s.visible !== false && s.url);
+  const socialLinks = defaultSocials.filter(s => s.active && s.url && s.url.trim() !== '');
 
   return (
     <footer className="relative z-10 mt-[100px] px-6 py-[70px] select-none text-center border-t border-slate-200 dark:border-white/10 bg-white dark:bg-zinc-950/95 text-slate-900 dark:text-white overflow-hidden transition-colors duration-300">
