@@ -1,11 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Users, Sparkles, Mail, ArrowRight, ShieldCheck, Code, Award, Globe } from 'lucide-react';
-import { LinkedinIcon } from '@/components/ui/SocialIcons';
+import { Users, Sparkles, Mail, ArrowRight, ShieldCheck, Code, Award, CheckCircle2 } from 'lucide-react';
 import Badge from '@/components/ui/Badge';
 import Card from '@/components/ui/Card';
 import FAQ, { aboutFaqs } from '@/components/sections/FAQ';
-import { defaultTeamMembers } from '@/data/team';
+import { defaultTeamMembers, DUMMY_AVATAR } from '@/data/team';
 
 export default function TeamPage({ teamMembers = defaultTeamMembers }) {
   const members = teamMembers.length > 0 ? teamMembers : defaultTeamMembers;
@@ -29,62 +28,74 @@ export default function TeamPage({ teamMembers = defaultTeamMembers }) {
 
       {/* Team Member Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {members.map((m) => (
-          <Card
-            key={m.id || m._id || m.name}
-            className="p-6 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-3xl shadow-xl flex flex-col justify-between group hover:border-sky-500/40 transition-all duration-300 hover:-translate-y-1"
-          >
-            <div className="space-y-4">
-              {/* Profile Image with Full View Side aspect ratio */}
-              <div className="w-full h-64 rounded-2xl overflow-hidden bg-slate-900/90 dark:bg-zinc-950 p-2 flex items-center justify-center border border-slate-100 dark:border-zinc-800">
-                <img
-                  src={m.image || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&auto=format&fit=crop&q=80'}
-                  alt={m.name}
-                  className="w-full h-full object-contain rounded-xl group-hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-
-              {/* Info */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
-                    {m.exp || 'Senior Engineer'}
-                  </span>
-                  <div className="flex items-center gap-2 text-slate-400">
-                    {m.linkedin && (
-                      <a href={m.linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-sky-500 transition-colors">
-                        <LinkedinIcon size={16} />
-                      </a>
-                    )}
-                    {m.github && (
-                      <a href={m.github} target="_blank" rel="noopener noreferrer" className="hover:text-slate-900 dark:hover:text-white transition-colors">
-                        <Globe size={16} />
-                      </a>
-                    )}
-                  </div>
+        {members.map((m) => {
+          const avatarUrl = m.image ? m.image : DUMMY_AVATAR;
+          return (
+            <Card
+              key={m.id || m._id || m.name}
+              className="p-6 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-3xl shadow-xl flex flex-col justify-between group hover:border-sky-500/40 transition-all duration-300 hover:-translate-y-1"
+            >
+              <div className="space-y-4">
+                {/* Profile Image - Custom image if present, otherwise clean Dummy Avatar */}
+                <div className="w-full h-64 rounded-2xl overflow-hidden bg-slate-900/90 dark:bg-zinc-950 p-2 flex items-center justify-center border border-slate-100 dark:border-zinc-800 relative">
+                  <img
+                    src={avatarUrl}
+                    alt={m.name}
+                    title={m.name}
+                    className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-500"
+                  />
+                  {!m.image && (
+                    <span className="absolute bottom-4 right-4 bg-slate-900/90 text-white text-[10px] font-mono px-2 py-0.5 rounded-md border border-white/20">
+                      Avatar Placeholder
+                    </span>
+                  )}
                 </div>
 
-                <h3 className="text-xl font-headline font-bold text-slate-900 dark:text-white pt-1">
-                  {m.name}
-                </h3>
-                <span className="text-xs font-mono font-bold text-pink-600 dark:text-pink-400 block">
-                  {m.role}
-                </span>
+                {/* Info */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
+                      {m.experience || m.exp || 'Team Lead'}
+                    </span>
+                    {m.badge && (
+                      <span className="text-[10px] font-mono font-bold text-slate-500 dark:text-zinc-400">
+                        {m.badge}
+                      </span>
+                    )}
+                  </div>
 
-                <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed font-sans pt-1">
-                  {m.bio}
-                </p>
+                  <h3 className="text-xl font-headline font-bold text-slate-900 dark:text-white pt-1">
+                    {m.name}
+                  </h3>
+                  <span className="text-xs font-mono font-bold text-pink-600 dark:text-pink-400 block">
+                    {m.role}
+                  </span>
+
+                  <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed font-sans pt-1">
+                    {m.bio}
+                  </p>
+
+                  {m.skills && m.skills.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 pt-2">
+                      {m.skills.map((skill, sIdx) => (
+                        <span key={sIdx} className="text-[10px] font-mono bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 px-2 py-0.5 rounded-md border border-slate-200 dark:border-zinc-700">
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
 
-            <div className="pt-4 border-t border-slate-100 dark:border-zinc-800 mt-4 flex items-center justify-between">
-              <span className="text-[11px] font-mono text-slate-500 dark:text-zinc-500">Kvantum Core Team</span>
-              <Link to="/contact" className="text-xs font-mono font-bold text-sky-600 dark:text-sky-400 hover:underline inline-flex items-center gap-1">
-                Consult <ArrowRight size={12} />
-              </Link>
-            </div>
-          </Card>
-        ))}
+              <div className="pt-4 border-t border-slate-100 dark:border-zinc-800 mt-4 flex items-center justify-between">
+                <span className="text-[11px] font-mono text-slate-500 dark:text-zinc-500">Kvantum Core Team</span>
+                <Link to="/contact" className="text-xs font-mono font-bold text-sky-600 dark:text-sky-400 hover:underline inline-flex items-center gap-1">
+                  Consult <ArrowRight size={12} />
+                </Link>
+              </div>
+            </Card>
+          );
+        })}
       </div>
 
       {/* Engineering Culture Banner */}
@@ -108,7 +119,7 @@ export default function TeamPage({ teamMembers = defaultTeamMembers }) {
         </Link>
       </div>
 
-      {/* FAQ */}
+      {/* Page FAQ placed at bottom */}
       <FAQ items={aboutFaqs} title="Team & Methodology" subtitle="Frequently Asked Questions" />
 
     </div>

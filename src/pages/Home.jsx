@@ -88,13 +88,13 @@ export default function Home({ services = [], blogs = [], settings }) {
       {/* 19. Rich SEO Enterprise Solutions Content */}
       <HomeSeoContentSection />
 
-      {/* 20. FAQs (15 SEO Questions) */}
-      <FAQ />
-
       {/* 20. Latest Blogs & Resources */}
       <BlogPreview blogs={blogs} />
 
-      {/* 21. Free Consultation CTA */}
+      {/* 21. FAQs (15 SEO Questions at bottom) */}
+      <FAQ />
+
+      {/* 22. Free Consultation CTA */}
       <CTA />
 
       {/* 22. Live Visitor Speedometer & Odometer Counter */}

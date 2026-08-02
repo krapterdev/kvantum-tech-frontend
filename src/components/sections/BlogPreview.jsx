@@ -36,7 +36,8 @@ export default function BlogPreview({ blogs = [] }) {
               <div className="relative aspect-[16/9] w-full overflow-hidden border-b border-slate-100 dark:border-zinc-800 bg-slate-900">
                 <img
                   src={post.image || post.ogImage || post.coverImage || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80'}
-                  alt={post.title}
+                  alt={post.imageAlt || post.keywords || post.title}
+                  title={post.imageTitle || post.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute top-4 left-4 z-10">

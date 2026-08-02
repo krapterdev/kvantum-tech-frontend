@@ -663,7 +663,7 @@ export default function AdminPortalPage({
             <label className="block text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-1.5 font-bold">Cover Image URL</label>
             <input 
               type="url"
-              placeholder="https://images.unsplash.com/... or S3 CDN URL"
+              placeholder="https://images.unsplash.com/... or CDN URL"
               value={editItem.image || ''}
               onChange={(e) => {
                 const newImg = e.target.value;
@@ -677,9 +677,39 @@ export default function AdminPortalPage({
             />
           </div>
         </div>
+
+        {/* Image Alt & Title Tags for SEO */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-1.5 font-bold">Image Alt Tag (SEO Keywords)</label>
+            <input 
+              type="text"
+              placeholder="e.g. IT solutions company delhi ncr custom software"
+              value={editItem.imageAlt || ''}
+              onChange={(e) => setEditItem(prev => ({ ...prev, imageAlt: e.target.value }))}
+              className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono"
+            />
+          </div>
+          <div>
+            <label className="block text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-1.5 font-bold">Image Title Tag</label>
+            <input 
+              type="text"
+              placeholder="e.g. Kvantum Tech Solutions IT Architecture"
+              value={editItem.imageTitle || ''}
+              onChange={(e) => setEditItem(prev => ({ ...prev, imageTitle: e.target.value }))}
+              className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono"
+            />
+          </div>
+        </div>
+
         {editItem.image && (
           <div className="rounded-xl overflow-hidden h-32 border border-white/10">
-            <img src={editItem.image} alt="Blog Cover Preview" className="w-full h-full object-cover" />
+            <img 
+              src={editItem.image} 
+              alt={editItem.imageAlt || editItem.title || "Blog Cover Preview"} 
+              title={editItem.imageTitle || editItem.title || "Blog Cover Preview"} 
+              className="w-full h-full object-cover" 
+            />
           </div>
         )}
 
@@ -691,6 +721,86 @@ export default function AdminPortalPage({
             onChange={(html) => setEditItem(prev => ({ ...prev, content: html }))}
             placeholder="Write your detailed blog content here... Use H2/H3 for subheadings, Bold for emphasis, and lists for structured content."
           />
+        </div>
+
+        {/* Custom Blog FAQs Editor */}
+        <div className="border border-white/8 rounded-2xl p-6 bg-zinc-950/30 flex flex-col gap-4">
+          <div className="flex justify-between items-center border-b border-white/8 pb-3">
+            <h3 className="text-xs font-mono text-cyanCustom uppercase tracking-widest font-bold flex items-center gap-2">
+              ❓ Custom Blog FAQs (Shown at Bottom of Article)
+            </h3>
+            <button
+              type="button"
+              onClick={() => {
+                const currentFaqs = Array.isArray(editItem.faqs) ? editItem.faqs : [];
+                setEditItem(prev => ({
+                  ...prev,
+                  faqs: [...currentFaqs, { question: '', answer: '' }]
+                }));
+              }}
+              className="px-3 py-1.5 rounded-lg bg-cyanCustom/10 border border-cyanCustom/30 text-cyanCustom text-xs font-mono font-bold hover:bg-cyanCustom/20 transition-colors cursor-pointer"
+            >
+              + Add FAQ Question
+            </button>
+          </div>
+
+          {(!editItem.faqs || editItem.faqs.length === 0) ? (
+            <p className="text-xs text-zinc-500 font-mono italic">No custom FAQs added for this blog yet. Click "+ Add FAQ Question" to add FAQs for this article.</p>
+          ) : (
+            <div className="space-y-4">
+              {editItem.faqs.map((faq, fIdx) => (
+                <div key={fIdx} className="p-4 rounded-xl bg-zinc-900/60 border border-white/8 space-y-3 relative text-left">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] font-mono font-bold text-zinc-400 uppercase">FAQ #{fIdx + 1}</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const updated = editItem.faqs.filter((_, idx) => idx !== fIdx);
+                        setEditItem(prev => ({ ...prev, faqs: updated }));
+                      }}
+                      className="text-red-400 text-xs font-mono hover:underline cursor-pointer"
+                    >
+                      Remove FAQ
+                    </button>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-mono text-zinc-500 uppercase mb-1">Question (Bold Title)</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. What technology stack is recommended for high-traffic software?"
+                      value={faq.question || ''}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setEditItem(prev => {
+                          const faqsCopy = [...(prev.faqs || [])];
+                          faqsCopy[fIdx] = { ...faqsCopy[fIdx], question: val };
+                          return { ...prev, faqs: faqsCopy };
+                        });
+                      }}
+                      className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-3.5 py-2 text-zinc-100 text-xs outline-none focus:border-cyanCustom/40 font-bold"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-mono text-zinc-500 uppercase mb-1">Answer (Paragraph Text)</label>
+                    <textarea
+                      rows={2}
+                      placeholder="Detailed paragraph answer for readers..."
+                      value={faq.answer || ''}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setEditItem(prev => {
+                          const faqsCopy = [...(prev.faqs || [])];
+                          faqsCopy[fIdx] = { ...faqsCopy[fIdx], answer: val };
+                          return { ...prev, faqs: faqsCopy };
+                        });
+                      }}
+                      className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-3.5 py-2 text-zinc-100 text-xs outline-none focus:border-cyanCustom/40 resize-none font-sans"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* SEO & Meta Tags Panel */}
@@ -1080,6 +1190,8 @@ export default function AdminPortalPage({
           date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
           author: 'Kvantum Tech Team',
           image: '',
+          imageAlt: '',
+          imageTitle: '',
           keywords: '',
           canonical: '',
           metaTitle: '',
@@ -1090,7 +1202,8 @@ export default function AdminPortalPage({
           ogType: 'article',
           twitterTitle: '',
           twitterDesc: '',
-          twitterCard: 'summary_large_image'
+          twitterCard: 'summary_large_image',
+          faqs: []
         });
       } else if (type === 'seo') {
         setEditItem({ slug: '', title: '', content: '', metaTitle: '', metaDesc: '', metaKeywords: '' });

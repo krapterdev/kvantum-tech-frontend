@@ -1,75 +1,7 @@
 import React from 'react';
 import { Users, Code, Palette, Search, Share2, TrendingUp, Award } from 'lucide-react';
 import Badge from '../ui/Badge';
-
-const teamMembers = [
-  {
-    id: 1,
-    name: 'Sahil Kumar',
-    role: 'Head of Web Design & Development',
-    experience: '10+ Yrs Exp.',
-    badge: 'Web Architecture & UI',
-    tagColor: 'text-pink-600 dark:text-pink-400 bg-pink-500/10 border-pink-500/30',
-    icon: Code,
-    bio: 'Leads custom software architecture, full-stack web application engineering, and responsive UI design.',
-    skills: ['Web Architecture', 'React & Full-Stack', 'UI/UX Engineering'],
-  },
-  {
-    id: 2,
-    name: 'Bhavya Nigam',
-    role: 'Head of Business Development & Sales',
-    experience: '10+ Yrs Exp.',
-    badge: 'Enterprise Growth',
-    tagColor: 'text-sky-600 dark:text-sky-400 bg-sky-500/10 border-sky-500/30',
-    icon: TrendingUp,
-    bio: 'Drives enterprise sales strategy, client consulting, and strategic business growth solutions.',
-    skills: ['Business Development', 'Client Consulting', 'Growth Strategy'],
-  },
-  {
-    id: 3,
-    name: 'Anil Thapa',
-    role: 'Head of SMO & Social Media Marketing',
-    experience: '7+ Yrs Exp.',
-    badge: 'Social Media & Branding',
-    tagColor: 'text-purple-600 dark:text-purple-400 bg-purple-500/10 border-purple-500/30',
-    icon: Share2,
-    bio: 'Spearheads brand positioning, multi-channel social media campaigns, and community engagement.',
-    skills: ['SMO Strategy', 'Brand Campaigns', 'Audience Growth'],
-  },
-  {
-    id: 4,
-    name: 'Ankit Kumar',
-    role: 'Head of SEO & Organic Growth',
-    experience: '6+ Yrs Exp.',
-    badge: 'Search Engine Optimization',
-    tagColor: 'text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/30',
-    icon: Search,
-    bio: 'Specializes in technical SEO auditing, high-converting keyword architecture, and search visibility.',
-    skills: ['Technical SEO', 'Keyword Architecture', 'Organic Traffic'],
-  },
-  {
-    id: 5,
-    name: 'Kunal Dinkar Singh',
-    role: 'Head of Graphic Design & Creative Media',
-    experience: '5+ Yrs Exp.',
-    badge: 'Creative & Visual Design',
-    tagColor: 'text-amber-600 dark:text-amber-400 bg-amber-500/10 border-amber-500/30',
-    icon: Palette,
-    bio: 'Oversees visual identity design, brand aesthetics, UI graphics, and marketing media assets.',
-    skills: ['Graphic Design', 'Brand Identity', 'UI Visuals & Assets'],
-  },
-  {
-    id: 6,
-    name: 'Akansha Sharma',
-    role: 'Business Development Executive',
-    experience: '2+ Yrs Exp.',
-    badge: 'Client Relations & Sales',
-    tagColor: 'text-pink-600 dark:text-pink-400 bg-pink-500/10 border-pink-500/30',
-    icon: Users,
-    bio: 'Manages client onboarding, initial project consultations, and daily sales coordination.',
-    skills: ['Client Onboarding', 'Sales Support', 'Requirements Gathering'],
-  },
-];
+import { defaultTeamMembers, DUMMY_AVATAR } from '@/data/team';
 
 export default function CardStackShowcase() {
   return (
@@ -91,8 +23,8 @@ export default function CardStackShowcase() {
 
       {/* Super Readable 6-Card Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {teamMembers.map((member) => {
-          const Icon = member.icon;
+        {defaultTeamMembers.map((member) => {
+          const avatarUrl = member.image ? member.image : DUMMY_AVATAR;
           return (
             <div
               key={member.id}
@@ -101,10 +33,15 @@ export default function CardStackShowcase() {
               {/* Member Top */}
               <div>
                 <div className="flex justify-between items-start mb-5">
-                  <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 flex items-center justify-center text-pink-500 group-hover:scale-110 transition-transform duration-300">
-                    <Icon size={22} />
+                  <div className="w-14 h-14 rounded-2xl overflow-hidden bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 flex items-center justify-center shrink-0">
+                    <img
+                      src={avatarUrl}
+                      alt={member.name}
+                      title={member.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
                   </div>
-                  <span className={`text-[10px] font-mono font-bold uppercase tracking-wider px-3 py-1 rounded-full border ${member.tagColor}`}>
+                  <span className={`text-[10px] font-mono font-bold uppercase tracking-wider px-3 py-1 rounded-full border ${member.tagColor || 'text-sky-600 dark:text-sky-400 bg-sky-500/10 border-sky-500/30'}`}>
                     {member.badge}
                   </span>
                 </div>

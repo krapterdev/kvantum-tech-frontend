@@ -136,7 +136,12 @@ function BlogDetail({ post }) {
       </div>
 
       <div className="w-full h-[380px] rounded-3xl overflow-hidden shadow-xl border border-slate-200 dark:border-zinc-800">
-        <img src={post.image || post.ogImage || post.coverImage || FALLBACK_IMG} alt={post.title} className="w-full h-full object-cover" />
+        <img 
+          src={post.image || post.ogImage || post.coverImage || FALLBACK_IMG} 
+          alt={post.imageAlt || post.keywords || post.title} 
+          title={post.imageTitle || post.title}
+          className="w-full h-full object-cover" 
+        />
       </div>
 
       <div
@@ -159,6 +164,13 @@ function BlogDetail({ post }) {
           Discuss Your Project →
         </Link>
       </div>
+
+      {/* Article Specific Custom FAQs or Default Blog FAQs at bottom */}
+      <FAQ 
+        items={Array.isArray(post.faqs) && post.faqs.length > 0 ? post.faqs : blogFaqs} 
+        title="Article FAQs & Technical Insights" 
+        subtitle="Frequently Asked Questions" 
+      />
     </div>
   );
 }
@@ -263,7 +275,8 @@ export default function BlogPage({ blogs = [] }) {
                 <div className="relative aspect-[16/9] w-full overflow-hidden border-b border-slate-100 dark:border-zinc-800 bg-slate-900">
                   <img
                     src={post.image || post.ogImage || post.coverImage || FALLBACK_IMG}
-                    alt={post.title}
+                    alt={post.imageAlt || post.keywords || post.title}
+                    title={post.imageTitle || post.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute top-4 left-4 z-10">
