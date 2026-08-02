@@ -32,12 +32,12 @@ export default function BlogPreview({ blogs = [] }) {
               to={blogTarget}
               className="rounded-3xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 overflow-hidden hover:border-cyan-500/40 transition-all duration-300 flex flex-col justify-between cursor-pointer group shadow-md dark:shadow-xl hover:-translate-y-1"
             >
-              {/* Image Thumbnail - Full View (No Cropping) */}
-              <div className="relative h-52 w-full bg-slate-900/90 dark:bg-zinc-950/80 p-2 flex items-center justify-center overflow-hidden border-b border-slate-100 dark:border-zinc-800">
+              {/* Image Banner */}
+              <div className="relative aspect-[16/9] w-full overflow-hidden border-b border-slate-100 dark:border-zinc-800 bg-slate-900">
                 <img
                   src={post.image || post.ogImage || post.coverImage || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80'}
                   alt={post.title}
-                  className="w-full h-full object-contain rounded-2xl group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute top-4 left-4 z-10">
                   <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-slate-900/90 text-white border border-white/20 backdrop-blur-md">
