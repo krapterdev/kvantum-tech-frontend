@@ -29,20 +29,27 @@ export default function FloatingQuickActions() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.name || formData.name.trim().length < 2) {
-      setStatus({ loading: false, error: 'Please enter your name.' });
+    const name = formData.name.trim();
+    if (!name || name.length < 2) {
+      setStatus({ loading: false, error: '⚠️ Please enter your full name (at least 2 letters).' });
       return;
     }
-    const phoneDigits = formData.phone.replace(/[^0-9]/g, '');
-    if (phoneDigits.length < 10) {
-      setStatus({ loading: false, error: 'Please enter a valid 10-digit phone number.' });
+    const cleanPhone = formData.phone.replace(/[^0-9]/g, '');
+    const indianPhoneRegex = /^[6-9]\d{9}$/;
+    if (cleanPhone.length !== 10) {
+      setStatus({ loading: false, error: `⚠️ Phone number must be 10 digits (you entered ${cleanPhone.length} digits).` });
       return;
     }
+    if (!indianPhoneRegex.test(cleanPhone)) {
+      setStatus({ loading: false, error: '⚠️ Indian mobile numbers must start with 6, 7, 8, or 9 (e.g. 9811661828).' });
+      return;
+    }
+
     setStatus({ loading: true, error: '' });
 
     try {
       await submitContact({
-        name: formData.name.trim(),
+        name: name,
         phone: formData.phone.trim(),
         email: formData.email ? formData.email.trim() : 'quickcall@kvantumtechsolutions.com',
         service: formData.service,
@@ -52,7 +59,8 @@ export default function FloatingQuickActions() {
       setIsOpen(false);
       navigate('/thank-you');
     } catch (err) {
-      setStatus({ loading: false, error: 'Submission failed. Please try again.' });
+      const msg = err.response?.data?.message || err.message;
+      setStatus({ loading: false, error: msg ? `Server Error: ${msg}` : 'Submission failed. Please try again.' });
     }
   };
 

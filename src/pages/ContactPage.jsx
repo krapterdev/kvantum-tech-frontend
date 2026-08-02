@@ -15,31 +15,56 @@ export default function ContactPage() {
     message: '',
   });
 
+  const [fieldErrors, setFieldErrors] = useState({});
   const [status, setStatus] = useState({ loading: false, error: '' });
 
   const validateForm = () => {
-    if (!formData.name || formData.name.trim().length < 2) {
-      return 'Please enter a valid full name.';
+    const errors = {};
+    const trimmedName = formData.name.trim();
+    if (!trimmedName || trimmedName.length < 2) {
+      errors.name = 'Please enter your full name (at least 2 characters).';
     }
+
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailRegex.test(formData.email.trim())) {
-      return 'Please enter a valid email address (e.g. name@company.com).';
+    const trimmedEmail = formData.email.trim();
+    if (!trimmedEmail) {
+      errors.email = 'Email address is required.';
+    } else if (!emailRegex.test(trimmedEmail)) {
+      errors.email = 'Invalid email format (e.g. name@company.com). Please enter a valid email.';
     }
-    const phoneDigits = formData.phone.replace(/[^0-9]/g, '');
-    if (phoneDigits.length < 10 || phoneDigits.length > 13) {
-      return 'Please enter a valid 10-digit phone number (e.g. 9811661828).';
+
+    const cleanPhone = formData.phone.replace(/[^0-9]/g, '');
+    const indianPhoneRegex = /^[6-9]\d{9}$/;
+    if (!formData.phone.trim()) {
+      errors.phone = 'Phone number is required.';
+    } else if (cleanPhone.length !== 10) {
+      errors.phone = `Phone number must be exactly 10 digits (you entered ${cleanPhone.length} digits).`;
+    } else if (!indianPhoneRegex.test(cleanPhone)) {
+      errors.phone = 'Indian mobile numbers must start with 6, 7, 8, or 9 (e.g. 9811661828).';
     }
-    if (!formData.message || formData.message.trim().length < 10) {
-      return 'Please enter project details (at least 10 characters).';
+
+    const trimmedMsg = formData.message.trim();
+    if (!trimmedMsg) {
+      errors.message = 'Please describe your project requirements.';
+    } else if (trimmedMsg.length < 10) {
+      errors.message = `Message is too short (currently ${trimmedMsg.length} chars). Please write at least 10 characters so we understand your requirement.`;
     }
-    return null;
+
+    setFieldErrors(errors);
+    return errors;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const validationError = validateForm();
-    if (validationError) {
-      setStatus({ loading: false, error: validationError });
+    const errors = validateForm();
+    const errorKeys = Object.keys(errors);
+
+    if (errorKeys.length > 0) {
+      const firstError = errors[errorKeys[0]];
+      setStatus({ 
+        loading: false, 
+        error: `Please fix the highlighted fields: ${firstError}` 
+      });
       return;
     }
 
@@ -57,7 +82,11 @@ export default function ContactPage() {
       setStatus({ loading: false, error: '' });
       navigate('/thank-you');
     } catch (err) {
-      setStatus({ loading: false, error: err.response?.data?.message || 'Failed to send inquiry. Please try again.' });
+      const backendMessage = err.response?.data?.message || err.message;
+      setStatus({ 
+        loading: false, 
+        error: backendMessage ? `Server Error: ${backendMessage}` : 'Unable to connect to server. Please check your internet connection or try again.' 
+      });
     }
   };
 
@@ -143,9 +172,12 @@ export default function ContactPage() {
             <h3 className="text-xl font-headline font-bold text-slate-900 dark:text-white mb-1">Send a Direct Message</h3>
 
             {status.error && (
-              <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-500 text-xs flex items-center gap-2 font-mono">
-                <AlertCircle size={16} className="shrink-0" />
-                <span>{status.error}</span>
+              <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-500 text-xs flex items-start gap-2.5 font-mono">
+                <AlertCircle size={18} className="shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <span className="font-bold block uppercase tracking-wider">Form Validation Alert</span>
+                  <span>{status.error}</span>
+                </div>
               </div>
             )}
 
@@ -154,23 +186,46 @@ export default function ContactPage() {
                 <label className="block text-xs font-mono text-slate-500 dark:text-slate-400 mb-1.5 font-bold">Your Full Name *</label>
                 <input
                   type="text"
-                  required
                   placeholder="Sahil Kumar"
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full box-border px-4 py-3 rounded-xl bg-slate-50 dark:bg-zinc-950/60 border border-slate-200 dark:border-zinc-800 text-slate-900 dark:text-white text-sm outline-none focus:border-sky-500"
+                  onChange={(e) => {
+                    setFormData({ ...formData, name: e.target.value });
+                    if (fieldErrors.name) setFieldErrors(prev => ({ ...prev, name: '' }));
+                  }}
+                  className={`w-full box-border px-4 py-3 rounded-xl text-slate-900 dark:text-white text-sm outline-none transition-colors ${
+                    fieldErrors.name
+                      ? 'bg-red-500/10 border-2 border-red-500 focus:border-red-600'
+                      : 'bg-slate-50 dark:bg-zinc-950/60 border border-slate-200 dark:border-zinc-800 focus:border-sky-500'
+                  }`}
                 />
+                {fieldErrors.name && (
+                  <span className="text-[11px] font-mono text-red-400 mt-1.5 block font-semibold">
+                    ⚠️ {fieldErrors.name}
+                  </span>
+                )}
               </div>
+
               <div className="w-full">
                 <label className="block text-xs font-mono text-slate-500 dark:text-slate-400 mb-1.5 font-bold">Email Address *</label>
                 <input
                   type="email"
-                  required
                   placeholder="name@company.com"
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full box-border px-4 py-3 rounded-xl bg-slate-50 dark:bg-zinc-950/60 border border-slate-200 dark:border-zinc-800 text-slate-900 dark:text-white text-sm outline-none focus:border-sky-500"
+                  onChange={(e) => {
+                    setFormData({ ...formData, email: e.target.value });
+                    if (fieldErrors.email) setFieldErrors(prev => ({ ...prev, email: '' }));
+                  }}
+                  className={`w-full box-border px-4 py-3 rounded-xl text-slate-900 dark:text-white text-sm outline-none transition-colors ${
+                    fieldErrors.email
+                      ? 'bg-red-500/10 border-2 border-red-500 focus:border-red-600'
+                      : 'bg-slate-50 dark:bg-zinc-950/60 border border-slate-200 dark:border-zinc-800 focus:border-sky-500'
+                  }`}
                 />
+                {fieldErrors.email && (
+                  <span className="text-[11px] font-mono text-red-400 mt-1.5 block font-semibold">
+                    ⚠️ {fieldErrors.email}
+                  </span>
+                )}
               </div>
             </div>
 
@@ -179,13 +234,25 @@ export default function ContactPage() {
                 <label className="block text-xs font-mono text-slate-500 dark:text-slate-400 mb-1.5 font-bold">Phone Number (10 digits) *</label>
                 <input
                   type="tel"
-                  required
                   placeholder="9811661828"
                   value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full box-border px-4 py-3 rounded-xl bg-slate-50 dark:bg-zinc-950/60 border border-slate-200 dark:border-zinc-800 text-slate-900 dark:text-white text-sm outline-none focus:border-sky-500 font-mono"
+                  onChange={(e) => {
+                    setFormData({ ...formData, phone: e.target.value });
+                    if (fieldErrors.phone) setFieldErrors(prev => ({ ...prev, phone: '' }));
+                  }}
+                  className={`w-full box-border px-4 py-3 rounded-xl text-slate-900 dark:text-white text-sm outline-none font-mono transition-colors ${
+                    fieldErrors.phone
+                      ? 'bg-red-500/10 border-2 border-red-500 focus:border-red-600'
+                      : 'bg-slate-50 dark:bg-zinc-950/60 border border-slate-200 dark:border-zinc-800 focus:border-sky-500'
+                  }`}
                 />
+                {fieldErrors.phone && (
+                  <span className="text-[11px] font-mono text-red-400 mt-1.5 block font-semibold">
+                    ⚠️ {fieldErrors.phone}
+                  </span>
+                )}
               </div>
+
               <div className="w-full">
                 <label className="block text-xs font-mono text-slate-500 dark:text-slate-400 mb-1.5 font-bold">Target Service *</label>
                 <select
@@ -209,12 +276,23 @@ export default function ContactPage() {
               <label className="block text-xs font-mono text-slate-500 dark:text-slate-400 mb-1.5 font-bold font-headline">Project / Automation Details *</label>
               <textarea
                 rows={4}
-                required
-                placeholder="Tell us about your project requirements, current workflows, or software goals..."
+                placeholder="Tell us about your project requirements, current workflows, or software goals (min 10 chars)..."
                 value={formData.message}
-                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                className="w-full box-border px-4 py-3 rounded-xl bg-slate-50 dark:bg-zinc-950/60 border border-slate-200 dark:border-zinc-800 text-slate-900 dark:text-white text-sm outline-none focus:border-sky-500 resize-none"
+                onChange={(e) => {
+                  setFormData({ ...formData, message: e.target.value });
+                  if (fieldErrors.message) setFieldErrors(prev => ({ ...prev, message: '' }));
+                }}
+                className={`w-full box-border px-4 py-3 rounded-xl text-slate-900 dark:text-white text-sm outline-none resize-none transition-colors ${
+                  fieldErrors.message
+                    ? 'bg-red-500/10 border-2 border-red-500 focus:border-red-600'
+                    : 'bg-slate-50 dark:bg-zinc-950/60 border border-slate-200 dark:border-zinc-800 focus:border-sky-500'
+                }`}
               />
+              {fieldErrors.message && (
+                <span className="text-[11px] font-mono text-red-400 mt-1.5 block font-semibold">
+                  ⚠️ {fieldErrors.message}
+                </span>
+              )}
             </div>
 
             <button
