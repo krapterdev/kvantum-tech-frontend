@@ -22,6 +22,7 @@ import BlogPreview from '@/components/sections/BlogPreview';
 import CTA from '@/components/sections/CTA';
 import VisitorOdometerCounter from '@/components/sections/VisitorOdometerCounter';
 import HomeContact from '@/components/sections/HomeContact';
+import HomeSeoContentSection from '@/components/sections/HomeSeoContentSection';
 import SeoSchema from '@/components/sections/SeoSchema';
 
 export default function Home({ services = [], blogs = [], settings }) {
@@ -84,7 +85,10 @@ export default function Home({ services = [], blogs = [], settings }) {
       {/* 18. Pricing Plans */}
       <Pricing />
 
-      {/* 19. FAQs (15 SEO Questions) */}
+      {/* 19. Rich SEO Enterprise Solutions Content */}
+      <HomeSeoContentSection />
+
+      {/* 20. FAQs (15 SEO Questions) */}
       <FAQ />
 
       {/* 20. Latest Blogs & Resources */}

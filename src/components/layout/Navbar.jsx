@@ -62,7 +62,15 @@ export default function Navbar({ theme, toggleTheme, settings }) {
                 `text-sm font-medium transition-colors duration-200 ${isActive ? 'text-cyan-600 dark:text-cyan-400 font-bold' : 'text-slate-600 dark:text-slate-300 hover:text-cyan-500'}`
               }
             >
-              Portfolio
+              Projects
+            </NavLink>
+            <NavLink 
+              to="/team"
+              className={({ isActive }) => 
+                `text-sm font-medium transition-colors duration-200 ${isActive ? 'text-cyan-600 dark:text-cyan-400 font-bold' : 'text-slate-600 dark:text-slate-300 hover:text-cyan-500'}`
+              }
+            >
+              Team
             </NavLink>
             <NavLink 
               to="/blog"

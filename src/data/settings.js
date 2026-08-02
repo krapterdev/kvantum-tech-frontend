@@ -21,7 +21,7 @@ export const fallbackSettings = {
     { name: 'Founder & CEO', role: 'Healthcare Startup', title: 'Professional Software Development Team', content: 'The team understood our business requirements and delivered a secure, scalable web application within the committed timeline.', rating: 5 }
   ],
   contact: {
-    phone: '+91 9811661828, +91 9811663433, +91 9811663121',
+    phone: '+91 9811661828, +91 9811663433',
     email: 'info@kvantumtechsolutions.com',
     address: 'A33, 64, Tahirpur Rd, Priyadarshini Vihar, Taharpur Village, Dilshad Garden, Delhi, 110095',
     instagram: 'https://www.instagram.com/kvantumtechsolutions/',

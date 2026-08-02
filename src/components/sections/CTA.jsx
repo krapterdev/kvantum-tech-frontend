@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { ArrowRight, Sparkles, Phone } from 'lucide-react';
 import Badge from '../ui/Badge';
 
@@ -26,24 +27,18 @@ export default function CTA() {
 
         {/* Dual CTAs */}
         <div className="flex flex-col sm:flex-row items-center gap-4 mt-2">
-          <button
-            onClick={() => {
-              const el = document.getElementById('contact');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
-            }}
+          <Link
+            to="/contact"
             className="px-9 py-4 rounded-xl text-sm font-bold bg-white text-zinc-950 hover:bg-zinc-100 transition-all duration-200 shadow-[0_0_30px_rgba(255,255,255,0.4)] hover:scale-[1.03] cursor-pointer flex items-center gap-2"
           >
             BOOK FREE CONSULTATION <ArrowRight size={16} />
-          </button>
-          <button
-            onClick={() => {
-              const el = document.getElementById('contact');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
-            }}
+          </Link>
+          <Link
+            to="/contact"
             className="px-8 py-4 rounded-xl text-sm font-bold border-2 border-white/40 text-white hover:bg-white/10 transition-all duration-200 cursor-pointer"
           >
             Request Live Demo
-          </button>
+          </Link>
         </div>
 
         {/* Direct Contact Numbers */}
@@ -52,8 +47,6 @@ export default function CTA() {
           <a href="tel:+919811661828" className="hover:text-white transition-colors">+91 9811661828</a>
           <span>•</span>
           <a href="tel:+919811663433" className="hover:text-white transition-colors">+91 9811663433</a>
-          <span>•</span>
-          <a href="tel:+919811663121" className="hover:text-white transition-colors">+91 9811663121</a>
         </div>
 
       </div>

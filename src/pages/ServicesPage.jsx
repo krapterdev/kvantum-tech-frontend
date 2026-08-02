@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Layers, Code, Database, Cpu, MessageSquare, Smartphone, Shield, ArrowRight, CheckCircle2, Zap } from 'lucide-react';
 import Badge from '@/components/ui/Badge';
+import FAQ, { servicesFaqs } from '@/components/sections/FAQ';
 
 const serviceOfferings = [
   {
@@ -174,6 +175,9 @@ export default function ServicesPage({ services = [] }) {
         </div>
 
       </div>
+
+      {/* Services Specific FAQ */}
+      <FAQ items={servicesFaqs} title="Services & Capabilities" subtitle="Frequently Asked Questions" />
 
     </div>
   );

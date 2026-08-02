@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MessageSquare, Phone, X, Send, CheckCircle2, ArrowUp, Headphones } from 'lucide-react';
 import { submitContact } from '@/services/contactService';
 
 export default function FloatingQuickActions() {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
-  const [formData, setFormData] = useState({ name: '', phone: '', service: 'custom-software' });
-  const [status, setStatus] = useState('idle');
+  const [formData, setFormData] = useState({ name: '', phone: '', email: '', service: 'Custom Software Development' });
+  const [status, setStatus] = useState({ loading: false, error: '' });
 
   // Track scroll position to show Scroll-to-Top button
   useEffect(() => {
@@ -27,30 +29,30 @@ export default function FloatingQuickActions() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.phone) return;
-    setStatus('submitting');
+    if (!formData.name || formData.name.trim().length < 2) {
+      setStatus({ loading: false, error: 'Please enter your name.' });
+      return;
+    }
+    const phoneDigits = formData.phone.replace(/[^0-9]/g, '');
+    if (phoneDigits.length < 10) {
+      setStatus({ loading: false, error: 'Please enter a valid 10-digit phone number.' });
+      return;
+    }
+    setStatus({ loading: true, error: '' });
 
     try {
       await submitContact({
-        name: formData.name,
-        phone: formData.phone,
+        name: formData.name.trim(),
+        phone: formData.phone.trim(),
+        email: formData.email ? formData.email.trim() : 'quickcall@kvantumtechsolutions.com',
         service: formData.service,
-        email: 'quickcall@kvantumtechsolutions.com',
-        message: 'Quick Callback Request from Floating Widget'
+        notes: 'Quick Callback Request from Floating Widget'
       });
-      setStatus('success');
+      setStatus({ loading: false, error: '' });
+      setIsOpen(false);
+      navigate('/thank-you');
     } catch (err) {
-      const saved = localStorage.getItem('kts_local_leads');
-      const list = saved ? JSON.parse(saved) : [];
-      list.push({
-        _id: 'quick_' + Math.random().toString(36).substr(2, 9),
-        name: formData.name,
-        phone: formData.phone,
-        service: formData.service,
-        createdAt: new Date().toISOString()
-      });
-      localStorage.setItem('kts_local_leads', JSON.stringify(list));
-      setStatus('success');
+      setStatus({ loading: false, error: 'Submission failed. Please try again.' });
     }
   };
 
@@ -132,8 +134,14 @@ export default function FloatingQuickActions() {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+              {status.error && (
+                <div className="p-2.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-[11px] font-mono">
+                  {status.error}
+                </div>
+              )}
+
               <div>
-                <label className="block text-[10px] font-mono text-zinc-400 uppercase mb-1">Your Name</label>
+                <label className="block text-[10px] font-mono text-zinc-400 uppercase mb-1">Your Full Name</label>
                 <input
                   type="text"
                   required
@@ -145,39 +153,39 @@ export default function FloatingQuickActions() {
               </div>
 
               <div>
-                <label className="block text-[10px] font-mono text-zinc-400 uppercase mb-1">Phone Number</label>
+                <label className="block text-[10px] font-mono text-zinc-400 uppercase mb-1">Phone Number (10 Digits)</label>
                 <input
                   type="tel"
                   required
-                  placeholder="+91 XXXXX XXXXX"
+                  placeholder="9811661828"
                   value={formData.phone}
                   onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                  className="w-full bg-zinc-900 border border-white/10 rounded-xl px-3.5 py-2.5 text-zinc-100 text-xs placeholder-zinc-600 outline-none focus:border-pinkCustom/50"
+                  className="w-full bg-zinc-900 border border-white/10 rounded-xl px-3.5 py-2.5 text-zinc-100 text-xs placeholder-zinc-600 outline-none focus:border-pinkCustom/50 font-mono"
                 />
               </div>
 
               <div>
-                <label className="block text-[10px] font-mono text-zinc-400 uppercase mb-1">Requirement</label>
+                <label className="block text-[10px] font-mono text-zinc-400 uppercase mb-1">Target Service</label>
                 <select
                   value={formData.service}
                   onChange={(e) => setFormData(prev => ({ ...prev, service: e.target.value }))}
-                  className="w-full bg-zinc-900 border border-white/10 rounded-xl px-3.5 py-2.5 text-zinc-100 text-xs outline-none focus:border-pinkCustom/50 cursor-pointer"
+                  className="w-full bg-zinc-900 border border-white/10 rounded-xl px-3.5 py-2.5 text-zinc-100 text-xs outline-none focus:border-pinkCustom/50 cursor-pointer font-mono"
                 >
-                  <option value="custom-software">Custom Software</option>
-                  <option value="crm">CRM System</option>
-                  <option value="hrms">HRMS Software</option>
-                  <option value="automation">Business Automation</option>
-                  <option value="whatsapp">WhatsApp API</option>
-                  <option value="mobile-app">Mobile App</option>
+                  <option value="Custom Software Development">Custom Software</option>
+                  <option value="CRM Software Development">CRM System</option>
+                  <option value="HRMS Software">HRMS Software</option>
+                  <option value="Business Automation">Business Automation</option>
+                  <option value="WhatsApp Automation">WhatsApp API</option>
+                  <option value="Web & Mobile App Development">Mobile App</option>
                 </select>
               </div>
 
               <button
                 type="submit"
-                disabled={status === 'submitting'}
-                className="w-full mt-2 py-3 rounded-xl text-xs font-bold bg-pinkCustom text-white hover:bg-pink-600 transition-colors flex items-center justify-center gap-1.5 shadow-[0_0_15px_rgba(236,72,153,0.35)] cursor-pointer"
+                disabled={status.loading}
+                className="w-full mt-2 py-3 rounded-xl text-xs font-bold bg-pinkCustom text-white hover:bg-pink-600 transition-colors flex items-center justify-center gap-1.5 shadow-[0_0_15px_rgba(236,72,153,0.35)] cursor-pointer font-mono uppercase tracking-wider"
               >
-                {status === 'submitting' ? 'Submitting...' : 'Call Me Back'} <Send size={13} />
+                {status.loading ? 'Submitting...' : 'Call Me Back'} <Send size={13} />
               </button>
 
               <div className="text-[10px] text-zinc-500 font-mono text-center mt-1">

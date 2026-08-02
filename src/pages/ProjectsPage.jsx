@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ExternalLink, ArrowRight, Layers, Sparkles, Code, CheckCircle2 } from 'lucide-react';
 import Badge from '@/components/ui/Badge';
+import FAQ, { projectsFaqs } from '@/components/sections/FAQ';
 
 const defaultProjects = [
   {
@@ -177,6 +178,9 @@ export default function ProjectsPage({ portfolios = [] }) {
           </div>
         ))}
       </div>
+
+      {/* Projects Specific FAQ */}
+      <FAQ items={projectsFaqs} title="Projects & Delivery" subtitle="Frequently Asked Questions" />
 
     </div>
   );

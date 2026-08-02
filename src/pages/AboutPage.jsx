@@ -1,6 +1,8 @@
 import React from 'react';
 import { Award, CheckCircle2, ShieldCheck, Zap, Users, Code, ArrowRight, Target, Lightbulb, Lock, HeartHandshake } from 'lucide-react';
 import Badge from '@/components/ui/Badge';
+import Card from '@/components/ui/Card';
+import FAQ, { aboutFaqs } from '@/components/sections/FAQ';
 
 const companyValues = [
   {
@@ -147,6 +149,9 @@ export default function AboutPage({ theme, settings }) {
           ))}
         </div>
       </div>
+
+      {/* Page Specific FAQ */}
+      <FAQ items={aboutFaqs} title="About Kvantum Tech" subtitle="Frequently Asked Questions" />
 
     </div>
   );

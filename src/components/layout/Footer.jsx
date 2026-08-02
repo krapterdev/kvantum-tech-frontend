@@ -187,7 +187,6 @@ export default function Footer({ seoPages = [], theme, settings, services = [], 
               <li className="flex flex-col gap-1 text-slate-600 dark:text-zinc-400 font-mono">
                 <a href="tel:+919811661828" className="hover:text-pink-500 transition-colors">+91 9811661828</a>
                 <a href="tel:+919811663433" className="hover:text-pink-500 transition-colors">+91 9811663433</a>
-                <a href="tel:+919811663121" className="hover:text-pink-500 transition-colors">+91 9811663121</a>
               </li>
               <li className="text-[11px] text-slate-500 dark:text-zinc-500 font-mono leading-relaxed mt-1">
                 Kvantum Tech Solutions, A33, 64, Tahirpur Rd, Priyadarshini Vihar, Taharpur Village, Dilshad Garden, Delhi, 110095
@@ -240,6 +239,7 @@ export default function Footer({ seoPages = [], theme, settings, services = [], 
             <a href="/robots.txt" target="_blank" rel="noopener noreferrer" className="hover:text-sky-500 transition-colors">
               robots.txt
             </a>
+            <Link to="/team" className="hover:text-slate-900 dark:hover:text-zinc-300 transition-colors">Our Team</Link>
             <Link to="/privacy" className="hover:text-slate-900 dark:hover:text-zinc-300 transition-colors">Privacy Policy</Link>
             <Link to="/terms" className="hover:text-slate-900 dark:hover:text-zinc-300 transition-colors">Terms of Service</Link>
             <Link to="/admin" className="text-slate-400 dark:text-zinc-600 hover:text-slate-700 dark:hover:text-zinc-400 transition-colors">[Admin Portal]</Link>

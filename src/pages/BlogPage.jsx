@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { BookOpen, Calendar, Clock, ArrowRight, User, Search, ArrowLeft } from 'lucide-react';
 import Badge from '@/components/ui/Badge';
+import FAQ, { blogFaqs } from '@/components/sections/FAQ';
 
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80';
 
@@ -250,63 +251,69 @@ export default function BlogPage({ blogs = [] }) {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {filteredBlogs.map((post) => (
-            <div
-              key={post.id || post.slug || post._id}
-              className="rounded-3xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 overflow-hidden shadow-xl flex flex-col justify-between group hover:border-sky-500/40 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
-            >
-              <div className="relative h-48 w-full overflow-hidden">
-                <img
-                  src={post.image || post.ogImage || post.coverImage || FALLBACK_IMG}
-                  alt={post.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute top-4 left-4">
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-slate-900/85 text-white border border-white/20 backdrop-blur-md">
-                    {post.category || 'Engineering'}
-                  </span>
+          {filteredBlogs.map((post) => {
+            const blogTarget = `/blog/${post.id || post.slug || post._id}`;
+            return (
+              <Link
+                key={post.id || post.slug || post._id}
+                to={blogTarget}
+                className="rounded-3xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 overflow-hidden shadow-xl flex flex-col justify-between group hover:border-sky-500/40 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+              >
+                {/* Full Image View Container (No Cropping) */}
+                <div className="relative h-52 w-full bg-slate-900/90 dark:bg-zinc-950/80 p-2 flex items-center justify-center overflow-hidden border-b border-slate-100 dark:border-zinc-800">
+                  <img
+                    src={post.image || post.ogImage || post.coverImage || FALLBACK_IMG}
+                    alt={post.title}
+                    className="w-full h-full object-contain rounded-2xl group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute top-4 left-4 z-10">
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-slate-900/90 text-white border border-white/20 backdrop-blur-md">
+                      {post.category || 'Engineering'}
+                    </span>
+                  </div>
                 </div>
-              </div>
 
-              <div className="p-7 flex flex-col justify-between flex-1 gap-4">
-                <div>
-                  <div className="flex flex-wrap items-center gap-3 text-[11px] font-mono text-slate-500 dark:text-zinc-400 mb-3">
-                    <div className="flex items-center gap-1">
-                      <User size={12} className="text-sky-500" />
-                      <span>{post.author || 'Kvantum Team'}</span>
+                <div className="p-7 flex flex-col justify-between flex-1 gap-4 text-left">
+                  <div>
+                    <div className="flex flex-wrap items-center gap-3 text-[11px] font-mono text-slate-500 dark:text-zinc-400 mb-3">
+                      <div className="flex items-center gap-1">
+                        <User size={12} className="text-sky-500" />
+                        <span>{post.author || 'Kvantum Team'}</span>
+                      </div>
+                      <span>•</span>
+                      <div className="flex items-center gap-1">
+                        <Calendar size={12} className="text-slate-400" />
+                        <span>{post.date || 'August 2026'}</span>
+                      </div>
+                      <span>•</span>
+                      <div className="flex items-center gap-1">
+                        <Clock size={12} className="text-slate-400" />
+                        <span>{post.readTime || '5 min'}</span>
+                      </div>
                     </div>
-                    <span>•</span>
-                    <div className="flex items-center gap-1">
-                      <Calendar size={12} className="text-slate-400" />
-                      <span>{post.date || 'July 2026'}</span>
-                    </div>
-                    <span>•</span>
-                    <div className="flex items-center gap-1">
-                      <Clock size={12} className="text-slate-400" />
-                      <span>{post.readTime || '5 min'}</span>
-                    </div>
+
+                    <h3 className="text-lg font-headline font-bold text-slate-900 dark:text-white group-hover:text-sky-500 transition-colors leading-snug mb-3">
+                      {post.title}
+                    </h3>
+
+                    <p className="text-slate-600 dark:text-zinc-300 text-xs sm:text-sm leading-relaxed line-clamp-3 font-sans">
+                      {post.summary || post.shortDesc}
+                    </p>
                   </div>
 
-                  <h3 className="text-lg font-headline font-bold text-slate-900 dark:text-white group-hover:text-sky-500 transition-colors leading-snug mb-3">
-                    {post.title}
-                  </h3>
-
-                  <p className="text-slate-600 dark:text-zinc-300 text-xs sm:text-sm leading-relaxed line-clamp-3">
-                    {post.summary || post.shortDesc}
-                  </p>
+                  <div className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-sky-600 dark:text-sky-400 group-hover:underline pt-4 border-t border-slate-100 dark:border-zinc-800 mt-auto">
+                    Read Full Article <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </div>
-
-                <Link
-                  to={`/blog/${post.id || post.slug || post._id}`}
-                  className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-sky-600 dark:text-sky-400 hover:underline pt-4 border-t border-slate-100 dark:border-zinc-800 mt-auto"
-                >
-                  Read Full Article <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                </Link>
-              </div>
-            </div>
-          ))}
+              </Link>
+            );
+          })}
         </div>
       )}
+
+      {/* Blog Specific FAQ */}
+      <FAQ items={blogFaqs} title="Engineering Blog" subtitle="Frequently Asked Questions" />
+
     </div>
   );
 }
