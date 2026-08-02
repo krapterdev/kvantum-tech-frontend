@@ -239,7 +239,6 @@ export default function Footer({ seoPages = [], theme, settings, services = [], 
             <a href="/robots.txt" target="_blank" rel="noopener noreferrer" className="hover:text-sky-500 transition-colors">
               robots.txt
             </a>
-            <Link to="/team" className="hover:text-slate-900 dark:hover:text-zinc-300 transition-colors">Our Team</Link>
             <Link to="/privacy" className="hover:text-slate-900 dark:hover:text-zinc-300 transition-colors">Privacy Policy</Link>
             <Link to="/terms" className="hover:text-slate-900 dark:hover:text-zinc-300 transition-colors">Terms of Service</Link>
             <Link to="/admin" className="text-slate-400 dark:text-zinc-600 hover:text-slate-700 dark:hover:text-zinc-400 transition-colors">[Admin Portal]</Link>

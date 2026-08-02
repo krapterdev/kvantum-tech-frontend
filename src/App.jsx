@@ -11,7 +11,6 @@ import CookieConsent from '@/components/ui/CookieConsent';
 // Page components
 import Home from '@/pages/Home';
 import AboutPage from '@/pages/AboutPage';
-import TeamPage from '@/pages/TeamPage';
 import ServicesPage from '@/pages/ServicesPage';
 import ServiceDetailPage from '@/pages/ServiceDetailPage';
 import ProjectsPage from '@/pages/ProjectsPage';
@@ -366,7 +365,6 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home services={services} blogs={blogs} settings={settings} />} />
           <Route path="/about" element={<AboutPage theme={theme} settings={settings} />} />
-          <Route path="/team" element={<TeamPage />} />
           <Route path="/services" element={<ServicesPage services={services} />} />
           <Route path="/services/:id" element={<ServiceDetailPage services={services} />} />
           <Route path="/projects" element={<ProjectsPage portfolios={portfolios} />} />

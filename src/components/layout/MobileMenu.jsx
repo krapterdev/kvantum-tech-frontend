@@ -98,16 +98,6 @@ export default function MobileMenu({ isOpen, onClose, theme, settings }) {
         Projects
       </NavLink>
       <NavLink
-        to="/team"
-        onClick={onClose}
-        className="text-base font-semibold transition-colors flex items-center"
-        style={({ isActive }) => ({
-          color: isActive ? 'var(--accent-cyan)' : 'var(--mobile-menu-text)'
-        })}
-      >
-        Team
-      </NavLink>
-      <NavLink
         to="/blog"
         onClick={onClose}
         className="text-base font-semibold transition-colors flex items-center"
