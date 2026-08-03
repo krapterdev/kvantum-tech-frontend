@@ -1004,6 +1004,30 @@ ${allRoutes.map(r => `  <url>
               </select>
             </div>
           </div>
+
+          <h4 className="text-[10px] font-mono text-purpleCustom uppercase tracking-widest font-bold border-b border-white/8 pb-2">Structured Data Schema & Custom Head SEO Tags</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1 font-bold">Custom JSON-LD Schema Code (Article / FAQ Schema)</label>
+              <textarea
+                rows={5}
+                placeholder={`{\n  "@context": "https://schema.org",\n  "@type": "BlogPosting",\n  "headline": "..." \n}`}
+                value={editItem.schemaMarkup || ''}
+                onChange={(e) => setEditItem(prev => ({ ...prev, schemaMarkup: e.target.value }))}
+                className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-xs outline-none focus:border-cyanCustom/40 font-mono resize-none"
+              />
+            </div>
+            <div>
+              <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1 font-bold">Other Custom Head SEO Meta / Script Tags</label>
+              <textarea
+                rows={5}
+                placeholder={`<!-- Custom head tags, pixel trackers, extra meta tags -->\n<meta name="custom-tag" content="..." />`}
+                value={editItem.otherSeoTags || ''}
+                onChange={(e) => setEditItem(prev => ({ ...prev, otherSeoTags: e.target.value }))}
+                className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-xs outline-none focus:border-cyanCustom/40 font-mono resize-none"
+              />
+            </div>
+          </div>
         </div>
 
         <Button type="submit" variant="primary" className="py-3 mt-4 self-start px-8 gap-2">
