@@ -2,16 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { 
   BookOpen, Calendar, Clock, ArrowRight, User, Search, ArrowLeft, 
-  ArrowUpRight, Send, CheckCircle2, Sparkles, AlertCircle, Eye, Share2, ChevronLeft, ChevronRight
+  Sparkles, Eye, Share2, MessageSquare, Send
 } from 'lucide-react';
 import Badge from '@/components/ui/Badge';
 import FAQ, { blogFaqs } from '@/components/sections/FAQ';
 import { submitContact } from '@/services/contactService';
-import { InstagramIcon, LinkedinIcon, FacebookIcon, TwitterIcon } from '@/components/ui/SocialIcons';
 
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80';
 
-// ─── Relative Time Ago Helper (Facebook / TechCrunch Style) ─────────────────
+// ─── Dynamic Facebook-Style Relative Time Ago Helper ────────────────────────
 export function formatTimeAgo(dateString) {
   if (!dateString) return 'Recently';
   const date = new Date(dateString);
@@ -136,8 +135,8 @@ function BlogDetail({ post, allBlogs = [] }) {
     );
   }
 
-  // Filter recent news articles excluding current post
-  const recentNews = allBlogs.filter(b => (b.id || b.slug || b._id) !== (post.id || post.slug || post._id));
+  // Filter related articles excluding current post
+  const relatedArticles = allBlogs.filter(b => (b.id || b.slug || b._id) !== (post.id || post.slug || post._id)).slice(0, 3);
 
   const handleContactSubmit = async (e) => {
     e.preventDefault();
@@ -154,7 +153,7 @@ function BlogDetail({ post, allBlogs = [] }) {
       errors.phone = 'Please enter a 10-digit mobile number.';
     }
     if (!formData.message.trim() || formData.message.trim().length < 10) {
-      errors.message = 'Please enter project requirements (at least 10 chars).';
+      errors.message = 'Please enter project details (at least 10 chars).';
     }
 
     setFieldErrors(errors);
@@ -179,7 +178,7 @@ function BlogDetail({ post, allBlogs = [] }) {
   const relativeTime = formatTimeAgo(post.createdAt || post.date);
 
   return (
-    <div className="container mx-auto max-w-[1020px] px-6 py-12 text-left select-none space-y-12">
+    <div className="container mx-auto max-w-[1000px] px-6 py-12 text-left select-none space-y-12">
       <Link to="/blog" className="inline-flex items-center gap-2 text-xs font-mono font-bold text-sky-600 dark:text-sky-400 hover:underline">
         <ArrowLeft size={14} /> Back to All Articles
       </Link>
@@ -187,10 +186,10 @@ function BlogDetail({ post, allBlogs = [] }) {
       {/* Header Info */}
       <div className="space-y-4">
         <div className="flex flex-wrap items-center gap-3">
-          <span className="text-xs font-mono font-bold uppercase tracking-wider px-3.5 py-1 rounded-full bg-slate-900 text-white dark:bg-white dark:text-slate-900">
+          <span className="text-xs font-mono font-bold uppercase tracking-wider px-3.5 py-1 rounded-full bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
             {post.category || 'Engineering'}
           </span>
-          <span className="text-xs font-mono font-bold text-sky-600 dark:text-sky-400 bg-sky-500/10 px-3 py-1 rounded-full border border-sky-500/20">
+          <span className="text-xs font-mono font-bold text-pink-600 dark:text-pink-400 bg-pink-500/10 px-3 py-1 rounded-full border border-pink-500/20">
             ⏱️ {relativeTime}
           </span>
         </div>
@@ -218,7 +217,7 @@ function BlogDetail({ post, allBlogs = [] }) {
       </div>
 
       {/* Cover Image Banner */}
-      <div className="w-full aspect-[16/9] max-h-[520px] rounded-[32px] overflow-hidden shadow-2xl border border-slate-200 dark:border-zinc-800 bg-slate-900 relative">
+      <div className="w-full aspect-[16/9] max-h-[520px] rounded-3xl overflow-hidden shadow-2xl border border-slate-200 dark:border-zinc-800 bg-slate-900 relative">
         <img 
           src={post.image || post.ogImage || post.coverImage || FALLBACK_IMG} 
           alt={post.imageAlt || post.keywords || post.title} 
@@ -239,17 +238,17 @@ function BlogDetail({ post, allBlogs = [] }) {
         dangerouslySetInnerHTML={{ __html: post.content || post.summary }}
       />
 
-      {/* CONTACT CONSULTATION FORM (TOP REQUIREMENT) */}
-      <div id="contact-form" className="p-8 sm:p-10 rounded-[32px] bg-slate-900 text-white dark:bg-zinc-900 border border-slate-800 shadow-2xl space-y-6">
+      {/* CONTACT CONSULTATION FORM (PLACED DIRECTLY ABOVE RELATED BLOGS) */}
+      <div id="article-contact-form" className="p-8 sm:p-10 rounded-3xl bg-slate-900 text-white dark:bg-zinc-900 border border-slate-800 shadow-2xl space-y-6">
         <div className="space-y-2">
           <Badge className="bg-pink-500/10 border-pink-500/30 text-pink-400 font-mono text-xs">
-            <Sparkles size={14} /> Request Free Consultation
+            <Sparkles size={14} /> Talk to Solution Architects
           </Badge>
           <h3 className="text-2xl sm:text-3xl font-black font-headline uppercase leading-tight">
-            Need IT Solutions or Custom Software for Your Business?
+            Need Custom IT Solutions or Software Development?
           </h3>
           <p className="text-slate-300 text-xs sm:text-sm">
-            Fill in your project details below and our technical solution lead will reach out within 2 hours.
+            Discuss your business automation, web, or mobile app requirements directly with our technical team.
           </p>
         </div>
 
@@ -260,7 +259,7 @@ function BlogDetail({ post, allBlogs = [] }) {
             </div>
           )}
           <div>
-            <label className="block text-[11px] font-mono text-slate-400 mb-1.5 font-bold">Your Full Name *</label>
+            <label className="block text-[11px] font-mono text-slate-400 mb-1.5 font-bold">Your Name *</label>
             <input
               type="text"
               placeholder="Sahil Kumar"
@@ -299,7 +298,7 @@ function BlogDetail({ post, allBlogs = [] }) {
             <label className="block text-[11px] font-mono text-slate-400 mb-1.5 font-bold">Project Details *</label>
             <input
               type="text"
-              placeholder="Tell us what you want to automate / build..."
+              placeholder="Tell us what software/system you need..."
               value={formData.message}
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
               className="w-full px-4 py-3 rounded-xl bg-slate-950/80 border border-white/10 text-white text-xs outline-none focus:border-sky-500"
@@ -313,75 +312,62 @@ function BlogDetail({ post, allBlogs = [] }) {
               disabled={status.loading}
               className="w-full py-4 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-bold text-xs font-mono uppercase tracking-wider transition-colors shadow-lg cursor-pointer"
             >
-              {status.loading ? 'Submitting Request...' : 'SEND CONSULTATION INQUIRY →'}
+              {status.loading ? 'Submitting...' : 'SUBMIT CONSULTATION REQUEST →'}
             </button>
           </div>
         </form>
       </div>
 
-      {/* TECHCRUNCH STYLE RECENT NEWS LIST VIEW (IMAGE 3 LAYOUT REQUIREMENT) */}
-      {recentNews.length > 0 && (
-        <div className="space-y-6 pt-8 border-t border-slate-200 dark:border-zinc-800">
+      {/* RELATED BLOGS GRID SECTION (DIRECTLY UNDER CONTACT FORM) */}
+      {relatedArticles.length > 0 && (
+        <div className="space-y-6 pt-6 border-t border-slate-200 dark:border-zinc-800">
           <div className="flex items-center justify-between">
-            <h3 className="text-2xl sm:text-3xl font-headline font-black text-slate-900 dark:text-white uppercase tracking-tight">
-              Recent News
+            <h3 className="text-2xl font-headline font-black text-slate-900 dark:text-white uppercase">
+              Related Engineering Articles
             </h3>
-            <div className="flex items-center gap-2">
-              <button className="w-8 h-8 rounded-lg bg-slate-900 text-white dark:bg-white dark:text-slate-900 flex items-center justify-center cursor-pointer">
-                <ChevronLeft size={16} />
-              </button>
-              <button className="w-8 h-8 rounded-lg bg-slate-900 text-white dark:bg-white dark:text-slate-900 flex items-center justify-center cursor-pointer">
-                <ChevronRight size={16} />
-              </button>
-            </div>
+            <Link to="/blog" className="text-xs font-mono font-bold text-sky-600 dark:text-sky-400 hover:underline">
+              View All Articles →
+            </Link>
           </div>
 
-          <div className="flex flex-col gap-6">
-            {recentNews.slice(0, 6).map((article) => {
-              const articleUrl = `/blog/${article.id || article.slug || article._id}`;
-              const relTime = formatTimeAgo(article.createdAt || article.date);
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {relatedArticles.map((relPost) => {
+              const relTarget = `/blog/${relPost.id || relPost.slug || relPost._id}`;
+              const relTime = formatTimeAgo(relPost.createdAt || relPost.date);
               return (
                 <Link
-                  key={article.id || article.slug || article._id}
-                  to={articleUrl}
-                  className="flex flex-col sm:flex-row items-start gap-5 group border-b border-slate-100 dark:border-zinc-800/80 pb-6 last:border-b-0"
+                  key={relPost.id || relPost.slug || relPost._id}
+                  to={relTarget}
+                  className="rounded-2xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 overflow-hidden shadow-md flex flex-col justify-between group hover:border-sky-500/40 transition-all duration-200 hover:-translate-y-1 cursor-pointer"
                 >
-                  {/* Left Square Thumbnail (Image 3 Style) */}
-                  <div className="w-full sm:w-36 h-36 sm:h-36 rounded-2xl overflow-hidden bg-slate-900 shrink-0 border border-slate-200 dark:border-zinc-800 shadow-md">
+                  <div className="aspect-[16/9] w-full overflow-hidden bg-slate-900">
                     <img
-                      src={article.image || article.ogImage || article.coverImage || FALLBACK_IMG}
-                      alt={article.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      src={relPost.image || relPost.ogImage || relPost.coverImage || FALLBACK_IMG}
+                      alt={relPost.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   </div>
 
-                  {/* Right Meta & Title */}
-                  <div className="space-y-2 flex-1 text-left">
-                    <div className="flex items-center gap-3">
-                      <span className="text-[11px] font-mono font-bold uppercase tracking-wider px-3 py-0.5 rounded-full bg-slate-900 text-white dark:bg-white dark:text-slate-900">
-                        {article.category || 'Business'}
-                      </span>
-                      <span className="text-xs font-mono text-slate-500 dark:text-zinc-400 flex items-center gap-1">
-                        <Clock size={12} /> {article.date || '24 July, 2026'} ({relTime})
-                      </span>
+                  <div className="p-5 flex flex-col justify-between flex-1 gap-3 text-left">
+                    <div>
+                      <div className="flex items-center justify-between text-[10px] font-mono text-slate-500 dark:text-zinc-400 mb-2">
+                        <span className="px-2.5 py-0.5 rounded-full bg-sky-500/10 text-sky-600 dark:text-sky-400 font-bold uppercase">
+                          {relPost.category || 'Tech'}
+                        </span>
+                        <span>⏱️ {relTime}</span>
+                      </div>
+
+                      <h4 className="text-base font-headline font-bold text-slate-900 dark:text-white group-hover:text-sky-500 transition-colors leading-snug line-clamp-2">
+                        {relPost.title}
+                      </h4>
+
+                      <p className="text-slate-600 dark:text-zinc-400 text-xs line-clamp-2 mt-2">
+                        {relPost.summary || relPost.shortDesc}
+                      </p>
                     </div>
 
-                    <h4 className="text-lg sm:text-xl font-headline font-bold text-slate-900 dark:text-white underline decoration-slate-300 dark:decoration-zinc-700 group-hover:decoration-sky-500 group-hover:text-sky-500 transition-colors leading-snug">
-                      {article.title}
-                    </h4>
-
-                    <div className="flex flex-wrap items-center gap-3 text-xs font-mono text-slate-500 dark:text-zinc-400 pt-1">
-                      <span className="flex items-center gap-1 text-slate-700 dark:text-zinc-300 font-bold">
-                        <User size={13} className="text-sky-500" /> {article.author || 'Gabbar Shingh'}
-                      </span>
-                      <span>•</span>
-                      <span className="flex items-center gap-1">
-                        <Eye size={13} className="text-amber-500" /> {article.views || '1,117'} Views
-                      </span>
-                      <span>•</span>
-                      <span className="flex items-center gap-1">
-                        <Share2 size={13} className="text-emerald-500" /> {article.shares || '0'} Shares
-                      </span>
+                    <div className="inline-flex items-center gap-1 text-xs font-mono font-bold text-sky-600 dark:text-sky-400 group-hover:underline pt-3 border-t border-slate-100 dark:border-zinc-800 mt-auto">
+                      Read Article <ArrowRight size={13} />
                     </div>
                   </div>
                 </Link>
@@ -401,7 +387,7 @@ function BlogDetail({ post, allBlogs = [] }) {
   );
 }
 
-// ─── Blog Listing Grid (ASH GRAY BENTO GRID - IMAGE 2 EXACT REQUIREMENT) ──
+// ─── Blog Listing Main Grid (Modern Premium Clean Grid) ─────────────────────
 export default function BlogPage({ blogs = [] }) {
   const { slug } = useParams();
   const [searchTerm, setSearchTerm] = useState('');
@@ -425,236 +411,48 @@ export default function BlogPage({ blogs = [] }) {
     return matchesSearch && matchesCat;
   });
 
-  // Pick top items for the Ash Gray Bento Grid
-  const card001 = filteredBlogs[0] || {
-    title: 'Whispers of Wisdom',
-    category: 'Financing',
-    date: 'Oct 16, 2024',
-    image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=80',
-    summary: 'Exploring financial technology and modern wealth strategies.'
-  };
-
-  const card002 = filteredBlogs[1] || {
-    title: 'Ink-Stained Insights',
-    category: 'Lifestyle',
-    date: 'Oct 23, 2024',
-    image: 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&auto=format&fit=crop&q=80',
-    summary: 'Engineering workflows, developer culture, and digital transformations.'
-  };
-
-  const mainHeroCard = filteredBlogs[2] || filteredBlogs[0] || {
-    title: 'Journey Through Life\'s Spectrum',
-    category: 'Architecture',
-    date: 'Nov 01, 2024',
-    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1000&auto=format&fit=crop&q=80',
-    summary: 'A deep dive into software systems, cloud infrastructure, and business scalability.'
-  };
-
-  const card003 = filteredBlogs[3] || filteredBlogs[1] || {
-    title: 'Musings in Grayscale',
-    category: 'Community',
-    date: 'Dec 4, 2024',
-    image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&auto=format&fit=crop&q=80',
-    summary: 'Building high-performance teams and fostering innovation.'
-  };
-
-  const remainingBlogs = filteredBlogs.length > 4 ? filteredBlogs.slice(4) : filteredBlogs;
+  const featuredPost = filteredBlogs[0];
+  const regularPosts = filteredBlogs.slice(1);
 
   return (
-    <div className="container mx-auto max-w-[1320px] px-4 sm:px-6 py-10 text-left select-none space-y-16">
+    <div className="container mx-auto max-w-[1280px] px-6 py-12 text-left select-none space-y-16">
 
-      {/* TOP ASH GRAY BENTO GRID (IMAGE 2 EXACT SPECIFICATION) */}
-      <div className="bg-[#f5f4ef] dark:bg-zinc-950 p-6 sm:p-10 rounded-[40px] border border-slate-200/80 dark:border-zinc-800 shadow-2xl space-y-10 text-slate-900 dark:text-white">
-        
-        {/* Bento Grid 3-Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-          
-          {/* Column 1: Left Stack (001 & 002) */}
-          <div className="lg:col-span-4 flex flex-col justify-between gap-8">
-            
-            {/* Card 001 */}
-            <Link
-              to={`/blog/${card001.id || card001.slug || card001._id || '#'}`}
-              className="relative rounded-[32px] overflow-hidden bg-slate-900 group h-[260px] shadow-xl border border-slate-200/60 dark:border-zinc-800 flex flex-col justify-between p-5 cursor-pointer"
-            >
-              <img
-                src={card001.image || card001.ogImage || card001.coverImage || FALLBACK_IMG}
-                alt={card001.title}
-                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent" />
+      {/* Page Header */}
+      <div className="text-center max-w-4xl mx-auto">
+        <Badge className="mb-4 mx-auto inline-flex items-center gap-1.5 bg-sky-500/10 border-sky-500/20 text-sky-600 dark:text-sky-400 font-mono text-xs">
+          <BookOpen size={14} /> Knowledge Base & Architecture Insights
+        </Badge>
+        <h1 className="text-4xl sm:text-6xl font-black font-headline text-slate-900 dark:text-white uppercase leading-tight mb-4">
+          ENGINEERING INSIGHTS & <br />
+          <span className="gradient-text">BUSINESS AUTOMATION GUIDES</span>
+        </h1>
+        <p className="text-slate-600 dark:text-slate-300 max-w-2xl mx-auto text-base sm:text-lg leading-relaxed mb-8">
+          Articles, architectural blueprints, and best practices on custom software, WhatsApp API automation, CRM development, and cloud scalability.
+        </p>
 
-              {/* Top Pills */}
-              <div className="relative z-10 flex items-center justify-between">
-                <span className="text-xs font-mono font-bold px-4 py-1.5 rounded-full bg-white/20 text-white border border-white/30 backdrop-blur-md">
-                  {card001.category || 'Financing'}
-                </span>
-                <span className="text-xs font-mono font-bold px-4 py-1.5 rounded-full bg-white/80 text-slate-900 backdrop-blur-md">
-                  {card001.date ? (card001.date.includes('-') || card001.date.includes('T') ? formatTimeAgo(card001.date) : card001.date) : 'Oct 16, 2024'}
-                </span>
-              </div>
-
-              {/* Bottom Cutout & Title Overlay */}
-              <div className="relative z-10 flex items-end justify-between gap-3 pt-12">
-                <div>
-                  <span className="text-xs font-mono text-slate-300 font-bold block mb-0.5">001</span>
-                  <h3 className="text-xl font-headline font-black text-white leading-tight drop-shadow-md group-hover:text-sky-400 transition-colors">
-                    {card001.title}
-                  </h3>
-                </div>
-                {/* Circular Arrow Button (Asymmetric Cutout Overlay) */}
-                <div className="w-12 h-12 rounded-full bg-[#e8e6dd] text-slate-900 flex items-center justify-center shadow-lg shrink-0 group-hover:bg-pink-500 group-hover:text-white transition-all duration-300">
-                  <ArrowUpRight size={22} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                </div>
-              </div>
-            </Link>
-
-            {/* Card 002 */}
-            <Link
-              to={`/blog/${card002.id || card002.slug || card002._id || '#'}`}
-              className="relative rounded-[32px] overflow-hidden bg-slate-900 group h-[260px] shadow-xl border border-slate-200/60 dark:border-zinc-800 flex flex-col justify-between p-5 cursor-pointer"
-            >
-              <img
-                src={card002.image || card002.ogImage || card002.coverImage || FALLBACK_IMG}
-                alt={card002.title}
-                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent" />
-
-              {/* Top Pills */}
-              <div className="relative z-10 flex items-center justify-between">
-                <span className="text-xs font-mono font-bold px-4 py-1.5 rounded-full bg-white/20 text-white border border-white/30 backdrop-blur-md">
-                  {card002.category || 'Lifestyle'}
-                </span>
-                <span className="text-xs font-mono font-bold px-4 py-1.5 rounded-full bg-white/80 text-slate-900 backdrop-blur-md">
-                  {card002.date ? (card002.date.includes('-') || card002.date.includes('T') ? formatTimeAgo(card002.date) : card002.date) : 'Oct 23, 2024'}
-                </span>
-              </div>
-
-              {/* Bottom Cutout & Title Overlay */}
-              <div className="relative z-10 flex items-end justify-between gap-3 pt-12">
-                <div>
-                  <span className="text-xs font-mono text-slate-300 font-bold block mb-0.5">002</span>
-                  <h3 className="text-xl font-headline font-black text-white leading-tight drop-shadow-md group-hover:text-sky-400 transition-colors">
-                    {card002.title}
-                  </h3>
-                </div>
-                <div className="w-12 h-12 rounded-full bg-[#e8e6dd] text-slate-900 flex items-center justify-center shadow-lg shrink-0 group-hover:bg-pink-500 group-hover:text-white transition-all duration-300">
-                  <ArrowUpRight size={22} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                </div>
-              </div>
-            </Link>
-
-          </div>
-
-          {/* Column 2: Center Main Hero Feature Card */}
-          <div className="lg:col-span-5 flex flex-col justify-between">
-            <Link
-              to={`/blog/${mainHeroCard.id || mainHeroCard.slug || mainHeroCard._id || '#'}`}
-              className="group flex flex-col justify-between h-full space-y-4"
-            >
-              <div className="relative w-full h-[380px] sm:h-[430px] rounded-[36px] overflow-hidden bg-slate-900 border border-slate-200/60 dark:border-zinc-800 shadow-2xl">
-                <img
-                  src={mainHeroCard.image || mainHeroCard.ogImage || mainHeroCard.coverImage || FALLBACK_IMG}
-                  alt={mainHeroCard.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-              </div>
-
-              <div className="space-y-2 text-left pt-2">
-                <h2 className="text-3xl sm:text-5xl font-black font-headline text-slate-900 dark:text-white tracking-tight leading-tight group-hover:text-sky-500 transition-colors">
-                  {mainHeroCard.title}
-                </h2>
-                <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed line-clamp-2">
-                  {mainHeroCard.summary || 'A realm of reflection, inspiration, and discovery where engineering insights illuminate growth.'}
-                </p>
-              </div>
-            </Link>
-          </div>
-
-          {/* Column 3: Right Header Note & Card 003 */}
-          <div className="lg:col-span-3 flex flex-col justify-between gap-8">
-            
-            {/* Top Right Header & Newsletter Note */}
-            <div className="space-y-5 text-left bg-white/60 dark:bg-zinc-900/60 p-6 rounded-[32px] border border-slate-200/60 dark:border-zinc-800">
-              <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-sans font-medium">
-                Welcome to Kvantum Tech Blog: A realm of engineering reflection, business automation, and technical discovery.
-              </p>
-              
-              <div className="flex items-center gap-3 flex-wrap">
-                <Link
-                  to="/contact"
-                  className="px-6 py-2.5 rounded-full bg-[#2d2d2d] text-white hover:bg-black font-bold text-xs font-mono transition-colors shadow-md shrink-0"
-                >
-                  Join Now
-                </Link>
-                <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
-                  <a href="https://instagram.com/kvantumtechsolutions" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full border border-slate-300 dark:border-zinc-700 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-zinc-800 transition-colors">
-                    <InstagramIcon size={14} />
-                  </a>
-                  <a href="https://facebook.com/kvantumtechsolutions" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full border border-slate-300 dark:border-zinc-700 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-zinc-800 transition-colors">
-                    <FacebookIcon size={14} />
-                  </a>
-                  <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full border border-slate-300 dark:border-zinc-700 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-zinc-800 transition-colors">
-                    <LinkedinIcon size={14} />
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 003 */}
-            <Link
-              to={`/blog/${card003.id || card003.slug || card003._id || '#'}`}
-              className="relative rounded-[32px] overflow-hidden bg-slate-900 group h-[260px] shadow-xl border border-slate-200/60 dark:border-zinc-800 flex flex-col justify-between p-5 cursor-pointer"
-            >
-              <img
-                src={card003.image || card003.ogImage || card003.coverImage || FALLBACK_IMG}
-                alt={card003.title}
-                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent" />
-
-              {/* Top Pills */}
-              <div className="relative z-10 flex items-center justify-between">
-                <span className="text-xs font-mono font-bold px-4 py-1.5 rounded-full bg-white/20 text-white border border-white/30 backdrop-blur-md">
-                  {card003.category || 'Community'}
-                </span>
-                <span className="text-xs font-mono font-bold px-4 py-1.5 rounded-full bg-white/80 text-slate-900 backdrop-blur-md">
-                  {card003.date ? (card003.date.includes('-') || card003.date.includes('T') ? formatTimeAgo(card003.date) : card003.date) : 'Dec 4, 2024'}
-                </span>
-              </div>
-
-              {/* Bottom Cutout & Title Overlay */}
-              <div className="relative z-10 flex items-end justify-between gap-3 pt-12">
-                <div>
-                  <span className="text-xs font-mono text-slate-300 font-bold block mb-0.5">003</span>
-                  <h3 className="text-xl font-headline font-black text-white leading-tight drop-shadow-md group-hover:text-sky-400 transition-colors">
-                    {card003.title}
-                  </h3>
-                </div>
-                <div className="w-12 h-12 rounded-full bg-[#e8e6dd] text-slate-900 flex items-center justify-center shadow-lg shrink-0 group-hover:bg-pink-500 group-hover:text-white transition-all duration-300">
-                  <ArrowUpRight size={22} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                </div>
-              </div>
-            </Link>
-
-          </div>
-
+        {/* Search Bar */}
+        <div className="relative max-w-xl mx-auto">
+          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+          <input
+            type="text"
+            placeholder="Search articles & engineering guides..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-12 pr-4 py-3.5 rounded-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-slate-900 dark:text-white text-sm outline-none focus:border-sky-500 shadow-md font-sans"
+          />
         </div>
-
       </div>
 
-      {/* SEARCH & CATEGORY FILTER TOOLBAR */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-4 border-t border-slate-200 dark:border-zinc-800">
-        {/* Category Pills */}
-        <div className="flex flex-wrap items-center gap-2">
+      {/* Category Filter Pills */}
+      {categories.length > 1 && (
+        <div className="flex flex-wrap items-center justify-center gap-3">
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`px-5 py-2.5 rounded-full text-xs font-mono font-bold transition-all duration-200 cursor-pointer ${
+              className={`px-5 py-2 rounded-full text-xs font-mono font-bold transition-all duration-200 cursor-pointer ${
                 activeCategory === cat
-                  ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-md'
+                  ? 'bg-sky-500 text-white shadow-md'
                   : 'bg-white dark:bg-zinc-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-zinc-800 hover:border-sky-500/40'
               }`}
             >
@@ -662,100 +460,130 @@ export default function BlogPage({ blogs = [] }) {
             </button>
           ))}
         </div>
+      )}
 
-        {/* Search Box */}
-        <div className="relative w-full sm:w-80">
-          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-          <input
-            type="text"
-            placeholder="Search articles..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-slate-900 dark:text-white text-xs outline-none focus:border-sky-500 shadow-sm"
-          />
+      {/* Empty States */}
+      {displayBlogs.length === 0 ? (
+        <div className="text-center py-24">
+          <p className="text-5xl mb-4">✍️</p>
+          <h3 className="text-xl font-bold font-headline text-slate-900 dark:text-white mb-2">No Articles Published Yet</h3>
+          <p className="text-slate-600 dark:text-zinc-400 text-sm">Stay tuned — new engineering insights and guides are coming soon!</p>
         </div>
-      </div>
-
-      {/* TECHCRUNCH STYLE RECENT NEWS LIST (IMAGE 3 REQUIREMENT) */}
-      <div className="space-y-8 pt-4">
-        <div className="flex items-center justify-between border-b border-slate-200 dark:border-zinc-800 pb-4">
-          <h2 className="text-3xl sm:text-4xl font-black font-headline text-slate-900 dark:text-white uppercase tracking-tight">
-            Recent News & Articles
-          </h2>
-          <div className="flex items-center gap-2">
-            <button className="w-8 h-8 rounded-lg bg-slate-900 text-white dark:bg-white dark:text-slate-900 flex items-center justify-center cursor-pointer">
-              <ChevronLeft size={16} />
-            </button>
-            <button className="w-8 h-8 rounded-lg bg-slate-900 text-white dark:bg-white dark:text-slate-900 flex items-center justify-center cursor-pointer">
-              <ChevronRight size={16} />
-            </button>
-          </div>
+      ) : filteredBlogs.length === 0 ? (
+        <div className="text-center py-24">
+          <p className="text-5xl mb-4">🔍</p>
+          <h3 className="text-xl font-bold font-headline text-slate-900 dark:text-white mb-2">No Articles Found</h3>
+          <p className="text-slate-600 dark:text-zinc-400 text-sm">Try a different search term or category.</p>
         </div>
+      ) : (
+        <div className="space-y-12">
+          
+          {/* Main Featured Article (If available) */}
+          {featuredPost && (
+            <Link
+              to={`/blog/${featuredPost.id || featuredPost.slug || featuredPost._id}`}
+              className="rounded-3xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 overflow-hidden shadow-2xl grid grid-cols-1 lg:grid-cols-12 group hover:border-sky-500/50 transition-all duration-300 cursor-pointer"
+            >
+              <div className="lg:col-span-7 aspect-[16/9] lg:aspect-auto w-full h-full overflow-hidden bg-slate-900">
+                <img
+                  src={featuredPost.image || featuredPost.ogImage || featuredPost.coverImage || FALLBACK_IMG}
+                  alt={featuredPost.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
 
-        {remainingBlogs.length === 0 ? (
-          <div className="text-center py-16">
-            <p className="text-4xl mb-2">🔍</p>
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white">No Additional Articles Found</h3>
-          </div>
-        ) : (
-          <div className="flex flex-col gap-8">
-            {remainingBlogs.map((post) => {
-              const blogTarget = `/blog/${post.id || post.slug || post._id}`;
-              const relTime = formatTimeAgo(post.createdAt || post.date);
-              return (
-                <Link
-                  key={post.id || post.slug || post._id}
-                  to={blogTarget}
-                  className="flex flex-col sm:flex-row items-start gap-6 group border-b border-slate-200 dark:border-zinc-800 pb-8 last:border-b-0 cursor-pointer"
-                >
-                  {/* Left Square Thumbnail (Image 3 TechCrunch Layout) */}
-                  <div className="w-full sm:w-44 h-44 sm:h-44 rounded-2xl overflow-hidden bg-slate-900 shrink-0 border border-slate-200 dark:border-zinc-800 shadow-md">
-                    <img
-                      src={post.image || post.ogImage || post.coverImage || FALLBACK_IMG}
-                      alt={post.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
+              <div className="lg:col-span-5 p-8 sm:p-10 flex flex-col justify-between text-left gap-6">
+                <div className="space-y-4">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <span className="text-xs font-mono font-bold uppercase tracking-wider px-3.5 py-1 rounded-full bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
+                      {featuredPost.category || 'Featured'}
+                    </span>
+                    <span className="text-xs font-mono font-bold text-pink-600 dark:text-pink-400 bg-pink-500/10 px-3 py-1 rounded-full border border-pink-500/20">
+                      ⏱️ {formatTimeAgo(featuredPost.createdAt || featuredPost.date)}
+                    </span>
                   </div>
 
-                  {/* Right Content */}
-                  <div className="space-y-3 flex-1 text-left">
-                    <div className="flex items-center gap-3">
-                      <span className="text-xs font-mono font-bold uppercase tracking-wider px-3.5 py-1 rounded-full bg-slate-900 text-white dark:bg-white dark:text-slate-900">
-                        {post.category || 'Business'}
-                      </span>
-                      <span className="text-xs font-mono text-slate-500 dark:text-zinc-400 flex items-center gap-1">
-                        <Clock size={13} /> {post.date || 'August 2026'} ({relTime})
-                      </span>
-                    </div>
+                  <h2 className="text-2xl sm:text-4xl font-headline font-black text-slate-900 dark:text-white group-hover:text-sky-500 transition-colors leading-tight">
+                    {featuredPost.title}
+                  </h2>
 
-                    <h3 className="text-xl sm:text-2xl font-headline font-bold text-slate-900 dark:text-white underline decoration-slate-300 dark:decoration-zinc-700 group-hover:decoration-sky-500 group-hover:text-sky-500 transition-colors leading-snug">
-                      {post.title}
-                    </h3>
+                  <p className="text-slate-600 dark:text-zinc-300 text-sm sm:text-base leading-relaxed line-clamp-3 font-sans">
+                    {featuredPost.summary || featuredPost.shortDesc}
+                  </p>
+                </div>
 
-                    <p className="text-slate-600 dark:text-zinc-300 text-xs sm:text-sm leading-relaxed line-clamp-2 font-sans">
-                      {post.summary || post.shortDesc}
-                    </p>
-
-                    <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-slate-500 dark:text-zinc-400 pt-2">
-                      <span className="flex items-center gap-1.5 text-slate-800 dark:text-zinc-200 font-bold">
-                        <User size={13} className="text-sky-500" /> {post.author || 'Gabbar Shingh'}
-                      </span>
-                      <span>•</span>
-                      <span className="flex items-center gap-1">
-                        <Eye size={13} className="text-amber-500" /> {post.views || '1,117'} Views
-                      </span>
-                      <span>•</span>
-                      <span className="flex items-center gap-1">
-                        <Share2 size={13} className="text-emerald-500" /> {post.shares || '0'} Shares
-                      </span>
-                    </div>
+                <div className="pt-4 border-t border-slate-100 dark:border-zinc-800 flex items-center justify-between text-xs font-mono text-slate-500 dark:text-zinc-400">
+                  <div className="flex items-center gap-2">
+                    <User size={14} className="text-sky-500" />
+                    <span className="font-bold text-slate-800 dark:text-zinc-200">{featuredPost.author || 'Kvantum Team'}</span>
                   </div>
-                </Link>
-              );
-            })}
-          </div>
-        )}
-      </div>
+                  <span className="inline-flex items-center gap-1 font-bold text-sky-600 dark:text-sky-400 group-hover:underline">
+                    Read Article <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                  </span>
+                </div>
+              </div>
+            </Link>
+          )}
+
+          {/* 3-Column Clean Card Grid for Remaining Posts */}
+          {regularPosts.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {regularPosts.map((post) => {
+                const blogTarget = `/blog/${post.id || post.slug || post._id}`;
+                const relTime = formatTimeAgo(post.createdAt || post.date);
+                return (
+                  <Link
+                    key={post.id || post.slug || post._id}
+                    to={blogTarget}
+                    className="rounded-3xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 overflow-hidden shadow-xl flex flex-col justify-between group hover:border-sky-500/40 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+                  >
+                    {/* Clean Aspect 16/9 Image Container without text overlap */}
+                    <div className="aspect-[16/9] w-full overflow-hidden bg-slate-900 border-b border-slate-100 dark:border-zinc-800">
+                      <img
+                        src={post.image || post.ogImage || post.coverImage || FALLBACK_IMG}
+                        alt={post.imageAlt || post.keywords || post.title}
+                        title={post.imageTitle || post.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+
+                    {/* Card Content Body */}
+                    <div className="p-6 flex flex-col justify-between flex-1 gap-4 text-left">
+                      <div>
+                        {/* Category & Time Ago Badges */}
+                        <div className="flex items-center justify-between text-[11px] font-mono mb-3">
+                          <span className="px-3 py-0.5 rounded-full bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20 font-bold uppercase">
+                            {post.category || 'Engineering'}
+                          </span>
+                          <span className="text-slate-500 dark:text-zinc-400 font-bold">
+                            ⏱️ {relTime}
+                          </span>
+                        </div>
+
+                        <h3 className="text-lg font-headline font-bold text-slate-900 dark:text-white group-hover:text-sky-500 transition-colors leading-snug mb-2">
+                          {post.title}
+                        </h3>
+
+                        <p className="text-slate-600 dark:text-zinc-300 text-xs sm:text-sm leading-relaxed line-clamp-3 font-sans">
+                          {post.summary || post.shortDesc}
+                        </p>
+                      </div>
+
+                      <div className="pt-4 border-t border-slate-100 dark:border-zinc-800 flex items-center justify-between text-xs font-mono text-slate-500 dark:text-zinc-400 mt-auto">
+                        <span className="font-bold text-slate-700 dark:text-zinc-300">{post.author || 'Kvantum Team'}</span>
+                        <span className="inline-flex items-center gap-1 font-bold text-sky-600 dark:text-sky-400 group-hover:underline">
+                          Read Article <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+
+        </div>
+      )}
 
       {/* Blog Specific FAQ */}
       <FAQ items={blogFaqs} title="Engineering Blog" subtitle="Frequently Asked Questions" />
