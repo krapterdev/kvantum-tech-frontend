@@ -37,8 +37,10 @@ export default function AdminPortalPage({
   const [loginError, setLoginError] = useState('');
   const [loggingIn, setLoggingIn] = useState(false);
 
-  // Active navigation tab
-  const [activeTab, setActiveTab] = useState('leads'); // 'leads', 'assets', 'seo', 'services', 'blogs', 'users'
+  // Active navigation tab (persisted in localStorage across page reloads)
+  const [activeTab, setActiveTab] = useState(() => {
+    return localStorage.getItem('kts_admin_active_tab') || 'leads';
+  });
 
   // CRM leads list
   const [leads, setLeads] = useState([]);
@@ -140,6 +142,7 @@ ${allRoutes.map(r => `  <url>
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
+    localStorage.setItem('kts_admin_active_tab', tab);
     setMobileMenuOpen(false);
   };
 

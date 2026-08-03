@@ -1,10 +1,28 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { CheckCircle2, ArrowLeft, PhoneCall, Mail, Sparkles, Clock, ShieldCheck } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { CheckCircle2, ArrowLeft, PhoneCall, Sparkles, Clock, ShieldCheck } from 'lucide-react';
 import Badge from '@/components/ui/Badge';
 import Card from '@/components/ui/Card';
 
 export default function ThankYouPage() {
+  const navigate = useNavigate();
+  const [countdown, setCountdown] = useState(3);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          navigate('/');
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [navigate]);
+
   return (
     <div className="container mx-auto max-w-[900px] px-6 py-16 text-center select-none space-y-10">
       {/* Icon & Badge */}
@@ -17,7 +35,7 @@ export default function ThankYouPage() {
         </Badge>
       </div>
 
-      {/* Main Heading */}
+      {/* Main Heading & Auto Redirect Counter */}
       <div className="space-y-4 max-w-2xl mx-auto">
         <h1 className="text-4xl sm:text-6xl font-black font-headline text-slate-900 dark:text-white uppercase leading-tight">
           THANK YOU FOR <br />
@@ -26,6 +44,11 @@ export default function ThankYouPage() {
         <p className="text-slate-600 dark:text-slate-300 text-base sm:text-lg leading-relaxed">
           Your project details have been successfully submitted to our engineering & solutions team. We are reviewing your requirements right now.
         </p>
+
+        {/* Automatic Redirect Banner */}
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-600 dark:text-sky-400 font-mono text-xs font-bold">
+          <span>⚡ Automatically redirecting to Home Page in {countdown} seconds...</span>
+        </div>
       </div>
 
       {/* Next Steps Box */}
@@ -81,7 +104,7 @@ export default function ThankYouPage() {
           to="/"
           className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-xs hover:opacity-90 transition-opacity shadow-lg"
         >
-          <ArrowLeft size={16} /> Return to Home Page
+          <ArrowLeft size={16} /> Return to Home Page Now
         </Link>
         <Link
           to="/projects"

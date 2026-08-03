@@ -184,6 +184,7 @@ function BlogDetail({ post, allBlogs = [] }) {
         email: formData.email.trim(),
         phone: formData.phone.trim(),
         service: `Inquiry via Article: ${post.title}`,
+        message: formData.message.trim(),
         notes: `Message: ${formData.message.trim()}`,
       });
       setStatus({ loading: false, error: '' });

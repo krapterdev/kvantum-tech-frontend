@@ -53,6 +53,7 @@ export default function FloatingQuickActions() {
         phone: formData.phone.trim(),
         email: formData.email ? formData.email.trim() : 'quickcall@kvantumtechsolutions.com',
         service: formData.service,
+        message: 'Quick Callback Request from Floating Widget',
         notes: 'Quick Callback Request from Floating Widget'
       });
       setStatus({ loading: false, error: '' });

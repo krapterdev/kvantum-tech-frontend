@@ -76,6 +76,7 @@ export default function ContactPage() {
         email: formData.email.trim(),
         phone: formData.phone.trim(),
         service: formData.service,
+        message: formData.message.trim(),
         notes: `Message: ${formData.message.trim()}`,
       });
 

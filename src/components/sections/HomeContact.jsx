@@ -76,6 +76,7 @@ export default function HomeContact() {
         email: formData.email.trim(),
         phone: formData.phone.trim(),
         service: formData.service,
+        message: formData.message.trim(),
         notes: `Company: ${formData.company.trim()} | Message: ${formData.message.trim()}`,
       });
 
