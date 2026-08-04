@@ -117,14 +117,14 @@ export default function AdminPortalPage({
         }))
       : fallbackServiceRoutes;
 
-    // Blog post pages strictly using genuine Publication / Creation Date
+    // Blog post pages strictly using genuine Publication / Creation Date & slug
     const fallbackBlogRoutes = [
       { loc: `${domain}/blog/why-kvantum-tech-solutions-is-the-best-it-solutions-company-in-delhi-ncr`, lastmod: '2026-08-01' }
     ];
 
     const blogRoutes = (blogs && blogs.length > 0)
       ? blogs.map(b => ({
-          loc: `${domain}/blog/${b.id || b.slug || b._id}`,
+          loc: `${domain}/blog/${b.slug || b.id || b._id}`,
           lastmod: formatIsoDate(b.createdAt || b.date, '2026-08-01')
         }))
       : fallbackBlogRoutes;
