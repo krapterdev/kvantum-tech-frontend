@@ -118,10 +118,10 @@ export default function AdminPortalPage({
 
     const activeServiceEntries = serviceRoutes.length > 0 ? serviceRoutes : fallbackServiceRoutes;
 
-    // Blog post pages with genuine blog updatedAt/createdAt/date dates
+    // Blog post pages strictly using genuine Publication / Creation Date
     const blogRoutes = (blogs || []).map(b => ({
       loc: `${domain}/blog/${b.id || b.slug || b._id}`,
-      lastmod: formatIsoDate(b.updatedAt || b.createdAt || b.date, '2026-08-01')
+      lastmod: formatIsoDate(b.createdAt || b.date, '2026-08-01')
     }));
 
     const allEntries = [...staticRoutes, ...activeServiceEntries, ...blogRoutes];
