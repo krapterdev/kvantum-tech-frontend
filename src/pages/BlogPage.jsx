@@ -264,13 +264,6 @@ function BlogDetail({ post, allBlogs = [] }) {
             dangerouslySetInnerHTML={{ __html: post.content || post.summary }}
           />
 
-          {/* Custom Blog FAQs at Bottom of Article */}
-          <FAQ 
-            items={Array.isArray(post.faqs) && post.faqs.length > 0 ? post.faqs : blogFaqs} 
-            title="Article Technical Insights & FAQs" 
-            subtitle="Frequently Asked Questions" 
-          />
-
         </div>
 
         {/* RIGHT SIDEBAR COLUMN (4 COLS): CONTACT FORM ON TOP + RECENT BLOGS LIST BELOW */}
@@ -405,6 +398,15 @@ function BlogDetail({ post, allBlogs = [] }) {
 
         </div>
 
+      </div>
+
+      {/* CENTERED BLOG DETAIL FAQ SECTION */}
+      <div className="w-full max-w-[960px] mx-auto text-center border-t border-slate-200 dark:border-zinc-800 pt-12">
+        <FAQ 
+          items={Array.isArray(post.faqs) && post.faqs.length > 0 ? post.faqs : blogFaqs} 
+          title="Article Technical Insights & FAQs" 
+          subtitle="Frequently Asked Questions" 
+        />
       </div>
 
     </div>
