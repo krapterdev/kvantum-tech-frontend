@@ -100,13 +100,7 @@ export default function AdminPortalPage({
       { loc: `${domain}/privacy`, lastmod: '2026-07-15' },
     ];
 
-    // Service detail pages with genuine service updatedAt/createdAt dates
-    const serviceRoutes = (services || []).map(s => ({
-      loc: `${domain}/services/${s.id}`,
-      lastmod: formatIsoDate(s.updatedAt || s.createdAt, '2026-07-20')
-    }));
-
-    // If services list is empty, use default service routes
+    // Service detail pages with genuine static launch date 2026-07-20
     const fallbackServiceRoutes = [
       { loc: `${domain}/services/custom-software-development`, lastmod: '2026-07-20' },
       { loc: `${domain}/services/crm-software-development`, lastmod: '2026-07-20' },
@@ -116,15 +110,26 @@ export default function AdminPortalPage({
       { loc: `${domain}/services/web-mobile-app-development`, lastmod: '2026-07-20' },
     ];
 
-    const activeServiceEntries = serviceRoutes.length > 0 ? serviceRoutes : fallbackServiceRoutes;
+    const serviceRoutes = (services && services.length > 0)
+      ? services.map(s => ({
+          loc: `${domain}/services/${s.id}`,
+          lastmod: formatIsoDate(s.createdAt, '2026-07-20')
+        }))
+      : fallbackServiceRoutes;
 
     // Blog post pages strictly using genuine Publication / Creation Date
-    const blogRoutes = (blogs || []).map(b => ({
-      loc: `${domain}/blog/${b.id || b.slug || b._id}`,
-      lastmod: formatIsoDate(b.createdAt || b.date, '2026-08-01')
-    }));
+    const fallbackBlogRoutes = [
+      { loc: `${domain}/blog/why-kvantum-tech-solutions-is-the-best-it-solutions-company-in-delhi-ncr`, lastmod: '2026-08-01' }
+    ];
 
-    const allEntries = [...staticRoutes, ...activeServiceEntries, ...blogRoutes];
+    const blogRoutes = (blogs && blogs.length > 0)
+      ? blogs.map(b => ({
+          loc: `${domain}/blog/${b.id || b.slug || b._id}`,
+          lastmod: formatIsoDate(b.createdAt || b.date, '2026-08-01')
+        }))
+      : fallbackBlogRoutes;
+
+    const allEntries = [...staticRoutes, ...serviceRoutes, ...blogRoutes];
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
