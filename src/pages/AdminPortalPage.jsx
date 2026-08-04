@@ -80,38 +80,33 @@ export default function AdminPortalPage({
     const today = new Date().toISOString().split('T')[0];
 
     const staticRoutes = [
-      { loc: `${domain}/`, priority: '1.0', changefreq: 'daily' },
-      { loc: `${domain}/about`, priority: '0.8', changefreq: 'weekly' },
-      { loc: `${domain}/services`, priority: '0.8', changefreq: 'weekly' },
-      { loc: `${domain}/projects`, priority: '0.8', changefreq: 'weekly' },
-      { loc: `${domain}/contact`, priority: '0.8', changefreq: 'monthly' },
-      { loc: `${domain}/blog`, priority: '0.9', changefreq: 'daily' },
-      { loc: `${domain}/terms`, priority: '0.3', changefreq: 'yearly' },
-      { loc: `${domain}/privacy`, priority: '0.3', changefreq: 'yearly' },
+      `${domain}/`,
+      `${domain}/about`,
+      `${domain}/services/custom-software-development`,
+      `${domain}/services/crm-software-development`,
+      `${domain}/services/business-automation`,
+      `${domain}/services/hrms-software`,
+      `${domain}/services/whatsapp-automation`,
+      `${domain}/services/web-mobile-app-development`,
+      `${domain}/projects`,
+      `${domain}/blog`,
+      `${domain}/contact`,
+      `${domain}/terms`,
+      `${domain}/privacy`,
     ];
 
-    const blogRoutes = (blogs || []).map(b => ({
-      loc: `${domain}/blog/${b.id || b.slug || b._id}`,
-      priority: '0.8',
-      changefreq: 'weekly'
-    }));
+    const blogRoutes = (blogs || []).map(b => `${domain}/blog/${b.id || b.slug || b._id}`);
 
-    const seoRoutes = (seoPages || []).map(p => ({
-      loc: `${domain}/keyword/${p.slug}`,
-      priority: '0.8',
-      changefreq: 'weekly'
-    }));
-
-    const allRoutes = [...staticRoutes, ...blogRoutes, ...seoRoutes];
+    const allUrls = [...staticRoutes, ...blogRoutes];
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${allRoutes.map(r => `  <url>
-    <loc>${r.loc}</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>${r.changefreq}</changefreq>
-    <priority>${r.priority}</priority>
-  </url>`).join('\n')}
+
+${allUrls.map(url => `    <url>
+        <loc>${url}</loc>
+        <lastmod>${today}</lastmod>
+    </url>`).join('\n\n')}
+
 </urlset>`;
 
     setGeneratedSitemapText(xml);
