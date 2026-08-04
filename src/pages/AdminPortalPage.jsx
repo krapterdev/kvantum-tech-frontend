@@ -1551,24 +1551,22 @@ ${allEntries.map(entry => `    <url>
   // If user is not logged in, render the login panel with instant auto-login helper
   if (!currentUser) {
     return (
-      <div className="min-h-screen w-full bg-[#080B14] flex items-center justify-center p-6 text-left relative overflow-hidden text-zinc-200">
-        {/* Ambient Glows */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600/15 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-600/15 rounded-full blur-[120px] pointer-events-none" />
-
-        <Card className="w-full max-w-[460px] p-10 border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.7)] bg-[#101424]/90 backdrop-blur-2xl rounded-3xl relative z-10">
+      <div className="min-h-screen w-full bg-[#050811] flex items-center justify-center p-6 text-left relative z-50">
+        <Card className="w-full max-w-[440px] p-10 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.8)] bg-[#090d1a]">
           <div className="flex flex-col gap-6">
-            <div className="text-center flex flex-col items-center">
-              <KvantumLogo theme="dark" className="h-10 mb-3" />
-              <h2 className="text-white text-2xl font-bold font-headline tracking-tight">Admin Console Terminal</h2>
+            <div className="text-center">
+              <div className="w-14 h-14 rounded-2xl bg-cyanCustom/10 border border-cyanCustom/20 text-cyanCustom flex items-center justify-center mx-auto mb-4">
+                <Lock size={28} />
+              </div>
+              <h2 className="text-zinc-100 text-xl font-bold font-headline">Admin Dashboard Login</h2>
               <p className="text-zinc-400 text-xs mt-1.5 font-sans leading-relaxed">
-                Kvantum Nexora Control Panel
+                Kvantum Tech Enterprise Control Panel
               </p>
             </div>
 
             <form onSubmit={handleLoginSubmit} className="flex flex-col gap-5">
               <div>
-                <label className="block text-[10px] font-mono text-zinc-400 uppercase tracking-widest mb-2 font-bold">
+                <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-2 font-bold">
                   Email Address
                 </label>
                 <input 
@@ -1577,13 +1575,13 @@ ${allEntries.map(entry => `    <url>
                   placeholder="e.g. admin@kvantumtechsolutions.com"
                   value={loginData.email}
                   onChange={(e) => setLoginData(prev => ({ ...prev, email: e.target.value }))}
-                  className="w-full bg-[#080A12]/80 border border-white/10 rounded-xl px-4 py-3 text-zinc-100 text-sm placeholder-zinc-500 outline-none focus:border-blue-500/60 focus:ring-1 focus:ring-blue-500/30 transition-all font-sans"
+                  className="w-full bg-zinc-950/80 border border-white/10 rounded-xl px-4 py-3 text-zinc-100 text-sm placeholder-zinc-500 outline-none focus:border-cyanCustom/60 transition-colors"
                 />
               </div>
 
               <div>
-                <label className="block text-[10px] font-mono text-zinc-400 uppercase tracking-widest mb-2 font-bold">
-                  Access Passcode
+                <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-2 font-bold">
+                  Access Key Passcode
                 </label>
                 <input 
                   type="password" 
@@ -1591,12 +1589,12 @@ ${allEntries.map(entry => `    <url>
                   placeholder="••••••••••••"
                   value={loginData.password}
                   onChange={(e) => setLoginData(prev => ({ ...prev, password: e.target.value }))}
-                  className="w-full bg-[#080A12]/80 border border-white/10 rounded-xl px-4 py-3 text-zinc-100 text-sm placeholder-zinc-500 outline-none focus:border-blue-500/60 focus:ring-1 focus:ring-blue-500/30 transition-all font-sans"
+                  className="w-full bg-zinc-950/80 border border-white/10 rounded-xl px-4 py-3 text-zinc-100 text-sm placeholder-zinc-500 outline-none focus:border-cyanCustom/60 transition-colors"
                 />
               </div>
 
               {loginError && (
-                <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 px-3.5 py-2.5 rounded-xl text-red-400 text-xs font-mono">
+                <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 px-3.5 py-2.5 rounded-lg text-red-400 text-xs font-mono">
                   <AlertTriangle size={14} /> <strong>[ERROR]</strong> {loginError}
                 </div>
               )}
@@ -1604,15 +1602,15 @@ ${allEntries.map(entry => `    <url>
               <Button 
                 type="submit" 
                 variant="primary" 
-                className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl shadow-[0_0_20px_rgba(37,99,235,0.4)] hover:shadow-[0_0_25px_rgba(37,99,235,0.6)] transition-all cursor-pointer"
+                className="w-full py-3.5"
                 disabled={loggingIn}
               >
-                {loggingIn ? 'Authenticating Credentials...' : 'Authorize Operator Connection'}
+                {loggingIn ? 'Authenticating Credentials...' : 'Authorize Secure Connection'}
               </Button>
 
               <div className="border-t border-white/8 pt-4 text-center">
                 <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest block">
-                  🔒 256-Bit Encrypted • Session Protected
+                  🔒 256-Bit Encrypted • 15-Min Auto-Lock Protected
                 </span>
               </div>
             </form>
@@ -1623,49 +1621,41 @@ ${allEntries.map(entry => `    <url>
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#080B14] font-sans text-zinc-300 select-none text-left w-full relative overflow-hidden">
-      {/* Top Ambient Glow Overlay */}
-      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-gradient-to-b from-blue-600/12 via-indigo-600/5 to-transparent blur-3xl pointer-events-none z-0" />
-
+    <div className="min-h-screen flex flex-col bg-[#050811] font-sans text-zinc-300 select-none text-left w-full">
       {/* Top Premium Navbar */}
-      <header className="w-full h-16 bg-[#0D111E]/80 backdrop-blur-xl border-b border-white/[0.08] flex items-center justify-between px-6 z-30 shrink-0 relative">
+      <header className="w-full h-16 bg-[#060b16] border-b border-white/5 flex items-center justify-between px-6 z-30 shrink-0">
         <div className="flex items-center gap-3">
           <button 
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-zinc-400 hover:text-zinc-100 hover:bg-white/5 rounded-lg transition-colors mr-1 cursor-pointer flex items-center justify-center"
+            className="md:hidden p-2 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/50 rounded-lg transition-colors mr-1 cursor-pointer flex items-center justify-center"
           >
             {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
           <KvantumLogo theme="dark" className="h-8" />
-          <span className="bg-blue-500/10 text-[10px] text-blue-400 font-mono px-2.5 py-0.5 rounded-full border border-blue-500/20 uppercase font-bold tracking-wider">
-            Nexora Console v2.4
+          <span className="bg-zinc-800 text-[10px] text-cyan-400 font-mono px-2 py-0.5 rounded border border-white/10 uppercase font-bold">
+            Console v2.0
           </span>
         </div>
 
-        {/* Quick Search & Status Bar */}
-        <div className="hidden lg:flex items-center gap-4">
-          <div className="flex items-center gap-2 bg-[#121727]/90 border border-white/10 rounded-full px-4 py-1.5 w-64 text-xs text-zinc-400 focus-within:border-blue-500/50 focus-within:ring-1 focus-within:ring-blue-500/20 transition-all">
-            <Search size={14} className="text-zinc-500" />
-            <input type="text" placeholder="Search telemetry..." className="bg-transparent text-zinc-200 outline-none w-full text-xs" />
-          </div>
-
-          <span className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 px-3.5 py-1 rounded-full text-emerald-400 text-xs font-medium">
+        {/* Database Connection Status badge */}
+        <div className="hidden md:flex items-center gap-2">
+          <span className="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full text-emerald-400 text-xs font-medium">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            Engine Active
+            🟢 Live Backend Engine Connected
           </span>
         </div>
 
         {/* Operator Profile and Logout */}
         <div className="flex items-center gap-4">
           <div className="hidden sm:flex flex-col text-right">
-            <span className="text-xs text-zinc-100 font-bold">{currentUser.name || 'Admin User'}</span>
-            <span className="text-[10px] text-blue-400 font-mono uppercase tracking-widest font-semibold">{currentUser.role}</span>
+            <span className="text-xs text-zinc-200 font-medium">{currentUser.name || 'Admin User'}</span>
+            <span className="text-[10px] text-zinc-500 font-mono uppercase tracking-widest">{currentUser.role}</span>
           </div>
           <div className="w-[1px] h-6 bg-white/10 hidden sm:block" />
           <Button 
             onClick={handleLogout} 
             variant="secondary"
-            className="gap-2 px-3.5 py-1.5 rounded-xl text-xs hover:border-red-500/40 hover:text-red-400 border border-white/10 bg-[#121727]/80 text-zinc-300 transition-all"
+            className="gap-2 px-3 py-1.5 rounded-lg text-xs hover:border-red-500/30 hover:text-red-400 border border-white/8 bg-zinc-900/50"
           >
             <LogOut size={13} /> Log Out
           </Button>
@@ -1673,31 +1663,31 @@ ${allEntries.map(entry => `    <url>
       </header>
 
       {/* Main Body */}
-      <div className="flex flex-1 overflow-hidden h-[calc(100vh-64px)] w-full relative z-10">
+      <div className="flex flex-1 overflow-hidden h-[calc(100vh-64px)] w-full">
         {/* Mobile Backdrop Overlay */}
         {mobileMenuOpen && (
           <div 
             onClick={() => setMobileMenuOpen(false)}
-            className="fixed inset-0 bg-black/70 backdrop-blur-md z-40 md:hidden transition-all duration-300"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden transition-all duration-300"
           />
         )}
 
         {/* Sidebar Navigation */}
-        <aside className={`fixed md:relative inset-y-0 left-0 w-64 bg-[#0D111E]/90 backdrop-blur-2xl border-r border-white/[0.08] flex flex-col justify-between py-6 px-4 shrink-0 z-50 transition-transform duration-300 md:translate-x-0 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-          <div className="flex flex-col gap-6">
+        <aside className={`fixed md:relative inset-y-0 left-0 w-64 bg-[#060b16] border-r border-white/5 flex flex-col justify-between py-6 px-4 shrink-0 z-50 transition-transform duration-300 md:translate-x-0 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+          <div className="flex flex-col gap-8">
             <div>
-              <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-widest px-3 block mb-3 font-bold">
+              <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest px-3 block mb-4">
                 Command Terminal
               </span>
-              <nav className="flex flex-col gap-1">
+              <nav className="flex flex-col gap-1.5">
                 {/* Leads CRM Telemetry tab */}
                 {(currentUser.role === 'admin' || currentUser.role === 'sales') && (
                   <button
                     onClick={() => handleTabChange('leads')}
                     className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-all duration-200 cursor-pointer ${
                       activeTab === 'leads' 
-                        ? 'bg-gradient-to-r from-pink-500/20 via-rose-500/10 to-transparent text-pink-400 border-l-2 border-pink-500 shadow-[0_0_15px_rgba(236,72,153,0.15)] font-bold' 
-                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/[0.04]'
+                        ? 'bg-pinkCustom/15 text-pinkCustom border-l-2 border-pinkCustom shadow-[0_0_10px_rgba(236,72,153,0.1)]' 
+                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/30'
                     }`}
                   >
                     <Mail size={16} />
@@ -1710,8 +1700,8 @@ ${allEntries.map(entry => `    <url>
                   onClick={() => handleTabChange('analytics')}
                   className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-all duration-200 cursor-pointer ${
                     activeTab === 'analytics' 
-                      ? 'bg-gradient-to-r from-blue-600/20 via-indigo-600/15 to-transparent text-blue-400 border-l-2 border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.15)] font-bold' 
-                      : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/[0.04]'
+                      ? 'bg-cyanCustom/10 text-cyanCustom border-l-2 border-cyanCustom shadow-[0_0_10px_rgba(0,210,255,0.05)]' 
+                      : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/30'
                   }`}
                 >
                   <Activity size={16} />
@@ -1724,8 +1714,8 @@ ${allEntries.map(entry => `    <url>
                     onClick={() => handleTabChange('services')}
                     className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-all duration-200 cursor-pointer ${
                       activeTab === 'services' 
-                        ? 'bg-gradient-to-r from-cyan-500/20 via-blue-500/10 to-transparent text-cyan-400 border-l-2 border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.15)] font-bold' 
-                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/[0.04]'
+                        ? 'bg-cyanCustom/10 text-cyanCustom border-l-2 border-cyanCustom shadow-[0_0_10px_rgba(0,210,255,0.05)]' 
+                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/30'
                     }`}
                   >
                     <Layers size={16} />
@@ -1739,8 +1729,8 @@ ${allEntries.map(entry => `    <url>
                     onClick={() => handleTabChange('portfolio')}
                     className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-all duration-200 cursor-pointer ${
                       activeTab === 'portfolio' 
-                        ? 'bg-gradient-to-r from-indigo-500/20 via-purple-500/10 to-transparent text-indigo-400 border-l-2 border-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.15)] font-bold' 
-                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/[0.04]'
+                        ? 'bg-cyanCustom/10 text-cyanCustom border-l-2 border-cyanCustom shadow-[0_0_10px_rgba(0,210,255,0.05)]' 
+                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/30'
                     }`}
                   >
                     <Plus size={16} className="rotate-45" />
@@ -1754,8 +1744,8 @@ ${allEntries.map(entry => `    <url>
                     onClick={() => handleTabChange('blogs')}
                     className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-all duration-200 cursor-pointer ${
                       activeTab === 'blogs' 
-                        ? 'bg-gradient-to-r from-blue-600/20 via-indigo-600/15 to-transparent text-blue-400 border-l-2 border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.15)] font-bold' 
-                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/[0.04]'
+                        ? 'bg-cyanCustom/10 text-cyanCustom border-l-2 border-cyanCustom shadow-[0_0_10px_rgba(0,210,255,0.05)]' 
+                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/30'
                     }`}
                   >
                     <BookOpen size={16} />
@@ -1769,8 +1759,8 @@ ${allEntries.map(entry => `    <url>
                     onClick={() => handleTabChange('seo')}
                     className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-all duration-200 cursor-pointer ${
                       activeTab === 'seo' 
-                        ? 'bg-gradient-to-r from-cyan-500/20 via-blue-500/10 to-transparent text-cyan-400 border-l-2 border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.15)] font-bold' 
-                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/[0.04]'
+                        ? 'bg-cyanCustom/10 text-cyanCustom border-l-2 border-cyanCustom shadow-[0_0_10px_rgba(0,210,255,0.05)]' 
+                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/30'
                     }`}
                   >
                     <Globe size={16} />
@@ -1784,8 +1774,8 @@ ${allEntries.map(entry => `    <url>
                     onClick={() => handleTabChange('robots_sitemap')}
                     className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-all duration-200 cursor-pointer ${
                       activeTab === 'robots_sitemap' 
-                        ? 'bg-gradient-to-r from-purple-500/20 via-indigo-500/10 to-transparent text-purple-400 border-l-2 border-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.15)] font-bold' 
-                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/[0.04]'
+                        ? 'bg-purpleCustom/15 text-purpleCustom border-l-2 border-purpleCustom shadow-[0_0_10px_rgba(138,43,226,0.1)]' 
+                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/30'
                     }`}
                   >
                     <FileText size={16} />
@@ -1799,8 +1789,8 @@ ${allEntries.map(entry => `    <url>
                     onClick={() => handleTabChange('assets')}
                     className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-all duration-200 cursor-pointer ${
                       activeTab === 'assets' 
-                        ? 'bg-gradient-to-r from-amber-500/20 via-orange-500/10 to-transparent text-amber-400 border-l-2 border-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.15)] font-bold' 
-                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/[0.04]'
+                        ? 'bg-cyanCustom/10 text-cyanCustom border-l-2 border-cyanCustom shadow-[0_0_10px_rgba(0,210,255,0.05)]' 
+                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/30'
                     }`}
                   >
                     <Image size={16} />
@@ -1814,8 +1804,8 @@ ${allEntries.map(entry => `    <url>
                     onClick={() => handleTabChange('users')}
                     className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-all duration-200 cursor-pointer ${
                       activeTab === 'users' 
-                        ? 'bg-gradient-to-r from-emerald-500/20 via-teal-500/10 to-transparent text-emerald-400 border-l-2 border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.15)] font-bold' 
-                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/[0.04]'
+                        ? 'bg-purpleCustom/15 text-purpleCustom border-l-2 border-purpleCustom shadow-[0_0_10px_rgba(138,43,226,0.1)]' 
+                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/30'
                     }`}
                   >
                     <UserCheck size={16} />
@@ -1829,8 +1819,8 @@ ${allEntries.map(entry => `    <url>
                     onClick={() => handleTabChange('settings')}
                     className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-all duration-200 cursor-pointer ${
                       activeTab === 'settings' 
-                        ? 'bg-gradient-to-r from-blue-500/20 via-indigo-500/10 to-transparent text-blue-400 border-l-2 border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.15)] font-bold' 
-                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/[0.04]'
+                        ? 'bg-cyanCustom/10 text-cyanCustom border-l-2 border-cyanCustom shadow-[0_0_10px_rgba(0,210,255,0.05)]' 
+                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/30'
                     }`}
                   >
                     <Settings size={16} />
@@ -1843,86 +1833,17 @@ ${allEntries.map(entry => `    <url>
 
           {/* Sidebar Footer info */}
           <div className="px-3 border-t border-white/5 pt-4">
-            <span className="text-[10px] font-mono text-zinc-500 block uppercase font-bold">
-              Nexora Cluster
+            <span className="text-[10px] font-mono text-zinc-600 block uppercase">
+              Engine System
             </span>
-            <span className="text-[11px] text-zinc-300 font-sans block mt-1 font-medium truncate">
+            <span className="text-[11px] text-zinc-400 font-sans block mt-1 font-medium truncate">
               {serverEngine}
             </span>
           </div>
         </aside>
 
         {/* Content Workspace Panel */}
-        <main className="flex-1 overflow-y-auto bg-[#080B14] p-6 sm:p-8 min-h-full">
-
-          {/* Nexora Style Top Telemetry KPI Bar */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-            {/* KPI Card 1: Total Leads */}
-            <div className="bg-[#121727]/70 backdrop-blur-xl border border-white/[0.08] p-5 rounded-2xl flex flex-col justify-between shadow-[0_8px_30px_rgb(0,0,0,0.3)] relative overflow-hidden group hover:border-blue-500/40 transition-all">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-all pointer-events-none" />
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-mono text-zinc-400 uppercase tracking-widest font-semibold">Leads Pipeline</span>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-pink-500/10 text-pink-400 border border-pink-500/20 font-bold flex items-center gap-1">
-                  <Activity size={10} /> Active
-                </span>
-              </div>
-              <div className="flex items-baseline justify-between mt-3">
-                <span className="text-3xl font-extrabold font-headline text-white tracking-tight">{leads.length || 0}</span>
-                <span className="text-xs text-emerald-400 font-mono font-bold flex items-center gap-0.5">
-                  ↑ 100% active
-                </span>
-              </div>
-              <p className="text-[11px] text-zinc-500 mt-2 line-clamp-1">Inquiries & quote submissions</p>
-            </div>
-
-            {/* KPI Card 2: Services Offered */}
-            <div className="bg-[#121727]/70 backdrop-blur-xl border border-white/[0.08] p-5 rounded-2xl flex flex-col justify-between shadow-[0_8px_30px_rgb(0,0,0,0.3)] relative overflow-hidden group hover:border-cyan-500/40 transition-all">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-500/10 rounded-full blur-2xl group-hover:bg-cyan-500/20 transition-all pointer-events-none" />
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-mono text-zinc-400 uppercase tracking-widest font-semibold">Service Capabilities</span>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-bold flex items-center gap-1">
-                  <Layers size={10} /> Live
-                </span>
-              </div>
-              <div className="flex items-baseline justify-between mt-3">
-                <span className="text-3xl font-extrabold font-headline text-white tracking-tight">{services.length || 6}</span>
-                <span className="text-xs text-cyan-400 font-mono font-bold">Dynamic CMS</span>
-              </div>
-              <p className="text-[11px] text-zinc-500 mt-2 line-clamp-1">Enterprise software & SaaS</p>
-            </div>
-
-            {/* KPI Card 3: Published Blog Posts */}
-            <div className="bg-[#121727]/70 backdrop-blur-xl border border-white/[0.08] p-5 rounded-2xl flex flex-col justify-between shadow-[0_8px_30px_rgb(0,0,0,0.3)] relative overflow-hidden group hover:border-indigo-500/40 transition-all">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/10 rounded-full blur-2xl group-hover:bg-indigo-500/20 transition-all pointer-events-none" />
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-mono text-zinc-400 uppercase tracking-widest font-semibold">Blog Posts</span>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-bold flex items-center gap-1">
-                  <BookOpen size={10} /> Published
-                </span>
-              </div>
-              <div className="flex items-baseline justify-between mt-3">
-                <span className="text-3xl font-extrabold font-headline text-white tracking-tight">{blogs.length || 1}</span>
-                <span className="text-xs text-indigo-400 font-mono font-bold">SEO Indexable</span>
-              </div>
-              <p className="text-[11px] text-zinc-500 mt-2 line-clamp-1">Articles & schema FAQ nodes</p>
-            </div>
-
-            {/* KPI Card 4: System Momentum Score */}
-            <div className="bg-[#121727]/70 backdrop-blur-xl border border-white/[0.08] p-5 rounded-2xl flex flex-col justify-between shadow-[0_8px_30px_rgb(0,0,0,0.3)] relative overflow-hidden group hover:border-purple-500/40 transition-all">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl group-hover:bg-purple-500/20 transition-all pointer-events-none" />
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-mono text-zinc-400 uppercase tracking-widest font-semibold">Engine Momentum</span>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
-                  98/100
-                </span>
-              </div>
-              <div className="flex items-baseline justify-between mt-3">
-                <span className="text-3xl font-extrabold font-headline text-white tracking-tight">Optimal</span>
-                <span className="text-xs text-emerald-400 font-mono font-bold">⚡ Active</span>
-              </div>
-              <p className="text-[11px] text-zinc-500 mt-2 line-clamp-1">Database & API cluster healthy</p>
-            </div>
-          </div>
+        <main className="flex-1 overflow-y-auto bg-[#050811] p-8 min-h-full">
 
       {/* ================================== TAB: TRAFFIC ANALYTICS ================================== */}
       {activeTab === 'analytics' && (
