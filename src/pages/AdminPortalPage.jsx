@@ -63,10 +63,17 @@ export default function AdminPortalPage({
   const [bulkSeoInput, setBulkSeoInput] = useState('');
   const [bulkUploading, setBulkUploading] = useState(false);
 
-  // Auto-Generate Sitemap XML State
+  // Auto-Generate Sitemap XML State & Dedicated Robots/Sitemap Tab
   const [isSitemapModalOpen, setIsSitemapModalOpen] = useState(false);
   const [generatedSitemapText, setGeneratedSitemapText] = useState('');
   const [sitemapCopied, setSitemapCopied] = useState(false);
+
+  const [robotsInput, setRobotsInput] = useState('');
+  const [sitemapInput, setSitemapInput] = useState('');
+  const [robotsSaving, setRobotsSaving] = useState(false);
+  const [sitemapSaving, setSitemapSaving] = useState(false);
+  const [robotsCopied, setRobotsCopied] = useState(false);
+  const [sitemapDirectCopied, setSitemapDirectCopied] = useState(false);
 
   const handleGenerateSitemap = () => {
     const domain = 'https://kvantumtechsolutions.com';
@@ -108,7 +115,34 @@ ${allRoutes.map(r => `  <url>
 </urlset>`;
 
     setGeneratedSitemapText(xml);
+    setSitemapInput(xml);
     setIsSitemapModalOpen(true);
+  };
+
+  const handleSaveRobots = async () => {
+    setRobotsSaving(true);
+    try {
+      await seoService.updateSeoSetting('robots', { key: 'robots', content: robotsInput });
+      alert('[SUCCESS] robots.txt directives saved live.');
+      fetchSeoSettingsList();
+    } catch (err) {
+      alert('[ERROR] Save failed: ' + (err.response?.data?.error || err.message));
+    } finally {
+      setRobotsSaving(false);
+    }
+  };
+
+  const handleSaveSitemapInput = async () => {
+    setSitemapSaving(true);
+    try {
+      await seoService.updateSeoSetting('sitemap', { key: 'sitemap', content: sitemapInput });
+      alert('[SUCCESS] sitemap.xml saved live.');
+      fetchSeoSettingsList();
+    } catch (err) {
+      alert('[ERROR] Save failed: ' + (err.response?.data?.error || err.message));
+    } finally {
+      setSitemapSaving(false);
+    }
   };
 
   // Users listing (Super admin only)
@@ -215,7 +249,7 @@ ${allRoutes.map(r => `  <url>
       fetchAssetsList();
     } else if (activeTab === 'users' && currentUser.role === 'admin') {
       fetchUsersList();
-    } else if (activeTab === 'seo' && (currentUser.role === 'admin' || currentUser.role === 'seo')) {
+    } else if ((activeTab === 'seo' || activeTab === 'robots_sitemap') && (currentUser.role === 'admin' || currentUser.role === 'seo')) {
       fetchSeoSettingsList();
     }
   }, [activeTab, token, currentUser]);
@@ -254,6 +288,16 @@ ${allRoutes.map(r => `  <url>
     try {
       const data = await seoService.getSeoSettings();
       setSeoSettings(data || {});
+
+      if (Array.isArray(data)) {
+        const r = data.find(s => s.key === 'robots');
+        const s = data.find(s => s.key === 'sitemap');
+        if (r?.content) setRobotsInput(r.content);
+        if (s?.content) setSitemapInput(s.content);
+      } else if (data && typeof data === 'object') {
+        if (data.robots?.content) setRobotsInput(data.robots.content);
+        if (data.sitemap?.content) setSitemapInput(data.sitemap.content);
+      }
     } catch (err) {
       console.warn('[ADMIN PORTAL] SEO settings fetch failed.');
     }
@@ -1697,6 +1741,21 @@ ${allRoutes.map(r => `  <url>
                   </button>
                 )}
 
+                {/* Robots & Sitemap CMS tab */}
+                {(currentUser.role === 'admin' || currentUser.role === 'seo') && (
+                  <button
+                    onClick={() => handleTabChange('robots_sitemap')}
+                    className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-all duration-200 cursor-pointer ${
+                      activeTab === 'robots_sitemap' 
+                        ? 'bg-purpleCustom/15 text-purpleCustom border-l-2 border-purpleCustom shadow-[0_0_10px_rgba(138,43,226,0.1)]' 
+                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/30'
+                    }`}
+                  >
+                    <FileText size={16} />
+                    Robots & Sitemap CMS
+                  </button>
+                )}
+
                 {/* Media Assets S3 tab */}
                 {(currentUser.role === 'admin' || currentUser.role === 'seo') && (
                   <button
@@ -2247,55 +2306,28 @@ ${allRoutes.map(r => `  <url>
               </table>
             </div>
 
-            {/* Auto-Generate Sitemap XML Generator Banner */}
-            <Card className="p-6 border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 bg-gradient-to-r from-cyanCustom/15 via-purpleCustom/10 to-transparent border-cyanCustom/30 mt-8">
-              <div className="space-y-1 text-left">
-                <span className="px-2.5 py-0.5 rounded text-[10px] font-mono bg-cyanCustom/20 text-cyanCustom font-bold uppercase inline-flex items-center gap-1">
-                  <Globe size={12} /> Auto-Generate Sitemap.xml Tool
-                </span>
-                <h3 className="text-lg font-headline font-bold text-zinc-100">Dynamic XML Sitemap Generator</h3>
-                <p className="text-zinc-400 text-xs leading-relaxed max-w-xl">
-                  Automatically scans static pages, active published blogs ({blogs.length}), and programmatic SEO keyword pages ({seoPages.length}) to build complete valid Google XML sitemap.
-                </p>
-              </div>
-              <Button
-                type="button"
-                onClick={handleGenerateSitemap}
-                variant="primary"
-                className="gap-2 py-3 px-6 text-xs shrink-0 cursor-pointer shadow-lg font-mono font-bold uppercase tracking-wider"
-              >
-                <Copy size={15} /> ⚡ Auto-Generate Sitemap XML
-              </Button>
-            </Card>
-
-            {/* Section 2: Site-wide Settings */}
-            <div className="flex flex-col gap-6 mt-12">
-              <h2 className="text-xl font-bold font-headline text-zinc-200 flex items-center gap-2 border-t border-white/8 pt-8">
-                <Key size={18} className="text-purpleCustom" /> Dynamic SEO Configurations (Robots, Sitemap, Page Meta)
+            {/* Section 2: Page Meta & Custom Code Snippets */}
+            <div className="flex flex-col gap-6 mt-12 border-t border-white/8 pt-8">
+              <h2 className="text-xl font-bold font-headline text-zinc-200 flex items-center gap-2">
+                <Key size={18} className="text-purpleCustom" /> Page Meta Configurations
               </h2>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {Array.isArray(seoSettings) && seoSettings.map(setting => (
+                {Array.isArray(seoSettings) && seoSettings.filter(s => s.key !== 'robots' && s.key !== 'sitemap').map(setting => (
                   <Card key={setting.key} className="p-6 border flex flex-col justify-between items-start gap-4 h-full">
                     <div className="text-left w-full flex flex-col justify-between flex-1">
                       <div>
                         <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-zinc-800 text-zinc-300 font-bold uppercase block w-fit mb-3">
                           {setting.key}
                         </span>
-                        {setting.key === 'robots' || setting.key === 'sitemap' ? (
-                          <div className="text-[11px] text-zinc-400 font-mono line-clamp-4 min-h-[5.5rem] bg-zinc-950/30 p-2.5 rounded-lg border border-white/5 whitespace-pre-wrap select-all">
-                            {setting.content ? setting.content.substring(0, 150) : 'Standard defaults active'}
-                          </div>
-                        ) : (
-                          <div className="flex flex-col gap-1.5 min-h-[5.5rem] justify-center">
-                            <h4 className="text-zinc-200 text-sm font-semibold line-clamp-1" title={setting.title || 'Untitled Page'}>
-                              {setting.title || 'Untitled Page'}
-                            </h4>
-                            <p className="text-zinc-400 text-xs line-clamp-3 leading-relaxed" title={setting.description || 'No description'}>
-                              {setting.description || 'No description'}
-                            </p>
-                          </div>
-                        )}
+                        <div className="flex flex-col gap-1.5 min-h-[5.5rem] justify-center">
+                          <h4 className="text-zinc-200 text-sm font-semibold line-clamp-1" title={setting.title || 'Untitled Page'}>
+                            {setting.title || 'Untitled Page'}
+                          </h4>
+                          <p className="text-zinc-400 text-xs line-clamp-3 leading-relaxed" title={setting.description || 'No description'}>
+                            {setting.description || 'No description'}
+                          </p>
+                        </div>
                       </div>
                     </div>
                     
@@ -2307,7 +2339,7 @@ ${allRoutes.map(r => `  <url>
                       variant="secondary"
                       className="w-full py-2 text-xs rounded-lg mt-4 cursor-pointer"
                     >
-                      Configure Node
+                      Configure Meta Node
                     </Button>
                   </Card>
                 ))}
@@ -2353,9 +2385,9 @@ ${allRoutes.map(r => `  <url>
                     <div>
                       <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-wider mb-1 font-bold">Target Scope Selection</label>
                       <select name="scriptTarget" className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono">
-                        <option value="global">Global (Injected on all pages)</option>
-                        <option value="home">Home Page Only</option>
-                        <option value="seo">Dynamic SEO Pages Only</option>
+                        <option value="global font-mono">Global (Injected on all pages)</option>
+                        <option value="home font-mono">Home Page Only</option>
+                        <option value="seo font-mono">Dynamic SEO Pages Only</option>
                       </select>
                     </div>
                     <div>
@@ -2416,6 +2448,155 @@ ${allRoutes.map(r => `  <url>
 
           </div>
         )
+      )}
+
+      {/* ================================== TAB: ROBOTS & SITEMAP CMS ================================== */}
+      {activeTab === 'robots_sitemap' && (currentUser.role === 'admin' || currentUser.role === 'seo') && (
+        <div className="fade-in-up flex flex-col gap-8 text-left">
+          
+          {/* Header */}
+          <div className="flex justify-between items-center border-b border-white/5 pb-4">
+            <div>
+              <h2 className="text-xl font-bold font-headline text-zinc-200 flex items-center gap-2">
+                <FileText size={20} className="text-cyanCustom" /> Robots.txt & Sitemap.xml Control Desk
+              </h2>
+              <p className="text-xs text-zinc-500 mt-1">
+                Configure search engine crawler rules (robots.txt), generate XML sitemaps, and manage indexing parameters.
+              </p>
+            </div>
+            <Button
+              type="button"
+              onClick={handleGenerateSitemap}
+              variant="primary"
+              className="gap-2 py-2.5 px-5 text-xs font-mono font-bold uppercase tracking-wider cursor-pointer"
+            >
+              <Copy size={15} /> ⚡ Auto-Generate Sitemap XML
+            </Button>
+          </div>
+
+          {/* Auto-Generate Banner Box */}
+          <Card className="p-6 border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 bg-gradient-to-r from-cyanCustom/15 via-purpleCustom/10 to-transparent border-cyanCustom/30">
+            <div className="space-y-1">
+              <span className="px-2.5 py-0.5 rounded text-[10px] font-mono bg-cyanCustom/20 text-cyanCustom font-bold uppercase inline-flex items-center gap-1">
+                <Globe size={12} /> Dynamic XML Generator
+              </span>
+              <h3 className="text-lg font-headline font-bold text-zinc-100">Auto-Generate Complete XML Sitemap</h3>
+              <p className="text-zinc-400 text-xs leading-relaxed max-w-xl">
+                Scans all static site pages (/, /about, /services, /projects, /contact, /blog, /terms, /privacy), active published blogs ({blogs.length}), and programmatic SEO keyword templates ({seoPages.length}) to compile valid Google XML.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-3 shrink-0">
+              <Button
+                type="button"
+                onClick={handleGenerateSitemap}
+                variant="primary"
+                className="gap-2 py-3 px-6 text-xs cursor-pointer shadow-lg font-mono font-bold uppercase tracking-wider"
+              >
+                <Copy size={15} /> ⚡ Generate XML Now
+              </Button>
+            </div>
+          </Card>
+
+          {/* Direct Textarea Editors (2 Columns) */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            {/* Column 1: robots.txt Editor */}
+            <Card className="p-6 border flex flex-col gap-4 text-left">
+              <div className="flex items-center justify-between border-b border-white/8 pb-3">
+                <h3 className="text-sm font-mono text-cyanCustom font-bold uppercase flex items-center gap-2">
+                  🤖 robots.txt Crawler Directives
+                </h3>
+                <span className="text-[10px] font-mono text-zinc-500">Target: /robots.txt</span>
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-mono text-zinc-400 uppercase tracking-wider mb-2 font-bold">
+                  Raw robots.txt Content
+                </label>
+                <textarea
+                  rows={14}
+                  placeholder={`User-agent: *\nAllow: /\nDisallow: /admin\nSitemap: https://kvantumtechsolutions.com/sitemap.xml`}
+                  value={robotsInput}
+                  onChange={(e) => setRobotsInput(e.target.value)}
+                  className="w-full bg-zinc-950/60 border border-white/8 rounded-xl p-4 text-zinc-100 text-xs font-mono outline-none focus:border-cyanCustom/40 resize-none leading-relaxed"
+                />
+              </div>
+
+              <div className="flex justify-between items-center pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(robotsInput);
+                    setRobotsCopied(true);
+                    setTimeout(() => setRobotsCopied(false), 2000);
+                  }}
+                  className="px-4 py-2 rounded-xl bg-white/[0.03] border border-white/8 text-zinc-300 text-xs font-mono hover:bg-white/[0.08] transition-colors cursor-pointer"
+                >
+                  {robotsCopied ? 'COPIED!' : '📋 Copy text'}
+                </button>
+
+                <Button
+                  type="button"
+                  onClick={handleSaveRobots}
+                  disabled={robotsSaving}
+                  variant="primary"
+                  className="px-6 py-2 text-xs font-mono font-bold uppercase cursor-pointer"
+                >
+                  {robotsSaving ? 'Saving...' : '💾 Save Robots.txt'}
+                </Button>
+              </div>
+            </Card>
+
+            {/* Column 2: sitemap.xml Editor */}
+            <Card className="p-6 border flex flex-col gap-4 text-left">
+              <div className="flex items-center justify-between border-b border-white/8 pb-3">
+                <h3 className="text-sm font-mono text-purpleCustom font-bold uppercase flex items-center gap-2">
+                  🌐 sitemap.xml Payload Code
+                </h3>
+                <span className="text-[10px] font-mono text-zinc-500">Target: /sitemap.xml</span>
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-mono text-zinc-400 uppercase tracking-wider mb-2 font-bold">
+                  Raw sitemap.xml Content
+                </label>
+                <textarea
+                  rows={14}
+                  placeholder={`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url>\n    <loc>https://kvantumtechsolutions.com/</loc>\n  </url>\n</urlset>`}
+                  value={sitemapInput}
+                  onChange={(e) => setSitemapInput(e.target.value)}
+                  className="w-full bg-zinc-950/60 border border-white/8 rounded-xl p-4 text-zinc-100 text-xs font-mono outline-none focus:border-cyanCustom/40 resize-none leading-relaxed"
+                />
+              </div>
+
+              <div className="flex justify-between items-center pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(sitemapInput);
+                    setSitemapDirectCopied(true);
+                    setTimeout(() => setSitemapDirectCopied(false), 2000);
+                  }}
+                  className="px-4 py-2 rounded-xl bg-white/[0.03] border border-white/8 text-zinc-300 text-xs font-mono hover:bg-white/[0.08] transition-colors cursor-pointer"
+                >
+                  {sitemapDirectCopied ? 'COPIED XML!' : '📋 Copy XML'}
+                </button>
+
+                <Button
+                  type="button"
+                  onClick={handleSaveSitemapInput}
+                  disabled={sitemapSaving}
+                  variant="primary"
+                  className="px-6 py-2 text-xs font-mono font-bold uppercase cursor-pointer"
+                >
+                  {sitemapSaving ? 'Saving...' : '💾 Save Sitemap.xml'}
+                </Button>
+              </div>
+            </Card>
+
+          </div>
+
+        </div>
       )}
 
       {/* ================================== TAB: S3 ASSETS ================================== */}
