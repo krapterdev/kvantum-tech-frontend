@@ -75,36 +75,63 @@ export default function AdminPortalPage({
   const [robotsCopied, setRobotsCopied] = useState(false);
   const [sitemapDirectCopied, setSitemapDirectCopied] = useState(false);
 
+  const formatIsoDate = (dateVal, fallbackDate = '2026-07-15') => {
+    if (!dateVal) return fallbackDate;
+    const d = new Date(dateVal);
+    if (isNaN(d.getTime())) {
+      const parsed = Date.parse(dateVal);
+      if (!isNaN(parsed)) return new Date(parsed).toISOString().split('T')[0];
+      return fallbackDate;
+    }
+    return d.toISOString().split('T')[0];
+  };
+
   const handleGenerateSitemap = () => {
     const domain = 'https://kvantumtechsolutions.com';
-    const today = new Date().toISOString().split('T')[0];
 
+    // Static core pages with genuine static last-modified dates
     const staticRoutes = [
-      `${domain}/`,
-      `${domain}/about`,
-      `${domain}/services/custom-software-development`,
-      `${domain}/services/crm-software-development`,
-      `${domain}/services/business-automation`,
-      `${domain}/services/hrms-software`,
-      `${domain}/services/whatsapp-automation`,
-      `${domain}/services/web-mobile-app-development`,
-      `${domain}/projects`,
-      `${domain}/blog`,
-      `${domain}/contact`,
-      `${domain}/terms`,
-      `${domain}/privacy`,
+      { loc: `${domain}/`, lastmod: '2026-07-15' },
+      { loc: `${domain}/about`, lastmod: '2026-07-19' },
+      { loc: `${domain}/projects`, lastmod: '2026-07-15' },
+      { loc: `${domain}/blog`, lastmod: '2026-08-01' },
+      { loc: `${domain}/contact`, lastmod: '2026-07-15' },
+      { loc: `${domain}/terms`, lastmod: '2026-07-15' },
+      { loc: `${domain}/privacy`, lastmod: '2026-07-15' },
     ];
 
-    const blogRoutes = (blogs || []).map(b => `${domain}/blog/${b.id || b.slug || b._id}`);
+    // Service detail pages with genuine service updatedAt/createdAt dates
+    const serviceRoutes = (services || []).map(s => ({
+      loc: `${domain}/services/${s.id}`,
+      lastmod: formatIsoDate(s.updatedAt || s.createdAt, '2026-07-20')
+    }));
 
-    const allUrls = [...staticRoutes, ...blogRoutes];
+    // If services list is empty, use default service routes
+    const fallbackServiceRoutes = [
+      { loc: `${domain}/services/custom-software-development`, lastmod: '2026-07-20' },
+      { loc: `${domain}/services/crm-software-development`, lastmod: '2026-07-20' },
+      { loc: `${domain}/services/business-automation`, lastmod: '2026-07-20' },
+      { loc: `${domain}/services/hrms-software`, lastmod: '2026-07-20' },
+      { loc: `${domain}/services/whatsapp-automation`, lastmod: '2026-07-20' },
+      { loc: `${domain}/services/web-mobile-app-development`, lastmod: '2026-07-20' },
+    ];
+
+    const activeServiceEntries = serviceRoutes.length > 0 ? serviceRoutes : fallbackServiceRoutes;
+
+    // Blog post pages with genuine blog updatedAt/createdAt/date dates
+    const blogRoutes = (blogs || []).map(b => ({
+      loc: `${domain}/blog/${b.id || b.slug || b._id}`,
+      lastmod: formatIsoDate(b.updatedAt || b.createdAt || b.date, '2026-08-01')
+    }));
+
+    const allEntries = [...staticRoutes, ...activeServiceEntries, ...blogRoutes];
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
-${allUrls.map(url => `    <url>
-        <loc>${url}</loc>
-        <lastmod>${today}</lastmod>
+${allEntries.map(entry => `    <url>
+        <loc>${entry.loc}</loc>
+        <lastmod>${entry.lastmod}</lastmod>
     </url>`).join('\n\n')}
 
 </urlset>`;
