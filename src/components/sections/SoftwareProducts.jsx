@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Users, Layers, BarChart2, Target, TrendingUp, Package,
   Warehouse, HeadphonesIcon, MessageSquare, CheckSquare,
   Clock, CreditCard, FolderKanban, Truck, ShoppingCart,
   FileText, PenLine, Wrench, Calendar, BookOpen,
   Heart, Hotel, UtensilsCrossed, ShoppingBag, PieChart,
-  FileArchive, HardDrive, Globe, Smartphone, Building2, Sparkles, ArrowRight
+  FileArchive, HardDrive, Globe, Smartphone, Building2, Sparkles, ArrowRight,
+  ChevronDown, ChevronUp
 } from 'lucide-react';
 import Badge from '../ui/Badge';
 
@@ -46,13 +48,16 @@ const products = [
 
 export default function SoftwareProducts() {
   const [activeCategory, setActiveCategory] = useState('All Products');
+  const [visibleCount, setVisibleCount] = useState(10);
 
   const filteredProducts = activeCategory === 'All Products'
     ? products
     : products.filter(p => p.cat === activeCategory);
 
+  const displayedProducts = filteredProducts.slice(0, visibleCount);
+
   return (
-    <section className="bg-zinc-950/40 border-y border-white/8 py-24 select-none">
+    <section className="bg-zinc-950/40 border-y border-white/8 py-20 select-none">
       <div className="container mx-auto max-w-[1280px] px-6">
 
         {/* Header */}
@@ -77,7 +82,10 @@ export default function SoftwareProducts() {
           {categories.map((category, idx) => (
             <button
               key={idx}
-              onClick={() => setActiveCategory(category)}
+              onClick={() => {
+                setActiveCategory(category);
+                setVisibleCount(10);
+              }}
               className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold font-headline transition-all duration-300 cursor-pointer ${
                 activeCategory === category
                   ? 'bg-pinkCustom text-white shadow-[0_0_20px_rgba(236,72,153,0.35)] scale-[1.02]'
@@ -89,9 +97,9 @@ export default function SoftwareProducts() {
           ))}
         </div>
 
-        {/* Products Grid */}
+        {/* Compact Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {filteredProducts.map((product, idx) => {
+          {displayedProducts.map((product, idx) => {
             const Icon = product.icon;
             return (
               <div
@@ -113,6 +121,46 @@ export default function SoftwareProducts() {
               </div>
             );
           })}
+        </div>
+
+        {/* Load More & View All Controls */}
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+          {visibleCount < filteredProducts.length ? (
+            <>
+              <button
+                onClick={() => setVisibleCount(prev => Math.min(prev + 10, filteredProducts.length))}
+                className="px-6 py-3 rounded-xl bg-pinkCustom/10 border border-pinkCustom/30 text-pinkCustom hover:bg-pinkCustom/20 text-xs sm:text-sm font-bold font-headline transition-all cursor-pointer flex items-center gap-2 shadow-[0_0_15px_rgba(236,72,153,0.15)]"
+              >
+                <span>Load More Suites ({filteredProducts.length - visibleCount} Remaining)</span>
+                <ChevronDown size={16} />
+              </button>
+
+              <button
+                onClick={() => setVisibleCount(filteredProducts.length)}
+                className="px-6 py-3 rounded-xl bg-white/[0.04] border border-white/10 text-zinc-300 hover:border-white/20 hover:bg-white/[0.08] text-xs sm:text-sm font-bold font-headline transition-all cursor-pointer"
+              >
+                View All {filteredProducts.length} Suites
+              </button>
+            </>
+          ) : (
+            filteredProducts.length > 10 && (
+              <button
+                onClick={() => setVisibleCount(10)}
+                className="px-6 py-3 rounded-xl bg-white/[0.04] border border-white/10 text-zinc-300 hover:border-white/20 hover:bg-white/[0.08] text-xs sm:text-sm font-bold font-headline transition-all cursor-pointer flex items-center gap-2"
+              >
+                <span>Show Compact View</span>
+                <ChevronUp size={16} />
+              </button>
+            )
+          )}
+
+          <Link
+            to="/services"
+            className="px-6 py-3 rounded-xl bg-cyanCustom/10 border border-cyanCustom/30 text-cyanCustom hover:bg-cyanCustom/20 text-xs sm:text-sm font-bold font-headline transition-all cursor-pointer flex items-center gap-2"
+          >
+            <span>Explore All Capabilities Page</span>
+            <ArrowRight size={14} />
+          </Link>
         </div>
 
         {/* Bottom CTA Banner */}
