@@ -7,6 +7,8 @@ import GradientText from '@/components/ui/GradientText';
 import LucideIcon from '@/components/ui/LucideIcon';
 import { getAllServices } from '@/services/serviceService';
 
+import { setPageSeoStatus } from '@/utils/seoUtils';
+
 export default function ServiceDetailPage({ services = [] }) {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -42,21 +44,22 @@ export default function ServiceDetailPage({ services = [] }) {
       });
   }, [id, services, navigate]);
 
-  // Inject noindex meta tag for non-existent 404 service pages
+  // Universal Technical SEO 200 / 404 Controller
   useEffect(() => {
-    if (!loading && !localService) {
-      document.title = '404 Capability Node Not Found | Kvantum Tech Solutions';
-      let metaRobots = document.querySelector('meta[name="robots"]');
-      if (!metaRobots) {
-        metaRobots = document.createElement('meta');
-        metaRobots.setAttribute('name', 'robots');
-        document.head.appendChild(metaRobots);
+    if (!loading) {
+      if (localService) {
+        setPageSeoStatus({
+          status: 200,
+          title: `${localService.title} | Kvantum Tech Solutions`,
+          description: localService.subtitle || localService.description
+        });
+      } else {
+        setPageSeoStatus({
+          status: 404,
+          title: '404 Capability Node Not Found | Kvantum Tech Solutions',
+          description: 'The requested service capability does not exist on Kvantum Tech Solutions.'
+        });
       }
-      metaRobots.setAttribute('content', 'noindex, follow');
-
-      return () => {
-        metaRobots.setAttribute('content', 'index, follow');
-      };
     }
   }, [loading, localService]);
 

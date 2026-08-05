@@ -4,23 +4,17 @@ import { ShieldAlert, ArrowLeft } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
 import GradientText from '@/components/ui/GradientText';
+import { setPageSeoStatus } from '@/utils/seoUtils';
 
 export default function NotFound() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = '404 Page Not Found | Kvantum Tech Solutions';
-    let metaRobots = document.querySelector('meta[name="robots"]');
-    if (!metaRobots) {
-      metaRobots = document.createElement('meta');
-      metaRobots.setAttribute('name', 'robots');
-      document.head.appendChild(metaRobots);
-    }
-    metaRobots.setAttribute('content', 'noindex, follow');
-
-    return () => {
-      metaRobots.setAttribute('content', 'index, follow');
-    };
+    setPageSeoStatus({
+      status: 404,
+      title: '404 Page Not Found | Kvantum Tech Solutions',
+      description: 'The requested URL does not exist on Kvantum Tech Solutions.'
+    });
   }, []);
 
   return (

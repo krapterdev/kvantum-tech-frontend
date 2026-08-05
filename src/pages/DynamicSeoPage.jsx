@@ -1,13 +1,30 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Link2, ShieldCheck, Cpu, ArrowRight, Server, Key, AlertTriangle } from 'lucide-react';
 import Card from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
+import { setPageSeoStatus } from '@/utils/seoUtils';
 
 export default function DynamicSeoPage({ seoPages = [] }) {
   const { slug } = useParams();
   const page = seoPages.find(p => p.slug === slug);
+
+  useEffect(() => {
+    if (page) {
+      setPageSeoStatus({
+        status: 200,
+        title: page.metaTitle || page.title,
+        description: page.metaDesc || page.content.substring(0, 160)
+      });
+    } else {
+      setPageSeoStatus({
+        status: 404,
+        title: '404 Keyword Page Not Found | Kvantum Tech Solutions',
+        description: 'The requested keyword page does not exist.'
+      });
+    }
+  }, [page]);
 
   if (!page) {
     return (
