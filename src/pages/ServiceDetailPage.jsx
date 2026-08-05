@@ -62,8 +62,18 @@ export default function ServiceDetailPage({ services = [] }) {
 
   if (loading) {
     return (
-      <div className="min-h-[70vh] flex items-center justify-center text-zinc-500 font-mono text-sm">
-        INITIALIZING_CAPABILITY_NODE_STREAM...
+      <div className="container mx-auto max-w-[1000px] px-6 py-16 text-left animate-pulse space-y-8 select-none">
+        <div className="h-8 w-36 bg-white/10 rounded-xl" />
+        <div className="p-8 sm:p-12 rounded-3xl bg-slate-900/60 border border-slate-800 space-y-6">
+          <div className="h-6 w-32 bg-cyan-500/20 rounded-full" />
+          <div className="h-12 w-3/4 bg-white/10 rounded-2xl" />
+          <div className="h-6 w-full bg-white/5 rounded-xl" />
+          <div className="h-6 w-2/3 bg-white/5 rounded-xl" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+          <div className="h-40 bg-slate-900/40 border border-slate-800 rounded-2xl p-6" />
+          <div className="h-40 bg-slate-900/40 border border-slate-800 rounded-2xl p-6" />
+        </div>
       </div>
     );
   }
