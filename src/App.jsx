@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import ScrollToTop from '@/components/layout/ScrollToTop';
@@ -16,7 +16,7 @@ import ServiceDetailPage from '@/pages/ServiceDetailPage';
 import ProjectsPage from '@/pages/ProjectsPage';
 import ContactPage from '@/pages/ContactPage';
 import ThankYouPage from '@/pages/ThankYouPage';
-import BlogPage from '@/pages/BlogPage';
+import BlogPage, { DEFAULT_SEED_BLOG } from '@/pages/BlogPage';
 import DynamicSeoPage from '@/pages/DynamicSeoPage';
 import AdminPortalPage from '@/pages/AdminPortalPage';
 import TermsPage from '@/pages/TermsPage';
@@ -37,7 +37,7 @@ import { fallbackSettings } from '@/data/settings';
 export default function App() {
   const [theme, setTheme] = useState('dark');
   const [services, setServices] = useState(fallbackServices);
-  const [blogs, setBlogs] = useState([]);
+  const [blogs, setBlogs] = useState([DEFAULT_SEED_BLOG]);
   const [seoPages, setSeoPages] = useState([]);
   const [portfolios, setPortfolios] = useState([]);
   const [settings, setSettings] = useState(fallbackSettings);
@@ -366,6 +366,8 @@ export default function App() {
           <Route path="/" element={<Home services={services} blogs={blogs} settings={settings} />} />
           <Route path="/about" element={<AboutPage theme={theme} settings={settings} />} />
           <Route path="/services" element={<ServicesPage services={services} />} />
+          {/* Legacy 301 Permanent Redirects for Google Search Central guidelines */}
+          <Route path="/services/web-development" element={<Navigate to="/services/web-mobile-app-development" replace />} />
           <Route path="/services/:id" element={<ServiceDetailPage services={services} />} />
           <Route path="/projects" element={<ProjectsPage portfolios={portfolios} />} />
           <Route path="/portfolio" element={<ProjectsPage portfolios={portfolios} />} />

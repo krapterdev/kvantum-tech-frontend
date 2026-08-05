@@ -1,4 +1,51 @@
 {
+  "redirects": [
+    {
+      "source": "/services/web-development",
+      "destination": "/services/web-mobile-app-development",
+      "permanent": true
+    },
+    {
+      "source": "/services/mobile-apps",
+      "destination": "/services/web-mobile-app-development",
+      "permanent": true
+    },
+    {
+      "source": "/services/mobile-app-development",
+      "destination": "/services/web-mobile-app-development",
+      "permanent": true
+    },
+    {
+      "source": "/services/ui-ux",
+      "destination": "/services/web-mobile-app-development",
+      "permanent": true
+    },
+    {
+      "source": "/services/custom-software",
+      "destination": "/services/custom-software-development",
+      "permanent": true
+    },
+    {
+      "source": "/services/crm",
+      "destination": "/services/crm-software-development",
+      "permanent": true
+    },
+    {
+      "source": "/services/automation",
+      "destination": "/services/business-automation",
+      "permanent": true
+    },
+    {
+      "source": "/services/hrms",
+      "destination": "/services/hrms-software",
+      "permanent": true
+    },
+    {
+      "source": "/services/whatsapp",
+      "destination": "/services/whatsapp-automation",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/robots.txt",

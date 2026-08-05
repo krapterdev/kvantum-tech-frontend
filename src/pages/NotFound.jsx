@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShieldAlert, ArrowLeft } from 'lucide-react';
 import Button from '@/components/ui/Button';
@@ -7,6 +7,21 @@ import GradientText from '@/components/ui/GradientText';
 
 export default function NotFound() {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.title = '404 Page Not Found | Kvantum Tech Solutions';
+    let metaRobots = document.querySelector('meta[name="robots"]');
+    if (!metaRobots) {
+      metaRobots = document.createElement('meta');
+      metaRobots.setAttribute('name', 'robots');
+      document.head.appendChild(metaRobots);
+    }
+    metaRobots.setAttribute('content', 'noindex, follow');
+
+    return () => {
+      metaRobots.setAttribute('content', 'index, follow');
+    };
+  }, []);
 
   return (
     <div className="container mx-auto max-w-[1280px] px-6 py-32 text-center relative z-10 flex flex-col items-center gap-6 select-none">

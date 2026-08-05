@@ -14,26 +14,51 @@ export default function ServiceDetailPage({ services = [] }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Explicit 301 Redirect for legacy /services/web-development -> /services/web-mobile-app-development
+    if (id === 'web-development') {
+      navigate('/services/web-mobile-app-development', { replace: true });
+      return;
+    }
+
     const service = services.find(s => s.id === id);
     if (service) {
       setLocalService(service);
       setLoading(false);
-    } else {
-      // Fallback API fetch
-      getAllServices()
-        .then(data => {
-          const found = data.find(s => s.id === id);
-          if (found) {
-            setLocalService(found);
-          }
-          setLoading(false);
-        })
-        .catch(err => {
-          console.error(err);
-          setLoading(false);
-        });
+      return;
     }
-  }, [id, services]);
+
+    // Fallback API fetch
+    getAllServices()
+      .then(data => {
+        const found = data.find(s => s.id === id);
+        if (found) {
+          setLocalService(found);
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, [id, services, navigate]);
+
+  // Inject noindex meta tag for non-existent 404 service pages
+  useEffect(() => {
+    if (!loading && !localService) {
+      document.title = '404 Capability Node Not Found | Kvantum Tech Solutions';
+      let metaRobots = document.querySelector('meta[name="robots"]');
+      if (!metaRobots) {
+        metaRobots = document.createElement('meta');
+        metaRobots.setAttribute('name', 'robots');
+        document.head.appendChild(metaRobots);
+      }
+      metaRobots.setAttribute('content', 'noindex, follow');
+
+      return () => {
+        metaRobots.setAttribute('content', 'index, follow');
+      };
+    }
+  }, [loading, localService]);
 
   if (loading) {
     return (

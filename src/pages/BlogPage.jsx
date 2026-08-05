@@ -10,31 +10,106 @@ import { submitContact } from '@/services/contactService';
 
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80';
 
-// ─── Dynamic Facebook-Style Relative Time Ago Helper ────────────────────────
+export function slugifyTitle(title) {
+  if (!title) return '';
+  return String(title)
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+export const DEFAULT_SEED_BLOG = {
+  id: 'why-kvantum-tech-solutions-is-the-best-it-solutions-company-in-delhi-ncr',
+  slug: 'why-kvantum-tech-solutions-is-the-best-it-solutions-company-in-delhi-ncr',
+  title: 'Why Kvantum Tech Solutions is the Best IT Solutions Company in Delhi NCR',
+  category: 'Engineering & Software',
+  date: '2026-08-01',
+  createdAt: '2026-08-01',
+  readTime: '3d ago',
+  author: 'Kvantum Tech Team',
+  image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80',
+  summary: 'Discover why startups and enterprises trust Kvantum Tech Solutions for custom software development, SaaS, WhatsApp API automation, and CRM software in Delhi NCR.',
+  content: `
+    <h2>Empowering Businesses with Scalable IT Infrastructure</h2>
+    <p>In today's fast-paced digital economy, businesses in Delhi NCR require robust, custom-tailored software solutions rather than off-the-shelf software. At Kvantum Tech Solutions, we specialize in high-performance web applications, business automation, CRM tools, and enterprise SaaS products built for growth.</p>
+    <h3>Core Areas of Expertise</h3>
+    <ul>
+      <li><strong>Custom Software Development:</strong> Scalable enterprise management tools, ERPs, and workflow automation.</li>
+      <li><strong>WhatsApp API & CRM Automation:</strong> Automated customer engagement and multi-channel lead management.</li>
+      <li><strong>Web & Mobile Application Architecture:</strong> Modern React, Node.js, and cloud-native solutions.</li>
+    </ul>
+    <p>Whether you are a growing SME or an established enterprise, our team helps digitize, automate, and scale your operations.</p>
+  `,
+  keywords: 'Best IT solutions company Delhi NCR, Custom software development, WhatsApp automation, CRM software'
+};
+
+// ─── Dynamic Relative Time Ago Parser & Calculator ────────────────────────
+export function parseAndFormatTimeAgo(customInput, fallbackCreatedAt) {
+  if (!customInput && !fallbackCreatedAt) return 'Recently';
+
+  const str = String(customInput || fallbackCreatedAt).trim();
+
+  // Pattern 1: Relative input like "3d ago", "3d", "2h ago", "2h", "5m ago", "1w ago"
+  const relMatch = str.match(/^(\d+)\s*([a-z]+)(\s*ago)?$/i);
+  if (relMatch) {
+    const amount = parseInt(relMatch[1], 10);
+    const unit = relMatch[2].toLowerCase();
+    const now = new Date();
+    let baseTimeMs = now.getTime();
+
+    if (unit.startsWith('m') && !unit.startsWith('mo')) {
+      baseTimeMs -= amount * 60 * 1000;
+    } else if (unit.startsWith('h')) {
+      baseTimeMs -= amount * 60 * 60 * 1000;
+    } else if (unit.startsWith('d')) {
+      baseTimeMs -= amount * 24 * 60 * 60 * 1000;
+    } else if (unit.startsWith('w')) {
+      baseTimeMs -= amount * 7 * 24 * 60 * 60 * 1000;
+    } else if (unit.startsWith('mo')) {
+      baseTimeMs -= amount * 30 * 24 * 60 * 60 * 1000;
+    } else if (unit.startsWith('y')) {
+      baseTimeMs -= amount * 365 * 24 * 60 * 60 * 1000;
+    }
+
+    const diffInSeconds = Math.max(0, Math.floor((now.getTime() - baseTimeMs) / 1000));
+    if (diffInSeconds < 60) return 'Just now';
+    const mins = Math.floor(diffInSeconds / 60);
+    if (mins < 60) return `${mins}m ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs}h ago`;
+    const days = Math.floor(hrs / 24);
+    if (days < 30) return `${days}d ago`;
+    const months = Math.floor(days / 30);
+    if (months < 12) return `${months} mo ago`;
+    const yrs = Math.floor(months / 12);
+    return `${yrs}y ago`;
+  }
+
+  // Pattern 2: ISO or Date String e.g. "2026-08-01"
+  const parsedDate = new Date(str);
+  if (!isNaN(parsedDate.getTime())) {
+    const now = new Date();
+    const diffInSeconds = Math.max(0, Math.floor((now.getTime() - parsedDate.getTime()) / 1000));
+    if (diffInSeconds < 60) return 'Just now';
+    const mins = Math.floor(diffInSeconds / 60);
+    if (mins < 60) return `${mins}m ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs}h ago`;
+    const days = Math.floor(hrs / 24);
+    if (days < 30) return `${days}d ago`;
+    const months = Math.floor(days / 30);
+    if (months < 12) return `${months} mo ago`;
+    const yrs = Math.floor(months / 12);
+    return `${yrs}y ago`;
+  }
+
+  return customInput || 'Recently';
+}
+
 export function formatTimeAgo(dateString) {
-  if (!dateString) return 'Recently';
-  const date = new Date(dateString);
-  if (isNaN(date.getTime())) return dateString;
-
-  const now = new Date();
-  const diffInSeconds = Math.floor((now - date) / 1000);
-
-  if (diffInSeconds < 0 || diffInSeconds < 60) return 'Just now';
-
-  const minutes = Math.floor(diffInSeconds / 60);
-  if (minutes < 60) return `${minutes}m ago`;
-
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
-
-  const days = Math.floor(hours / 24);
-  if (days < 30) return `${days}d ago`;
-
-  const months = Math.floor(days / 30);
-  if (months < 12) return `${months} mo ago`;
-
-  const years = Math.floor(months / 12);
-  return `${years}y ago`;
+  return parseAndFormatTimeAgo(dateString);
 }
 
 // ─── Blog Article Detail View (Split 2-Column Desktop Layout) ────────────────
@@ -47,11 +122,12 @@ function BlogDetail({ post, allBlogs = [] }) {
   useEffect(() => {
     if (!post) return;
     const siteUrl = 'https://kvantumtechsolutions.com';
-    const slug = post.id || post.slug || post._id || '';
+    const titleSlug = slugifyTitle(post.title);
+    const slug = post.slug || titleSlug || post.id || post._id || '';
     const title   = post.metaTitle || post.title || 'Kvantum Tech Blog';
     const desc    = post.metaDesc || post.summary || '';
     const image   = post.ogImage || post.image || FALLBACK_IMG;
-    const canonical = post.canonical || `${siteUrl}/blog/${slug}`;
+    const canonical = `${siteUrl}/blog/${slug}`; // 100% IDENTICAL to blog URL
     const author  = post.author || 'Kvantum Tech Team';
     const datePublished = post.date || new Date().toISOString();
 
@@ -119,9 +195,7 @@ function BlogDetail({ post, allBlogs = [] }) {
       schemaEl.type = 'application/ld+json';
       document.head.appendChild(schemaEl);
     }
-    schemaEl.textContent = post.schemaMarkup && post.schemaMarkup.trim() !== '' 
-      ? post.schemaMarkup 
-      : JSON.stringify(defaultSchema);
+    schemaEl.textContent = JSON.stringify(defaultSchema);
 
     // 2. Custom Other SEO Tags Injection
     let customTagsContainer = document.getElementById('blog-custom-seo-tags');
@@ -136,6 +210,7 @@ function BlogDetail({ post, allBlogs = [] }) {
       customTagsContainer.innerHTML = '';
     }
 
+    // Cleanup
     return () => {
       document.title = 'Kvantum Tech Solutions | Best IT Solutions Company in Delhi NCR';
       const cContainer = document.getElementById('blog-custom-seo-tags');
@@ -145,10 +220,27 @@ function BlogDetail({ post, allBlogs = [] }) {
 
   if (!post) {
     return (
-      <div className="container mx-auto max-w-[900px] px-6 py-24 text-center">
-        <p className="text-4xl mb-4">📄</p>
-        <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Article Not Found</h2>
-        <Link to="/blog" className="text-sky-500 hover:underline font-mono text-sm">← Back to all articles</Link>
+      <div className="container mx-auto max-w-[1280px] px-6 py-12 text-left animate-pulse space-y-8 select-none">
+        <div className="h-4 w-36 bg-sky-500/20 rounded-full" />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+          <div className="lg:col-span-8 space-y-6">
+            <div className="flex gap-3">
+              <div className="h-6 w-28 bg-sky-500/20 rounded-full" />
+              <div className="h-6 w-20 bg-pink-500/20 rounded-full" />
+            </div>
+            <div className="h-10 w-full bg-slate-800/80 rounded-2xl" />
+            <div className="h-8 w-3/4 bg-slate-800/60 rounded-2xl" />
+            <div className="w-full aspect-[16/9] bg-slate-800/70 rounded-3xl" />
+            <div className="space-y-3 pt-4">
+              <div className="h-4 w-full bg-slate-800/50 rounded-lg" />
+              <div className="h-4 w-11/12 bg-slate-800/50 rounded-lg" />
+              <div className="h-4 w-4/5 bg-slate-800/50 rounded-lg" />
+            </div>
+          </div>
+          <div className="lg:col-span-4 hidden lg:block">
+            <div className="h-[450px] w-full bg-slate-800/60 rounded-3xl" />
+          </div>
+        </div>
       </div>
     );
   }
@@ -194,7 +286,7 @@ function BlogDetail({ post, allBlogs = [] }) {
     }
   };
 
-  const relativeTime = formatTimeAgo(post.createdAt || post.date);
+  const relativeTime = parseAndFormatTimeAgo(post.readTime || post.date, post.createdAt);
 
   return (
     <div className="container mx-auto max-w-[1280px] px-6 py-10 text-left select-none space-y-12">
@@ -419,11 +511,17 @@ export default function BlogPage({ blogs = [] }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
 
-  const displayBlogs = blogs;
+  const displayBlogs = Array.isArray(blogs) && blogs.length > 0 ? blogs : [DEFAULT_SEED_BLOG];
 
   // Single Article Detail View
   if (slug) {
-    const post = displayBlogs.find(b => b.id === slug || b.slug === slug || b._id === slug);
+    const post = displayBlogs.find(b => 
+      b.id === slug || 
+      b.slug === slug || 
+      b._id === slug || 
+      slugifyTitle(b.title) === slug
+    ) || (slug.includes('why-kvantum') ? DEFAULT_SEED_BLOG : null);
+
     return <BlogDetail post={post} allBlogs={displayBlogs} />;
   }
 
