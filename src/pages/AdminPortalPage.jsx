@@ -3068,17 +3068,22 @@ ${allEntries.map(entry => `    <url>
                   e.preventDefault();
                   try {
                     const val = {
+                      ...settings?.contact,
                       phone: e.target.contactPhone.value,
                       email: e.target.contactEmail.value,
                       address: e.target.contactAddress.value,
-                      instagram: e.target.contactInstagram.value,
-                      linkedin: e.target.contactLinkedin.value,
-                      facebook: e.target.contactFacebook.value,
-                      twitter: e.target.contactTwitter.value
+                      instagram: e.target.contactInstagram?.value || '',
+                      linkedin: e.target.contactLinkedin?.value || '',
+                      facebook: e.target.contactFacebook?.value || '',
+                      twitter: e.target.contactTwitter?.value || '',
+                      whatsapp: e.target.contactWhatsapp?.value || '',
+                      youtube: e.target.contactYoutube?.value || '',
+                      github: e.target.contactGithub?.value || '',
+                      pinterest: e.target.contactPinterest?.value || ''
                     };
                     await settingService.updateSetting('contact', val);
                     setSettings(prev => ({ ...prev, contact: val }));
-                    alert('[SUCCESS] Contact settings updated.');
+                    alert('[SUCCESS] Contact details & social matrix synchronized live!');
                   } catch (err) {
                     alert('[ERROR] Update failed: ' + err.message);
                   }

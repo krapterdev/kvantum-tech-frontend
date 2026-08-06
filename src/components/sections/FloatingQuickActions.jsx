@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { MessageSquare, Phone, X, Send, CheckCircle2, ArrowUp, Headphones } from 'lucide-react';
 import { submitContact } from '@/services/contactService';
 
-export default function FloatingQuickActions() {
+export default function FloatingQuickActions({ settings }) {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const contact = settings?.contact || {};
+  const whatsappUrl = contact.whatsapp || `https://wa.me/${(contact.phone || '919999888877').replace(/[^0-9]/g, '')}?text=Hi%20Kvantum%20Tech%20Team,%20I%20want%20to%20know%20more%20about%20your%20software%20and%20automation%20services.`;
   const [formData, setFormData] = useState({ name: '', phone: '', email: '', service: 'Custom Software Development' });
   const [status, setStatus] = useState({ loading: false, error: '' });
 
@@ -83,7 +85,7 @@ export default function FloatingQuickActions() {
 
         {/* WhatsApp Direct Chat Button */}
         <a
-          href="https://wa.me/919811661828?text=Hi%20Kvantum%20Tech%20Team,%20I%20want%20to%20know%20more%20about%20your%20software%20and%20automation%20services."
+          href={whatsappUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="group relative flex items-center gap-2.5 px-4 py-3 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white shadow-[0_10px_25px_rgba(16,185,129,0.4)] transition-all duration-300 hover:scale-105 cursor-pointer border border-emerald-400/30"

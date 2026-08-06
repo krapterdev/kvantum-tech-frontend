@@ -409,7 +409,7 @@ export default function App() {
       {!isAdminPath && <Footer seoPages={seoPages} theme={theme} settings={settings} services={services} blogs={blogs} />}
       
       {/* Floating Action Buttons */}
-      {!isAdminPath && <FloatingQuickActions />}
+      {!isAdminPath && <FloatingQuickActions settings={settings} />}
 
       {/* Cookie & Terms Consent Modal */}
       {!isAdminPath && <CookieConsent />}

@@ -4,8 +4,9 @@ import { Send, CheckCircle, Mail, Phone, MapPin, Sparkles, AlertCircle } from 'l
 import Badge from '../ui/Badge';
 import { submitContact } from '@/services/contactService';
 
-export default function HomeContact() {
+export default function HomeContact({ settings }) {
   const navigate = useNavigate();
+  const contact = settings?.contact || {};
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -60,10 +61,10 @@ export default function HomeContact() {
     const errorKeys = Object.keys(errors);
 
     if (errorKeys.length > 0) {
-      const firstError = errors[errorKeys[0]];
+      const firstErrorField = errorKeys[0];
       setStatus({ 
         loading: false, 
-        error: `Please fix the highlighted fields: ${firstError}` 
+        error: `Please fix errors in the form: ${errors[firstErrorField]}` 
       });
       return;
     }
@@ -75,9 +76,9 @@ export default function HomeContact() {
         name: formData.name.trim(),
         email: formData.email.trim(),
         phone: formData.phone.trim(),
+        company: formData.company.trim(),
         service: formData.service,
-        message: formData.message.trim(),
-        notes: `Company: ${formData.company.trim()} | Message: ${formData.message.trim()}`,
+        notes: `Message: ${formData.message.trim()}`,
       });
 
       setStatus({ loading: false, error: '' });
@@ -92,11 +93,11 @@ export default function HomeContact() {
   };
 
   return (
-    <section id="contact" className="container mx-auto max-w-[1280px] px-6 py-24 select-none text-left relative z-10">
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-
-        {/* Left Info Column */}
+    <section id="contact-form" className="container mx-auto max-w-[1280px] px-6 py-24 select-none text-left relative z-10">
+      
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-stretch">
+        
+        {/* Left Info Card */}
         <div className="flex flex-col justify-between h-full">
           <div>
             <Badge className="mb-5 inline-flex items-center gap-1.5 bg-pink-500/10 border-pink-500/20 text-pink-600 dark:text-pink-400">
@@ -115,15 +116,15 @@ export default function HomeContact() {
             <div className="space-y-4 font-mono text-sm mb-8">
               <div className="flex items-center gap-3 text-slate-700 dark:text-slate-200">
                 <Mail size={18} className="text-sky-500 shrink-0" />
-                <a href="mailto:info@kvantumtechsolutions.com" className="hover:underline">info@kvantumtechsolutions.com</a>
+                <a href={`mailto:${contact.email || 'info@kvantumtechsolutions.com'}`} className="hover:underline">{contact.email || 'info@kvantumtechsolutions.com'}</a>
               </div>
               <div className="flex items-center gap-3 text-slate-700 dark:text-slate-200">
                 <Phone size={18} className="text-pink-500 shrink-0" />
-                <span>+91 9811661828 / +91 9811663433</span>
+                <a href={`tel:${(contact.phone || '+91 99998 88877').replace(/\s+/g, '')}`} className="hover:underline font-bold">{contact.phone || '+91 99998 88877'}</a>
               </div>
               <div className="flex items-start gap-3 text-slate-700 dark:text-slate-200">
                 <MapPin size={18} className="text-purple-500 shrink-0 mt-0.5" />
-                <span className="text-xs text-slate-500 dark:text-slate-400">A33, 64, Tahirpur Rd, Priyadarshini Vihar, Dilshad Garden, Delhi, 110095</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400">{contact.address || 'Sector 62, Noida, Uttar Pradesh, India'}</span>
               </div>
             </div>
           </div>

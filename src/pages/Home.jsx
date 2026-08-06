@@ -101,7 +101,7 @@ export default function Home({ services = [], blogs = [], blogsLoading = false, 
       <VisitorOdometerCounter />
 
       {/* 23. Contact Form */}
-      <HomeContact />
+      <HomeContact settings={settings} />
 
     </div>
   );

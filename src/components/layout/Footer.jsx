@@ -191,11 +191,12 @@ export default function Footer({ seoPages = [], theme, settings, services = [], 
                 </a>
               </li>
               <li className="flex flex-col gap-1 text-slate-600 dark:text-zinc-400 font-mono">
-                <a href="tel:+919811661828" className="hover:text-pink-500 transition-colors">+91 9811661828</a>
-                <a href="tel:+919811663433" className="hover:text-pink-500 transition-colors">+91 9811663433</a>
+                <a href={`tel:${(contact.phone || '+91 99998 88877').replace(/\s+/g, '')}`} className="hover:text-pink-500 transition-colors font-bold">
+                  {contact.phone || '+91 99998 88877'}
+                </a>
               </li>
               <li className="text-[11px] text-slate-500 dark:text-zinc-500 font-mono leading-relaxed mt-1">
-                Kvantum Tech Solutions, A33, 64, Tahirpur Rd, Priyadarshini Vihar, Taharpur Village, Dilshad Garden, Delhi, 110095
+                {contact.address || 'Sector 62, Noida, Uttar Pradesh, India'}
               </li>
             </ul>
           </div>

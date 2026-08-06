@@ -5,8 +5,9 @@ import Badge from '@/components/ui/Badge';
 import FAQ, { contactFaqs } from '@/components/sections/FAQ';
 import { submitContact } from '@/services/contactService';
 
-export default function ContactPage() {
+export default function ContactPage({ settings }) {
   const navigate = useNavigate();
+  const contact = settings?.contact || {};
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -60,10 +61,10 @@ export default function ContactPage() {
     const errorKeys = Object.keys(errors);
 
     if (errorKeys.length > 0) {
-      const firstError = errors[errorKeys[0]];
+      const firstErrorField = errorKeys[0];
       setStatus({ 
         loading: false, 
-        error: `Please fix the highlighted fields: ${firstError}` 
+        error: `Please fix errors in the form: ${errors[firstErrorField]}` 
       });
       return;
     }
@@ -76,7 +77,6 @@ export default function ContactPage() {
         email: formData.email.trim(),
         phone: formData.phone.trim(),
         service: formData.service,
-        message: formData.message.trim(),
         notes: `Message: ${formData.message.trim()}`,
       });
 
@@ -123,8 +123,8 @@ export default function ContactPage() {
                 </div>
                 <div className="overflow-hidden">
                   <span className="text-xs font-mono text-slate-400 block uppercase">Email Support</span>
-                  <a href="mailto:info@kvantumtechsolutions.com" className="text-sm sm:text-base font-bold text-slate-900 dark:text-white hover:text-sky-500 transition-colors break-all">
-                    info@kvantumtechsolutions.com
+                  <a href={`mailto:${contact.email || 'info@kvantumtechsolutions.com'}`} className="text-sm sm:text-base font-bold text-slate-900 dark:text-white hover:text-sky-500 transition-colors break-all">
+                    {contact.email || 'info@kvantumtechsolutions.com'}
                   </a>
                 </div>
               </div>
@@ -136,8 +136,9 @@ export default function ContactPage() {
                 <div>
                   <span className="text-xs font-mono text-slate-400 block uppercase">Direct Hotlines</span>
                   <div className="flex flex-col gap-1 text-sm font-bold text-slate-900 dark:text-white mt-1">
-                    <a href="tel:+919811661828" className="hover:text-pink-500 transition-colors">+91 9811661828</a>
-                    <a href="tel:+919811663433" className="hover:text-pink-500 transition-colors">+91 9811663433</a>
+                    <a href={`tel:${(contact.phone || '+91 99998 88877').replace(/\s+/g, '')}`} className="hover:text-pink-500 transition-colors">
+                      {contact.phone || '+91 99998 88877'}
+                    </a>
                   </div>
                 </div>
               </div>
@@ -149,7 +150,7 @@ export default function ContactPage() {
                 <div>
                   <span className="text-xs font-mono text-slate-400 block uppercase">Office Address</span>
                   <p className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white leading-relaxed mt-1">
-                    Kvantum Tech Solutions, A33, 64, Tahirpur Rd, Priyadarshini Vihar, Taharpur Village, Dilshad Garden, Delhi, 110095
+                    {contact.address || 'Sector 62, Noida, Uttar Pradesh, India'}
                   </p>
                 </div>
               </div>

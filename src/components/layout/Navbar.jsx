@@ -10,9 +10,10 @@ export default function Navbar({ theme, toggleTheme, settings }) {
   const navigate = useNavigate();
 
   const contact = settings?.contact || {};
-  const instagramUrl = contact.instagram || 'https://www.instagram.com/kvantumtechsolutions/';
-  const linkedinUrl = contact.linkedin || 'https://www.linkedin.com/in/kvantum-tech-solutions-75916a41b';
-  const facebookUrl = contact.facebook || 'https://facebook.com/kvantumtechsolutions';
+  const showInstagram = contact.instagramActive !== false && (contact.instagram || 'https://www.instagram.com/kvantumtechsolutions/');
+  const showLinkedin = contact.linkedinActive !== false && (contact.linkedin || 'https://www.linkedin.com/in/kvantum-tech-solutions-75916a41b');
+  const showFacebook = contact.facebookActive !== false && (contact.facebook || 'https://facebook.com/kvantumtechsolutions');
+  const showTwitter = contact.twitterActive !== false && contact.twitter;
 
   return (
     <>
@@ -85,15 +86,26 @@ export default function Navbar({ theme, toggleTheme, settings }) {
           {/* Social Links & Controls */}
           <div className="hidden lg:flex items-center gap-4">
             <div className="flex items-center gap-2 border-r border-slate-200 dark:border-white/10 pr-4">
-              <a href={instagramUrl} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-pink-500 transition-colors">
-                <InstagramIcon size={16} />
-              </a>
-              <a href={linkedinUrl} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-cyan-500 transition-colors">
-                <LinkedinIcon size={16} />
-              </a>
-              <a href={facebookUrl} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-blue-500 transition-colors">
-                <FacebookIcon size={16} />
-              </a>
+              {showInstagram && (
+                <a href={contact.instagram || 'https://www.instagram.com/kvantumtechsolutions/'} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-pink-500 transition-colors" title="Instagram">
+                  <InstagramIcon size={16} />
+                </a>
+              )}
+              {showLinkedin && (
+                <a href={contact.linkedin || 'https://www.linkedin.com/in/kvantum-tech-solutions-75916a41b'} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-cyan-500 transition-colors" title="LinkedIn">
+                  <LinkedinIcon size={16} />
+                </a>
+              )}
+              {showFacebook && (
+                <a href={contact.facebook || 'https://facebook.com/kvantumtechsolutions'} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-blue-500 transition-colors" title="Facebook">
+                  <FacebookIcon size={16} />
+                </a>
+              )}
+              {showTwitter && (
+                <a href={contact.twitter} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-sky-400 transition-colors" title="Twitter / X">
+                  <TwitterIcon size={16} />
+                </a>
+              )}
             </div>
 
             {/* Theme Toggle Button */}
