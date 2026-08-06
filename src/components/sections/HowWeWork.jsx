@@ -76,8 +76,9 @@ export default function HowWeWork() {
 
         <button
           onClick={() => {
-            const el = document.getElementById('contact');
+            const el = document.getElementById('contact') || document.getElementById('contact-form');
             if (el) el.scrollIntoView({ behavior: 'smooth' });
+            else window.location.href = '/contact';
           }}
           className="px-6 py-3.5 rounded-xl text-xs font-bold bg-pink-500 hover:bg-pink-600 text-white transition-colors shadow-md shrink-0 cursor-pointer"
         >

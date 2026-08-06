@@ -93,7 +93,7 @@ export default function HomeContact({ settings }) {
   };
 
   return (
-    <section id="contact-form" className="container mx-auto max-w-[1280px] px-6 py-24 select-none text-left relative z-10">
+    <section id="contact" className="container mx-auto max-w-[1280px] px-6 py-24 select-none text-left relative z-10">
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-stretch">
         

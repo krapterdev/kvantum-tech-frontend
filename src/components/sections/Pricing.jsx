@@ -154,8 +154,9 @@ export default function Pricing() {
             {/* CTA */}
             <button
               onClick={() => {
-                const el = document.getElementById('contact');
+                const el = document.getElementById('contact') || document.getElementById('contact-form');
                 if (el) el.scrollIntoView({ behavior: 'smooth' });
+                else window.location.href = '/contact';
               }}
               className={`w-full py-3.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 mt-4 ${
                 tier.popular

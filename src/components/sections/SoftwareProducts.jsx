@@ -171,8 +171,9 @@ export default function SoftwareProducts() {
           </div>
           <button
             onClick={() => {
-              const el = document.getElementById('contact');
+              const el = document.getElementById('contact') || document.getElementById('contact-form');
               if (el) el.scrollIntoView({ behavior: 'smooth' });
+              else window.location.href = '/contact';
             }}
             className="px-7 py-3.5 rounded-xl text-xs font-bold bg-pinkCustom text-white hover:bg-pink-600 transition-all duration-200 shadow-[0_0_20px_rgba(236,72,153,0.3)] hover:scale-[1.02] shrink-0 cursor-pointer"
           >

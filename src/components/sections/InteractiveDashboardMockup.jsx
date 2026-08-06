@@ -163,8 +163,9 @@ export default function InteractiveDashboardMockup() {
 
             <button
               onClick={() => {
-                const el = document.getElementById('contact');
+                const el = document.getElementById('contact') || document.getElementById('contact-form');
                 if (el) el.scrollIntoView({ behavior: 'smooth' });
+                else window.location.href = '/contact';
               }}
               className="py-3.5 px-6 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/15 text-zinc-100 border border-white/15 transition-all cursor-pointer text-center"
             >

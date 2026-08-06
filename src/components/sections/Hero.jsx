@@ -150,8 +150,9 @@ export default function Hero({ settings }) {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14">
           <button
             onClick={() => {
-              const el = document.getElementById('contact');
+              const el = document.getElementById('contact') || document.getElementById('contact-form');
               if (el) el.scrollIntoView({ behavior: 'smooth' });
+              else navigate('/contact');
             }}
             className="w-full sm:w-auto px-8 py-3.5 rounded-xl text-xs sm:text-sm font-bold bg-sky-500 hover:bg-sky-600 text-white transition-all duration-200 shadow-md hover:shadow-sky-500/20 hover:scale-[1.02] cursor-pointer flex items-center justify-center gap-2"
           >
@@ -159,8 +160,9 @@ export default function Hero({ settings }) {
           </button>
           <button
             onClick={() => {
-              const el = document.getElementById('contact');
+              const el = document.getElementById('contact') || document.getElementById('contact-form');
               if (el) el.scrollIntoView({ behavior: 'smooth' });
+              else navigate('/contact');
             }}
             className="w-full sm:w-auto px-7 py-3.5 rounded-xl text-xs sm:text-sm font-bold bg-slate-200 dark:bg-white/10 hover:bg-slate-300 dark:hover:bg-white/15 text-slate-900 dark:text-white border border-slate-300 dark:border-white/15 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2"
           >

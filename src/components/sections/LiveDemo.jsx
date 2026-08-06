@@ -46,15 +46,16 @@ export default function LiveDemo() {
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
               <button
                 onClick={() => {
-                  const el = document.getElementById('contact');
+                  const el = document.getElementById('contact') || document.getElementById('contact-form');
                   if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  else window.location.href = '/contact';
                 }}
                 className="px-7 py-4 rounded-xl text-sm font-bold bg-pinkCustom text-white hover:bg-pink-600 transition-all duration-200 shadow-[0_0_25px_rgba(236,72,153,0.35)] hover:scale-[1.02] cursor-pointer text-center"
               >
                 Book Your Free Live Demo
               </button>
               <a
-                href="tel:9811661828"
+                href="tel:+919811661828"
                 className="px-7 py-4 rounded-xl text-sm font-bold border border-white/15 text-zinc-200 hover:bg-white/5 hover:border-white/25 transition-all duration-200 cursor-pointer text-center"
               >
                 Call Now: +91 98116 61828

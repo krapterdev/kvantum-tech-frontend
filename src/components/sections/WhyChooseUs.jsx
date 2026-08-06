@@ -95,8 +95,9 @@ export default function WhyChooseUs() {
           </div>
           <button
             onClick={() => {
-              const el = document.getElementById('contact');
+              const el = document.getElementById('contact') || document.getElementById('contact-form');
               if (el) el.scrollIntoView({ behavior: 'smooth' });
+              else window.location.href = '/contact';
             }}
             className="px-7 py-3.5 rounded-xl text-xs font-bold bg-pink-500 text-white hover:bg-pink-600 transition-all duration-200 shadow-md shrink-0 cursor-pointer"
           >
