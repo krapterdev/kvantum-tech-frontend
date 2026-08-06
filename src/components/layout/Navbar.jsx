@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Menu, X, Sun, Moon, ArrowRight } from 'lucide-react';
 import MobileMenu from './MobileMenu';
-import { InstagramIcon, LinkedinIcon, FacebookIcon } from '../ui/SocialIcons';
+import { InstagramIcon, LinkedinIcon, FacebookIcon, TwitterIcon } from '../ui/SocialIcons';
 import KvantumLogo from '../ui/KvantumLogo';
 
 export default function Navbar({ theme, toggleTheme, settings }) {
