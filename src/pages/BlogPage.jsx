@@ -150,25 +150,42 @@ function BlogDetail({ post, allBlogs = [] }) {
     };
 
     setMeta('description', desc);
-    setMeta('keywords', post.keywords || '');
+    setMeta('keywords', post.keywords || 'IT Solutions, Software Development, Custom CRM, Automation, Delhi NCR');
     setMeta('author', author);
-    setMeta('robots', 'index, follow');
+    setMeta('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1');
     setLink('canonical', canonical);
 
+    // Open Graph Complete Protocol Tags
+    setOg('og:site_name',   'Kvantum Tech Solutions');
+    setOg('og:url',         canonical);
     setOg('og:type',        post.ogType || 'article');
     setOg('og:title',       post.ogTitle || title);
     setOg('og:description', post.ogDesc || desc);
     setOg('og:image',       image);
-    setOg('og:url',         canonical);
-    setOg('og:site_name',   'Kvantum Tech Solutions');
-    setOg('article:published_time', datePublished);
-    setOg('article:author', author);
+    setOg('og:image:secure_url', image);
+    setOg('og:image:width',  '1200');
+    setOg('og:image:height', '630');
+    setOg('og:image:alt',    post.imageAlt || title);
+    setOg('og:image:type',   'image/jpeg');
+    setOg('og:locale',       'en_US');
 
+    // Article Specific Protocol Tags
+    setOg('article:published_time', datePublished);
+    setOg('article:modified_time',  post.updatedAt || post.dateModified || datePublished);
+    setOg('article:author',        author);
+    setOg('article:section',       post.category || 'Engineering & Software');
+    if (post.keywords) {
+      setOg('article:tag', post.keywords);
+    }
+
+    // Twitter Card Complete Protocol Tags
     setMeta('twitter:card',        post.twitterCard || 'summary_large_image');
+    setMeta('twitter:site',        '@kvantumtech');
+    setMeta('twitter:creator',     '@kvantumtech');
     setMeta('twitter:title',       post.twitterTitle || title);
     setMeta('twitter:description', post.twitterDesc || desc);
     setMeta('twitter:image',       image);
-    setMeta('twitter:site',        '@kvantumtech');
+    setMeta('twitter:image:alt',   post.imageAlt || title);
 
     // 1. Core JSON-LD Schema
     const defaultSchema = {
