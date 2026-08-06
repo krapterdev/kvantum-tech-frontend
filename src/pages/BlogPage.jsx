@@ -529,7 +529,7 @@ function BlogDetail({ post, allBlogs = [] }) {
 }
 
 // ─── Blog Listing Main Grid (Clean Professional 3-Column Grid) ─────────────
-export default function BlogPage({ blogs = [] }) {
+export default function BlogPage({ blogs = [], loading = false }) {
   const { slug } = useParams();
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
@@ -544,6 +544,19 @@ export default function BlogPage({ blogs = [] }) {
       b._id === slug || 
       slugifyTitle(b.title) === slug
     ) || null;
+
+    if (loading && !post) {
+      return (
+        <div className="container mx-auto max-w-[1000px] px-6 py-16 text-left animate-pulse space-y-8 select-none">
+          <div className="h-8 w-36 bg-white/10 rounded-xl" />
+          <div className="p-8 sm:p-12 rounded-3xl bg-slate-900/60 border border-slate-800 space-y-6">
+            <div className="h-6 w-32 bg-cyan-500/20 rounded-full" />
+            <div className="h-12 w-3/4 bg-white/10 rounded-2xl" />
+            <div className="h-6 w-full bg-white/5 rounded-xl" />
+          </div>
+        </div>
+      );
+    }
 
     return <BlogDetail post={post} allBlogs={displayBlogs} />;
   }
@@ -606,8 +619,29 @@ export default function BlogPage({ blogs = [] }) {
         </div>
       )}
 
-      {/* Empty States */}
-      {displayBlogs.length === 0 ? (
+      {/* Loading Skeleton vs Empty State vs Grid */}
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 animate-pulse">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="rounded-3xl bg-zinc-900/60 border border-zinc-800 p-4 space-y-4 shadow-xl">
+              <div className="aspect-[16/9] w-full bg-white/10 rounded-2xl" />
+              <div className="h-4 w-24 bg-cyan-500/20 rounded-full" />
+              <div className="h-6 w-full bg-white/10 rounded-xl" />
+              <div className="h-12 w-full bg-white/5 rounded-xl" />
+            </div>
+          ))}
+        </div>
+      ) : displayBlogs.length === 0 ? (
+        <div className="min-h-[40vh] flex flex-col items-center justify-center text-center p-12 bg-white/[0.02] border border-white/8 rounded-3xl max-w-xl mx-auto my-8 space-y-4 shadow-xl">
+          <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mx-auto mb-2">
+            <BookOpen size={32} className="text-cyanCustom animate-pulse" />
+          </div>
+          <h3 className="text-2xl font-headline font-bold text-zinc-100">No Articles Published Yet</h3>
+          <p className="text-zinc-400 text-sm leading-relaxed max-w-md">
+            No articles published yet. Fresh engineering insights, SaaS tutorials, and technology updates will appear here as soon as they are published from the Admin Portal!
+          </p>
+        </div>
+      ) : filteredBlogs.length === 0 ? (
         <div className="text-center py-24">
           <p className="text-5xl mb-4">✍️</p>
           <h3 className="text-xl font-bold font-headline text-slate-900 dark:text-white mb-2">No Articles Published Yet</h3>

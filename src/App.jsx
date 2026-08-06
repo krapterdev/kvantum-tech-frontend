@@ -38,6 +38,7 @@ export default function App() {
   const [theme, setTheme] = useState('dark');
   const [services, setServices] = useState(fallbackServices);
   const [blogs, setBlogs] = useState([]);
+  const [blogsLoading, setBlogsLoading] = useState(true);
   const [seoPages, setSeoPages] = useState([]);
   const [portfolios, setPortfolios] = useState([]);
   const [settings, setSettings] = useState(fallbackSettings);
@@ -90,6 +91,8 @@ export default function App() {
         setBlogs(data);
       } catch (err) {
         console.warn('[API CONNECTION] Blogs offline.');
+      } finally {
+        setBlogsLoading(false);
       }
 
       // 3. Programmatic SEO Pages
@@ -363,7 +366,7 @@ export default function App() {
 
       <main className={`relative z-10 ${isAdminPath ? 'pt-0 min-h-screen' : 'pt-[100px] min-h-[75vh]'}`}>
         <Routes>
-          <Route path="/" element={<Home services={services} blogs={blogs} settings={settings} />} />
+          <Route path="/" element={<Home services={services} blogs={blogs} blogsLoading={blogsLoading} settings={settings} />} />
           <Route path="/about" element={<AboutPage theme={theme} settings={settings} />} />
           <Route path="/services" element={<ServicesPage services={services} />} />
           {/* Legacy 301 Permanent Redirects for Google Search Central guidelines */}
@@ -374,8 +377,8 @@ export default function App() {
           <Route path="/contact" element={<ContactPage settings={settings} />} />
           <Route path="/thank-you" element={<ThankYouPage />} />
           
-          <Route path="/blog" element={<BlogPage blogs={blogs} />} />
-          <Route path="/blog/:slug" element={<BlogPage blogs={blogs} />} />
+          <Route path="/blog" element={<BlogPage blogs={blogs} loading={blogsLoading} />} />
+          <Route path="/blog/:slug" element={<BlogPage blogs={blogs} loading={blogsLoading} />} />
           
           <Route path="/keyword/:slug" element={<DynamicSeoPage seoPages={seoPages} />} />
           

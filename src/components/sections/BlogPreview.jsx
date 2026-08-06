@@ -4,7 +4,27 @@ import { BookOpen, Calendar, Clock, ArrowRight, User } from 'lucide-react';
 import Badge from '../ui/Badge';
 import { formatTimeAgo } from '@/pages/BlogPage';
 
-export default function BlogPreview({ blogs = [] }) {
+export default function BlogPreview({ blogs = [], blogsLoading = false }) {
+  if (blogsLoading) {
+    return (
+      <section id="blog" className="container mx-auto max-w-[1280px] px-6 py-24 select-none text-left relative z-10 animate-pulse space-y-12">
+        <div className="text-center space-y-4">
+          <div className="h-6 w-44 bg-cyan-500/20 rounded-full mx-auto" />
+          <div className="h-10 w-2/3 bg-white/10 rounded-2xl mx-auto" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="rounded-3xl bg-zinc-900/60 border border-zinc-800 p-4 space-y-4 shadow-xl">
+              <div className="aspect-[16/9] w-full bg-white/10 rounded-2xl" />
+              <div className="h-4 w-24 bg-cyan-500/20 rounded-full" />
+              <div className="h-6 w-full bg-white/10 rounded-xl" />
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  }
+
   const displayBlogs = blogs.slice(0, 3);
   if (displayBlogs.length === 0) return null;
 

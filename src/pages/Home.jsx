@@ -25,7 +25,7 @@ import HomeContact from '@/components/sections/HomeContact';
 import HomeSeoContentSection from '@/components/sections/HomeSeoContentSection';
 import SeoSchema from '@/components/sections/SeoSchema';
 
-export default function Home({ services = [], blogs = [], settings }) {
+export default function Home({ services = [], blogs = [], blogsLoading = false, settings }) {
   return (
     <div className="fade-in-up">
       {/* Rich Snippet JSON-LD SEO Schema */}
@@ -89,7 +89,7 @@ export default function Home({ services = [], blogs = [], settings }) {
       <HomeSeoContentSection />
 
       {/* 20. Latest Blogs & Resources */}
-      <BlogPreview blogs={blogs} />
+      <BlogPreview blogs={blogs} blogsLoading={blogsLoading} />
 
       {/* 21. FAQs (15 SEO Questions at bottom) */}
       <FAQ />
