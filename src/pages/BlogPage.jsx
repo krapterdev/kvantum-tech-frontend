@@ -168,6 +168,8 @@ function BlogDetail({ post, allBlogs = [] }) {
     setOg('og:image:alt',    post.imageAlt || title);
     setOg('og:image:type',   'image/jpeg');
     setOg('og:locale',       'en_US');
+    setOg('og:locale:alternate', 'en_IN');
+    setMeta('theme-color', '#080B14');
 
     // Article Specific Protocol Tags
     setOg('article:published_time', datePublished);
