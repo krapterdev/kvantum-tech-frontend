@@ -2908,25 +2908,39 @@ ${allEntries.map(entry => `    <url>
             <form onSubmit={async (e) => {
               e.preventDefault();
               try {
-                const val = {
+                const fd = new FormData(e.currentTarget);
+                const updatedContact = {
                   ...settings?.contact,
-                  instagram: e.target.contactInstagram?.value || '',
-                  linkedin: e.target.contactLinkedin?.value || '',
-                  facebook: e.target.contactFacebook?.value || '',
-                  twitter: e.target.contactTwitter?.value || '',
-                  whatsapp: e.target.contactWhatsapp?.value || '',
-                  youtube: e.target.contactYoutube?.value || '',
-                  github: e.target.contactGithub?.value || '',
-                  pinterest: e.target.contactPinterest?.value || '',
-                  telegram: e.target.contactTelegram?.value || '',
-                  reddit: e.target.contactReddit?.value || '',
-                  tiktok: e.target.contactTiktok?.value || ''
+                  instagram: fd.get('contactInstagram') || '',
+                  instagramActive: fd.get('instagramActive') === 'on',
+                  linkedin: fd.get('contactLinkedin') || '',
+                  linkedinActive: fd.get('linkedinActive') === 'on',
+                  facebook: fd.get('contactFacebook') || '',
+                  facebookActive: fd.get('facebookActive') === 'on',
+                  twitter: fd.get('contactTwitter') || '',
+                  twitterActive: fd.get('twitterActive') === 'on',
+                  whatsapp: fd.get('contactWhatsapp') || '',
+                  whatsappActive: fd.get('whatsappActive') === 'on',
+                  youtube: fd.get('contactYoutube') || '',
+                  youtubeActive: fd.get('youtubeActive') === 'on',
+                  github: fd.get('contactGithub') || '',
+                  githubActive: fd.get('githubActive') === 'on',
+                  pinterest: fd.get('contactPinterest') || '',
+                  pinterestActive: fd.get('pinterestActive') === 'on',
+                  telegram: fd.get('contactTelegram') || '',
+                  telegramActive: fd.get('telegramActive') === 'on',
+                  reddit: fd.get('contactReddit') || '',
+                  redditActive: fd.get('redditActive') === 'on',
+                  tiktok: fd.get('contactTiktok') || '',
+                  tiktokActive: fd.get('tiktokActive') === 'on',
                 };
-                await settingService.updateSetting('contact', val);
-                setSettings(prev => ({ ...prev, contact: val }));
+
+                await settingService.updateSetting('contact', updatedContact);
+                setSettings(prev => ({ ...prev, contact: updatedContact }));
                 alert('[SUCCESS] Social Media Links & Network Visibility updated live!');
               } catch (err) {
-                alert('[ERROR] Update failed: ' + err.message);
+                const msg = err.response?.data?.message || err.response?.data?.error || err.message;
+                alert('[ERROR] Update failed: ' + msg);
               }
             }} className="flex flex-col gap-5">
 
@@ -2944,7 +2958,7 @@ ${allEntries.map(entry => `    <url>
                   { key: 'reddit', label: 'Reddit', defaultUrl: '', activeKey: 'redditActive' },
                   { key: 'tiktok', label: 'TikTok', defaultUrl: '', activeKey: 'tiktokActive' },
                 ].map(soc => {
-                  const isActive = settings?.contact?.[soc.activeKey] !== false && (soc.activeKey.includes('youtube') || soc.activeKey.includes('github') || soc.activeKey.includes('pinterest') || soc.activeKey.includes('telegram') || soc.activeKey.includes('reddit') || soc.activeKey.includes('tiktok') || soc.activeKey.includes('whatsapp') ? settings?.contact?.[soc.activeKey] === true : true);
+                  const isActive = settings?.contact?.[soc.activeKey] !== false && (soc.activeKey.includes('youtube') || soc.activeKey.includes('github') || soc.activeKey.includes('pinterest') || soc.activeKey.includes('telegram') || soc.activeKey.includes('reddit') || soc.activeKey.includes('tiktok') ? settings?.contact?.[soc.activeKey] === true : true);
 
                   return (
                     <div key={soc.key} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl bg-zinc-950/60 border border-white/8 hover:border-white/15 transition-all">
@@ -2952,21 +2966,14 @@ ${allEntries.map(entry => `    <url>
                         <label className="flex items-center gap-2.5 cursor-pointer">
                           <input
                             type="checkbox"
+                            name={soc.activeKey}
                             defaultChecked={isActive}
-                            onChange={async (e) => {
-                              const val = { ...settings?.contact, [soc.activeKey]: e.target.checked };
-                              await settingService.updateSetting('contact', val);
-                              setSettings(prev => ({ ...prev, contact: val }));
-                            }}
                             className="accent-pinkCustom w-4 h-4 cursor-pointer"
                           />
-                          <span className={`font-bold text-sm ${isActive ? 'text-emerald-400' : 'text-zinc-500'}`}>
+                          <span className="font-bold text-sm text-zinc-200">
                             {soc.label}
                           </span>
                         </label>
-                        <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded font-mono ${isActive ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-zinc-800 text-zinc-500 border border-zinc-700'}`}>
-                          {isActive ? 'ACTIVE (SHOW)' : 'INACTIVE (HIDDEN)'}
-                        </span>
                       </div>
 
                       <input
