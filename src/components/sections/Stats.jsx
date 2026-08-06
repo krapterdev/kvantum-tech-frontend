@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Badge from '../ui/Badge';
-import { Award, Activity, ShieldCheck, Zap } from 'lucide-react';
+import { Sparkles, Activity, ShieldCheck, Zap, Award } from 'lucide-react';
 
 function AnimatedCounter({ target, suffix = '', duration = 2000 }) {
   const [count, setCount] = useState(0);
@@ -43,134 +43,153 @@ function AnimatedCounter({ target, suffix = '', duration = 2000 }) {
   return <span ref={ref}>{hasAnimated ? (isNaN(parseFloat(target)) ? target : `${count}${suffix}`) : `0${suffix}`}</span>;
 }
 
+function parseStat(valStr, defaultNum, defaultSuffix) {
+  if (!valStr) return { num: defaultNum, suffix: defaultSuffix, isStatic: false, raw: '' };
+  const str = String(valStr).trim();
+  if (str === '24/7' || !str.match(/\d/)) {
+    return { isStatic: true, raw: str };
+  }
+  const match = str.match(/^([\d\.]+)(.*)$/);
+  if (match) {
+    return { isStatic: false, num: parseFloat(match[1]), suffix: match[2] || '', raw: str };
+  }
+  return { isStatic: true, raw: str };
+}
+
 const defaultMetrics = [
   {
     id: '01',
     num: 95,
     suffix: '%',
+    value: '95%',
     tag: '+9.4% YOY',
-    tagColor: 'text-emerald-400',
+    tagColor: 'text-emerald-400 border-emerald-500/20 bg-emerald-500/10',
     subtitle: 'CLIENT SATISFACTION',
     gradient: 'from-cyan-300 via-sky-400 to-white',
-    lineColor: 'bg-cyan-400 shadow-[0_0_10px_#38bdf8]',
-    outline: false,
+    lineColor: 'bg-cyan-400 shadow-[0_0_12px_#38bdf8]',
   },
   {
     id: '02',
     num: 150,
     suffix: '+',
+    value: '150+',
     tag: 'VOL.MAX',
-    tagColor: 'text-zinc-400',
+    tagColor: 'text-purple-400 border-purple-500/20 bg-purple-500/10',
     subtitle: 'PROJECTS COMPLETED',
-    gradient: 'from-zinc-100 via-zinc-300 to-zinc-500',
-    lineColor: 'bg-zinc-500',
-    outline: true,
+    gradient: 'from-purple-400 via-pink-400 to-cyan-300',
+    lineColor: 'bg-purple-500 shadow-[0_0_12px_#a855f7]',
   },
   {
     id: '03',
     num: 50,
     suffix: '+',
+    value: '50+',
     tag: 'ACTIVE STREAM',
-    tagColor: 'text-purple-400',
+    tagColor: 'text-emerald-400 border-emerald-500/20 bg-emerald-500/10',
     subtitle: 'AUTOMATIONS LIVE',
-    gradient: 'from-purple-400 via-pink-400 to-cyan-400',
-    lineColor: 'bg-purple-500 shadow-[0_0_10px_#a855f7]',
-    outline: false,
+    gradient: 'from-emerald-400 via-teal-300 to-cyan-200',
+    lineColor: 'bg-emerald-400 shadow-[0_0_12px_#34d399]',
   },
   {
     id: '04',
     num: 99.9,
     suffix: '%',
+    value: '99.9%',
     tag: 'BANK-GRADE',
-    tagColor: 'text-sky-400',
+    tagColor: 'text-sky-400 border-sky-500/20 bg-sky-500/10',
     subtitle: 'SYSTEM UPTIME',
-    gradient: 'from-sky-400 via-teal-300 to-white',
-    lineColor: 'bg-sky-400 shadow-[0_0_10px_#38bdf8]',
-    outline: false,
+    gradient: 'from-sky-400 via-cyan-300 to-white',
+    lineColor: 'bg-sky-400 shadow-[0_0_12px_#38bdf8]',
   },
   {
     id: '05',
     isStatic: true,
     value: '24/7',
     tag: 'SECURE_LINK',
-    tagColor: 'text-cyan-400',
+    tagColor: 'text-cyan-400 border-cyan-500/20 bg-cyan-500/10',
     subtitle: 'SUPPORT AVAILABLE',
-    gradient: 'from-indigo-400 via-purple-400 to-cyan-400',
-    lineColor: 'bg-cyan-400 shadow-[0_0_10px_#22d3ee]',
-    outline: false,
+    gradient: 'from-indigo-400 via-purple-400 to-cyan-300',
+    lineColor: 'bg-cyan-400 shadow-[0_0_12px_#22d3ee]',
   },
 ];
 
 export default function Stats({ settings }) {
+  const activeMetrics = defaultMetrics.map((def, idx) => {
+    const adminItem = settings?.stats?.[idx];
+    if (!adminItem) return def;
+
+    const parsed = parseStat(adminItem.value, def.num, def.suffix);
+    return {
+      ...def,
+      value: adminItem.value || def.value,
+      subtitle: adminItem.label || def.subtitle,
+      tag: adminItem.tag || def.tag,
+      isStatic: parsed.isStatic,
+      num: parsed.num,
+      suffix: parsed.suffix
+    };
+  });
+
   return (
-    <section className="bg-[#030712] border-y border-white/10 py-24 select-none relative overflow-hidden text-left font-sans">
-      {/* Subtle Tech Grid Pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:3.5rem_3.5rem] pointer-events-none" />
-      <div className="absolute top-0 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[140px] pointer-events-none" />
+    <section className="bg-zinc-950/90 border-y border-white/10 py-24 select-none relative overflow-hidden text-left font-sans">
+      {/* Background Ambient Glow Gradients */}
+      <div className="absolute top-0 right-1/4 w-[500px] h-[300px] bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-0 left-1/4 w-[500px] h-[300px] bg-purple-500/10 rounded-full blur-[140px] pointer-events-none" />
 
       <div className="container mx-auto max-w-[1340px] px-6 relative z-10">
         
-        {/* Header telemetry matching reference design */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14 pb-8 border-b border-white/10">
-          <div>
-            <div className="flex items-center gap-2 text-xs font-mono text-cyan-400 uppercase tracking-widest mb-3 font-bold">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping inline-block" />
-              <span>// DATA_STREAM_ACTIVE</span>
-            </div>
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-black font-headline text-white tracking-tight leading-none uppercase">
-              KEY PERFORMANCE <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-500 via-zinc-400 to-zinc-600">METRICS</span>
-            </h2>
-          </div>
+        {/* Centered Modern Section Header */}
+        <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+          <Badge className="mb-2 mx-auto inline-flex items-center gap-2 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 font-mono text-xs shadow-[0_0_20px_rgba(34,211,238,0.15)]">
+            <Sparkles size={14} className="text-cyan-400 animate-pulse" /> Proven Track Record
+          </Badge>
+          
+          <h2 className="text-4xl sm:text-5xl font-headline font-extrabold text-white tracking-tight leading-tight">
+            Key Performance <span className="gradient-text">Metrics & Benchmarks</span>
+          </h2>
 
-          <div className="flex flex-col items-start md:items-end text-[11px] font-mono text-zinc-500 space-y-1 font-bold">
-            <span className="text-zinc-400">SYS.OP.0492</span>
-            <span>LAT.45.92.11</span>
-            <span className="text-cyan-400 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" /> SECURE_LINK
-            </span>
-          </div>
+          <p className="text-zinc-400 text-sm sm:text-base font-sans leading-relaxed">
+            Real-world performance telemetry, high system availability, and operational growth across enterprise software deployments.
+          </p>
         </div>
 
-        {/* 5-Card Cyber Telemetry Grid matching Image 1 */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 bg-zinc-950/80 border border-white/10 rounded-3xl overflow-hidden divide-y sm:divide-y-0 sm:divide-x divide-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.5)]">
-          {defaultMetrics.map((st) => (
-            <div key={st.id} className="p-6 sm:p-8 flex flex-col justify-between min-h-[220px] sm:min-h-[260px] hover:bg-white/[0.02] transition-all duration-300 group relative">
-              
-              {/* Card Top Header */}
-              <div className="flex justify-between items-center text-xs font-mono mb-6">
-                <span className="text-zinc-500 font-bold">[ {st.id} ]</span>
-                <span className={`text-[11px] font-bold ${st.tagColor} tracking-wider`}>{st.tag}</span>
+        {/* 5 Glassmorphic Floating Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+          {activeMetrics.map((st, idx) => (
+            <div 
+              key={idx} 
+              className="relative rounded-3xl bg-zinc-900/50 border border-white/10 p-7 flex flex-col justify-between min-h-[240px] overflow-hidden shadow-2xl hover:border-cyanCustom/50 hover:bg-zinc-900/90 hover:-translate-y-2 transition-all duration-300 group cursor-pointer"
+            >
+              {/* Ambient Hover Backlight Glow */}
+              <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 absolute -top-16 -right-16 w-36 h-36 bg-cyanCustom/20 blur-3xl pointer-events-none rounded-full" />
+
+              {/* Card Top Row */}
+              <div className="flex justify-between items-center text-xs font-mono mb-6 relative z-10">
+                <span className="text-zinc-500 font-bold bg-white/[0.04] px-2.5 py-1 rounded-lg border border-white/5">
+                  [ 0{idx + 1} ]
+                </span>
+                <span className={`text-[10px] font-bold font-mono px-2.5 py-0.5 rounded-full border ${st.tagColor} tracking-wider`}>
+                  {st.tag}
+                </span>
               </div>
 
-              {/* Main Number Value */}
-              <div className="my-auto py-2">
+              {/* Main Typography Value */}
+              <div className="my-auto py-1 relative z-10">
                 {st.isStatic ? (
-                  <span className={`text-5xl sm:text-6xl lg:text-5xl xl:text-6xl font-black font-headline tracking-tighter leading-none text-transparent bg-clip-text bg-gradient-to-r ${st.gradient}`}>
+                  <span className={`text-5xl sm:text-6xl lg:text-4xl xl:text-5xl font-black font-headline tracking-tight leading-none text-transparent bg-clip-text bg-gradient-to-br ${st.gradient}`}>
                     {st.value}
                   </span>
-                ) : st.outline ? (
-                  <span 
-                    className="text-5xl sm:text-6xl lg:text-5xl xl:text-6xl font-black font-headline tracking-tighter leading-none"
-                    style={{
-                      WebkitTextStroke: '1.5px rgba(255,255,255,0.7)',
-                      color: 'transparent'
-                    }}
-                  >
-                    <AnimatedCounter target={st.num} suffix={st.suffix} />
-                  </span>
                 ) : (
-                  <span className={`text-5xl sm:text-6xl lg:text-5xl xl:text-6xl font-black font-headline tracking-tighter leading-none text-transparent bg-clip-text bg-gradient-to-r ${st.gradient}`}>
+                  <span className={`text-5xl sm:text-6xl lg:text-4xl xl:text-5xl font-black font-headline tracking-tight leading-none text-transparent bg-clip-text bg-gradient-to-br ${st.gradient}`}>
                     <AnimatedCounter target={st.num} suffix={st.suffix} />
                   </span>
                 )}
               </div>
 
-              {/* Accent Line & Subtitle */}
-              <div className="mt-6 pt-4 border-t border-white/5 space-y-3">
-                <div className={`h-0.5 w-8 rounded-full ${st.lineColor} group-hover:w-16 transition-all duration-500`} />
-                <span className="text-[11px] font-mono font-bold text-zinc-400 uppercase tracking-widest block leading-tight group-hover:text-zinc-200 transition-colors">
+              {/* Bottom Line & Label */}
+              <div className="mt-6 pt-4 border-t border-white/5 space-y-3 relative z-10">
+                <div className={`h-1 w-10 rounded-full ${st.lineColor} group-hover:w-full transition-all duration-500`} />
+                <span className="text-xs font-mono font-bold text-zinc-300 uppercase tracking-wider block leading-snug group-hover:text-white transition-colors">
                   {st.subtitle}
                 </span>
               </div>

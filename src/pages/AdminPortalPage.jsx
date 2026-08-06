@@ -2986,52 +2986,77 @@ ${allEntries.map(entry => `    <url>
 
             {/* Stats & Testimonials Column */}
             <div className="flex flex-col gap-8">
-              {/* Stats Grid Form */}
+              {/* Key Performance Metrics CMS Form */}
               <Card className="p-6 border flex flex-col gap-4">
-                <h3 className="text-sm font-mono text-zinc-400 uppercase tracking-widest border-b border-white/5 pb-3">Performance Ticker Stats</h3>
+                <h3 className="text-sm font-mono text-cyanCustom uppercase tracking-widest border-b border-white/8 pb-3 font-bold flex items-center justify-between">
+                  <span>📊 Key Performance Metrics Board (5 Cards)</span>
+                </h3>
                 <form onSubmit={async (e) => {
                   e.preventDefault();
                   try {
-                    const val = [
-                      { value: e.target.statVal0.value, label: e.target.statLabel0.value },
-                      { value: e.target.statVal1.value, label: e.target.statLabel1.value },
-                      { value: e.target.statVal2.value, label: e.target.statLabel2.value }
-                    ];
+                    const val = [0, 1, 2, 3, 4].map(idx => ({
+                      value: e.target[`statVal${idx}`].value,
+                      label: e.target[`statLabel${idx}`].value,
+                      tag: e.target[`statTag${idx}`].value
+                    }));
                     await settingService.updateSetting('stats', val);
                     setSettings(prev => ({ ...prev, stats: val }));
-                    alert('[SUCCESS] Site statistics updated.');
+                    alert('[SUCCESS] Key Performance Metrics board updated live!');
                   } catch (err) {
                     alert('[ERROR] Update failed: ' + err.message);
                   }
                 }} className="flex flex-col gap-4">
-                  {[0, 1, 2].map(idx => (
-                    <div key={idx} className="grid grid-cols-2 gap-4 border-b border-white/5 pb-3 last:border-b-0 last:pb-0">
-                      <div>
-                        <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-wider mb-1 font-bold">Stat Value #{idx + 1}</label>
-                        <input 
-                          type="text" 
-                          name={`statVal${idx}`}
-                          required
-                          placeholder="e.g. 99% or 150+"
-                          defaultValue={settings?.stats?.[idx]?.value || ''}
-                          className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono"
-                        />
+                  {[0, 1, 2, 3, 4].map(idx => {
+                    const defaultValues = [
+                      { value: '95%', label: 'CLIENT SATISFACTION', tag: '+9.4% YOY' },
+                      { value: '150+', label: 'PROJECTS COMPLETED', tag: 'VOL.MAX' },
+                      { value: '50+', label: 'AUTOMATIONS LIVE', tag: 'ACTIVE STREAM' },
+                      { value: '99.9%', label: 'SYSTEM UPTIME', tag: 'BANK-GRADE' },
+                      { value: '24/7', label: 'SUPPORT AVAILABLE', tag: 'SECURE_LINK' }
+                    ];
+                    const currentVal = settings?.stats?.[idx]?.value || defaultValues[idx]?.value || '';
+                    const currentLabel = settings?.stats?.[idx]?.label || defaultValues[idx]?.label || '';
+                    const currentTag = settings?.stats?.[idx]?.tag || defaultValues[idx]?.tag || '';
+
+                    return (
+                      <div key={idx} className="p-3.5 rounded-xl bg-zinc-950/40 border border-white/8 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                          <label className="block text-[10px] font-mono text-cyanCustom uppercase tracking-wider mb-1 font-bold">Metric Value #{idx + 1}</label>
+                          <input 
+                            type="text" 
+                            name={`statVal${idx}`}
+                            required
+                            placeholder="e.g. 95% or 150+"
+                            defaultValue={currentVal}
+                            className="w-full bg-zinc-900 border border-white/8 rounded-xl px-3.5 py-2 text-zinc-100 text-xs outline-none focus:border-cyanCustom/40 font-mono font-bold"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-mono text-zinc-400 uppercase tracking-wider mb-1 font-bold">Metric Label #{idx + 1}</label>
+                          <input 
+                            type="text" 
+                            name={`statLabel${idx}`}
+                            required
+                            placeholder="e.g. CLIENT SATISFACTION"
+                            defaultValue={currentLabel}
+                            className="w-full bg-zinc-900 border border-white/8 rounded-xl px-3.5 py-2 text-zinc-100 text-xs outline-none focus:border-cyanCustom/40 font-mono"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-mono text-emerald-400 uppercase tracking-wider mb-1 font-bold">Badge Tag #{idx + 1}</label>
+                          <input 
+                            type="text" 
+                            name={`statTag${idx}`}
+                            placeholder="e.g. +9.4% YOY or BANK-GRADE"
+                            defaultValue={currentTag}
+                            className="w-full bg-zinc-900 border border-white/8 rounded-xl px-3.5 py-2 text-zinc-100 text-xs outline-none focus:border-cyanCustom/40 font-mono"
+                          />
+                        </div>
                       </div>
-                      <div>
-                        <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-wider mb-1 font-bold">Stat Label #{idx + 1}</label>
-                        <input 
-                          type="text" 
-                          name={`statLabel${idx}`}
-                          required
-                          placeholder="e.g. Retention Rate"
-                          defaultValue={settings?.stats?.[idx]?.label || ''}
-                          className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono"
-                        />
-                      </div>
-                    </div>
-                  ))}
-                  <Button type="submit" variant="primary" className="py-2.5 mt-2 gap-2 justify-center">
-                    <Save size={14} /> Synchronize Stats Board
+                    );
+                  })}
+                  <Button type="submit" variant="primary" className="py-3 mt-2 gap-2 justify-center font-mono font-bold">
+                    <Save size={14} /> Synchronize 5 Metrics Cards Board
                   </Button>
                 </form>
               </Card>
