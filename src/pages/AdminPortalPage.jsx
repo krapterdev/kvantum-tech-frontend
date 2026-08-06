@@ -726,15 +726,58 @@ ${allEntries.map(entry => `    <url>
             />
           </div>
           <div>
-            <label className="block text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-1.5 font-bold">Estimated Read Time</label>
-            <input 
-              type="text" 
-              required 
-              placeholder="e.g. 5 min read"
-              value={editItem.readTime || ''}
-              onChange={(e) => setEditItem(prev => ({ ...prev, readTime: e.target.value }))}
-              className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono"
-            />
+            <label className="block text-[11px] font-mono text-cyanCustom uppercase tracking-widest mb-1.5 font-bold flex items-center justify-between">
+              <span>⏱️ Relative Time / Read Time</span>
+              <span className="text-zinc-300 font-mono text-[10px] bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20 font-bold">
+                Preview: {editItem.readTime || 'Just now'}
+              </span>
+            </label>
+            <div className="flex gap-2">
+              <input 
+                type="number"
+                min="0"
+                placeholder="Val (e.g. 3)"
+                value={editItem.readTime && editItem.readTime.match(/^(\d+)/) ? editItem.readTime.match(/^(\d+)/)[1] : ''}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  const currentStr = editItem.readTime || '';
+                  const unitMatch = currentStr.match(/([a-z]+)/i);
+                  let unit = unitMatch ? unitMatch[1] : 'd';
+                  if (unit === 'now' || unit === 'Just') unit = 'd';
+                  const formatted = val ? `${val}${unit} ago` : 'Just now';
+                  setEditItem(prev => ({ ...prev, readTime: formatted }));
+                }}
+                className="w-1/3 bg-zinc-950/40 border border-white/8 rounded-xl px-3 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono"
+              />
+              <select
+                value={
+                  !editItem.readTime || editItem.readTime.toLowerCase().includes('just') ? 'now' :
+                  editItem.readTime.includes('m') && !editItem.readTime.includes('mo') ? 'm' :
+                  editItem.readTime.includes('h') ? 'h' :
+                  editItem.readTime.includes('w') ? 'w' :
+                  editItem.readTime.includes('mo') ? 'mo' :
+                  editItem.readTime.includes('y') ? 'y' : 'd'
+                }
+                onChange={(e) => {
+                  const unit = e.target.value;
+                  const currentNum = editItem.readTime && editItem.readTime.match(/^(\d+)/) ? editItem.readTime.match(/^(\d+)/)[1] : '1';
+                  let formatted = 'Just now';
+                  if (unit !== 'now') {
+                    formatted = `${currentNum}${unit} ago`;
+                  }
+                  setEditItem(prev => ({ ...prev, readTime: formatted }));
+                }}
+                className="w-2/3 bg-zinc-950/40 border border-white/8 rounded-xl px-3 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono text-zinc-200"
+              >
+                <option value="now">⚡ Just Now (Start from 0)</option>
+                <option value="m">⏱️ Minutes (m ago)</option>
+                <option value="h">⏳ Hours (h ago)</option>
+                <option value="d">📅 Days (d ago)</option>
+                <option value="w">🗓️ Weeks (w ago)</option>
+                <option value="mo">🗓️ Months (mo ago)</option>
+                <option value="y">🏛️ Years (y ago)</option>
+              </select>
+            </div>
           </div>
           <div>
             <label className="block text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-1.5 font-bold">Publish Date String</label>

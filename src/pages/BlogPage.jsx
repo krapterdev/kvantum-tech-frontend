@@ -531,7 +531,7 @@ export default function BlogPage({ blogs = [] }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
 
-  const displayBlogs = Array.isArray(blogs) && blogs.length > 0 ? blogs : [DEFAULT_SEED_BLOG];
+  const displayBlogs = Array.isArray(blogs) ? blogs : [];
 
   // Single Article Detail View
   if (slug) {
@@ -540,7 +540,7 @@ export default function BlogPage({ blogs = [] }) {
       b.slug === slug || 
       b._id === slug || 
       slugifyTitle(b.title) === slug
-    ) || (slug.includes('why-kvantum') ? DEFAULT_SEED_BLOG : null);
+    ) || null;
 
     return <BlogDetail post={post} allBlogs={displayBlogs} />;
   }

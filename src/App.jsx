@@ -37,7 +37,7 @@ import { fallbackSettings } from '@/data/settings';
 export default function App() {
   const [theme, setTheme] = useState('dark');
   const [services, setServices] = useState(fallbackServices);
-  const [blogs, setBlogs] = useState([DEFAULT_SEED_BLOG]);
+  const [blogs, setBlogs] = useState([]);
   const [seoPages, setSeoPages] = useState([]);
   const [portfolios, setPortfolios] = useState([]);
   const [settings, setSettings] = useState(fallbackSettings);
