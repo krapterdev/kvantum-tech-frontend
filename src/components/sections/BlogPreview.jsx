@@ -26,7 +26,7 @@ export default function BlogPreview({ blogs = [] }) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
         {displayBlogs.map((post) => {
           const blogTarget = `/blog/${post.id || post.slug || post._id}`;
-          const relTime = formatTimeAgo(post.createdAt || post.date);
+          const relTime = formatTimeAgo(post);
           return (
             <Link
               key={post.id || post._id}

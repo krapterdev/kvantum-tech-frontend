@@ -108,8 +108,11 @@ export function parseAndFormatTimeAgo(customInput, fallbackCreatedAt) {
   return customInput || 'Recently';
 }
 
-export function formatTimeAgo(dateString) {
-  return parseAndFormatTimeAgo(dateString);
+export function formatTimeAgo(readTimeOrPost, fallbackDate) {
+  if (readTimeOrPost && typeof readTimeOrPost === 'object') {
+    return parseAndFormatTimeAgo(readTimeOrPost.readTime, readTimeOrPost.createdAt || readTimeOrPost.date);
+  }
+  return parseAndFormatTimeAgo(readTimeOrPost, fallbackDate);
 }
 
 // ─── Blog Article Detail View (Split 2-Column Desktop Layout) ────────────────
@@ -470,7 +473,7 @@ function BlogDetail({ post, allBlogs = [] }) {
               <div className="flex flex-col gap-4 max-h-[500px] overflow-y-auto pr-1">
                 {recentArticles.map((article) => {
                   const articleUrl = `/blog/${article.id || article.slug || article._id}`;
-                  const relTime = formatTimeAgo(article.createdAt || article.date);
+                  const relTime = formatTimeAgo(article);
                   return (
                     <Link
                       key={article.id || article.slug || article._id}
@@ -621,7 +624,7 @@ export default function BlogPage({ blogs = [] }) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {filteredBlogs.map((post) => {
             const blogTarget = `/blog/${post.id || post.slug || post._id}`;
-            const relTime = formatTimeAgo(post.createdAt || post.date);
+            const relTime = formatTimeAgo(post);
             return (
               <Link
                 key={post.id || post.slug || post._id}
