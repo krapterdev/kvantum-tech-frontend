@@ -116,15 +116,15 @@ export default function HomeContact({ settings }) {
             <div className="space-y-4 font-mono text-sm mb-8">
               <div className="flex items-center gap-3 text-slate-700 dark:text-slate-200">
                 <Mail size={18} className="text-sky-500 shrink-0" />
-                <a href={`mailto:${contact.email || 'info@kvantumtechsolutions.com'}`} className="hover:underline">{contact.email || 'info@kvantumtechsolutions.com'}</a>
+                <a href="mailto:info@kvantumtechsolutions.com" className="hover:underline">info@kvantumtechsolutions.com</a>
               </div>
               <div className="flex items-center gap-3 text-slate-700 dark:text-slate-200">
                 <Phone size={18} className="text-pink-500 shrink-0" />
-                <a href={`tel:${(contact.phone || '+91 99998 88877').replace(/\s+/g, '')}`} className="hover:underline font-bold">{contact.phone || '+91 99998 88877'}</a>
+                <span>+91 9811661828 / +91 9811663433</span>
               </div>
               <div className="flex items-start gap-3 text-slate-700 dark:text-slate-200">
                 <MapPin size={18} className="text-purple-500 shrink-0 mt-0.5" />
-                <span className="text-xs text-slate-500 dark:text-slate-400">{contact.address || 'Sector 62, Noida, Uttar Pradesh, India'}</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400">A33, 64, Tahirpur Rd, Priyadarshini Vihar, Dilshad Garden, Delhi, 110095</span>
               </div>
             </div>
           </div>

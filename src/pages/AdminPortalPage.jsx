@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Plus, Edit2, Trash2, Save, X, Globe, Layers, BookOpen, Key, Link2, Eye, 
-  UserCheck, Image, Copy, Check, UploadCloud, LogOut, Lock, Mail, FileText, CheckCircle2, AlertTriangle, Settings, Menu, Activity 
+  UserCheck, Image, Copy, Check, UploadCloud, LogOut, Lock, Mail, FileText, CheckCircle2, AlertTriangle, Settings, Menu, Activity, Share2 
 } from 'lucide-react';
 import Card from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
@@ -1856,6 +1856,21 @@ ${allEntries.map(entry => `    <url>
                   </button>
                 )}
 
+                {/* Social Media CMS tab */}
+                {(currentUser.role === 'admin' || currentUser.role === 'seo') && (
+                  <button
+                    onClick={() => handleTabChange('social_matrix')}
+                    className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-all duration-200 cursor-pointer ${
+                      activeTab === 'social_matrix' 
+                        ? 'bg-pinkCustom/15 text-pinkCustom border-l-2 border-pinkCustom shadow-[0_0_10px_rgba(236,72,153,0.1)]' 
+                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/30'
+                    }`}
+                  >
+                    <Share2 size={16} />
+                    Social Media CMS
+                  </button>
+                )}
+
                 {/* Site Settings CMS tab */}
                 {(currentUser.role === 'admin' || currentUser.role === 'seo') && (
                   <button
@@ -2875,6 +2890,105 @@ ${allEntries.map(entry => `    <url>
         </div>
       )}
 
+      {/* ================================== TAB: DEDICATED SOCIAL MEDIA CMS ================================== */}
+      {activeTab === 'social_matrix' && (
+        <div className="fade-in-up flex flex-col gap-8 text-left">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-zinc-900/60 p-6 rounded-2xl border border-white/8">
+            <div>
+              <h2 className="text-xl font-black font-headline text-zinc-100 uppercase tracking-tight flex items-center gap-2">
+                <Share2 className="text-pinkCustom" size={22} /> Social Media Networks CMS Matrix
+              </h2>
+              <p className="text-xs text-zinc-400 font-mono mt-1">
+                Manage social network profile links and toggle icon visibility (Active/Inactive) across the website (Navbar & Footer).
+              </p>
+            </div>
+          </div>
+
+          <Card className="p-6 border flex flex-col gap-6">
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              try {
+                const val = {
+                  ...settings?.contact,
+                  instagram: e.target.contactInstagram?.value || '',
+                  linkedin: e.target.contactLinkedin?.value || '',
+                  facebook: e.target.contactFacebook?.value || '',
+                  twitter: e.target.contactTwitter?.value || '',
+                  whatsapp: e.target.contactWhatsapp?.value || '',
+                  youtube: e.target.contactYoutube?.value || '',
+                  github: e.target.contactGithub?.value || '',
+                  pinterest: e.target.contactPinterest?.value || '',
+                  telegram: e.target.contactTelegram?.value || '',
+                  reddit: e.target.contactReddit?.value || '',
+                  tiktok: e.target.contactTiktok?.value || ''
+                };
+                await settingService.updateSetting('contact', val);
+                setSettings(prev => ({ ...prev, contact: val }));
+                alert('[SUCCESS] Social Media Links & Network Visibility updated live!');
+              } catch (err) {
+                alert('[ERROR] Update failed: ' + err.message);
+              }
+            }} className="flex flex-col gap-5">
+
+              <div className="flex flex-col gap-4 font-mono text-xs">
+                {[
+                  { key: 'instagram', label: 'Instagram', defaultUrl: 'https://www.instagram.com/kvantumtechsolutions/', activeKey: 'instagramActive' },
+                  { key: 'linkedin', label: 'LinkedIn', defaultUrl: 'https://www.linkedin.com/in/kvantum-tech-solutions-75916a41b', activeKey: 'linkedinActive' },
+                  { key: 'facebook', label: 'Facebook', defaultUrl: 'https://facebook.com/kvantumtechsolutions', activeKey: 'facebookActive' },
+                  { key: 'twitter', label: 'Twitter / X', defaultUrl: 'https://twitter.com/kvantumtech', activeKey: 'twitterActive' },
+                  { key: 'whatsapp', label: 'WhatsApp', defaultUrl: 'https://wa.me/919811661828', activeKey: 'whatsappActive' },
+                  { key: 'youtube', label: 'YouTube', defaultUrl: '', activeKey: 'youtubeActive' },
+                  { key: 'github', label: 'GitHub', defaultUrl: '', activeKey: 'githubActive' },
+                  { key: 'pinterest', label: 'Pinterest', defaultUrl: '', activeKey: 'pinterestActive' },
+                  { key: 'telegram', label: 'Telegram', defaultUrl: '', activeKey: 'telegramActive' },
+                  { key: 'reddit', label: 'Reddit', defaultUrl: '', activeKey: 'redditActive' },
+                  { key: 'tiktok', label: 'TikTok', defaultUrl: '', activeKey: 'tiktokActive' },
+                ].map(soc => {
+                  const isActive = settings?.contact?.[soc.activeKey] !== false && (soc.activeKey.includes('youtube') || soc.activeKey.includes('github') || soc.activeKey.includes('pinterest') || soc.activeKey.includes('telegram') || soc.activeKey.includes('reddit') || soc.activeKey.includes('tiktok') || soc.activeKey.includes('whatsapp') ? settings?.contact?.[soc.activeKey] === true : true);
+
+                  return (
+                    <div key={soc.key} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl bg-zinc-950/60 border border-white/8 hover:border-white/15 transition-all">
+                      <div className="flex items-center gap-3 shrink-0">
+                        <label className="flex items-center gap-2.5 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            defaultChecked={isActive}
+                            onChange={async (e) => {
+                              const val = { ...settings?.contact, [soc.activeKey]: e.target.checked };
+                              await settingService.updateSetting('contact', val);
+                              setSettings(prev => ({ ...prev, contact: val }));
+                            }}
+                            className="accent-pinkCustom w-4 h-4 cursor-pointer"
+                          />
+                          <span className={`font-bold text-sm ${isActive ? 'text-emerald-400' : 'text-zinc-500'}`}>
+                            {soc.label}
+                          </span>
+                        </label>
+                        <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded font-mono ${isActive ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-zinc-800 text-zinc-500 border border-zinc-700'}`}>
+                          {isActive ? 'ACTIVE (SHOW)' : 'INACTIVE (HIDDEN)'}
+                        </span>
+                      </div>
+
+                      <input
+                        type="text"
+                        name={`contact${soc.key.charAt(0).toUpperCase() + soc.key.slice(1)}`}
+                        placeholder={`Paste ${soc.label} URL profile link...`}
+                        defaultValue={settings?.contact?.[soc.key] || (isActive ? soc.defaultUrl : '')}
+                        className="w-full sm:w-2/3 bg-zinc-900 border border-white/8 rounded-xl px-4 py-2 text-zinc-100 text-xs outline-none focus:border-cyanCustom/40 font-mono"
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+
+              <Button type="submit" variant="primary" className="py-3 mt-2 gap-2 justify-center font-mono font-bold text-sm">
+                <Save size={16} /> Synchronize Social Media Matrix
+              </Button>
+            </form>
+          </Card>
+        </div>
+      )}
+
       {/* ================================== TAB: SITE SETTINGS CMS ================================== */}
       {activeTab === 'settings' && (
         <div className="fade-in-up flex flex-col gap-8 text-left">
@@ -3057,123 +3171,6 @@ ${allEntries.map(entry => `    <url>
                   })}
                   <Button type="submit" variant="primary" className="py-3 mt-2 gap-2 justify-center font-mono font-bold">
                     <Save size={14} /> Synchronize 5 Metrics Cards Board
-                  </Button>
-                </form>
-              </Card>
-
-              {/* Contact Information Form */}
-              <Card className="p-6 border flex flex-col gap-4">
-                <h3 className="text-sm font-mono text-zinc-400 uppercase tracking-widest border-b border-white/5 pb-3">Contact & Network Matrix</h3>
-                <form onSubmit={async (e) => {
-                  e.preventDefault();
-                  try {
-                    const val = {
-                      ...settings?.contact,
-                      phone: e.target.contactPhone.value,
-                      email: e.target.contactEmail.value,
-                      address: e.target.contactAddress.value,
-                      instagram: e.target.contactInstagram?.value || '',
-                      linkedin: e.target.contactLinkedin?.value || '',
-                      facebook: e.target.contactFacebook?.value || '',
-                      twitter: e.target.contactTwitter?.value || '',
-                      whatsapp: e.target.contactWhatsapp?.value || '',
-                      youtube: e.target.contactYoutube?.value || '',
-                      github: e.target.contactGithub?.value || '',
-                      pinterest: e.target.contactPinterest?.value || ''
-                    };
-                    await settingService.updateSetting('contact', val);
-                    setSettings(prev => ({ ...prev, contact: val }));
-                    alert('[SUCCESS] Contact details & social matrix synchronized live!');
-                  } catch (err) {
-                    alert('[ERROR] Update failed: ' + err.message);
-                  }
-                }} className="flex flex-col gap-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-wider mb-1 font-bold">Official Hotline Phone</label>
-                      <input 
-                        type="text" 
-                        name="contactPhone"
-                        required
-                        defaultValue={settings?.contact?.phone || ''}
-                        className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-wider mb-1 font-bold">Support Email Inbox</label>
-                      <input 
-                        type="email" 
-                        name="contactEmail"
-                        required
-                        defaultValue={settings?.contact?.email || ''}
-                        className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-wider mb-1 font-bold">Physical Office Address</label>
-                    <input 
-                      type="text" 
-                      name="contactAddress"
-                      required
-                      defaultValue={settings?.contact?.address || ''}
-                      className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono"
-                    />
-                  </div>
-                  <div className="border-t border-white/5 pt-4 mt-2">
-                    <span className="text-[11px] font-mono text-cyanCustom uppercase tracking-wider block mb-3 font-bold">
-                      🌐 Social Media Networks Manager (Icon + Link + Active/Inactive Switch):
-                    </span>
-                    <div className="flex flex-col gap-3 font-mono text-xs">
-                      {[
-                        { key: 'instagram', label: 'Instagram', defaultUrl: 'https://www.instagram.com/kvantumtechsolutions/', activeKey: 'instagramActive' },
-                        { key: 'linkedin', label: 'LinkedIn', defaultUrl: 'https://www.linkedin.com/in/kvantum-tech-solutions-75916a41b', activeKey: 'linkedinActive' },
-                        { key: 'facebook', label: 'Facebook', defaultUrl: 'https://facebook.com/kvantumtechsolutions', activeKey: 'facebookActive' },
-                        { key: 'twitter', label: 'Twitter / X', defaultUrl: 'https://twitter.com/kvantumtech', activeKey: 'twitterActive' },
-                        { key: 'whatsapp', label: 'WhatsApp', defaultUrl: 'https://wa.me/919811661828', activeKey: 'whatsappActive' },
-                        { key: 'youtube', label: 'YouTube', defaultUrl: '', activeKey: 'youtubeActive' },
-                        { key: 'github', label: 'GitHub', defaultUrl: '', activeKey: 'githubActive' },
-                        { key: 'pinterest', label: 'Pinterest', defaultUrl: '', activeKey: 'pinterestActive' },
-                      ].map(soc => {
-                        const isActive = settings?.contact?.[soc.activeKey] !== false && (soc.activeKey.includes('youtube') || soc.activeKey.includes('github') || soc.activeKey.includes('pinterest') || soc.activeKey.includes('whatsapp') ? settings?.contact?.[soc.activeKey] === true : true);
-                        return (
-                          <div key={soc.key} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-xl bg-zinc-950/40 border border-white/5">
-                            <div className="flex items-center gap-3 shrink-0">
-                              <label className="flex items-center gap-2 cursor-pointer">
-                                <input
-                                  type="checkbox"
-                                  defaultChecked={isActive}
-                                  onChange={async (e) => {
-                                    const val = { ...settings?.contact, [soc.activeKey]: e.target.checked };
-                                    await settingService.updateSetting('contact', val);
-                                    setSettings(prev => ({ ...prev, contact: val }));
-                                  }}
-                                  className="accent-pinkCustom w-4 h-4 cursor-pointer"
-                                />
-                                <span className={`font-bold ${isActive ? 'text-emerald-400' : 'text-zinc-500'}`}>
-                                  {soc.label}
-                                </span>
-                              </label>
-                              <span className={`text-[9px] px-2 py-0.5 rounded font-mono ${isActive ? 'bg-emerald-500/20 text-emerald-300' : 'bg-zinc-800 text-zinc-500'}`}>
-                                {isActive ? 'ACTIVE (SHOW)' : 'INACTIVE (HIDDEN)'}
-                              </span>
-                            </div>
-
-                            <input
-                              type="text"
-                              name={`contact${soc.key.charAt(0).toUpperCase() + soc.key.slice(1)}`}
-                              placeholder={`Paste ${soc.label} URL link...`}
-                              defaultValue={settings?.contact?.[soc.key] || (isActive ? soc.defaultUrl : '')}
-                              className="w-full sm:w-2/3 bg-zinc-900/80 border border-white/8 rounded-lg px-3 py-1.5 text-zinc-100 text-xs outline-none focus:border-cyanCustom/40 font-mono"
-                            />
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  <Button type="submit" variant="primary" className="py-2.5 mt-2 gap-2 justify-center">
-                    <Save size={14} /> Synchronize Contact Matrix
                   </Button>
                 </form>
               </Card>

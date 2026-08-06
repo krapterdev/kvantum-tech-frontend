@@ -123,8 +123,8 @@ export default function ContactPage({ settings }) {
                 </div>
                 <div className="overflow-hidden">
                   <span className="text-xs font-mono text-slate-400 block uppercase">Email Support</span>
-                  <a href={`mailto:${contact.email || 'info@kvantumtechsolutions.com'}`} className="text-sm sm:text-base font-bold text-slate-900 dark:text-white hover:text-sky-500 transition-colors break-all">
-                    {contact.email || 'info@kvantumtechsolutions.com'}
+                  <a href="mailto:info@kvantumtechsolutions.com" className="text-sm sm:text-base font-bold text-slate-900 dark:text-white hover:text-sky-500 transition-colors break-all">
+                    info@kvantumtechsolutions.com
                   </a>
                 </div>
               </div>
@@ -136,9 +136,8 @@ export default function ContactPage({ settings }) {
                 <div>
                   <span className="text-xs font-mono text-slate-400 block uppercase">Direct Hotlines</span>
                   <div className="flex flex-col gap-1 text-sm font-bold text-slate-900 dark:text-white mt-1">
-                    <a href={`tel:${(contact.phone || '+91 99998 88877').replace(/\s+/g, '')}`} className="hover:text-pink-500 transition-colors">
-                      {contact.phone || '+91 99998 88877'}
-                    </a>
+                    <a href="tel:+919811661828" className="hover:text-pink-500 transition-colors">+91 9811661828</a>
+                    <a href="tel:+919811663433" className="hover:text-pink-500 transition-colors">+91 9811663433</a>
                   </div>
                 </div>
               </div>
@@ -150,7 +149,7 @@ export default function ContactPage({ settings }) {
                 <div>
                   <span className="text-xs font-mono text-slate-400 block uppercase">Office Address</span>
                   <p className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white leading-relaxed mt-1">
-                    {contact.address || 'Sector 62, Noida, Uttar Pradesh, India'}
+                    Kvantum Tech Solutions, A33, 64, Tahirpur Rd, Priyadarshini Vihar, Taharpur Village, Dilshad Garden, Delhi, 110095
                   </p>
                 </div>
               </div>

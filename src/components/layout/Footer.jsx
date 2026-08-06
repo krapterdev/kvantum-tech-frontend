@@ -186,17 +186,16 @@ export default function Footer({ seoPages = [], theme, settings, services = [], 
             </h5>
             <ul className="flex flex-col gap-2 text-xs">
               <li>
-                <a href={`mailto:${contact.email || 'info@kvantumtechsolutions.com'}`} className="text-slate-600 dark:text-zinc-400 hover:text-pink-500 transition-colors block break-all font-mono">
-                  {contact.email || 'info@kvantumtechsolutions.com'}
+                <a href="mailto:info@kvantumtechsolutions.com" className="text-slate-600 dark:text-zinc-400 hover:text-pink-500 transition-colors block break-all font-mono">
+                  info@kvantumtechsolutions.com
                 </a>
               </li>
               <li className="flex flex-col gap-1 text-slate-600 dark:text-zinc-400 font-mono">
-                <a href={`tel:${(contact.phone || '+91 99998 88877').replace(/\s+/g, '')}`} className="hover:text-pink-500 transition-colors font-bold">
-                  {contact.phone || '+91 99998 88877'}
-                </a>
+                <a href="tel:+919811661828" className="hover:text-pink-500 transition-colors">+91 9811661828</a>
+                <a href="tel:+919811663433" className="hover:text-pink-500 transition-colors">+91 9811663433</a>
               </li>
               <li className="text-[11px] text-slate-500 dark:text-zinc-500 font-mono leading-relaxed mt-1">
-                {contact.address || 'Sector 62, Noida, Uttar Pradesh, India'}
+                Kvantum Tech Solutions, A33, 64, Tahirpur Rd, Priyadarshini Vihar, Taharpur Village, Dilshad Garden, Delhi, 110095
               </li>
             </ul>
           </div>
