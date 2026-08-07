@@ -123,6 +123,29 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
+/* Animated Smooth Flowing Text Gradient */
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient-flow {
+  background: linear-gradient(90deg, #38bdf8 0%, #a855f7 33%, #ec4899 66%, #38bdf8 100%);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientFlow 6s ease infinite;
+}
+
+:root.light-mode .animate-gradient-flow {
+  background: linear-gradient(90deg, #0284c7 0%, #7e22ce 33%, #db2777 66%, #0284c7 100%);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientFlow 6s ease infinite;
+}
+
 /* Keyframes for Marquees */
 @keyframes marqueeLeft {
   0% { transform: translateX(0%); }

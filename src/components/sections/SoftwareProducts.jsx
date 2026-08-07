@@ -57,7 +57,7 @@ export default function SoftwareProducts() {
   const displayedProducts = filteredProducts.slice(0, visibleCount);
 
   return (
-    <section className="bg-zinc-950/40 border-y border-white/8 py-20 select-none">
+    <section className="bg-slate-50 dark:bg-zinc-950/40 border-y border-slate-200 dark:border-white/8 py-20 select-none">
       <div className="container mx-auto max-w-[1280px] px-6">
 
         {/* Header */}
@@ -65,10 +65,10 @@ export default function SoftwareProducts() {
           <Badge className="mb-5 mx-auto inline-flex items-center gap-1.5 bg-pinkCustom/10 border-pinkCustom/20 text-pinkCustom">
             <Sparkles size={14} /> Software Solutions
           </Badge>
-          <h2 className="text-3xl sm:text-4xl font-headline font-bold text-zinc-100 leading-tight mb-4">
+          <h2 className="text-3xl sm:text-4xl font-headline font-bold text-slate-900 dark:text-zinc-100 leading-tight mb-4">
             One Technology Partner. Multiple Business Solutions.
           </h2>
-          <p className="text-zinc-400 max-w-3xl mx-auto text-sm sm:text-base leading-relaxed">
+          <p className="text-slate-600 dark:text-zinc-400 max-w-3xl mx-auto text-sm sm:text-base leading-relaxed">
             Your business may need more than a single application. We build connected software solutions that bring customers, employees, operations, and data together.
           </p>
         </div>
@@ -85,7 +85,7 @@ export default function SoftwareProducts() {
               className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold font-headline transition-all duration-300 cursor-pointer ${
                 activeCategory === category
                   ? 'bg-pinkCustom text-white shadow-[0_0_20px_rgba(236,72,153,0.35)] scale-[1.02]'
-                  : 'bg-white/[0.03] text-zinc-400 border border-white/8 hover:border-white/20 hover:text-zinc-200'
+                  : 'bg-white dark:bg-white/[0.03] text-slate-600 dark:text-zinc-400 border border-slate-200 dark:border-white/8 hover:border-slate-300 dark:hover:border-white/20 hover:text-slate-900 dark:hover:text-zinc-200'
               }`}
             >
               {category}
@@ -100,18 +100,18 @@ export default function SoftwareProducts() {
             return (
               <div
                 key={idx}
-                className="flex flex-col justify-between gap-3 p-5 rounded-2xl bg-zinc-900/40 border border-white/8 hover:border-pinkCustom/40 hover:bg-pinkCustom/[0.04] hover:-translate-y-1.5 transition-all duration-300 cursor-pointer text-left group shadow-sm hover:shadow-[0_15px_30px_rgba(236,72,153,0.12)]"
+                className="flex flex-col justify-between gap-3 p-5 rounded-2xl bg-white dark:bg-zinc-900/40 border border-slate-200 dark:border-white/8 hover:border-pinkCustom/40 hover:bg-pinkCustom/[0.04] hover:-translate-y-1.5 transition-all duration-300 cursor-pointer text-left group shadow-sm dark:shadow-md hover:shadow-[0_15px_30px_rgba(236,72,153,0.12)]"
               >
                 <div>
-                  <div className="w-10 h-10 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center shrink-0 group-hover:border-pinkCustom/40 group-hover:bg-pinkCustom/10 transition-all duration-300 mb-3">
+                  <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-white/10 flex items-center justify-center shrink-0 group-hover:border-pinkCustom/40 group-hover:bg-pinkCustom/10 transition-all duration-300 mb-3">
                     <Icon size={18} className="text-pinkCustom group-hover:scale-110 transition-transform" />
                   </div>
-                  <h4 className="text-zinc-100 text-xs font-bold font-headline mb-1.5 leading-snug group-hover:text-pinkCustom transition-colors">
+                  <h4 className="text-slate-900 dark:text-zinc-100 text-xs font-bold font-headline mb-1.5 leading-snug group-hover:text-pinkCustom transition-colors">
                     {product.name}
                   </h4>
-                  <p className="text-zinc-400 text-[11px] leading-relaxed">{product.desc}</p>
+                  <p className="text-slate-600 dark:text-zinc-400 text-[11px] leading-relaxed">{product.desc}</p>
                 </div>
-                <div className="text-[10px] font-mono text-zinc-500 group-hover:text-zinc-300 flex items-center gap-1 pt-2 border-t border-white/5 transition-colors">
+                <div className="text-[10px] font-mono text-slate-500 dark:text-zinc-500 group-hover:text-slate-900 dark:group-hover:text-zinc-300 flex items-center gap-1 pt-2 border-t border-slate-100 dark:border-white/5 transition-colors">
                   <span>Explore Module</span> <ArrowRight size={10} className="group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>

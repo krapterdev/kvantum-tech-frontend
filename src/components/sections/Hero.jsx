@@ -134,9 +134,10 @@ export default function Hero({ settings }) {
           <Sparkles size={14} className="animate-pulse" /> Custom Software & Business Automation Solutions
         </Badge>
 
-        {/* Exact Specified H1 */}
-        <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black font-headline tracking-tight text-slate-900 dark:text-white leading-[1.1] mb-6 max-w-5xl mx-auto">
-          Custom Software Development Company for Growing Businesses
+        {/* Exact Specified H1 with Animated Flowing Brand Gradient */}
+        <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black font-headline tracking-tight leading-[1.1] mb-6 max-w-5xl mx-auto">
+          <span className="animate-gradient-flow">Custom Software Development Company</span>{' '}
+          <span className="text-slate-900 dark:text-white">for Growing Businesses</span>
         </h1>
 
         {/* Sub-Tagline */}

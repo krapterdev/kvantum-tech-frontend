@@ -5,9 +5,9 @@ import Badge from '../ui/Badge';
 
 export default function CTA() {
   return (
-    <section className="relative py-28 px-6 select-none text-center overflow-hidden bg-gradient-to-br from-pinkCustom/20 via-purpleCustom/20 to-cyanCustom/20 border-y border-white/15">
+    <section className="relative py-28 px-6 select-none text-center overflow-hidden bg-slate-900 dark:bg-zinc-950 border-y border-slate-800 dark:border-white/15 text-white">
       {/* Background Glow Halo */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[350px] bg-gradient-to-r from-pinkCustom/30 via-purpleCustom/30 to-cyanCustom/30 blur-3xl pointer-events-none rounded-full" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[350px] bg-gradient-to-r from-pinkCustom/20 via-purpleCustom/20 to-cyanCustom/20 blur-3xl pointer-events-none rounded-full" />
 
       <div className="relative z-10 container mx-auto max-w-[1100px] flex flex-col items-center gap-8">
         
@@ -19,7 +19,7 @@ export default function CTA() {
           Have a Software Idea or a Process That Needs Automation?
         </h2>
 
-        <p className="text-zinc-200 text-sm sm:text-base leading-relaxed max-w-3xl">
+        <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-3xl">
           Whether you're planning a new digital product, replacing manual processes, modernizing existing software, or connecting disconnected systems, we're ready to understand the challenge and help you find the right development approach.
         </p>
 
@@ -31,7 +31,7 @@ export default function CTA() {
         <div className="flex flex-col sm:flex-row items-center gap-4 mt-2">
           <Link
             to="/contact"
-            className="px-9 py-4 rounded-xl text-sm font-bold bg-white text-zinc-950 hover:bg-zinc-100 transition-all duration-200 shadow-[0_0_30px_rgba(255,255,255,0.4)] hover:scale-[1.03] cursor-pointer flex items-center gap-2"
+            className="px-9 py-4 rounded-xl text-sm font-bold bg-sky-500 hover:bg-sky-600 text-white transition-all duration-200 shadow-[0_0_30px_rgba(56,189,248,0.4)] hover:scale-[1.03] cursor-pointer flex items-center gap-2"
           >
             Discuss Your Project <ArrowRight size={16} />
           </Link>
@@ -44,7 +44,7 @@ export default function CTA() {
         </div>
 
         {/* Direct Contact Numbers */}
-        <div className="text-zinc-400 text-xs sm:text-sm font-mono flex flex-wrap justify-center gap-4 mt-4">
+        <div className="text-slate-400 text-xs sm:text-sm font-mono flex flex-wrap justify-center gap-4 mt-4">
           <span>Or call directly:</span>
           <a href="tel:+919811661828" className="hover:text-white transition-colors">+91 9811661828</a>
           <span>•</span>

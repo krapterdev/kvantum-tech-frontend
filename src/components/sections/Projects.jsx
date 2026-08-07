@@ -33,10 +33,10 @@ export default function Projects() {
           <Badge className="mb-5 bg-cyanCustom/10 border-cyanCustom/20 text-cyanCustom">
             Portfolio & Case Studies
           </Badge>
-          <h2 className="text-3xl sm:text-4xl font-headline font-bold text-zinc-100 leading-tight mb-5">
+          <h2 className="text-3xl sm:text-4xl font-headline font-bold text-slate-900 dark:text-zinc-100 leading-tight mb-5">
             Software Built to Solve Real Business Challenges
           </h2>
-          <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-6">
+          <p className="text-slate-600 dark:text-zinc-400 text-sm sm:text-base leading-relaxed mb-6">
             Explore how we turn operational challenges and product ideas into practical digital solutions. Our work spans custom business software, CRM systems, HR platforms, automation workflows, web applications, and mobile products.
           </p>
           <button
@@ -49,17 +49,17 @@ export default function Projects() {
 
         {/* Right: Expertise Grid */}
         <div>
-          <h3 className="text-zinc-300 text-sm font-mono uppercase tracking-widest mb-6 border-b border-white/5 pb-3">
+          <h3 className="text-slate-700 dark:text-zinc-300 text-sm font-mono uppercase tracking-widest mb-6 border-b border-slate-200 dark:border-white/8 pb-3">
             Our Expertise Includes
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {expertiseAreas.map((area, idx) => (
               <div
                 key={idx}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/[0.02] border border-white/8 hover:border-cyanCustom/30 hover:bg-cyanCustom/5 transition-all duration-200 group"
+                className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white dark:bg-white/[0.02] border border-slate-200 dark:border-white/8 hover:border-cyanCustom/40 hover:bg-cyanCustom/5 transition-all duration-200 group shadow-sm dark:shadow-none"
               >
                 <CheckCircle2 size={14} className="text-cyanCustom shrink-0" />
-                <span className="text-zinc-300 text-xs sm:text-sm group-hover:text-zinc-100 transition-colors">{area}</span>
+                <span className="text-slate-800 dark:text-zinc-300 text-xs sm:text-sm group-hover:text-slate-900 dark:group-hover:text-zinc-100 transition-colors">{area}</span>
               </div>
             ))}
           </div>
