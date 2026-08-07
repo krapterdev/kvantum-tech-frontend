@@ -135,9 +135,9 @@ export default function App() {
 
   // Dynamic Browser SEO Metadata Injection & Custom Scripts
   useEffect(() => {
-    let title = 'IT Solutions Company in Delhi NCR | Kvantum Tech Solutions';
-    let description = 'Kvantum Tech Solutions offers reliable IT services, software development, cloud solutions, web development, and digital transformation services across Delhi NCR.';
-    let keywords = 'it solutions, web dev, app development';
+    let title = 'Custom Software Development Company | Kvantum Tech Solutions';
+    let description = 'Kvantum Tech Solutions is a custom software development company building scalable business software, CRM, HRMS, ERP, web and mobile apps, and automation solutions.';
+    let keywords = 'custom software development company, software development company, custom software development services, business software development company';
     
     const path = location.pathname;
     const siteUrl = 'https://kvantumtechsolutions.com';

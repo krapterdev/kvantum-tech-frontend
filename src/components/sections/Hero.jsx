@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Sparkles, Play, CheckCircle2 } from 'lucide-react';
 import Badge from '../ui/Badge';
 
@@ -116,6 +117,8 @@ export default function Hero({ settings }) {
     };
   }, []);
 
+  const navigate = useNavigate();
+
   return (
     <section className="relative min-h-[85vh] flex flex-col justify-center items-center text-center select-none overflow-hidden pt-28 pb-16 px-6">
       {/* Background Mesh Canvas */}
@@ -128,26 +131,31 @@ export default function Hero({ settings }) {
 
         {/* Top Badge */}
         <Badge className="mb-6 mx-auto inline-flex items-center gap-2 bg-sky-500/10 border-sky-500/20 text-sky-600 dark:text-sky-400 font-mono text-xs">
-          <Sparkles size={14} className="animate-pulse" /> Software & Automation Built For Modern Businesses
+          <Sparkles size={14} className="animate-pulse" /> Custom Software & Business Automation Solutions
         </Badge>
 
-        {/* Minimal High-Contrast Dynamic Headline */}
-        <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black font-headline tracking-tight text-slate-900 dark:text-white uppercase leading-[0.98] mb-6">
-          <span className="gradient-text transition-all duration-500">
-            {rotatingWords[wordIndex] || primaryTitle}
-          </span>{' '}
-          <br className="hidden sm:inline" />
-          <span className="text-slate-900 dark:text-white">SCALE. </span>
-          <span className="text-slate-500 dark:text-slate-400">TRANSFORM.</span>
+        {/* Exact Specified H1 */}
+        <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black font-headline tracking-tight text-slate-900 dark:text-white leading-[1.1] mb-6 max-w-5xl mx-auto">
+          Custom Software Development Company for Growing Businesses
         </h1>
 
-        {/* Clean Subtitle */}
-        <p className="text-slate-600 dark:text-slate-300 max-w-3xl mx-auto text-base sm:text-lg leading-relaxed mb-10 font-sans font-normal">
-          {subtitle}
+        {/* Sub-Tagline */}
+        <p className="text-sky-500 dark:text-cyanCustom font-semibold text-lg sm:text-xl mb-4 font-headline">
+          Build software around your business—not your business around software.
         </p>
 
+        {/* Clean Body Copy */}
+        <div className="text-slate-600 dark:text-zinc-300 max-w-3xl mx-auto text-base sm:text-lg leading-relaxed mb-10 font-sans space-y-3">
+          <p>
+            Kvantum Tech Solutions designs and develops <strong>custom software, web applications, mobile apps, and business automation solutions</strong> that help growing businesses simplify operations, connect teams, improve customer experiences, and scale with confidence.
+          </p>
+          <p className="text-sm sm:text-base text-slate-500 dark:text-zinc-400">
+            From CRM and HRMS to ERP, workflow automation, and custom business applications, we turn complex requirements into secure, scalable, and easy-to-use digital solutions built around the way your business works.
+          </p>
+        </div>
+
         {/* CTAs */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
           <button
             onClick={() => {
               const el = document.getElementById('contact') || document.getElementById('contact-form');
@@ -156,38 +164,19 @@ export default function Hero({ settings }) {
             }}
             className="w-full sm:w-auto px-8 py-3.5 rounded-xl text-xs sm:text-sm font-bold bg-sky-500 hover:bg-sky-600 text-white transition-all duration-200 shadow-md hover:shadow-sky-500/20 hover:scale-[1.02] cursor-pointer flex items-center justify-center gap-2"
           >
-            {ctaText} <ArrowRight size={15} />
+            Discuss Your Project <ArrowRight size={15} />
           </button>
           <button
-            onClick={() => {
-              const el = document.getElementById('contact') || document.getElementById('contact-form');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
-              else navigate('/contact');
-            }}
+            onClick={() => navigate('/services')}
             className="w-full sm:w-auto px-7 py-3.5 rounded-xl text-xs sm:text-sm font-bold bg-slate-200 dark:bg-white/10 hover:bg-slate-300 dark:hover:bg-white/15 text-slate-900 dark:text-white border border-slate-300 dark:border-white/15 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2"
           >
-            <Play size={14} fill="currentColor" /> Book Free Demo
+            Explore Our Services <ArrowRight size={14} />
           </button>
         </div>
 
-        {/* 4 Trust Checkpoints */}
-        <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-mono">
-          <div className="flex items-center gap-2">
-            <CheckCircle2 size={15} className="text-sky-500" />
-            <span>Custom CRM Systems</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CheckCircle2 size={15} className="text-purple-500" />
-            <span>Business Process Automation</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CheckCircle2 size={15} className="text-pink-500" />
-            <span>HRMS & ERP Solutions</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CheckCircle2 size={15} className="text-emerald-500" />
-            <span>WhatsApp Business API</span>
-          </div>
+        {/* Small Trust Line */}
+        <div className="text-xs sm:text-sm text-slate-600 dark:text-zinc-400 font-mono tracking-wide border-t border-slate-200 dark:border-white/10 pt-6 max-w-4xl mx-auto">
+          <strong className="text-slate-800 dark:text-zinc-200">Custom Software</strong> • CRM • HRMS • ERP • Business Automation • Web Apps • Mobile Apps
         </div>
 
       </div>

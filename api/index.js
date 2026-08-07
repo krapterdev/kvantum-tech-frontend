@@ -15,9 +15,9 @@ export default async function handler(req, res) {
     const siteUrl = 'https://kvantumtechsolutions.com';
     const canonicalUrl = `${siteUrl}${pathname === '/' ? '/' : pathname}`;
 
-    let title = "IT Solutions Company in Delhi NCR | Kvantum Tech Solutions";
-    let description = "Kvantum Tech Solutions offers reliable IT services, software development, cloud solutions, web development, and digital transformation services across Delhi NCR.";
-    let keywords = "it solutions, web dev, app development";
+    let title = "Custom Software Development Company | Kvantum Tech Solutions";
+    let description = "Kvantum Tech Solutions is a custom software development company building scalable business software, CRM, HRMS, ERP, web and mobile apps, and automation solutions.";
+    let keywords = "custom software development company, software development company, custom software development services, business software development company";
     let ogImage = `${siteUrl}/assets/og-image.jpg`;
 
     // Dynamic API fetch helper

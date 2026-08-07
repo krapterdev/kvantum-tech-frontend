@@ -104,13 +104,12 @@ export default function HomeContact({ settings }) {
               <Sparkles size={14} /> Get In Touch
             </Badge>
 
-            <h2 className="text-4xl sm:text-5xl font-black font-headline text-slate-900 dark:text-white uppercase leading-tight mb-6">
-              LET'S BUILD <br />
-              <span className="gradient-text">SOMETHING POWERFUL.</span>
+            <h2 className="text-3xl sm:text-4xl font-headline font-bold text-slate-900 dark:text-white leading-tight mb-4">
+              Let's Build Something That Moves Your Business Forward
             </h2>
 
-            <p className="text-slate-600 dark:text-slate-300 text-base leading-relaxed mb-8">
-              Have a process that should be automated? Want custom software built for your business? Talk directly to our technical engineering lead.
+            <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed mb-8">
+              Tell us what you want to build, improve, or automate. Speak directly to our technical engineering team.
             </p>
 
             <div className="space-y-4 font-mono text-sm mb-8">
@@ -271,9 +270,9 @@ export default function HomeContact({ settings }) {
             <button
               type="submit"
               disabled={status.loading}
-              className="w-full py-4 rounded-xl text-sm font-bold bg-pink-500 text-white hover:bg-pink-600 transition-colors shadow-md flex items-center justify-center gap-2 cursor-pointer mt-2 font-mono uppercase tracking-wider"
+              className="w-full py-4 rounded-xl text-sm font-bold bg-sky-500 hover:bg-sky-600 text-white transition-colors shadow-md flex items-center justify-center gap-2 cursor-pointer mt-2 font-mono uppercase tracking-wider"
             >
-              {status.loading ? 'Sending Request...' : 'SEND REQUEST →'}
+              {status.loading ? 'Sending Request...' : 'Discuss My Project →'}
             </button>
           </form>
         </div>

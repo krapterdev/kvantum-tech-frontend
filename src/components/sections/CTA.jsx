@@ -15,14 +15,16 @@ export default function CTA() {
           <Sparkles size={13} /> Free Technical Consultation — No Commitment Required
         </Badge>
 
-        <h2 className="text-4xl sm:text-6xl md:text-7xl font-black font-headline text-white uppercase tracking-tight leading-[1.05] max-w-4xl">
-          HAVE A PROCESS THAT <br />
-          SHOULD BE <span className="gradient-text">AUTOMATED?</span> <br />
-          LET'S BUILD IT.
+        <h2 className="text-3xl sm:text-5xl font-black font-headline text-white tracking-tight leading-tight max-w-4xl">
+          Have a Software Idea or a Process That Needs Automation?
         </h2>
 
-        <p className="text-zinc-200 text-sm sm:text-base leading-relaxed max-w-2xl">
-          Whether you need Custom Software, CRM, HRMS, ERP, Business Automation, or WhatsApp Integration, our team is ready to turn your operational bottlenecks into automated digital advantages.
+        <p className="text-zinc-200 text-sm sm:text-base leading-relaxed max-w-3xl">
+          Whether you're planning a new digital product, replacing manual processes, modernizing existing software, or connecting disconnected systems, we're ready to understand the challenge and help you find the right development approach.
+        </p>
+
+        <p className="text-sky-400 font-semibold text-sm font-mono">
+          Tell us what you want to build, improve, or automate.
         </p>
 
         {/* Dual CTAs */}
@@ -31,13 +33,13 @@ export default function CTA() {
             to="/contact"
             className="px-9 py-4 rounded-xl text-sm font-bold bg-white text-zinc-950 hover:bg-zinc-100 transition-all duration-200 shadow-[0_0_30px_rgba(255,255,255,0.4)] hover:scale-[1.03] cursor-pointer flex items-center gap-2"
           >
-            BOOK FREE CONSULTATION <ArrowRight size={16} />
+            Discuss Your Project <ArrowRight size={16} />
           </Link>
           <Link
             to="/contact"
             className="px-8 py-4 rounded-xl text-sm font-bold border-2 border-white/40 text-white hover:bg-white/10 transition-all duration-200 cursor-pointer"
           >
-            Request Live Demo
+            Request a Demo
           </Link>
         </div>
 

@@ -136,24 +136,20 @@ export default function Stats({ settings }) {
       <div className="absolute top-0 right-1/4 w-[500px] h-[300px] bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-0 left-1/4 w-[500px] h-[300px] bg-purple-500/10 rounded-full blur-[140px] pointer-events-none" />
 
-      <div className="container mx-auto max-w-[1340px] px-6 relative z-10">
-        
-        {/* Centered Modern Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-          <Badge className="mb-2 mx-auto inline-flex items-center gap-2 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 font-mono text-xs shadow-[0_0_20px_rgba(34,211,238,0.15)]">
-            <Sparkles size={14} className="text-cyan-400 animate-pulse" /> Proven Track Record
-          </Badge>
-          
-          <h2 className="text-4xl sm:text-5xl font-headline font-extrabold text-white tracking-tight leading-tight">
-            Key Performance <span className="gradient-text">Metrics & Benchmarks</span>
-          </h2>
-
-          <p className="text-zinc-400 text-sm sm:text-base font-sans leading-relaxed">
-            Real-world performance telemetry, high system availability, and operational growth across enterprise software deployments.
-          </p>
-        </div>
+      <div className="container mx-auto max-w-[1280px] px-6 mb-16 text-center">
+        <Badge className="mb-4 mx-auto inline-flex items-center gap-1.5 bg-sky-500/10 border-sky-500/20 text-sky-600 dark:text-sky-400">
+          <Award size={14} /> Proven Track Record
+        </Badge>
+        <h2 className="text-3xl sm:text-4xl font-headline font-bold text-slate-900 dark:text-white leading-tight mb-4">
+          Built for Business. Backed by Results.
+        </h2>
+        <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
+          Measurable achievements in software engineering, process automation, and system reliability for growing enterprise teams.
+        </p>
+      </div>
 
         {/* 5 Glassmorphic Floating Cards Grid */}
+        <div className="container mx-auto max-w-[1340px] px-6 relative z-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
           {activeMetrics.map((st, idx) => (
             <div 

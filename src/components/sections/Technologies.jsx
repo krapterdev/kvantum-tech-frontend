@@ -27,13 +27,15 @@ export default function Technologies() {
       {/* Header */}
       <div className="container mx-auto max-w-[1280px] px-6 mb-12">
         <Badge className="mb-4 mx-auto inline-flex items-center gap-1.5 bg-sky-500/10 border-sky-500/20 text-sky-600 dark:text-sky-400">
-          <Cpu size={14} /> Modern Tech Stack & Architecture
+          <Cpu size={14} /> Technology Stack
         </Badge>
 
         <h2 className="text-3xl sm:text-4xl font-headline font-bold text-slate-900 dark:text-white leading-tight mb-4">
-          Enterprise Frameworks & <br />
-          <span className="gradient-text">Cloud Infrastructure We Master</span>
+          Technology Selected for Performance, Security & Scale
         </h2>
+        <p className="text-slate-600 dark:text-slate-400 max-w-3xl mx-auto text-sm sm:text-base leading-relaxed">
+          We choose technology based on what your product needs—not simply what's trending. Our development stack supports modern web applications, mobile products, business platforms, APIs, databases, cloud infrastructure, and automation.
+        </p>
       </div>
 
       {/* Row 1 Marquee */}

@@ -28,30 +28,27 @@ export default function About({ settings }) {
               About Kvantum Tech Solutions
             </Badge>
 
-            <h2 className="text-3xl sm:text-4xl font-headline font-bold text-zinc-100 mb-6 leading-tight">
-              Empowering Businesses Through <br />
-              <span className="gradient-text">Custom Software & Intelligent Automation</span>
+            <h2 className="text-3xl sm:text-4xl font-headline font-bold text-zinc-100 mb-4 leading-tight">
+              Software Built Around Your Business
             </h2>
 
+            <p className="text-sky-500 dark:text-cyanCustom font-semibold text-base sm:text-lg mb-4">
+              Every business operates differently. Your software should too.
+            </p>
+
             <div className="text-zinc-400 text-sm sm:text-base leading-relaxed flex flex-col gap-4 mb-6">
-              {about.description ? (
-                <p className="whitespace-pre-wrap">{about.description}</p>
-              ) : (
-                <>
-                  <p>
-                    Kvantum Tech Solutions is a custom software development company dedicated to helping businesses streamline operations, reduce manual workload, and grow faster through intelligent digital solutions.
-                  </p>
-                  <p>
-                    We specialize in building tailored software systems — from CRM and HRMS platforms to ERP solutions, business automation tools, WhatsApp automation, and scalable web and mobile applications — all designed to match your exact business processes.
-                  </p>
-                  <p>
-                    Our team of experienced developers, UI/UX designers, and automation experts work closely with your organization to understand your workflows and deliver software that genuinely solves your business challenges.
-                  </p>
-                  <p>
-                    We believe technology should simplify your work — not complicate it. That's why every solution we build is practical, scalable, and built specifically for your business needs.
-                  </p>
-                </>
-              )}
+              <p>
+                Kvantum Tech Solutions is a <strong>custom software development company</strong> focused on building technology that solves real operational challenges. Instead of forcing businesses to adapt to rigid, off-the-shelf tools, we develop solutions around your workflows, users, processes, and long-term goals.
+              </p>
+              <p>
+                Our <strong>custom software development services</strong> cover everything from internal business systems and customer portals to CRM, HRMS, ERP, web applications, mobile apps, and workflow automation.
+              </p>
+              <p>
+                Whether you're replacing spreadsheets, connecting disconnected systems, automating repetitive work, or turning a new software idea into a scalable product, our team works with you from planning and architecture through development, deployment, and ongoing improvement.
+              </p>
+              <p className="text-zinc-300 font-medium">
+                The result is not just another application. It's software designed to make your business simpler to manage and easier to scale.
+              </p>
             </div>
 
             {/* Service Highlights */}
@@ -66,9 +63,9 @@ export default function About({ settings }) {
 
             <button
               onClick={() => navigate('/about')}
-              className="group text-sm font-bold text-pinkCustom hover:text-pink-400 flex items-center gap-1.5 cursor-pointer transition-colors duration-200"
+              className="group text-sm font-bold text-cyanCustom hover:text-cyan-400 flex items-center gap-1.5 cursor-pointer transition-colors duration-200"
             >
-              More About Us <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
+              About Kvantum Tech Solutions <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
 

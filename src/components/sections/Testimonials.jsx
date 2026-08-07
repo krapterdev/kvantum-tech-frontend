@@ -36,8 +36,7 @@ export default function Testimonials({ settings }) {
           Client Feedback
         </Badge>
         <h2 className="text-3xl sm:text-4xl font-headline font-bold text-slate-900 dark:text-white leading-tight mb-4">
-          Trusted by Industry Leaders <br />
-          <span className="gradient-text">What Our Clients Say About Kvantum</span>
+          What Our Clients Say About Working With Us
         </h2>
       </div>
 

@@ -1,55 +1,80 @@
 import React from 'react';
-import { Code, Database, Cpu, MessageSquare, Smartphone, Zap, ArrowRight, Shield } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Code, Database, Cpu, MessageSquare, Smartphone, Zap, ArrowRight, Shield, Layers, Globe } from 'lucide-react';
 import Badge from '../ui/Badge';
 
 const serviceCards = [
   {
     num: '01',
-    title: 'BUSINESS AUTOMATION',
-    desc: 'Eliminate repetitive manual tasks. We build automated lead assignment, email follow-ups, quotation generation, and cross-platform data syncing.',
-    highlights: ['Workflow Automation', 'Lead Qualification', 'Document & Invoice Triggers'],
-    icon: Cpu,
+    title: 'Custom Software Development',
+    desc: 'Build purpose-driven software tailored to your processes, users, and business goals. From internal management platforms to complex enterprise applications, we develop secure and scalable solutions from the ground up.',
+    link: '/services/custom-software-development',
+    ctaText: 'Explore Custom Software Development →',
+    icon: Code,
     color: 'text-sky-500 bg-sky-500/10 border-sky-500/20',
   },
   {
     num: '02',
-    title: 'CUSTOM SOFTWARE DEV',
-    desc: 'Bespoke web and enterprise software built from the ground up for your specific business requirements. Zero template bloat, 100% source code ownership.',
-    highlights: ['100% Source Code Ownership', 'Scalable Architecture', 'Zero Recurring License Fees'],
-    icon: Code,
+    title: 'CRM Software Development',
+    desc: 'Turn leads and customer interactions into structured sales processes with custom CRM software for lead management, follow-ups, pipelines, quotations, communication, reporting, and team performance.',
+    link: '/services/crm-software-development',
+    ctaText: 'Explore CRM Development →',
+    icon: Database,
     color: 'text-pink-500 bg-pink-500/10 border-pink-500/20',
   },
   {
     num: '03',
-    title: 'CRM SOFTWARE SYSTEMS',
-    desc: 'Manage lead pipelines, team performance, client communications, and automated sales follow-ups from an intuitive single dashboard.',
-    highlights: ['Lead Funnel Tracking', 'Sales Rep Scoring', 'WhatsApp & Call Sync'],
-    icon: Database,
+    title: 'HRMS Software Development',
+    desc: 'Simplify workforce management with custom HRMS solutions for employee records, attendance, leave, payroll, onboarding, recruitment, performance, and HR reporting.',
+    link: '/services/hrms-software-development',
+    ctaText: 'Explore HRMS Development →',
+    icon: Shield,
     color: 'text-purple-500 bg-purple-500/10 border-purple-500/20',
   },
   {
     num: '04',
-    title: 'HRMS & PAYROLL SOFTWARE',
-    desc: 'Streamline employee onboarding, biometric attendance, leave approvals, automated salary slip generation, and compliance reporting.',
-    highlights: ['Biometric Attendance Sync', 'Automated Payroll Engine', 'Leave & Asset Management'],
-    icon: Shield,
+    title: 'ERP Software Development',
+    desc: 'Connect departments, data, and operations through custom ERP software designed around your finance, inventory, procurement, sales, HR, and operational workflows.',
+    link: '/services/erp-software-development',
+    ctaText: 'Explore ERP Development →',
+    icon: Layers,
     color: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20',
   },
   {
     num: '05',
-    title: 'WHATSAPP BUSINESS API',
-    desc: 'Engage leads in under 5 seconds with automated WhatsApp bots, PDF proposal dispatch, appointment scheduling, and order status updates.',
-    highlights: ['Interactive 24/7 Chatbots', 'Instant PDF Proposals', 'Broadcast Campaigns'],
+    title: 'Business Automation',
+    desc: 'Replace repetitive manual work with connected workflows. Automate lead routing, approvals, notifications, reporting, tasks, documents, customer communication, and everyday business processes.',
+    link: '/services/business-automation',
+    ctaText: 'Explore Business Automation →',
+    icon: Cpu,
+    color: 'text-cyanCustom bg-cyanCustom/10 border-cyanCustom/20',
+  },
+  {
+    num: '06',
+    title: 'WhatsApp Automation',
+    desc: 'Integrate WhatsApp into your business workflows for automated notifications, customer updates, reminders, lead communication, support, and API-driven messaging.',
+    link: '/services/whatsapp-automation',
+    ctaText: 'Explore WhatsApp Automation →',
     icon: MessageSquare,
     color: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20',
   },
   {
-    num: '06',
-    title: 'WEB & MOBILE APPS',
-    desc: 'High-performance React web applications and Flutter iOS/Android mobile apps designed for speed, security, and exceptional user experience.',
-    highlights: ['React & Full-Stack', 'iOS & Android Native Apps', 'REST & GraphQL APIs'],
-    icon: Smartphone,
+    num: '07',
+    title: 'Web Application Development',
+    desc: 'Develop responsive, secure, and scalable web applications—from customer portals and SaaS platforms to internal dashboards and business management systems.',
+    link: '/services/web-mobile-app-development',
+    ctaText: 'Explore Web App Development →',
+    icon: Globe,
     color: 'text-sky-500 bg-sky-500/10 border-sky-500/20',
+  },
+  {
+    num: '08',
+    title: 'Mobile App Development',
+    desc: 'Build Android, iOS, and cross-platform mobile applications for customers, employees, field teams, ecommerce, operations, and digital products.',
+    link: '/services/web-mobile-app-development',
+    ctaText: 'Explore Mobile App Development →',
+    icon: Smartphone,
+    color: 'text-pink-500 bg-pink-500/10 border-pink-500/20',
   },
 ];
 
@@ -63,16 +88,15 @@ export default function Services({ services = [] }) {
           Core Services & Solutions
         </Badge>
         <h2 className="text-3xl sm:text-4xl font-headline font-bold text-slate-900 dark:text-white leading-tight mb-4">
-          Tailored Engineering for <br />
-          <span className="gradient-text">Modern Enterprise Scale</span>
+          Custom Software Development Services for Every Stage of Growth
         </h2>
-        <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
-          From custom software development to automated lead funnels and enterprise ERP platforms, we deliver secure, scalable digital products.
+        <p className="text-slate-600 dark:text-slate-400 max-w-3xl mx-auto text-sm sm:text-base leading-relaxed">
+          From a single business application to a connected digital ecosystem, we design and develop software that supports the way your business operates today—and where it wants to go tomorrow.
         </p>
       </div>
 
-      {/* Ultra-Wide Cards Layout (Blueprint Section 03) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      {/* 8 Core Service Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
         {serviceCards.map((card, idx) => {
           const Icon = card.icon;
           return (
@@ -98,15 +122,13 @@ export default function Services({ services = [] }) {
                 </p>
               </div>
 
-              <div className="space-y-2 border-t border-slate-100 dark:border-white/8 pt-4">
-                <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase tracking-widest block mb-1">Key Deliverables:</span>
-                <div className="flex flex-wrap gap-2">
-                  {card.highlights.map((h, hIdx) => (
-                    <span key={hIdx} className="text-[11px] font-mono text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-white/8 px-2.5 py-1 rounded-lg">
-                      • {h}
-                    </span>
-                  ))}
-                </div>
+              <div className="border-t border-slate-100 dark:border-white/8 pt-4">
+                <Link 
+                  to={card.link}
+                  className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-sky-500 dark:text-cyanCustom hover:underline group-hover:translate-x-1 transition-transform"
+                >
+                  {card.ctaText}
+                </Link>
               </div>
 
             </div>

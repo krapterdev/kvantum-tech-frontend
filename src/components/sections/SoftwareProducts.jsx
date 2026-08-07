@@ -63,17 +63,13 @@ export default function SoftwareProducts() {
         {/* Header */}
         <div className="text-center mb-12">
           <Badge className="mb-5 mx-auto inline-flex items-center gap-1.5 bg-pinkCustom/10 border-pinkCustom/20 text-pinkCustom">
-            <Sparkles size={14} /> Custom Software Suite
+            <Sparkles size={14} /> Software Solutions
           </Badge>
-          <h2 className="text-3xl sm:text-4xl font-headline font-bold text-zinc-100 leading-tight mb-5">
-            Powerful Software Products Designed to <br />
-            <span className="gradient-text">Simplify & Automate Business Operations</span>
+          <h2 className="text-3xl sm:text-4xl font-headline font-bold text-zinc-100 leading-tight mb-4">
+            One Technology Partner. Multiple Business Solutions.
           </h2>
-          <p className="text-zinc-400 max-w-3xl mx-auto text-sm sm:text-base leading-relaxed mb-3">
-            At Kvantum Tech Solutions, we develop enterprise-grade software products that empower businesses to manage operations, workforce, sales, and logistics from a unified digital platform.
-          </p>
-          <p className="text-zinc-500 max-w-2xl mx-auto text-xs sm:text-sm leading-relaxed">
-            Every module is 100% customizable, scalable, and includes full source code ownership with zero recurring license fees.
+          <p className="text-zinc-400 max-w-3xl mx-auto text-sm sm:text-base leading-relaxed">
+            Your business may need more than a single application. We build connected software solutions that bring customers, employees, operations, and data together.
           </p>
         </div>
 

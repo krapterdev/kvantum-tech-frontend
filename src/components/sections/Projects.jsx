@@ -34,14 +34,10 @@ export default function Projects() {
             Portfolio & Case Studies
           </Badge>
           <h2 className="text-3xl sm:text-4xl font-headline font-bold text-zinc-100 leading-tight mb-5">
-            Real Projects. <br />
-            <span className="gradient-text">Real Business Impact.</span>
+            Software Built to Solve Real Business Challenges
           </h2>
-          <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-4">
-            Over the years, we've helped businesses across multiple industries streamline operations, improve customer engagement, and accelerate growth through innovative software solutions.
-          </p>
-          <p className="text-zinc-500 text-sm leading-relaxed mb-8">
-            Each project is developed with a focus on performance, scalability, security, and long-term business value.
+          <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-6">
+            Explore how we turn operational challenges and product ideas into practical digital solutions. Our work spans custom business software, CRM systems, HR platforms, automation workflows, web applications, and mobile products.
           </p>
           <button
             onClick={() => navigate('/projects')}

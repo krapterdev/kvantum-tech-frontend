@@ -5,28 +5,43 @@ import Badge from '../ui/Badge';
 export const homeFaqs = [
   {
     num: '01',
-    question: 'What custom software & automation solutions does Kvantum Tech build?',
-    answer: 'We specialize in Custom Software Development, CRM Systems, HRMS & Payroll Software, ERP Platforms, Business Process Automation, WhatsApp Business API, Web Applications, and Mobile Apps tailored specifically to your business operations.'
+    question: 'What does a custom software development company do?',
+    answer: 'A custom software development company designs and builds applications around the specific requirements, workflows, users, and goals of a business instead of relying entirely on pre-built software.'
   },
   {
     num: '02',
-    question: 'Do we get 100% source code ownership with zero recurring license fees?',
-    answer: 'Yes! All custom software and automation solutions built by Kvantum Tech Solutions come with 100% full source code ownership. You never pay recurring software license fees or get locked into proprietary reseller platforms.'
+    question: 'What types of custom software do you develop?',
+    answer: 'We develop CRM, HRMS, ERP systems, business management platforms, workflow automation, web applications, mobile apps, customer portals, internal systems, and other custom business software.'
   },
   {
     num: '03',
-    question: 'How long does it take to develop and deploy a custom CRM or ERP system?',
-    answer: 'Our sprint-driven development process delivers initial MVP releases within 2 to 4 weeks. Full-scale custom enterprise CRM or ERP platforms typically take 6 to 12 weeks depending on module complexity.'
+    question: 'Can you automate our existing business processes?',
+    answer: 'Yes. We can analyze repetitive workflows and automate activities such as lead assignment, approvals, notifications, follow-ups, reporting, invoicing, employee processes, and system-to-system data exchange.'
   },
   {
     num: '04',
-    question: 'Can Kvantum integrate WhatsApp Business API with our existing CRM/ERP database?',
-    answer: 'Absolutely. We build direct Meta WhatsApp API integrations with automated lead response, instant quotation dispatch, payment reminders, order status updates, and 24/7 interactive chat bots.'
+    question: 'Can you integrate with our existing software?',
+    answer: 'Yes. Depending on the available APIs and technical capabilities, we can integrate existing software with payment gateways, WhatsApp, email, SMS, CRMs, ERPs, websites, mobile apps, and third-party services.'
   },
   {
     num: '05',
-    question: 'What post-launch maintenance and SLA support options do you provide?',
-    answer: 'We offer 24/7 continuous system monitoring, rapid bug resolution SLAs, daily backups, cloud server maintenance, and dedicated developer support across our monthly engagement plans.'
+    question: 'How much does custom software development cost?',
+    answer: 'The cost depends on project scope, functionality, integrations, design requirements, technology, security needs, and development timeline. We estimate projects after understanding the requirements.'
+  },
+  {
+    num: '06',
+    question: 'How long does custom software development take?',
+    answer: 'Timelines vary by complexity. A focused application may require considerably less time than a multi-module ERP or enterprise platform. We define milestones and an estimated timeline after requirement analysis.'
+  },
+  {
+    num: '07',
+    question: 'Do you provide support after launch?',
+    answer: 'Yes. Software can require maintenance, monitoring, optimization, security updates, integrations, and new features as the business evolves.'
+  },
+  {
+    num: '08',
+    question: 'Can you develop both web and mobile applications?',
+    answer: 'Yes. We develop web applications as well as Android, iOS, and cross-platform mobile applications based on product and business requirements.'
   },
 ];
 

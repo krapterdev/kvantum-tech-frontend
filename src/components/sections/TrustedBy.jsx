@@ -23,12 +23,12 @@ export default function TrustedBy() {
   return (
     <section className="bg-slate-50 dark:bg-zinc-950/90 border-y border-slate-200 dark:border-white/8 py-16 select-none overflow-hidden relative z-10">
       <div className="container mx-auto max-w-[1280px] px-6 mb-10 text-center">
-        <span className="text-[11px] font-mono uppercase tracking-[0.3em] text-sky-600 dark:text-sky-400 font-bold block mb-2">
-          TRUSTED BY INNOVATIVE BUSINESSES & ENTERPRISES
-        </span>
-        <h3 className="text-xl font-headline font-bold text-slate-900 dark:text-zinc-100">
-          Powering Operations for High-Growth Companies
-        </h3>
+        <h2 className="text-2xl sm:text-3xl font-headline font-bold text-slate-900 dark:text-zinc-100 mb-3">
+          Trusted by Businesses to Build, Automate & Scale
+        </h2>
+        <p className="text-slate-600 dark:text-zinc-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
+          We partner with startups, growing businesses, and established organizations to build reliable software, modernize operations, and automate the processes that slow teams down.
+        </p>
       </div>
 
       {/* Row 1: Right Moving Marquee */}
