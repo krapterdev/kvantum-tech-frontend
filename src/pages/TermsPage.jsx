@@ -40,7 +40,7 @@ export default function TermsPage() {
             <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-4">Kvantum Tech Solutions</p>
             <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-4">Email: info@kvantumtechsolutions.com</p>
             <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-4">Phone: +91 9811661828, +91 9811663433</p>
-            <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-4">Website: www.kvantumtechsolutions.com</p>
+            <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-4">Website: kvantumtechsolutions.com</p>
           </div>
         </section>
 
@@ -403,8 +403,8 @@ export default function TermsPage() {
             <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-4">Kvantum Tech Solutions</p>
             <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-4">Email: info@kvantumtechsolutions.com</p>
             <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-4">Phone: +91 9811661828, +91 9811663433</p>
-            <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-4">Website: www.kvantumtechsolutions.com</p>
-            <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-4">I have read, understood, and agree to be bound by the Terms & Conditions available at www.kvantumtechsolutions.com/terms.</p>
+            <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-4">Website: kvantumtechsolutions.com</p>
+            <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-4">I have read, understood, and agree to be bound by the Terms & Conditions available at kvantumtechsolutions.com/terms.</p>
           </div>
         </section>
           </div>

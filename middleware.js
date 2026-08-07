@@ -24,7 +24,7 @@ export default async function middleware(req) {
   } else if (path === '/services') {
     title = "Enterprise IT & Automation Services | Kvantum Tech Solutions";
     description = "Explore custom software development, CRM systems, HRMS payroll, ERP platforms, WhatsApp API automation, and scalable web apps built by Kvantum Tech Solutions.";
-  } else if (path === '/projects') {
+  } else if (path === '/projects' || path === '/portfolio') {
     title = "Featured Software & Engineering Projects | Kvantum Tech Solutions";
     description = "Explore enterprise case studies, custom CRM systems, HRMS platforms, and web applications engineered by Kvantum Tech Solutions.";
   } else if (path === '/blog') {
@@ -33,6 +33,15 @@ export default async function middleware(req) {
   } else if (path === '/contact') {
     title = "Contact Kvantum Tech Solutions | Direct Technical Contact";
     description = "Get in touch with Kvantum Tech Solutions for custom software, CRM, HRMS, ERP, web apps, and business automation. Book a live demo or request project quotes.";
+  } else if (path === '/privacy') {
+    title = "Privacy Policy | Kvantum Tech Solutions";
+    description = "Privacy Policy for Kvantum Tech Solutions. Read how we protect and handle your information.";
+  } else if (path === '/terms') {
+    title = "Terms & Conditions | Kvantum Tech Solutions";
+    description = "Terms and Conditions for Kvantum Tech Solutions software development and digital engineering services.";
+  } else if (path === '/thank-you') {
+    title = "Thank You | Kvantum Tech Solutions";
+    description = "Thank you for contacting Kvantum Tech Solutions. Our technical team will reach out to you shortly.";
   } else if (path.startsWith('/blog/')) {
     const slug = path.replace('/blog/', '').trim();
     if (slug) {
