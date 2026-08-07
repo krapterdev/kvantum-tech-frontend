@@ -1,13 +1,73 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, ArrowRight, ShieldCheck, Zap, CheckCircle2 } from 'lucide-react';
+import { Sparkles, ArrowRight, ShieldCheck, Zap, Check, X } from 'lucide-react';
 import Badge from '../ui/Badge';
 
 const models = [
-  { name: 'Fixed-Scope Development', desc: 'For clearly defined requirements and deliverables.', badge: 'Project Based', icon: ShieldCheck, color: 'text-sky-500 bg-sky-500/10 border-sky-500/20' },
-  { name: 'Dedicated Development', desc: 'For businesses that need ongoing development capacity.', badge: 'Retainer / Dedicated', icon: Zap, color: 'text-pink-500 bg-pink-500/10 border-pink-500/20' },
-  { name: 'Custom Product Development', desc: 'For complex software, SaaS products, and long-term platforms.', badge: 'Full Platform', icon: Sparkles, color: 'text-purple-500 bg-purple-500/10 border-purple-500/20' },
-  { name: 'Automation Implementation', desc: 'For improving and connecting existing business processes.', badge: 'Workflow Engine', icon: CheckCircle2, color: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20' },
+  {
+    id: 'fixed-scope',
+    name: 'FIXED-SCOPE',
+    tagline: 'Clearly defined requirements and deliverables',
+    badge: 'Project Based',
+    badgeStyle: 'bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20',
+    popular: false,
+    features: [
+      { text: 'Fixed Scope & Milestone Roadmap', inc: true },
+      { text: 'Dedicated Project Manager & Developers', inc: true },
+      { text: 'Full Source Code Ownership', inc: true },
+      { text: 'Quality Assurance & Automated Testing', inc: true },
+      { text: 'Post-Launch Warranty Support', inc: true },
+      { text: 'Ongoing Unscoped Retainer', inc: false },
+    ],
+  },
+  {
+    id: 'dedicated',
+    name: 'DEDICATED TEAM',
+    tagline: 'Ongoing engineering capacity for scaling teams',
+    badge: 'Popular',
+    badgeStyle: 'bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20',
+    popular: false,
+    features: [
+      { text: 'Dedicated Full-Stack Software Engineers', inc: true },
+      { text: 'Agile Sprint Planning & Daily Standups', inc: true },
+      { text: 'Direct Developer Slack / WhatsApp Sync', inc: true },
+      { text: 'Continuous Feature Releases & Updates', inc: true },
+      { text: '100% Flexible Monthly Scaling', inc: true },
+      { text: 'Fixed Rigid Deliverable Lock', inc: false },
+    ],
+  },
+  {
+    id: 'custom-product',
+    name: 'CUSTOM PRODUCT',
+    tagline: 'Complex SaaS products, ERPs & core platforms',
+    badge: 'MOST POPULAR',
+    badgeStyle: 'bg-pink-500 text-white font-bold border-pink-500 shadow-lg shadow-pink-500/20',
+    popular: true,
+    features: [
+      { text: 'Custom Enterprise System Architecture', inc: true },
+      { text: 'Custom CRM, HRMS or ERP Engine', inc: true },
+      { text: 'Scalable Microservices & Cloud Infrastructure', inc: true },
+      { text: 'Full API & Third-Party System Integrations', inc: true },
+      { text: '100% Code Ownership & Zero License Fees', inc: true },
+      { text: 'Shared Resource Constraints', inc: false },
+    ],
+  },
+  {
+    id: 'automation',
+    name: 'AUTOMATION ENGINE',
+    tagline: 'Connect disconnected systems & workflows',
+    badge: 'Workflow Engine',
+    badgeStyle: 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20',
+    popular: false,
+    features: [
+      { text: 'Lead Capture & Assignment Triggers', inc: true },
+      { text: 'WhatsApp, Email & SMS Automated Messaging', inc: true },
+      { text: 'Approval Workflows & Auto Invoicing', inc: true },
+      { text: 'System-to-System Data Synchronization', inc: true },
+      { text: 'Real-Time Management Dashboards', inc: true },
+      { text: 'Manual Spreadsheet Updates', inc: false },
+    ],
+  },
 ];
 
 export default function Pricing() {
@@ -29,53 +89,68 @@ export default function Pricing() {
         </p>
       </div>
 
-      {/* 4 Models Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-        {models.map((m, idx) => {
-          const Icon = m.icon;
-          return (
-            <div
-              key={idx}
-              className="p-7 rounded-3xl bg-white dark:bg-zinc-900/80 border border-slate-200 dark:border-white/10 hover:border-sky-500/40 transition-all duration-300 flex flex-col justify-between gap-6 cursor-default group shadow-md dark:shadow-xl hover:-translate-y-1"
-            >
-              <div>
-                <div className="flex justify-between items-center mb-5">
-                  <div className={`p-2.5 rounded-xl border ${m.color}`}>
-                    <Icon size={20} />
-                  </div>
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-white/5">
-                    {m.badge}
-                  </span>
-                </div>
-
-                <h3 className="text-xl font-headline font-bold text-slate-900 dark:text-white mb-3 group-hover:text-sky-500 transition-colors">
-                  {m.name}
-                </h3>
-                <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed">
-                  {m.desc}
-                </p>
-              </div>
+      {/* 4 Pricing Tiers Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch mb-12">
+        {models.map((tier) => (
+          <div
+            key={tier.id}
+            className={`p-7 rounded-3xl bg-white dark:bg-zinc-900/90 border transition-all duration-300 flex flex-col justify-between text-left relative backdrop-blur-2xl ${
+              tier.popular
+                ? 'border-pink-500/50 shadow-xl shadow-pink-500/10 scale-[1.02] z-20'
+                : 'border-slate-200 dark:border-white/10 z-10'
+            }`}
+          >
+            {/* Top Badge */}
+            <div className="flex justify-between items-center mb-4">
+              <span className={`text-[10px] font-mono uppercase tracking-wider px-3 py-1 rounded-full border ${tier.badgeStyle}`}>
+                {tier.badge}
+              </span>
+              {tier.popular && (
+                <span className="text-[10px] font-mono text-pink-500 font-bold flex items-center gap-1">
+                  <Zap size={12} /> FEATURED
+                </span>
+              )}
             </div>
-          );
-        })}
-      </div>
 
-      {/* CTA Box */}
-      <div className="p-8 rounded-3xl bg-slate-50 dark:bg-zinc-900/90 border border-slate-200 dark:border-white/10 flex flex-col sm:flex-row justify-between items-center gap-6 text-center sm:text-left shadow-md">
-        <div>
-          <h3 className="text-xl font-headline font-bold text-slate-900 dark:text-white mb-2">Need a Custom Estimate for Your Project?</h3>
-          <p className="text-slate-600 dark:text-zinc-400 text-xs sm:text-sm max-w-xl">Share your project goals, scope, and technical requirements with our engineering team for an accurate milestone roadmap and timeline.</p>
-        </div>
-        <button
-          onClick={() => {
-            const el = document.getElementById('contact') || document.getElementById('contact-form');
-            if (el) el.scrollIntoView({ behavior: 'smooth' });
-            else navigate('/contact');
-          }}
-          className="px-7 py-3.5 rounded-xl text-xs sm:text-sm font-bold bg-sky-500 hover:bg-sky-600 text-white transition-all duration-200 shadow-md shrink-0 cursor-pointer flex items-center gap-2"
-        >
-          Request a Project Estimate <ArrowRight size={15} />
-        </button>
+            {/* Title & Tagline */}
+            <div className="mb-6">
+              <h3 className="text-xl font-headline font-extrabold text-slate-900 dark:text-white mb-1">{tier.name}</h3>
+              <p className="text-slate-600 dark:text-slate-400 text-xs min-h-[32px] leading-relaxed">{tier.tagline}</p>
+            </div>
+
+            {/* Features List */}
+            <div className="space-y-3 border-t border-slate-100 dark:border-white/8 pt-5 my-4 flex-1">
+              <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase tracking-widest block mb-2">Key Highlights:</span>
+              {tier.features.map((feat, idx) => (
+                <div key={idx} className="flex items-start gap-2 text-xs">
+                  {feat.inc ? (
+                    <Check size={14} className="text-sky-500 shrink-0 mt-0.5" />
+                  ) : (
+                    <X size={14} className="text-slate-400 shrink-0 mt-0.5" />
+                  )}
+                  <span className={feat.inc ? 'text-slate-700 dark:text-slate-300' : 'text-slate-400 dark:text-slate-600 line-through'}>{feat.text}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* CTA */}
+            <button
+              onClick={() => {
+                const el = document.getElementById('contact') || document.getElementById('contact-form');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+                else navigate('/contact');
+              }}
+              className={`w-full py-3.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 mt-4 ${
+                tier.popular
+                  ? 'bg-pink-500 text-white hover:bg-pink-600 shadow-md shadow-pink-500/20'
+                  : 'bg-slate-100 dark:bg-white/10 text-slate-900 dark:text-white hover:bg-slate-200 dark:hover:bg-white/15 border border-slate-300 dark:border-white/15'
+              }`}
+            >
+              Discuss Estimate <ArrowRight size={14} />
+            </button>
+
+          </div>
+        ))}
       </div>
 
     </section>
