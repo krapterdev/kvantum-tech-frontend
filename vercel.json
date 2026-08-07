@@ -56,8 +56,8 @@
       "destination": "https://api.kvantumtechsolutions.com/sitemap.xml"
     },
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "source": "/((?!assets|_next|favicon.ico|web-icons|og_banners|.*\\..*).*)",
+      "destination": "/api/index"
     }
   ]
 }

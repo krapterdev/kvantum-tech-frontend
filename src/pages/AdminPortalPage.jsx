@@ -537,26 +537,129 @@ ${allEntries.map(entry => `    <url>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Service Image & Media Settings */}
+        <div className="p-6 rounded-2xl bg-zinc-950/60 border border-white/8 flex flex-col gap-6">
+          <h3 className="text-xs font-mono font-bold text-cyanCustom uppercase tracking-wider flex items-center gap-2 border-b border-white/8 pb-3">
+            <ImageIcon size={14} /> Service Cover Image & Asset Attributes
+          </h3>
           <div>
-            <label className="block text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-1.5 font-bold">Meta Title Override</label>
-            <input 
-              type="text" 
-              placeholder="Custom Google SEO page title tag..."
-              value={editItem.metaTitle || ''}
-              onChange={(e) => setEditItem(prev => ({ ...prev, metaTitle: e.target.value }))}
-              className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
-            />
+            <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">Service Cover Image URL</label>
+            <div className="flex gap-3">
+              <input 
+                type="text" 
+                placeholder="https://kvantumtechsolutions.com/assets/service-banner.jpg..."
+                value={editItem.coverImage || ''}
+                onChange={(e) => setEditItem(prev => ({ ...prev, coverImage: e.target.value, ogImage: prev.ogImage || e.target.value }))}
+                className="w-full bg-zinc-900 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono"
+              />
+              <Button type="button" variant="secondary" onClick={() => setShowAssetPicker(true)} className="px-4 py-2 text-xs shrink-0 gap-1 font-mono">
+                <Folder size={14} /> Assets
+              </Button>
+            </div>
+            {editItem.coverImage && (
+              <div className="mt-3 relative w-full max-w-xs h-32 rounded-xl overflow-hidden border border-white/10 bg-zinc-950">
+                <img src={editItem.coverImage} alt={editItem.imageAlt || 'Service Preview'} title={editItem.imageTitle || editItem.title} className="w-full h-full object-cover" />
+              </div>
+            )}
           </div>
-          <div>
-            <label className="block text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-1.5 font-bold">Meta Description Override</label>
-            <input 
-              type="text" 
-              placeholder="Custom Google SEO page description tag..."
-              value={editItem.metaDesc || ''}
-              onChange={(e) => setEditItem(prev => ({ ...prev, metaDesc: e.target.value }))}
-              className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
-            />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">Image Alt Tag (SEO)</label>
+              <input 
+                type="text" 
+                placeholder="Descriptive alt attribute for Google Images..."
+                value={editItem.imageAlt || ''}
+                onChange={(e) => setEditItem(prev => ({ ...prev, imageAlt: e.target.value }))}
+                className="w-full bg-zinc-900 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
+              />
+            </div>
+            <div>
+              <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">Image Title Attribute</label>
+              <input 
+                type="text" 
+                placeholder="Image title hover text attribute..."
+                value={editItem.imageTitle || ''}
+                onChange={(e) => setEditItem(prev => ({ ...prev, imageTitle: e.target.value }))}
+                className="w-full bg-zinc-900 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Comprehensive SEO & Canonical Matrix */}
+        <div className="p-6 rounded-2xl bg-zinc-950/60 border border-white/8 flex flex-col gap-6">
+          <h3 className="text-xs font-mono font-bold text-pinkCustom uppercase tracking-wider flex items-center gap-2 border-b border-white/8 pb-3">
+            <Globe size={14} /> Comprehensive Technical SEO & Canonical Matrix
+          </h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">Meta Title Override</label>
+              <input 
+                type="text" 
+                placeholder="Custom Google SEO page title tag..."
+                value={editItem.metaTitle || ''}
+                onChange={(e) => setEditItem(prev => ({ ...prev, metaTitle: e.target.value, ogTitle: prev.ogTitle || e.target.value }))}
+                className="w-full bg-zinc-900 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
+              />
+            </div>
+            <div>
+              <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">Meta Description Override</label>
+              <input 
+                type="text" 
+                placeholder="Custom Google SEO page description tag..."
+                value={editItem.metaDesc || ''}
+                onChange={(e) => setEditItem(prev => ({ ...prev, metaDesc: e.target.value, ogDesc: prev.ogDesc || e.target.value }))}
+                className="w-full bg-zinc-900 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">Target Keywords</label>
+              <input 
+                type="text" 
+                placeholder="Comma separated: CRM software, business automation, Delhi NCR..."
+                value={editItem.keywords || ''}
+                onChange={(e) => setEditItem(prev => ({ ...prev, keywords: e.target.value }))}
+                className="w-full bg-zinc-900 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono"
+              />
+            </div>
+            <div>
+              <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">Canonical Tag URL</label>
+              <input 
+                type="text" 
+                placeholder={`https://kvantumtechsolutions.com/services/${editItem.id || 'slug'}`}
+                value={editItem.canonical || `https://kvantumtechsolutions.com/services/${editItem.id || ''}`}
+                onChange={(e) => setEditItem(prev => ({ ...prev, canonical: e.target.value }))}
+                className="w-full bg-zinc-900 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono text-emerald-400"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">OpenGraph Title</label>
+              <input 
+                type="text" 
+                placeholder="Social share title (WhatsApp, LinkedIn, Twitter)..."
+                value={editItem.ogTitle || editItem.metaTitle || editItem.title || ''}
+                onChange={(e) => setEditItem(prev => ({ ...prev, ogTitle: e.target.value }))}
+                className="w-full bg-zinc-900 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
+              />
+            </div>
+            <div>
+              <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">OpenGraph Image URL</label>
+              <input 
+                type="text" 
+                placeholder="Social banner image URL..."
+                value={editItem.ogImage || editItem.coverImage || ''}
+                onChange={(e) => setEditItem(prev => ({ ...prev, ogImage: e.target.value }))}
+                className="w-full bg-zinc-900 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono"
+              />
+            </div>
           </div>
         </div>
 
@@ -1357,7 +1460,27 @@ ${allEntries.map(entry => `    <url>
     } else {
       setOriginalId(null);
       if (type === 'service') {
-        setEditItem({ id: '', iconName: 'Code', title: '', shortDesc: '', longDesc: '', color: 'var(--accent-cyan)', techStack: '', metrics: '', metaTitle: '', metaDesc: '' });
+        setEditItem({
+          id: '',
+          slug: '',
+          iconName: 'Code',
+          title: '',
+          shortDesc: '',
+          longDesc: '',
+          color: 'var(--accent-cyan)',
+          techStack: '',
+          metrics: '',
+          coverImage: '',
+          imageAlt: '',
+          imageTitle: '',
+          keywords: '',
+          canonical: '',
+          metaTitle: '',
+          metaDesc: '',
+          ogTitle: '',
+          ogDesc: '',
+          ogImage: ''
+        });
       } else if (type === 'blog') {
         setBlogTouched({
           slug: false,
