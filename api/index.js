@@ -71,11 +71,8 @@ async function initDb() {
         updated_at TIMESTAMPTZ DEFAULT NOW()
       );
       CREATE TABLE IF NOT EXISTS site_settings (
-        _id TEXT PRIMARY KEY,
-        contact JSONB DEFAULT '{}'::jsonb,
-        seo JSONB DEFAULT '{}'::jsonb,
-        branding JSONB DEFAULT '{}'::jsonb,
-        analytics JSONB DEFAULT '{}'::jsonb,
+        key TEXT PRIMARY KEY,
+        value JSONB DEFAULT '{}'::jsonb,
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ DEFAULT NOW()
       );
@@ -451,12 +448,25 @@ app.put(['/api/seosettings/:key', '/api/seopages/settings/:key'], async function
 // ── SITE & SOCIAL SETTINGS ─────────────────────────────────────
 app.get(['/api/settings', '/api/settings/:key'], async function(req, res) {
   try {
-    var r = await db.query('SELECT * FROM site_settings ORDER BY "updated_at" DESC LIMIT 1');
-    var settings = r.rows[0] || {};
-    if (req.params.key && settings[req.params.key]) {
-      return res.json(settings[req.params.key]);
+    var key = req.params.key || 'contact';
+    var r = await db.query('SELECT * FROM site_settings WHERE "key"=$1 OR "key"=\'contact\' ORDER BY "updated_at" DESC LIMIT 1', [key]);
+    var row = r.rows[0];
+    if (!row) {
+      var all = await db.query('SELECT * FROM site_settings');
+      var obj = {};
+      all.rows.forEach(function(item) {
+        var val = item.value;
+        if (typeof val === 'string') { try { val = JSON.parse(val); } catch(e) {} }
+        obj[item.key] = val;
+      });
+      return res.json(obj);
     }
-    res.json(settings);
+    var val = row.value;
+    if (typeof val === 'string') { try { val = JSON.parse(val); } catch(e) {} }
+    if (req.params.key) {
+      return res.json(val);
+    }
+    res.json({ contact: val, value: val });
   } catch(e) {
     res.json({});
   }
@@ -467,19 +477,12 @@ app.put(['/api/settings', '/api/settings/:key'], async function(req, res) {
     var key = req.params.key || 'contact';
     var payload = req.body || {};
     var valueToSave = payload.value || payload;
+    var jsonStr = typeof valueToSave === 'string' ? valueToSave : JSON.stringify(valueToSave);
 
-    var existing = await db.query('SELECT "_id" FROM site_settings LIMIT 1');
-    if (existing.rows.length > 0) {
-      var id = existing.rows[0]._id;
-      if (key === 'contact') {
-        await db.query('UPDATE site_settings SET "contact"=$1, "updated_at"=NOW() WHERE "_id"=$2', [JSON.stringify(valueToSave), id]);
-      } else {
-        await db.query('UPDATE site_settings SET "contact"=$1, "updated_at"=NOW() WHERE "_id"=$2', [JSON.stringify(valueToSave), id]);
-      }
-    } else {
-      var newId = 'settings_1';
-      await db.query('INSERT INTO site_settings ("_id","contact","created_at","updated_at") VALUES ($1,$2,NOW(),NOW())', [newId, JSON.stringify(valueToSave)]);
-    }
+    await db.query(
+      'INSERT INTO site_settings ("key","value","updated_at") VALUES ($1,$2,NOW()) ON CONFLICT ("key") DO UPDATE SET "value"=EXCLUDED."value","updated_at"=NOW()',
+      [key, jsonStr]
+    );
     res.json({ success: true, key: key, value: valueToSave });
   } catch(err) {
     console.error('[SETTINGS PUT ERROR]', err.message);
