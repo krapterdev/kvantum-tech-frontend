@@ -161,6 +161,20 @@ Sitemap: https://kvantumtechsolutions.com/sitemap.xml`;
   const [robotsCopied, setRobotsCopied] = useState(false);
   const [sitemapDirectCopied, setSitemapDirectCopied] = useState(false);
 
+  const [socialState, setSocialState] = useState(() => {
+    const local = localStorage.getItem('kts_saved_contact_settings');
+    if (local) {
+      try { return JSON.parse(local); } catch(e) {}
+    }
+    return {};
+  });
+
+  useEffect(() => {
+    if (settings?.contact) {
+      setSocialState(prev => ({ ...prev, ...settings.contact }));
+    }
+  }, [settings?.contact]);
+
   const formatIsoDate = (dateVal, fallbackDate = '2026-08-04') => {
     if (!dateVal) return fallbackDate;
     const d = new Date(dateVal);
@@ -357,17 +371,15 @@ ${allEntries.map(entry => `    <url>
     };
   }, [currentUser]);
 
-  // Fetch contextual collections upon active tab switches
+  // Always fetch collections upon mount and active tab switches
   useEffect(() => {
-    if (!token || !currentUser) return;
-
     fetchLeadsList();
     fetchAssetsList();
     fetchSeoSettingsList();
-    if (currentUser.role === 'admin') {
+    if (currentUser && currentUser.role === 'admin') {
       fetchUsersList();
     }
-  }, [activeTab, token, currentUser]);
+  }, [activeTab, currentUser]);
 
   const fetchLeadsList = async () => {
     // Always load local queue first so leads never disappear
@@ -3207,9 +3219,12 @@ ${allEntries.map(entry => `    <url>
                   
                   {/* Image Thumbnail preview */}
                   <div className="w-full h-36 bg-zinc-950/60 rounded-xl overflow-hidden flex items-center justify-center border border-white/8 relative group">
-                    {asset.contentType && asset.contentType.startsWith('image/') ? (
+                    {((asset.contentType && asset.contentType.startsWith('image/')) ||
+                      (asset.name && /\.(png|jpe?g|gif|webp|svg|ico)($|\?)/i.test(asset.name)) ||
+                      (asset.url && /\.(png|jpe?g|gif|webp|svg|ico)($|\?)/i.test(asset.url)) ||
+                      (asset.url && asset.url.startsWith('data:image/'))) ? (
                       <img 
-                        src={asset.url} 
+                        src={asset.url || asset.publicUrl} 
                         alt={asset.name} 
                         className="w-full h-full object-contain p-2 hover:scale-105 transition-transform" 
                       />
@@ -3217,7 +3232,7 @@ ${allEntries.map(entry => `    <url>
                       <FileText size={40} className="text-zinc-600" />
                     )}
                     <span className="absolute bottom-2 left-2 px-2 py-0.5 bg-black/60 backdrop-blur rounded text-[10px] font-mono text-zinc-400">
-                      {asset.size ? `${(asset.size / 1024).toFixed(1)} KB` : 'S3 Data'}
+                      {asset.size ? `${(asset.size / 1024).toFixed(1)} KB` : 'Media Asset'}
                     </span>
                   </div>
 
@@ -3422,63 +3437,45 @@ ${allEntries.map(entry => `    <url>
           </div>
 
           <Card className="p-6 border flex flex-col gap-6">
-            <form key={JSON.stringify(settings?.contact || {})} onSubmit={async (e) => {
+            <form onSubmit={async (e) => {
               e.preventDefault();
               try {
-                const fd = new FormData(e.currentTarget);
                 const updatedContact = {
                   ...settings?.contact,
-                  instagram: fd.get('contactInstagram') || '',
-                  instagramActive: fd.get('instagramActive') === 'on',
-                  linkedin: fd.get('contactLinkedin') || '',
-                  linkedinActive: fd.get('linkedinActive') === 'on',
-                  facebook: fd.get('contactFacebook') || '',
-                  facebookActive: fd.get('facebookActive') === 'on',
-                  twitter: fd.get('contactTwitter') || '',
-                  twitterActive: fd.get('twitterActive') === 'on',
-                  whatsapp: fd.get('contactWhatsapp') || '',
-                  whatsappActive: fd.get('whatsappActive') === 'on',
-                  youtube: fd.get('contactYoutube') || '',
-                  youtubeActive: fd.get('youtubeActive') === 'on',
-                  github: fd.get('contactGithub') || '',
-                  githubActive: fd.get('githubActive') === 'on',
-                  pinterest: fd.get('contactPinterest') || '',
-                  pinterestActive: fd.get('pinterestActive') === 'on',
-                  telegram: fd.get('contactTelegram') || '',
-                  telegramActive: fd.get('telegramActive') === 'on',
-                  reddit: fd.get('contactReddit') || '',
-                  redditActive: fd.get('redditActive') === 'on',
-                  tiktok: fd.get('contactTiktok') || '',
-                  tiktokActive: fd.get('tiktokActive') === 'on',
+                  ...socialState
                 };
 
                 try {
                   await settingService.updateSetting('contact', updatedContact);
+                  localStorage.setItem('kts_saved_contact_settings', JSON.stringify(updatedContact));
+                  alert('✅ [SUCCESS] Social Media Links & Network Visibility updated successfully!');
                 } catch (e) {
                   console.warn('[OFFLINE SAVE] Social media updated locally:', e.message);
+                  localStorage.setItem('kts_saved_contact_settings', JSON.stringify(updatedContact));
+                  alert('✅ [SUCCESS] Social Media Links updated locally.');
                 }
                 setSettings(prev => ({ ...prev, contact: updatedContact }));
-                alert('[SUCCESS] Social Media Links & Network Visibility updated successfully!');
               } catch (err) {
-                alert('[SUCCESS] Social Media Matrix updated.');
+                alert('✅ [SUCCESS] Social Media Matrix updated.');
               }
             }} className="flex flex-col gap-5">
 
               <div className="flex flex-col gap-4 font-mono text-xs">
                 {[
                   { key: 'instagram', label: 'Instagram', defaultUrl: 'https://www.instagram.com/kvantumtechsolutions/', activeKey: 'instagramActive' },
-                  { key: 'linkedin', label: 'LinkedIn', defaultUrl: 'https://www.linkedin.com/in/kvantum-tech-solutions-75916a41b', activeKey: 'linkedinActive' },
-                  { key: 'facebook', label: 'Facebook', defaultUrl: 'https://facebook.com/kvantumtechsolutions', activeKey: 'facebookActive' },
+                  { key: 'linkedin', label: 'LinkedIn', defaultUrl: 'https://www.linkedin.com/in/kvantum-tech-solutions-75916a41b/', activeKey: 'linkedinActive' },
+                  { key: 'facebook', label: 'Facebook', defaultUrl: 'https://www.facebook.com/profile.php?id=61591468234442', activeKey: 'facebookActive' },
                   { key: 'twitter', label: 'Twitter / X', defaultUrl: 'https://twitter.com/kvantumtech', activeKey: 'twitterActive' },
                   { key: 'whatsapp', label: 'WhatsApp', defaultUrl: 'https://wa.me/919811661828', activeKey: 'whatsappActive' },
-                  { key: 'youtube', label: 'YouTube', defaultUrl: '', activeKey: 'youtubeActive' },
-                  { key: 'github', label: 'GitHub', defaultUrl: '', activeKey: 'githubActive' },
+                  { key: 'youtube', label: 'YouTube', defaultUrl: 'https://www.youtube.com/@KvantumTechSolutions', activeKey: 'youtubeActive' },
+                  { key: 'github', label: 'GitHub', defaultUrl: 'https://github.com/krapterdev', activeKey: 'githubActive' },
                   { key: 'pinterest', label: 'Pinterest', defaultUrl: '', activeKey: 'pinterestActive' },
                   { key: 'telegram', label: 'Telegram', defaultUrl: '', activeKey: 'telegramActive' },
                   { key: 'reddit', label: 'Reddit', defaultUrl: '', activeKey: 'redditActive' },
                   { key: 'tiktok', label: 'TikTok', defaultUrl: '', activeKey: 'tiktokActive' },
                 ].map(soc => {
-                  const isActive = settings?.contact?.[soc.activeKey] !== false && (soc.activeKey.includes('youtube') || soc.activeKey.includes('github') || soc.activeKey.includes('pinterest') || soc.activeKey.includes('telegram') || soc.activeKey.includes('reddit') || soc.activeKey.includes('tiktok') ? settings?.contact?.[soc.activeKey] === true : true);
+                  const isActive = socialState[soc.activeKey] !== undefined ? socialState[soc.activeKey] : (soc.activeKey.includes('youtube') || soc.activeKey.includes('github') || soc.activeKey.includes('pinterest') || soc.activeKey.includes('telegram') || soc.activeKey.includes('reddit') || soc.activeKey.includes('tiktok') ? false : true);
+                  const currentVal = socialState[soc.key] !== undefined ? socialState[soc.key] : soc.defaultUrl;
 
                   return (
                     <div key={soc.key} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl bg-zinc-950/60 border border-white/8 hover:border-white/15 transition-all">
@@ -3486,8 +3483,8 @@ ${allEntries.map(entry => `    <url>
                         <label className="flex items-center gap-2.5 cursor-pointer">
                           <input
                             type="checkbox"
-                            name={soc.activeKey}
-                            defaultChecked={isActive}
+                            checked={isActive}
+                            onChange={(e) => setSocialState(prev => ({ ...prev, [soc.activeKey]: e.target.checked }))}
                             className="accent-pinkCustom w-4 h-4 cursor-pointer"
                           />
                           <span className="font-bold text-sm text-zinc-200">
@@ -3498,9 +3495,9 @@ ${allEntries.map(entry => `    <url>
 
                       <input
                         type="text"
-                        name={`contact${soc.key.charAt(0).toUpperCase() + soc.key.slice(1)}`}
+                        value={currentVal}
+                        onChange={(e) => setSocialState(prev => ({ ...prev, [soc.key]: e.target.value }))}
                         placeholder={`Paste ${soc.label} URL profile link...`}
-                        defaultValue={settings?.contact?.[soc.key] || (isActive ? soc.defaultUrl : '')}
                         className="w-full sm:w-2/3 bg-zinc-900 border border-white/8 rounded-xl px-4 py-2 text-zinc-100 text-xs outline-none focus:border-cyanCustom/40 font-mono"
                       />
                     </div>
