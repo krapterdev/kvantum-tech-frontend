@@ -260,7 +260,7 @@ app.get('/api/assets', async function(req, res) {
       var data = await s3.send(new ListObjectsV2Command({ Bucket: S3_BUCKET }));
       s3Assets = (data.Contents || []).map(function(item) {
         var ext = (item.Key.split('.').pop() || '').toLowerCase();
-        var imgs = ['png','jpg','jpeg','svg','gif','webp'];
+        var imgs = ['png','jpg','jpeg','svg','gif','webp','ico'];
         return {
           name: item.Key,
           created_at: item.LastModified,
@@ -282,14 +282,18 @@ app.get('/api/assets', async function(req, res) {
           publicUrl: row.public_url || row.url,
           url: row.url,
           size: parseInt(row.size || '0', 10),
-          contentType: row.content_type || 'image/jpeg'
+          contentType: row.content_type || 'image/png'
         };
       });
     } catch(e) {}
 
     var combinedMap = new Map();
+    // Prioritize local assets & db assets so newly uploaded PNG/JPG files stay at position 0
     localAssets.concat(dbAssets, s3Assets).forEach(function(ast) {
-      if (ast && ast.name) combinedMap.set(ast.name, ast);
+      if (ast && (ast.name || ast.url)) {
+        var key = ast.name || ast.url;
+        if (!combinedMap.has(key)) combinedMap.set(key, ast);
+      }
     });
 
     res.json(Array.from(combinedMap.values()));
@@ -323,14 +327,15 @@ app.post('/api/assets/upload', upload.single('file'), async function(req, res) {
     contentType: req.file.mimetype
   };
 
+  localAssets = [asset].concat(localAssets.filter(function(a) { return a.name !== fileName; }));
+
   try {
     await db.query(
-      'INSERT INTO media_assets ("name","url","public_url","size","content_type") VALUES ($1,$2,$3,$4,$5)',
+      'INSERT INTO media_assets ("name","url","public_url","size","content_type") VALUES ($1,$2,$3,$4,$5) ON CONFLICT ("name") DO UPDATE SET "url"=EXCLUDED."url","public_url"=EXCLUDED."public_url","size"=EXCLUDED."size"',
       [fileName, publicUrl, publicUrl, req.file.size, req.file.mimetype]
     );
   } catch(dbErr) {
     console.warn('[DB Asset Save Warning]', dbErr.message);
-    localAssets.unshift(asset);
   }
 
   res.json(asset);
@@ -340,7 +345,7 @@ app.delete('/api/assets/:name', async function(req, res) {
   try { await s3.send(new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: req.params.name })); } catch(e) {}
   try { await db.query('DELETE FROM media_assets WHERE name=$1', [req.params.name]); } catch(e) {}
   localAssets = localAssets.filter(function(a) { return a.name !== req.params.name; });
-  res.json({ success: true });
+  res.json({ success: true, name: req.params.name });
 });
 
 // ── USERS ─────────────────────────────────────────────────────

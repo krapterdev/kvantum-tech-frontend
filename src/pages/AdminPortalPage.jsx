@@ -161,6 +161,10 @@ Sitemap: https://kvantumtechsolutions.com/sitemap.xml`;
   const [robotsCopied, setRobotsCopied] = useState(false);
   const [sitemapDirectCopied, setSitemapDirectCopied] = useState(false);
 
+  const [assetSearchTerm, setAssetSearchTerm] = useState('');
+  const [hideScrollerFrames, setHideScrollerFrames] = useState(true);
+  const [assetZoomModal, setAssetZoomModal] = useState(null);
+
   const [socialState, setSocialState] = useState(() => {
     const local = localStorage.getItem('kts_saved_contact_settings');
     if (local) {
@@ -3245,102 +3249,233 @@ ${allEntries.map(entry => `    <url>
       {/* ================================== TAB: S3 ASSETS ================================== */}
       {activeTab === 'assets' && (currentUser.role === 'admin' || currentUser.role === 'seo') && (
         <div className="fade-in-up flex flex-col gap-6">
-          <div className="flex justify-between items-center flex-wrap gap-4">
-            <div>
-              <h2 className="text-xl font-bold font-headline text-zinc-200 flex items-center gap-2">
-                <Image size={18} className="text-cyanCustom" /> AWS S3 Object Telemetry
-              </h2>
-              <span className="text-zinc-500 text-[11px] font-mono uppercase mt-1 block">Storage Nodes list</span>
+          
+          {/* Supabase S3 Control Header & Search Bar */}
+          <div className="p-6 rounded-2xl bg-zinc-900/40 border border-white/8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="flex flex-col gap-1.5 text-left">
+              <div className="flex items-center gap-2">
+                <h2 className="text-xl font-bold font-headline text-zinc-100 flex items-center gap-2">
+                  <Image size={20} className="text-cyanCustom" /> Supabase S3 Cloud Storage Manager
+                </h2>
+                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-500/10 text-cyanCustom border border-cyan-500/20">
+                  Bucket: kvantumtechsolutions_storage
+                </span>
+              </div>
+              <p className="text-xs text-zinc-400 font-mono">
+                Manage, upload, preview, and delete high-resolution images & assets stored in Supabase S3 CDN.
+              </p>
             </div>
-            
-            <label className="btn-primary px-4 py-2.5 rounded-lg text-xs gap-1.5 cursor-pointer relative select-none">
-              <UploadCloud size={14} /> {uploadingAsset ? 'Uploading Asset...' : 'Upload File to S3'}
-              <input 
-                type="file" 
-                className="hidden" 
-                onChange={handleAssetUpload} 
-                disabled={uploadingAsset} 
-              />
-            </label>
+
+            <div className="flex items-center gap-3 flex-wrap">
+              <label className="flex items-center gap-2 text-xs font-mono text-zinc-300 bg-zinc-950/60 border border-white/8 px-3 py-2 rounded-xl cursor-pointer hover:border-white/20 select-none">
+                <input
+                  type="checkbox"
+                  checked={hideScrollerFrames}
+                  onChange={(e) => setHideScrollerFrames(e.target.checked)}
+                  className="accent-cyanCustom w-4 h-4 cursor-pointer"
+                />
+                <span>Hide Scroller Frames ({ (assets || []).filter(a => (a.name||'').includes('scroller-images')).length })</span>
+              </label>
+
+              <label className="btn-primary px-5 py-2.5 rounded-xl text-xs gap-2 cursor-pointer font-mono font-bold select-none shrink-0 shadow-lg shadow-cyanCustom/10">
+                <UploadCloud size={16} /> {uploadingAsset ? 'Uploading File...' : 'Upload File to Supabase S3'}
+                <input 
+                  type="file" 
+                  multiple
+                  className="hidden" 
+                  onChange={handleAssetUpload} 
+                  disabled={uploadingAsset} 
+                />
+              </label>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {Array.isArray(assets) && assets.length > 0 ? (
-              assets.map((asset, idx) => (
-                <Card key={idx} className="p-4 border flex flex-col justify-between items-start gap-4">
-                  
-                  {/* Image Thumbnail preview */}
-                  <div className="w-full h-36 bg-zinc-950/60 rounded-xl overflow-hidden flex items-center justify-center border border-white/8 relative group">
-                    {((asset.contentType && asset.contentType.startsWith('image/')) ||
-                      (asset.name && /\.(png|jpe?g|gif|webp|svg|ico)($|\?)/i.test(asset.name)) ||
-                      (asset.url && /\.(png|jpe?g|gif|webp|svg|ico)($|\?)/i.test(asset.url)) ||
-                      (asset.url && asset.url.startsWith('data:image/'))) ? (
-                      <img 
-                        src={asset.url || asset.publicUrl} 
-                        alt={asset.name} 
-                        className="w-full h-full object-contain p-2 hover:scale-105 transition-transform" 
-                      />
-                    ) : (
-                      <FileText size={40} className="text-zinc-600" />
-                    )}
-                    <span className="absolute bottom-2 left-2 px-2 py-0.5 bg-black/60 backdrop-blur rounded text-[10px] font-mono text-zinc-400">
-                      {asset.size ? `${(asset.size / 1024).toFixed(1)} KB` : 'Media Asset'}
-                    </span>
-                  </div>
-
-                  {/* Info & Copy Link triggers */}
-                  <div className="w-full text-left">
-                    <h4 className="text-zinc-200 text-xs font-mono font-bold truncate mb-3" title={asset.name}>
-                      {asset.name}
-                    </h4>
-                    
-                    <div className="flex gap-2 w-full">
-                      <Button 
-                        onClick={() => copyToClipboard(asset.url, idx)} 
-                        variant="secondary" 
-                        className="flex-grow py-2 rounded-lg text-[10px] gap-1.5"
-                      >
-                        {copiedIndex === idx ? <Check size={11} className="text-emerald-400" /> : <Copy size={11} />}
-                        {copiedIndex === idx ? 'URL Copied' : 'Copy CDN URL'}
-                      </Button>
-                      
-                      {currentUser.role === 'admin' && (
-                        <button 
-                          onClick={() => handleAssetDelete(asset.name)}
-                          className="p-2 bg-white/[0.02] border border-white/8 rounded-lg hover:border-red-500/30 hover:text-red-400 transition-colors"
-                          title="Delete asset (Admin only)"
-                        >
-                          <Trash2 size={12} />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-
-                </Card>
-              ))
-            ) : (
-              <div className="col-span-full py-16 px-6 bg-zinc-950/40 border border-white/8 rounded-2xl flex flex-col items-center justify-center text-center gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyanCustom">
-                  <Folder size={32} />
-                </div>
-                <div className="max-w-md flex flex-col gap-1">
-                  <h4 className="text-zinc-200 font-bold font-headline text-base">No S3 Media Assets Uploaded Yet</h4>
-                  <p className="text-zinc-400 text-xs font-mono leading-relaxed">
-                    Upload images or media documents to AWS S3 storage using the "Upload File to S3" button above. Uploaded files will appear here with instant CDN link copy buttons.
-                  </p>
-                </div>
-                <label className="btn-primary px-5 py-2.5 rounded-xl text-xs gap-2 cursor-pointer mt-2 font-mono font-bold">
-                  <UploadCloud size={16} /> Upload First File to S3
-                  <input 
-                    type="file" 
-                    className="hidden" 
-                    onChange={handleAssetUpload} 
-                    disabled={uploadingAsset} 
-                  />
-                </label>
-              </div>
+          {/* Search Filter Input */}
+          <div className="w-full relative">
+            <input
+              type="text"
+              placeholder="🔍 Search media assets by filename or format (e.g. logo, png, jpeg, svg)..."
+              value={assetSearchTerm}
+              onChange={(e) => setAssetSearchTerm(e.target.value)}
+              className="w-full bg-zinc-900/60 border border-white/8 rounded-xl px-4 py-3 text-zinc-100 text-xs font-mono outline-none focus:border-cyanCustom/40 placeholder:text-zinc-500"
+            />
+            {assetSearchTerm && (
+              <button
+                type="button"
+                onClick={() => setAssetSearchTerm('')}
+                className="absolute right-3 top-2.5 text-zinc-500 hover:text-zinc-200 text-xs font-mono"
+              >
+                Clear [✕]
+              </button>
             )}
           </div>
+
+          {/* Assets Grid Display */}
+          {(() => {
+            const filteredAssets = (Array.isArray(assets) ? assets : []).filter(ast => {
+              if (!ast) return false;
+              const name = (ast.name || '').toLowerCase();
+              const url = (ast.url || '').toLowerCase();
+              if (hideScrollerFrames && name.includes('scroller-images')) return false;
+              if (!assetSearchTerm) return true;
+              const term = assetSearchTerm.toLowerCase().trim();
+              return name.includes(term) || url.includes(term);
+            });
+
+            return (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {filteredAssets.length > 0 ? (
+                  filteredAssets.map((asset, idx) => {
+                    const isImg = (asset.contentType && asset.contentType.startsWith('image/')) || 
+                                  (asset.name && /\.(png|jpe?g|gif|webp|svg|ico)($|\?)/i.test(asset.name)) ||
+                                  (asset.url && /\.(png|jpe?g|gif|webp|svg|ico)($|\?)/i.test(asset.url)) ||
+                                  (asset.url && asset.url.startsWith('data:image/'));
+
+                    return (
+                      <Card key={idx} className="p-4 border flex flex-col justify-between items-start gap-4 hover:border-cyanCustom/30 transition-all text-left group">
+                        
+                        {/* Image Thumbnail preview & Zoom Trigger */}
+                        <div 
+                          onClick={() => setAssetZoomModal(asset)}
+                          className="w-full h-40 bg-zinc-950/80 rounded-xl overflow-hidden flex items-center justify-center border border-white/8 relative cursor-pointer group-hover:border-cyanCustom/40 transition-all"
+                        >
+                          {isImg ? (
+                            <img 
+                              src={asset.url || asset.publicUrl} 
+                              alt={asset.name} 
+                              className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform" 
+                            />
+                          ) : (
+                            <FileText size={44} className="text-zinc-600 group-hover:text-cyanCustom transition-colors" />
+                          )}
+
+                          <span className="absolute bottom-2 left-2 px-2 py-0.5 bg-black/70 backdrop-blur rounded text-[10px] font-mono text-zinc-300 border border-white/10">
+                            {asset.size ? `${(asset.size / 1024).toFixed(1)} KB` : 'S3 CDN'}
+                          </span>
+
+                          <span className="absolute top-2 right-2 px-2 py-0.5 bg-cyan-500/20 text-cyanCustom backdrop-blur rounded text-[10px] font-mono font-bold opacity-0 group-hover:opacity-100 transition-opacity border border-cyan-500/30">
+                            🔍 Inspect & Zoom
+                          </span>
+                        </div>
+
+                        {/* File Info & Copy CDN URL Actions */}
+                        <div className="w-full text-left">
+                          <h4 className="text-zinc-200 text-xs font-mono font-bold truncate mb-3" title={asset.name}>
+                            {asset.name}
+                          </h4>
+                          
+                          <div className="flex gap-2 w-full">
+                            <Button 
+                              onClick={() => copyToClipboard(asset.url || asset.publicUrl, idx)} 
+                              variant="secondary" 
+                              className="flex-grow py-2 rounded-lg text-[10px] gap-1.5 font-mono font-bold"
+                            >
+                              {copiedIndex === idx ? <Check size={11} className="text-emerald-400" /> : <Copy size={11} />}
+                              {copiedIndex === idx ? 'URL Copied!' : 'Copy CDN URL'}
+                            </Button>
+                            
+                            {currentUser.role === 'admin' && (
+                              <button 
+                                onClick={() => handleAssetDelete(asset.name)}
+                                className="p-2 bg-white/[0.02] border border-white/8 rounded-lg hover:border-red-500/40 hover:bg-red-500/10 hover:text-red-400 transition-all cursor-pointer"
+                                title="Delete from Supabase S3 Bucket"
+                              >
+                                <Trash2 size={13} />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+
+                      </Card>
+                    );
+                  })
+                ) : (
+                  <div className="col-span-full py-16 px-6 bg-zinc-950/40 border border-white/8 rounded-2xl flex flex-col items-center justify-center text-center gap-4">
+                    <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyanCustom">
+                      <Folder size={32} />
+                    </div>
+                    <div className="max-w-md flex flex-col gap-1">
+                      <h4 className="text-zinc-200 font-bold font-headline text-base">No Matching S3 Media Assets Found</h4>
+                      <p className="text-zinc-400 text-xs font-mono leading-relaxed">
+                        {assetSearchTerm ? `No files match search "${assetSearchTerm}". Try clearing search.` : 'Upload PNG, JPG, WebP, or SVG images to Supabase S3 using the button above.'}
+                      </p>
+                    </div>
+                    <label className="btn-primary px-5 py-2.5 rounded-xl text-xs gap-2 cursor-pointer mt-2 font-mono font-bold">
+                      <UploadCloud size={16} /> Upload Media to Supabase S3
+                      <input 
+                        type="file" 
+                        multiple
+                        className="hidden" 
+                        onChange={handleAssetUpload} 
+                        disabled={uploadingAsset} 
+                      />
+                    </label>
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+
+          {/* Full Screen Image Zoom & Inspector Modal */}
+          {assetZoomModal && (
+            <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+              <div className="bg-zinc-900 border border-white/10 rounded-2xl p-6 max-w-2xl w-full flex flex-col gap-4 text-left shadow-2xl relative">
+                <button
+                  type="button"
+                  onClick={() => setAssetZoomModal(null)}
+                  className="absolute top-4 right-4 text-zinc-400 hover:text-zinc-100 text-sm font-mono cursor-pointer"
+                >
+                  ✕ Close
+                </button>
+
+                <h3 className="text-base font-bold font-headline text-zinc-100 truncate pr-12">
+                  🖼️ Supabase S3 Object Inspector: {assetZoomModal.name}
+                </h3>
+
+                <div className="w-full h-72 bg-zinc-950 rounded-xl overflow-hidden flex items-center justify-center border border-white/10 p-2">
+                  <img
+                    src={assetZoomModal.url || assetZoomModal.publicUrl}
+                    alt={assetZoomModal.name}
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 text-xs font-mono text-zinc-300">
+                  <div>
+                    <span className="text-zinc-500 block text-[10px] uppercase">File Size:</span>
+                    <span>{assetZoomModal.size ? `${(assetZoomModal.size / 1024).toFixed(1)} KB` : 'N/A'}</span>
+                  </div>
+                  <div>
+                    <span className="text-zinc-500 block text-[10px] uppercase">Content Type:</span>
+                    <span>{assetZoomModal.contentType || 'image/png'}</span>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] font-mono text-zinc-400 uppercase font-bold">Public Supabase CDN URL</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      readOnly
+                      value={assetZoomModal.url || assetZoomModal.publicUrl}
+                      className="w-full bg-zinc-950 border border-white/10 rounded-xl px-3.5 py-2 text-xs font-mono text-cyanCustom outline-none"
+                    />
+                    <Button
+                      onClick={() => {
+                        navigator.clipboard.writeText(assetZoomModal.url || assetZoomModal.publicUrl);
+                        alert('✅ CDN URL copied to clipboard!');
+                      }}
+                      variant="primary"
+                      className="px-4 py-2 text-xs font-mono shrink-0"
+                    >
+                      Copy Link
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
         </div>
       )}
 
