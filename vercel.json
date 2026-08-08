@@ -1,70 +1,25 @@
 {
   "functions": {
     "api/index.js": {
-      "includeFiles": "dist/**,api/backend/**,public/**",
+      "includeFiles": "dist/**,public/**",
       "memory": 1024,
       "maxDuration": 30
     }
   },
   "redirects": [
-    {
-      "source": "/services/web-development",
-      "destination": "/services/web-mobile-app-development",
-      "permanent": true
-    },
-    {
-      "source": "/services/mobile-apps",
-      "destination": "/services/web-mobile-app-development",
-      "permanent": true
-    },
-    {
-      "source": "/services/mobile-app-development",
-      "destination": "/services/web-mobile-app-development",
-      "permanent": true
-    },
-    {
-      "source": "/services/ui-ux",
-      "destination": "/services/web-mobile-app-development",
-      "permanent": true
-    },
-    {
-      "source": "/services/custom-software",
-      "destination": "/services/custom-software-development",
-      "permanent": true
-    },
-    {
-      "source": "/services/crm",
-      "destination": "/services/crm-software-development",
-      "permanent": true
-    },
-    {
-      "source": "/services/automation",
-      "destination": "/services/business-automation",
-      "permanent": true
-    },
-    {
-      "source": "/services/hrms",
-      "destination": "/services/hrms-software",
-      "permanent": true
-    },
-    {
-      "source": "/services/whatsapp",
-      "destination": "/services/whatsapp-automation",
-      "permanent": true
-    }
+    { "source": "/services/web-development", "destination": "/services/web-mobile-app-development", "permanent": true },
+    { "source": "/services/mobile-apps", "destination": "/services/web-mobile-app-development", "permanent": true },
+    { "source": "/services/mobile-app-development", "destination": "/services/web-mobile-app-development", "permanent": true },
+    { "source": "/services/ui-ux", "destination": "/services/web-mobile-app-development", "permanent": true },
+    { "source": "/services/custom-software", "destination": "/services/custom-software-development", "permanent": true },
+    { "source": "/services/crm", "destination": "/services/crm-software-development", "permanent": true },
+    { "source": "/services/automation", "destination": "/services/business-automation", "permanent": true },
+    { "source": "/services/hrms", "destination": "/services/hrms-software", "permanent": true },
+    { "source": "/services/whatsapp", "destination": "/services/whatsapp-automation", "permanent": true }
   ],
   "rewrites": [
-    {
-      "source": "/sitemap.xml",
-      "destination": "/api/index"
-    },
-    {
-      "source": "/robots.txt",
-      "destination": "/api/index"
-    },
-    {
-      "source": "/((?!assets|_next|favicon.ico|web-icons|og_banners|.*\\..*).*)",
-      "destination": "/api/index"
-    }
+    { "source": "/sitemap.xml", "destination": "/api/index" },
+    { "source": "/robots.txt", "destination": "/api/index" },
+    { "source": "/((?!assets|_next|favicon.ico|web-icons|og_banners|.*\\..*).*)", "destination": "/api/index" }
   ]
 }

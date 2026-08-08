@@ -364,22 +364,52 @@ ${allEntries.map(entry => `    <url>
   }, [activeTab, token, currentUser]);
 
   const fetchLeadsList = async () => {
+    // Always load local queue first so leads never disappear
+    let localLeads = [];
     try {
-      const data = await contactService.getLeads();
-      setLeads(Array.isArray(data) ? data : []);
+      const raw = JSON.parse(localStorage.getItem('kts_queued_leads') || '[]');
+      localLeads = raw.map((item, idx) => ({
+        _id: item._id || item.id || `local_${idx}`,
+        id: item._id || item.id || `local_${idx}`,
+        name: item.name || 'Client',
+        email: item.email || '',
+        phone: item.phone || '',
+        service: item.service || 'Inquiry',
+        notes: item.notes || item.message || '',
+        status: item.status || 'New Lead',
+        createdAt: item.submittedAt || item.createdAt || new Date().toISOString(),
+        created_at: item.submittedAt || item.createdAt || new Date().toISOString(),
+        source: 'local'
+      }));
+    } catch (e) {}
+
+    try {
+      const serverLeads = await contactService.getLeads();
+      const combined = Array.isArray(serverLeads) ? serverLeads : [];
+      // Merge: local leads shown first, skip duplicates
+      const seen = new Set(combined.map(l => `${l.name}_${l.email}_${l.phone}`.toLowerCase()));
+      const extra = localLeads.filter(l => !seen.has(`${l.name}_${l.email}_${l.phone}`.toLowerCase()));
+      setLeads([...extra, ...combined]);
     } catch (err) {
-      console.warn('[ADMIN PORTAL] Leads fetch failed or unauthorized.');
-      setLeads([]);
+      console.warn('[ADMIN PORTAL] Server leads fetch failed, showing local queue only.');
+      setLeads(localLeads);
     }
   };
 
   const fetchAssetsList = async () => {
     try {
       const data = await assetService.listAssets();
-      setAssets(Array.isArray(data) ? data : []);
+      if (Array.isArray(data) && data.length >= 0) {
+        setAssets(prev => {
+          // Keep any local/previewed assets already in state, merge with server
+          const serverNames = new Set(data.map(a => a.name));
+          const localOnly = (Array.isArray(prev) ? prev : []).filter(a => !serverNames.has(a.name));
+          return [...localOnly, ...data];
+        });
+      }
     } catch (err) {
-      console.warn('[ADMIN PORTAL] Assets fetch failed or unauthorized.');
-      setAssets([]);
+      console.warn('[ADMIN PORTAL] Assets fetch failed, keeping existing assets.');
+      // Don't clear existing assets on error
     }
   };
 
