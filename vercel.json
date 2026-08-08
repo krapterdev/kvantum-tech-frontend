@@ -20,6 +20,7 @@
   "rewrites": [
     { "source": "/sitemap.xml", "destination": "/api/index" },
     { "source": "/robots.txt", "destination": "/api/index" },
+    { "source": "/img/:path*", "destination": "https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/:path*" },
     { "source": "/((?!assets|_next|favicon.ico|web-icons|og_banners|.*\\..*).*)", "destination": "/api/index" }
   ]
 }
