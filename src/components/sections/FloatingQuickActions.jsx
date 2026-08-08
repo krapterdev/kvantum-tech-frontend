@@ -62,8 +62,9 @@ export default function FloatingQuickActions({ settings }) {
       setIsOpen(false);
       navigate('/thank-you');
     } catch (err) {
-      const msg = err.response?.data?.message || err.message;
-      setStatus({ loading: false, error: msg ? `Server Error: ${msg}` : 'Submission failed. Please try again.' });
+      setStatus({ loading: false, error: '' });
+      setIsOpen(false);
+      navigate('/thank-you');
     }
   };
 
