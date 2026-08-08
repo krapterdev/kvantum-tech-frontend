@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://kvantumtechsolutions.com/sitemap.xml

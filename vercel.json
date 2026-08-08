@@ -53,14 +53,6 @@
   ],
   "rewrites": [
     {
-      "source": "/robots.txt",
-      "destination": "https://api.kvantumtechsolutions.com/robots.txt"
-    },
-    {
-      "source": "/sitemap.xml",
-      "destination": "https://api.kvantumtechsolutions.com/sitemap.xml"
-    },
-    {
       "source": "/((?!assets|_next|favicon.ico|web-icons|og_banners|.*\\..*).*)",
       "destination": "/api/index"
     }
