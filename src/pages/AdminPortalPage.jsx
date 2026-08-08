@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Plus, Edit2, Trash2, Save, X, Globe, Layers, BookOpen, Key, Link2, Eye, 
   UserCheck, Image, Image as ImageIcon, Copy, Check, UploadCloud, LogOut, Lock, Mail, FileText, CheckCircle2, AlertTriangle, Settings, Menu, Activity, Share2,
-  ChevronUp, ChevronDown, Folder
+  ChevronUp, ChevronDown, Folder, Database, Download, RotateCcw
 } from 'lucide-react';
 import Card from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
@@ -3340,6 +3340,119 @@ ${allEntries.map(entry => `    <url>
             <h2 className="text-xl font-bold font-headline text-zinc-200">Site Settings CMS</h2>
             <p className="text-zinc-550 text-xs mt-1">Configure global content schemas, metrics, hero parameters, and testimonial logs in real-time.</p>
           </div>
+
+          {/* Super Admin Database Backup & Disaster Recovery Control Center */}
+          {currentUser?.role === 'admin' && (
+            <Card className="p-6 border border-cyan-500/20 bg-cyan-950/10 flex flex-col gap-5">
+              <div className="flex justify-between items-center flex-wrap gap-4 border-b border-cyan-500/20 pb-4">
+                <div>
+                  <h3 className="text-base font-bold font-headline text-cyanCustom flex items-center gap-2">
+                    <Database size={18} /> Super Admin Database Backup & Recovery Engine
+                  </h3>
+                  <p className="text-xs text-zinc-400 font-mono mt-1">
+                    Download live JSON database backups directly to your local machine, restore from backup files, or execute hard database resets.
+                  </p>
+                </div>
+                <span className="px-2.5 py-1 rounded text-[10px] font-mono bg-cyan-500/20 text-cyanCustom font-bold border border-cyan-500/30">
+                  SUPER ADMIN PRIVILEGES ACTIVE
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {/* 1. Download Backup Button */}
+                <Button
+                  onClick={async () => {
+                    try {
+                      const apiBase = import.meta.env.VITE_API_URL || 'https://api.kvantumtechsolutions.com/api';
+                      const res = await fetch(`${apiBase}/admin/backup`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                      });
+                      if (!res.ok) throw new Error('Backup download failed');
+                      const blob = await res.blob();
+                      const url = window.URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = `kts_database_backup_${new Date().toISOString().split('T')[0]}.json`;
+                      document.body.appendChild(a);
+                      a.click();
+                      a.remove();
+                      window.URL.revokeObjectURL(url);
+                      alert('✅ [SUCCESS] Database Backup JSON downloaded to your local computer.');
+                    } catch (err) {
+                      alert('❌ [ERROR] Backup failed: ' + err.message);
+                    }
+                  }}
+                  variant="primary"
+                  className="py-3 px-4 text-xs font-mono font-bold justify-center gap-2"
+                >
+                  <Download size={15} /> Download DB Backup (.JSON)
+                </Button>
+
+                {/* 2. Upload/Restore Backup File */}
+                <label className="flex items-center justify-center gap-2 bg-zinc-900 border border-white/10 hover:border-cyanCustom/40 rounded-xl px-4 py-3 text-xs font-mono text-zinc-200 font-bold cursor-pointer transition-all">
+                  <UploadCloud size={15} className="text-cyanCustom" /> Restore Backup (.JSON)
+                  <input
+                    type="file"
+                    accept=".json"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (!file) return;
+                      const reader = new FileReader();
+                      reader.onload = async (evt) => {
+                        try {
+                          const parsed = JSON.parse(evt.target.result);
+                          const apiBase = import.meta.env.VITE_API_URL || 'https://api.kvantumtechsolutions.com/api';
+                          const res = await fetch(`${apiBase}/admin/restore-backup`, {
+                            method: 'POST',
+                            headers: {
+                              'Content-Type': 'application/json',
+                              Authorization: `Bearer ${token}`
+                            },
+                            body: JSON.stringify({ backupData: parsed })
+                          });
+                          const data = await res.json();
+                          if (!res.ok) throw new Error(data.error || 'Restore failed');
+                          alert('✅ [SUCCESS] Database restored from backup JSON successfully!');
+                          window.location.reload();
+                        } catch (err) {
+                          alert('❌ [ERROR] Restoration failed: ' + err.message);
+                        }
+                      };
+                      reader.readAsText(file);
+                    }}
+                  />
+                </label>
+
+                {/* 3. Hard Reset Database Button */}
+                <Button
+                  onClick={async () => {
+                    if (window.confirm('⚠️ WARNING: Are you sure you want to RESET the database? This will clear operational tables and reload clean initial seed templates.')) {
+                      if (window.confirm('🚨 FINAL CONFIRMATION: Type YES to reset database tables clean.')) {
+                        try {
+                          const apiBase = import.meta.env.VITE_API_URL || 'https://api.kvantumtechsolutions.com/api';
+                          const res = await fetch(`${apiBase}/admin/reset-database`, {
+                            method: 'POST',
+                            headers: { Authorization: `Bearer ${token}` }
+                          });
+                          const data = await res.json();
+                          if (!res.ok) throw new Error(data.error || 'Reset failed');
+                          alert('✅ [SUCCESS] Database reset complete! Clean default templates loaded.');
+                          window.location.reload();
+                        } catch (err) {
+                          alert('❌ [ERROR] Database reset failed: ' + err.message);
+                        }
+                      }
+                    }
+                  }}
+                  variant="secondary"
+                  className="py-3 px-4 text-xs font-mono font-bold justify-center gap-2 text-red-400 border-red-500/30 hover:bg-red-500/10"
+                >
+                  <RotateCcw size={15} /> Hard Reset Database
+                </Button>
+              </div>
+            </Card>
+          )}
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Hero & About Column */}
