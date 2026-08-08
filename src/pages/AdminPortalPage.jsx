@@ -75,26 +75,82 @@ Sitemap: https://kvantumtechsolutions.com/sitemap.xml`;
 
   const DEFAULT_SITEMAP = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://kvantumtechsolutions.com/</loc>
-    <lastmod>2026-08-01</lastmod>
-  </url>
-  <url>
-    <loc>https://kvantumtechsolutions.com/about</loc>
-    <lastmod>2026-08-01</lastmod>
-  </url>
-  <url>
-    <loc>https://kvantumtechsolutions.com/services</loc>
-    <lastmod>2026-08-01</lastmod>
-  </url>
-  <url>
-    <loc>https://kvantumtechsolutions.com/blog</loc>
-    <lastmod>2026-08-01</lastmod>
-  </url>
-  <url>
-    <loc>https://kvantumtechsolutions.com/contact</loc>
-    <lastmod>2026-08-01</lastmod>
-  </url>
+
+    <url>
+        <loc>https://kvantumtechsolutions.com/</loc>
+        <lastmod>2026-08-04</lastmod>
+    </url>
+
+    <url>
+        <loc>https://kvantumtechsolutions.com/about</loc>
+        <lastmod>2026-08-04</lastmod>
+    </url>
+
+    <url>
+        <loc>https://kvantumtechsolutions.com/services/custom-software-development</loc>
+        <lastmod>2026-08-04</lastmod>
+    </url>
+
+    <url>
+        <loc>https://kvantumtechsolutions.com/services/crm-software-development</loc>
+        <lastmod>2026-08-04</lastmod>
+    </url>
+
+    <url>
+        <loc>https://kvantumtechsolutions.com/services/business-automation</loc>
+        <lastmod>2026-08-04</lastmod>
+    </url>
+
+    <url>
+        <loc>https://kvantumtechsolutions.com/services/hrms-software</loc>
+        <lastmod>2026-08-04</lastmod>
+    </url>
+
+    <url>
+        <loc>https://kvantumtechsolutions.com/services/whatsapp-automation</loc>
+        <lastmod>2026-08-04</lastmod>
+    </url>
+
+    <url>
+        <loc>https://kvantumtechsolutions.com/services/web-mobile-app-development</loc>
+        <lastmod>2026-08-04</lastmod>
+    </url>
+
+    <url>
+        <loc>https://kvantumtechsolutions.com/projects</loc>
+        <lastmod>2026-08-04</lastmod>
+    </url>
+
+    <url>
+        <loc>https://kvantumtechsolutions.com/blog</loc>
+        <lastmod>2026-08-04</lastmod>
+    </url>
+
+    <url>
+        <loc>https://kvantumtechsolutions.com/contact</loc>
+        <lastmod>2026-08-04</lastmod>
+    </url>
+
+    <url>
+        <loc>https://kvantumtechsolutions.com/terms</loc>
+        <lastmod>2026-08-04</lastmod>
+    </url>
+
+    <url>
+        <loc>https://kvantumtechsolutions.com/privacy</loc>
+        <lastmod>2026-08-04</lastmod>
+    </url>
+
+    <url>
+        <loc>https://kvantumtechsolutions.com/blog/why-custom-software-services-are-essential-for-business-growth-kvantum-tech-solutions</loc>
+        <lastmod>2026-08-05</lastmod>
+    </url>
+
+    <url>
+        <loc>https://kvantumtechsolutions.com/blog/why-kvantum-tech-solutions-is-the-best-it-solutions-company-in-delhi-ncr</loc>
+        <lastmod>2026-08-01</lastmod>
+    </url>
+
 </urlset>`;
 
   const [showAssetPicker, setShowAssetPicker] = useState(false);
@@ -105,7 +161,7 @@ Sitemap: https://kvantumtechsolutions.com/sitemap.xml`;
   const [robotsCopied, setRobotsCopied] = useState(false);
   const [sitemapDirectCopied, setSitemapDirectCopied] = useState(false);
 
-  const formatIsoDate = (dateVal, fallbackDate = '2026-07-15') => {
+  const formatIsoDate = (dateVal, fallbackDate = '2026-08-04') => {
     if (!dateVal) return fallbackDate;
     const d = new Date(dateVal);
     if (isNaN(d.getTime())) {
@@ -119,47 +175,48 @@ Sitemap: https://kvantumtechsolutions.com/sitemap.xml`;
   const handleGenerateSitemap = () => {
     const domain = 'https://kvantumtechsolutions.com';
 
-    // Static core pages with genuine static last-modified dates
     const staticRoutes = [
-      { loc: `${domain}/`, lastmod: '2026-07-15' },
-      { loc: `${domain}/about`, lastmod: '2026-07-19' },
-      { loc: `${domain}/projects`, lastmod: '2026-07-15' },
-      { loc: `${domain}/blog`, lastmod: '2026-08-01' },
-      { loc: `${domain}/contact`, lastmod: '2026-07-15' },
-      { loc: `${domain}/terms`, lastmod: '2026-07-15' },
-      { loc: `${domain}/privacy`, lastmod: '2026-07-15' },
+      { loc: `${domain}/`, lastmod: '2026-08-04' },
+      { loc: `${domain}/about`, lastmod: '2026-08-04' },
     ];
 
-    // Service detail pages with genuine static launch date 2026-07-20
     const fallbackServiceRoutes = [
-      { loc: `${domain}/services/custom-software-development`, lastmod: '2026-07-20' },
-      { loc: `${domain}/services/crm-software-development`, lastmod: '2026-07-20' },
-      { loc: `${domain}/services/business-automation`, lastmod: '2026-07-20' },
-      { loc: `${domain}/services/hrms-software`, lastmod: '2026-07-20' },
-      { loc: `${domain}/services/whatsapp-automation`, lastmod: '2026-07-20' },
-      { loc: `${domain}/services/web-mobile-app-development`, lastmod: '2026-07-20' },
+      { loc: `${domain}/services/custom-software-development`, lastmod: '2026-08-04' },
+      { loc: `${domain}/services/crm-software-development`, lastmod: '2026-08-04' },
+      { loc: `${domain}/services/business-automation`, lastmod: '2026-08-04' },
+      { loc: `${domain}/services/hrms-software`, lastmod: '2026-08-04' },
+      { loc: `${domain}/services/whatsapp-automation`, lastmod: '2026-08-04' },
+      { loc: `${domain}/services/web-mobile-app-development`, lastmod: '2026-08-04' },
     ];
 
     const serviceRoutes = (services && services.length > 0)
       ? services.map(s => ({
-          loc: `${domain}/services/${s.id}`,
-          lastmod: formatIsoDate(s.createdAt, '2026-07-20')
+          loc: `${domain}/services/${s.slug || s.id || s._id}`,
+          lastmod: formatIsoDate(s.createdAt || s.updatedAt, '2026-08-04')
         }))
       : fallbackServiceRoutes;
 
-    // Blog post pages strictly using genuine Publication / Creation Date & slug
+    const midStaticRoutes = [
+      { loc: `${domain}/projects`, lastmod: '2026-08-04' },
+      { loc: `${domain}/blog`, lastmod: '2026-08-04' },
+      { loc: `${domain}/contact`, lastmod: '2026-08-04' },
+      { loc: `${domain}/terms`, lastmod: '2026-08-04' },
+      { loc: `${domain}/privacy`, lastmod: '2026-08-04' },
+    ];
+
     const fallbackBlogRoutes = [
+      { loc: `${domain}/blog/why-custom-software-services-are-essential-for-business-growth-kvantum-tech-solutions`, lastmod: '2026-08-05' },
       { loc: `${domain}/blog/why-kvantum-tech-solutions-is-the-best-it-solutions-company-in-delhi-ncr`, lastmod: '2026-08-01' }
     ];
 
     const blogRoutes = (blogs && blogs.length > 0)
       ? blogs.map(b => ({
           loc: `${domain}/blog/${b.slug || b.id || b._id}`,
-          lastmod: formatIsoDate(b.createdAt || b.date, '2026-08-01')
+          lastmod: formatIsoDate(b.createdAt || b.date, String(b.slug || b.id || '').includes('essential') ? '2026-08-05' : '2026-08-01')
         }))
       : fallbackBlogRoutes;
 
-    const allEntries = [...staticRoutes, ...serviceRoutes, ...blogRoutes];
+    const allEntries = [...staticRoutes, ...serviceRoutes, ...midStaticRoutes, ...blogRoutes];
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
