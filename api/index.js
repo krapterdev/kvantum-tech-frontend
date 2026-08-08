@@ -1,11 +1,17 @@
 import fs from 'fs';
 import path from 'path';
+import app from './backend/app.js';
 
 export default async function handler(req, res) {
   try {
     const reqUrl = req.url || '/';
     const parsedUrl = new URL(reqUrl, `https://kvantumtechsolutions.com`);
     const pathname = parsedUrl.pathname;
+
+    // Delegate all /api/* routes directly to Vercel Serverless Express Engine
+    if (pathname.startsWith('/api')) {
+      return app(req, res);
+    }
 
     // Read dist/index.html
     const indexPath = path.join(process.cwd(), 'dist', 'index.html');
@@ -48,60 +54,24 @@ export default async function handler(req, res) {
     } else if (pathname.startsWith('/services/')) {
       const slug = pathname.replace('/services/', '').trim();
       if (slug) {
-        try {
-          const apiRes = await fetch(`https://api.kvantumtechsolutions.com/api/services`);
-          if (apiRes.ok) {
-            const services = await apiRes.json();
-            const service = Array.isArray(services) ? services.find(s => s.id === slug || s._id === slug || s.slug === slug) : null;
-            if (service) {
-              title = service.metaTitle || `${service.title} | Kvantum Tech Solutions`;
-              description = service.metaDesc || service.shortDesc || service.longDesc || description;
-              if (service.keywords) keywords = service.keywords;
-              if (service.coverImage || service.ogImage) ogImage = service.coverImage || service.ogImage;
-            } else {
-              const formattedSlug = slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-              title = `${formattedSlug} Services | Kvantum Tech Solutions`;
-              description = `Enterprise ${formattedSlug} services engineered by Kvantum Tech Solutions in Delhi NCR.`;
-            }
-          }
-        } catch (e) {
-          const formattedSlug = slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-          title = `${formattedSlug} Services | Kvantum Tech Solutions`;
-        }
+        const formattedSlug = slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+        title = `${formattedSlug} Services | Kvantum Tech Solutions`;
+        description = `Enterprise ${formattedSlug} services engineered by Kvantum Tech Solutions in Delhi NCR.`;
       }
     } else if (pathname.startsWith('/blog/')) {
       const slug = pathname.replace('/blog/', '').trim();
       if (slug) {
-        try {
-          const blogRes = await fetch(`https://api.kvantumtechsolutions.com/api/blogs/${slug}`);
-          if (blogRes.ok) {
-            const post = await blogRes.json();
-            if (post && (post.title || post.metaTitle)) {
-              title = `${post.metaTitle || post.seoTitle || post.title} | Kvantum Tech Blog`;
-              description = post.metaDesc || post.metaDescription || post.excerpt || description;
-              if (post.coverImage || post.image || post.ogImage) ogImage = post.coverImage || post.image || post.ogImage;
-            }
-          }
-        } catch (e) {
-          const formattedSlug = slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-          title = `${formattedSlug} | Kvantum Tech Blog`;
-        }
+        const formattedSlug = slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+        title = `${formattedSlug} | Kvantum Tech Blog`;
+        description = `Read expert insights and articles on ${formattedSlug} published by Kvantum Tech Solutions.`;
       }
     } else if (pathname.startsWith('/keyword/')) {
       const slug = pathname.replace('/keyword/', '').trim();
       if (slug) {
-        try {
-          const seoRes = await fetch(`https://api.kvantumtechsolutions.com/api/seopages/${slug}`);
-          if (seoRes.ok) {
-            const page = await seoRes.json();
-            if (page) {
-              title = page.metaTitle || page.title || title;
-              description = page.metaDesc || description;
-              if (page.metaKeywords) keywords = page.metaKeywords;
-            }
-          }
-        } catch (e) {
-          const formattedSlug = slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+        const formattedSlug = slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+        title = `${formattedSlug} | Kvantum Tech Solutions`;
+        description = `Custom software engineering, IT solutions, and enterprise tech services for ${formattedSlug}.`;
+      }
           title = `${formattedSlug} | Kvantum Tech Solutions`;
         }
       }
