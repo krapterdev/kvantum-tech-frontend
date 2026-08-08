@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Plus, Edit2, Trash2, Save, X, Globe, Layers, BookOpen, Key, Link2, Eye, 
-  UserCheck, Image, Copy, Check, UploadCloud, LogOut, Lock, Mail, FileText, CheckCircle2, AlertTriangle, Settings, Menu, Activity, Share2 
+  UserCheck, Image, Image as ImageIcon, Copy, Check, UploadCloud, LogOut, Lock, Mail, FileText, CheckCircle2, AlertTriangle, Settings, Menu, Activity, Share2,
+  ChevronUp, ChevronDown, Folder
 } from 'lucide-react';
 import Card from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
@@ -423,12 +424,14 @@ ${allEntries.map(entry => `    <url>
     }));
   };
 
-  const renderServiceForm = () => (
+  const renderServiceForm = () => {
+    if (!editItem) return null;
+    return (
     <div className="fade-in-up flex flex-col gap-6">
       <div className="flex justify-between items-center border-b border-white/5 pb-4">
         <div>
           <h2 className="text-xl font-bold font-headline text-zinc-200">
-            {editItem._id ? 'Edit Service Capability' : 'Create New Service Capability'}
+            {editItem._id || editItem.id ? 'Edit Service Capability' : 'Create New Service Capability'}
           </h2>
           <p className="text-xs text-zinc-500 mt-1">Configure service definitions, visual styles, and metadata overrides.</p>
         </div>
@@ -687,8 +690,11 @@ ${allEntries.map(entry => `    <url>
       </form>
     </div>
   );
+};
 
-  const renderPortfolioForm = () => (
+  const renderPortfolioForm = () => {
+    if (!editItem) return null;
+    return (
     <div className="fade-in-up flex flex-col gap-6">
       <div className="flex justify-between items-center border-b border-white/5 pb-4">
         <div>
@@ -771,8 +777,11 @@ ${allEntries.map(entry => `    <url>
       </form>
     </div>
   );
+};
 
-  const renderBlogForm = () => (
+  const renderBlogForm = () => {
+    if (!editItem) return null;
+    return (
     <div className="fade-in-up flex flex-col gap-6">
       <div className="flex justify-between items-center border-b border-white/5 pb-4">
         <div>
@@ -1274,6 +1283,7 @@ ${allEntries.map(entry => `    <url>
       </form>
     </div>
   );
+};
 
   const renderSeoPageForm = () => (
     <div className="fade-in-up flex flex-col gap-6">
@@ -1615,11 +1625,38 @@ ${allEntries.map(entry => `    <url>
     if (window.confirm('Delete this service capability node?')) {
       try {
         await serviceService.deleteService(id);
-        setServices(prev => prev.filter(s => s.id !== id));
+        setServices(prev => prev.filter(s => s.id !== id && s._id !== id && s.slug !== id));
         alert('[SUCCESS] Service deleted.');
       } catch (err) {
         alert('[ERROR] Delete failed: ' + (err.response?.data?.error || err.message));
       }
+    }
+  };
+
+  const handleMoveService = async (index, direction) => {
+    if (!Array.isArray(services)) return;
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= services.length) return;
+
+    const updated = [...services];
+    const temp = updated[index];
+    updated[index] = updated[targetIndex];
+    updated[targetIndex] = temp;
+
+    setServices(updated);
+
+    try {
+      const orderedIds = updated.map(s => s._id || s.id || s.slug);
+      await fetch('https://api.kvantumtechsolutions.com/api/services/reorder', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${currentUser?.token}`
+        },
+        body: JSON.stringify({ orderedIds })
+      });
+    } catch (err) {
+      console.warn('[REORDER] Failed to sync order to server:', err);
     }
   };
 
@@ -2321,38 +2358,65 @@ ${allEntries.map(entry => `    <url>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {(Array.isArray(services) ? services : []).map(ser => (
-                <Card key={ser.id} className="p-6 border flex justify-between items-start gap-4">
-                  <div className="text-left flex flex-col gap-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-mono text-zinc-500 uppercase">NODE_ID: {ser.id}</span>
-                      <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${
-                        ser.showInHome !== false 
-                          ? 'bg-cyanCustom/10 text-cyanCustom border border-cyanCustom/30' 
-                          : 'bg-zinc-800 text-zinc-400 border border-zinc-700'
-                      }`}>
-                        {ser.showInHome !== false ? '✓ Homepage' : 'Hidden on Home'}
-                      </span>
+              {(Array.isArray(services) ? services : []).map((ser, idx) => {
+                const serKey = ser._id || ser.id || ser.slug || `ser_${idx}`;
+                return (
+                  <Card key={serKey} className="p-6 border flex justify-between items-start gap-4 relative">
+                    <div className="text-left flex flex-col gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-[10px] font-mono text-zinc-500 uppercase">NODE_ID: {serKey}</span>
+                        <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${
+                          ser.showInHome !== false 
+                            ? 'bg-cyanCustom/10 text-cyanCustom border border-cyanCustom/30' 
+                            : 'bg-zinc-800 text-zinc-400 border border-zinc-700'
+                        }`}>
+                          {ser.showInHome !== false ? '✓ Homepage' : 'Hidden on Home'}
+                        </span>
+                      </div>
+                      <h3 className="text-lg font-bold font-headline text-zinc-200">{ser.title}</h3>
+                      <p className="text-zinc-400 text-xs leading-relaxed max-w-[400px]">{ser.shortDesc}</p>
                     </div>
-                    <h3 className="text-lg font-bold font-headline text-zinc-200">{ser.title}</h3>
-                    <p className="text-zinc-400 text-xs leading-relaxed max-w-[400px]">{ser.shortDesc}</p>
-                  </div>
-                  <div className="flex gap-2 shrink-0">
-                    <button 
-                      onClick={() => openEditor('service', ser)}
-                      className="p-2 bg-white/[0.02] border border-white/8 rounded-lg hover:border-cyanCustom/30 hover:text-cyanCustom transition-colors"
-                    >
-                      <Edit2 size={14} />
-                    </button>
-                    <button 
-                      onClick={() => handleDeleteService(ser.id)}
-                      className="p-2 bg-white/[0.02] border border-white/8 rounded-lg hover:border-red-500/30 hover:text-red-400 transition-colors"
-                    >
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
-                </Card>
-              ))}
+                    <div className="flex items-center gap-2 shrink-0">
+                      {/* Sort Order Up/Down Buttons */}
+                      <div className="flex flex-col gap-1 bg-zinc-900 border border-white/8 rounded-lg p-1">
+                        <button
+                          type="button"
+                          disabled={idx === 0}
+                          onClick={() => handleMoveService(idx, 'up')}
+                          title="Move Up"
+                          className="p-1 hover:bg-white/10 rounded text-zinc-300 disabled:opacity-20 cursor-pointer"
+                        >
+                          <ChevronUp size={12} />
+                        </button>
+                        <button
+                          type="button"
+                          disabled={idx === services.length - 1}
+                          onClick={() => handleMoveService(idx, 'down')}
+                          title="Move Down"
+                          className="p-1 hover:bg-white/10 rounded text-zinc-300 disabled:opacity-20 cursor-pointer"
+                        >
+                          <ChevronDown size={12} />
+                        </button>
+                      </div>
+
+                      <button 
+                        onClick={() => openEditor('service', ser)}
+                        title="Edit Service & SEO"
+                        className="p-2 bg-white/[0.02] border border-white/8 rounded-lg hover:border-cyanCustom/30 hover:text-cyanCustom transition-colors cursor-pointer"
+                      >
+                        <Edit2 size={14} />
+                      </button>
+                      <button 
+                        onClick={() => handleDeleteService(serKey)}
+                        title="Delete Service"
+                        className="p-2 bg-white/[0.02] border border-white/8 rounded-lg hover:border-red-500/30 hover:text-red-400 transition-colors cursor-pointer"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </Card>
+                );
+              })}
             </div>
           </div>
         )

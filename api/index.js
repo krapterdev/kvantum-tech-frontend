@@ -108,20 +108,20 @@ export default async function handler(req, res) {
     }
 
     // Perform replacement on HTML head
-    html = html.replace(/<title>.*?<\/title>/gi, `<title>${title}</title>`);
-    html = html.replace(/<meta\s+name="description"\s+content=".*?"\s*\/?>/gi, `<meta name="description" content="${description}" />`);
-    html = html.replace(/<meta\s+name="keywords"\s+content=".*?"\s*\/?>/gi, `<meta name="keywords" content="${keywords}" />`);
-    html = html.replace(/<link\s+rel="canonical"\s+href=".*?"\s*\/?>/gi, `<link rel="canonical" href="${canonicalUrl}" />`);
+    html = html.replace(/<title[\s\S]*?<\/title>/gi, `<title>${title}</title>`);
+    html = html.replace(/<meta[\s\S]*?name=["']description["'][\s\S]*?\/?>/gi, `<meta name="description" content="${description}" />`);
+    html = html.replace(/<meta[\s\S]*?name=["']keywords["'][\s\S]*?\/?>/gi, `<meta name="keywords" content="${keywords}" />`);
+    html = html.replace(/<link[\s\S]*?rel=["']canonical["'][\s\S]*?\/?>/gi, `<link rel="canonical" href="${canonicalUrl}" />`);
 
-    html = html.replace(/<meta\s+property="og:title"\s+content=".*?"\s*\/?>/gi, `<meta property="og:title" content="${title}" />`);
-    html = html.replace(/<meta\s+property="og:description"\s+content=".*?"\s*\/?>/gi, `<meta property="og:description" content="${description}" />`);
-    html = html.replace(/<meta\s+property="og:url"\s+content=".*?"\s*\/?>/gi, `<meta property="og:url" content="${canonicalUrl}" />`);
-    html = html.replace(/<meta\s+property="og:image"\s+content=".*?"\s*\/?>/gi, `<meta property="og:image" content="${ogImage}" />`);
-    html = html.replace(/<meta\s+property="og:image:secure_url"\s+content=".*?"\s*\/?>/gi, `<meta property="og:image:secure_url" content="${ogImage}" />`);
+    html = html.replace(/<meta[\s\S]*?property=["']og:title["'][\s\S]*?\/?>/gi, `<meta property="og:title" content="${title}" />`);
+    html = html.replace(/<meta[\s\S]*?property=["']og:description["'][\s\S]*?\/?>/gi, `<meta property="og:description" content="${description}" />`);
+    html = html.replace(/<meta[\s\S]*?property=["']og:url["'][\s\S]*?\/?>/gi, `<meta property="og:url" content="${canonicalUrl}" />`);
+    html = html.replace(/<meta[\s\S]*?property=["']og:image["'][\s\S]*?\/?>/gi, `<meta property="og:image" content="${ogImage}" />`);
+    html = html.replace(/<meta[\s\S]*?property=["']og:image:secure_url["'][\s\S]*?\/?>/gi, `<meta property="og:image:secure_url" content="${ogImage}" />`);
 
-    html = html.replace(/<meta\s+name="twitter:title"\s+content=".*?"\s*\/?>/gi, `<meta name="twitter:title" content="${title}" />`);
-    html = html.replace(/<meta\s+name="twitter:description"\s+content=".*?"\s*\/?>/gi, `<meta name="twitter:description" content="${description}" />`);
-    html = html.replace(/<meta\s+name="twitter:image"\s+content=".*?"\s*\/?>/gi, `<meta name="twitter:image" content="${ogImage}" />`);
+    html = html.replace(/<meta[\s\S]*?name=["']twitter:title["'][\s\S]*?\/?>/gi, `<meta name="twitter:title" content="${title}" />`);
+    html = html.replace(/<meta[\s\S]*?name=["']twitter:description["'][\s\S]*?\/?>/gi, `<meta name="twitter:description" content="${description}" />`);
+    html = html.replace(/<meta[\s\S]*?name=["']twitter:image["'][\s\S]*?\/?>/gi, `<meta name="twitter:image" content="${ogImage}" />`);
 
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
@@ -144,9 +144,9 @@ export default async function handler(req, res) {
         title = "Enterprise IT & Automation Services | Kvantum Tech Solutions";
       }
       
-      html = html.replace(/<title>.*?<\/title>/gi, `<title>${title}</title>`);
-      html = html.replace(/<link\s+rel="canonical"\s+href=".*?"\s*\/?>/gi, `<link rel="canonical" href="${canonicalUrl}" />`);
-      html = html.replace(/<meta\s+property="og:url"\s+content=".*?"\s*\/?>/gi, `<meta property="og:url" content="${canonicalUrl}" />`);
+      html = html.replace(/<title[\s\S]*?<\/title>/gi, `<title>${title}</title>`);
+      html = html.replace(/<link[\s\S]*?rel=["']canonical["'][\s\S]*?\/?>/gi, `<link rel="canonical" href="${canonicalUrl}" />`);
+      html = html.replace(/<meta[\s\S]*?property=["']og:url["'][\s\S]*?\/?>/gi, `<meta property="og:url" content="${canonicalUrl}" />`);
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       return res.status(200).send(html);
     } catch (e2) {

@@ -77,22 +77,22 @@ export default async function middleware(req) {
   }
 
   // 1. Replace <title>
-  html = html.replace(/<title>.*?<\/title>/gi, `<title>${title}</title>`);
+  html = html.replace(/<title[\s\S]*?<\/title>/gi, `<title>${title}</title>`);
 
   // 2. Replace <meta name="description">
-  html = html.replace(/<meta\s+name="description"\s+content=".*?"\s*\/?>/gi, `<meta name="description" content="${description}" />`);
+  html = html.replace(/<meta[\s\S]*?name=["']description["'][\s\S]*?\/?>/gi, `<meta name="description" content="${description}" />`);
 
   // 3. Replace <link rel="canonical">
-  html = html.replace(/<link\s+rel="canonical"\s+href=".*?"\s*\/?>/gi, `<link rel="canonical" href="${canonicalUrl}" />`);
+  html = html.replace(/<link[\s\S]*?rel=["']canonical["'][\s\S]*?\/?>/gi, `<link rel="canonical" href="${canonicalUrl}" />`);
 
   // 4. Replace OpenGraph & Twitter Meta Tags
-  html = html.replace(/<meta\s+property="og:title"\s+content=".*?"\s*\/?>/gi, `<meta property="og:title" content="${title}" />`);
-  html = html.replace(/<meta\s+property="og:description"\s+content=".*?"\s*\/?>/gi, `<meta property="og:description" content="${description}" />`);
-  html = html.replace(/<meta\s+property="og:url"\s+content=".*?"\s*\/?>/gi, `<meta property="og:url" content="${canonicalUrl}" />`);
-  html = html.replace(/<meta\s+property="og:image"\s+content=".*?"\s*\/?>/gi, `<meta property="og:image" content="${ogImage}" />`);
+  html = html.replace(/<meta[\s\S]*?property=["']og:title["'][\s\S]*?\/?>/gi, `<meta property="og:title" content="${title}" />`);
+  html = html.replace(/<meta[\s\S]*?property=["']og:description["'][\s\S]*?\/?>/gi, `<meta property="og:description" content="${description}" />`);
+  html = html.replace(/<meta[\s\S]*?property=["']og:url["'][\s\S]*?\/?>/gi, `<meta property="og:url" content="${canonicalUrl}" />`);
+  html = html.replace(/<meta[\s\S]*?property=["']og:image["'][\s\S]*?\/?>/gi, `<meta property="og:image" content="${ogImage}" />`);
 
-  html = html.replace(/<meta\s+name="twitter:title"\s+content=".*?"\s*\/?>/gi, `<meta name="twitter:title" content="${title}" />`);
-  html = html.replace(/<meta\s+name="twitter:description"\s+content=".*?"\s*\/?>/gi, `<meta name="twitter:description" content="${description}" />`);
+  html = html.replace(/<meta[\s\S]*?name=["']twitter:title["'][\s\S]*?\/?>/gi, `<meta name="twitter:title" content="${title}" />`);
+  html = html.replace(/<meta[\s\S]*?name=["']twitter:description["'][\s\S]*?\/?>/gi, `<meta name="twitter:description" content="${description}" />`);
 
   return new Response(html, {
     headers: {
