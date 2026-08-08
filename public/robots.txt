@@ -1,3 +1,130 @@
+# =========================================================
+# Kvantum Tech Solutions - Robots.txt
+# =========================================================
+
+# ---------------------------------------------------------
+# SEARCH ENGINES & IMPORTANT CRAWLERS
+# ---------------------------------------------------------
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Googlebot-Video
+Allow: /
+
+User-agent: Googlebot-News
+Allow: /
+
+User-agent: Google-InspectionTool
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+
+# ---------------------------------------------------------
+# SOCIAL / LINK PREVIEW CRAWLERS
+# ---------------------------------------------------------
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Facebot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: Slackbot
+Allow: /
+
+User-agent: TelegramBot
+Allow: /
+
+
+# ---------------------------------------------------------
+# AI & AI-RELATED CRAWLERS
+# ---------------------------------------------------------
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+
+# ---------------------------------------------------------
+# UNWANTED SEO / COMPETITOR CRAWLERS
+# ---------------------------------------------------------
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: SemrushBot-SA
+Disallow: /
+
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /
+
+User-agent: DataForSeoBot
+Disallow: /
+
+User-agent: SeobilityBot
+Disallow: /
+
+
+# ---------------------------------------------------------
+# OTHER KNOWN NON-SEARCH / RESOURCE-HEAVY CRAWLERS
+# ---------------------------------------------------------
+
+User-agent: PetalBot
+Disallow: /
+
+
+# ---------------------------------------------------------
+# DEFAULT CRAWLING POLICY
+# ---------------------------------------------------------
+
 User-agent: *
 Allow: /
+
+
+# ---------------------------------------------------------
+# XML SITEMAP
+# ---------------------------------------------------------
+
 Sitemap: https://kvantumtechsolutions.com/sitemap.xml
+
