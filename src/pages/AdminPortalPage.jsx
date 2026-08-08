@@ -1831,11 +1831,21 @@ ${allEntries.map(entry => `    <url>
         
         if (originalId) {
           try { await blogService.updateBlog(originalId, completeItem); } catch (apiErr) { console.warn('Offline blog update:', apiErr); }
-          setBlogs(prev => (Array.isArray(prev) ? prev : []).map(b => (b.id === originalId || b._id === originalId || b.slug === originalId) ? completeItem : b));
+          setBlogs(prev => {
+            const list = Array.isArray(prev) ? prev : [];
+            const updated = list.map(b => (b.id === originalId || b._id === originalId || b.slug === originalId) ? completeItem : b);
+            localStorage.setItem('kts_saved_blogs', JSON.stringify(updated));
+            return updated;
+          });
         } else {
           let created = completeItem;
           try { created = await blogService.createBlog(completeItem); } catch (apiErr) { console.warn('Offline blog create:', apiErr); }
-          setBlogs(prev => [created || completeItem, ...(Array.isArray(prev) ? prev : [])]);
+          setBlogs(prev => {
+            const list = Array.isArray(prev) ? prev : [];
+            const updated = [created || completeItem, ...list];
+            localStorage.setItem('kts_saved_blogs', JSON.stringify(updated));
+            return updated;
+          });
         }
       } else if (editType === 'seo') {
         if (originalId) {

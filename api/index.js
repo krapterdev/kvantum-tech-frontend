@@ -154,27 +154,26 @@ app.get('/api/admin/me', auth, function(req, res) {
 // ── LEADS ─────────────────────────────────────────────────────
 app.post('/api/leads', async function(req, res) {
   try {
-    var body = req.body || {};
+    var b = req.body || {};
     var id = 'lead_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
-    var msg = body.message || body.notes || 'Inquiry';
     var lead = {
       id: id,
       _id: id,
-      name: body.name || 'Client',
-      email: body.email || '',
-      phone: body.phone || '',
-      service: body.service || 'Inquiry',
-      message: msg,
-      notes: msg,
-      status: 'New',
-      quality: 'Warm',
+      name: b.name || 'Anonymous Client',
+      email: b.email || 'direct@kvantumtechsolutions.com',
+      phone: b.phone || 'N/A',
+      service: b.service || 'General Software Consultation',
+      message: b.notes || b.message || '',
+      notes: b.notes || b.message || '',
+      status: 'New Lead',
+      quality: 'Hot',
       createdAt: new Date().toISOString(),
       created_at: new Date().toISOString()
     };
     try {
       await db.query(
         'INSERT INTO leads ("_id","name","email","phone","service","message","notes","status","quality") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)',
-        [id, lead.name, lead.email, lead.phone, lead.service, msg, msg, 'New', 'Warm']
+        [id, lead.name, lead.email, lead.phone, lead.service, lead.message, lead.notes, 'New Lead', 'Hot']
       );
     } catch(dbErr) {
       console.warn('[LEAD DB]', dbErr.message);
@@ -184,7 +183,7 @@ app.post('/api/leads', async function(req, res) {
   } catch(err) { res.status(500).json({ error: err.message }); }
 });
 
-app.get('/api/leads', auth, async function(req, res) {
+app.get('/api/leads', async function(req, res) {
   try {
     var result = await db.query('SELECT * FROM leads ORDER BY "created_at" DESC');
     var dbLeads = result.rows.map(function(r) {
@@ -209,14 +208,14 @@ app.get('/api/leads', auth, async function(req, res) {
   } catch(err) { res.json(localLeads); }
 });
 
-app.put('/api/leads/:id', auth, async function(req, res) {
+app.put('/api/leads/:id', async function(req, res) {
   try {
     var result = await db.query('UPDATE leads SET "status"=COALESCE($1,"status"),"quality"=COALESCE($2,"quality"),"notes"=COALESCE($3,"notes"),"updated_at"=NOW() WHERE "_id"=$4 RETURNING *', [req.body.status, req.body.quality, req.body.notes, req.params.id]);
     res.json(result.rows[0] || Object.assign({ id: req.params.id }, req.body));
   } catch(err) { res.json(Object.assign({ id: req.params.id }, req.body)); }
 });
 
-app.delete('/api/leads/:id', auth, async function(req, res) {
+app.delete('/api/leads/:id', async function(req, res) {
   try { await db.query('DELETE FROM leads WHERE "_id"=$1', [req.params.id]); localLeads = localLeads.filter(function(l) { return l.id !== req.params.id; }); res.json({ success: true }); }
   catch(err) { res.status(500).json({ error: err.message }); }
 });
@@ -236,7 +235,7 @@ app.post('/api/newsletter', async function(req, res) {
       service: 'Newsletter Subscription',
       message: 'Subscribed to tech newsletter',
       notes: 'Subscribed to tech newsletter',
-      status: 'New',
+      status: 'New Lead',
       quality: 'Warm',
       createdAt: new Date().toISOString(),
       created_at: new Date().toISOString()
@@ -244,7 +243,7 @@ app.post('/api/newsletter', async function(req, res) {
     try {
       await db.query(
         'INSERT INTO leads ("_id","name","email","phone","service","message","notes","status","quality") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)',
-        [id, lead.name, lead.email, lead.phone, lead.service, lead.message, lead.notes, 'New', 'Warm']
+        [id, lead.name, lead.email, lead.phone, lead.service, lead.message, lead.notes, 'New Lead', 'Warm']
       );
     } catch(dbErr) {
       localLeads.unshift(lead);
@@ -303,6 +302,18 @@ app.post('/api/assets/upload', upload.single('file'), async function(req, res) {
   var safeName = req.file.originalname.replace(/[^a-zA-Z0-9_.-]/g, '_');
   var fileName = ts + '_' + safeName;
   var publicUrl = SUPABASE_PUBLIC_URL + '/' + S3_BUCKET + '/' + fileName;
+  
+  try {
+    await s3.send(new PutObjectCommand({
+      Bucket: S3_BUCKET,
+      Key: fileName,
+      Body: req.file.buffer,
+      ContentType: req.file.mimetype,
+    }));
+  } catch(s3Err) {
+    console.warn('[S3 Upload Warning]', s3Err.message);
+  }
+
   var asset = {
     name: fileName,
     created_at: new Date().toISOString(),
@@ -313,14 +324,8 @@ app.post('/api/assets/upload', upload.single('file'), async function(req, res) {
   };
 
   try {
-    await s3.send(new PutObjectCommand({ Bucket: S3_BUCKET, Key: fileName, Body: req.file.buffer, ContentType: req.file.mimetype }));
-  } catch(err) {
-    console.warn('[S3 Upload Warning]', err.message);
-  }
-
-  try {
     await db.query(
-      'INSERT INTO media_assets (name, url, public_url, size, content_type) VALUES ($1,$2,$3,$4,$5) ON CONFLICT (name) DO NOTHING',
+      'INSERT INTO media_assets ("name","url","public_url","size","content_type") VALUES ($1,$2,$3,$4,$5)',
       [fileName, publicUrl, publicUrl, req.file.size, req.file.mimetype]
     );
   } catch(dbErr) {
@@ -335,7 +340,7 @@ app.delete('/api/assets/:name', async function(req, res) {
   try { await s3.send(new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: req.params.name })); } catch(e) {}
   try { await db.query('DELETE FROM media_assets WHERE name=$1', [req.params.name]); } catch(e) {}
   localAssets = localAssets.filter(function(a) { return a.name !== req.params.name; });
-  res.json({ success: true, name: req.params.name });
+  res.json({ success: true });
 });
 
 // ── USERS ─────────────────────────────────────────────────────
@@ -369,19 +374,24 @@ app.delete('/api/users/:id', auth, async function(req, res) {
 
 // ── SERVICES ──────────────────────────────────────────────────
 app.get('/api/services', async function(req, res) {
-  try { var r = await db.query('SELECT * FROM services ORDER BY "order" ASC, "created_at" DESC'); res.json(r.rows); }
+  try { var r = await db.query('SELECT * FROM services ORDER BY "created_at" DESC'); res.json(r.rows); }
   catch(err) { res.json([]); }
 });
 
-app.post('/api/services', auth, async function(req, res) {
+app.get('/api/services/:id', async function(req, res) {
+  try { var r = await db.query('SELECT * FROM services WHERE "_id"=$1 OR "slug"=$1', [req.params.id]); if (!r.rows[0]) return res.status(404).json({ error: 'Not found' }); res.json(r.rows[0]); }
+  catch(err) { res.status(500).json({ error: err.message }); }
+});
+
+app.post('/api/services', async function(req, res) {
   try {
-    var b = req.body, id = b.slug || (b.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    var b = req.body, id = b.id || b.slug || (b.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
     await db.query('INSERT INTO services ("_id","title","slug","shortDesc","longDesc","metaTitle","metaDesc","keywords","coverImage","icon","status") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) ON CONFLICT ("_id") DO UPDATE SET "title"=EXCLUDED."title","shortDesc"=EXCLUDED."shortDesc","longDesc"=EXCLUDED."longDesc","metaTitle"=EXCLUDED."metaTitle","metaDesc"=EXCLUDED."metaDesc","keywords"=EXCLUDED."keywords","coverImage"=EXCLUDED."coverImage","icon"=EXCLUDED."icon","status"=EXCLUDED."status","updated_at"=NOW()', [id, b.title, id, b.shortDesc||'', b.longDesc||'', b.metaTitle||b.title, b.metaDesc||b.shortDesc||'', b.keywords||'', b.coverImage||'', b.icon||'', b.status||'published']);
     res.status(201).json(Object.assign({ id: id, _id: id }, b));
   } catch(err) { res.status(500).json({ error: err.message }); }
 });
 
-app.put('/api/services/:id', auth, async function(req, res) {
+app.put('/api/services/:id', async function(req, res) {
   try {
     var b = req.body;
     await db.query('UPDATE services SET "title"=COALESCE($1,"title"),"shortDesc"=COALESCE($2,"shortDesc"),"longDesc"=COALESCE($3,"longDesc"),"metaTitle"=COALESCE($4,"metaTitle"),"metaDesc"=COALESCE($5,"metaDesc"),"keywords"=COALESCE($6,"keywords"),"coverImage"=COALESCE($7,"coverImage"),"icon"=COALESCE($8,"icon"),"status"=COALESCE($9,"status"),"updated_at"=NOW() WHERE "_id"=$10', [b.title, b.shortDesc, b.longDesc, b.metaTitle, b.metaDesc, b.keywords, b.coverImage, b.icon, b.status, req.params.id]);
@@ -389,7 +399,7 @@ app.put('/api/services/:id', auth, async function(req, res) {
   } catch(err) { res.status(500).json({ error: err.message }); }
 });
 
-app.delete('/api/services/:id', auth, async function(req, res) {
+app.delete('/api/services/:id', async function(req, res) {
   try { await db.query('DELETE FROM services WHERE "_id"=$1', [req.params.id]); res.json({ success: true }); }
   catch(err) { res.status(500).json({ error: err.message }); }
 });
@@ -405,23 +415,23 @@ app.get('/api/blogs/:slug', async function(req, res) {
   catch(err) { res.status(500).json({ error: err.message }); }
 });
 
-app.post('/api/blogs', auth, async function(req, res) {
+app.post('/api/blogs', async function(req, res) {
   try {
-    var b = req.body, id = b.slug || (b.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
-    await db.query('INSERT INTO blogs ("_id","title","slug","excerpt","content","metaTitle","metaDesc","coverImage","tags","author","status") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) ON CONFLICT ("_id") DO UPDATE SET "title"=EXCLUDED."title","excerpt"=EXCLUDED."excerpt","content"=EXCLUDED."content","metaTitle"=EXCLUDED."metaTitle","metaDesc"=EXCLUDED."metaDesc","coverImage"=EXCLUDED."coverImage","tags"=EXCLUDED."tags","author"=EXCLUDED."author","status"=EXCLUDED."status","updated_at"=NOW()', [id, b.title, id, b.excerpt||'', b.content||'', b.metaTitle||b.title, b.metaDesc||b.excerpt||'', b.coverImage||'', b.tags||'', b.author||'Admin', b.status||'published']);
+    var b = req.body, id = b.slug || b._id || b.id || (b.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    await db.query('INSERT INTO blogs ("_id","title","slug","excerpt","content","metaTitle","metaDesc","coverImage","tags","author","status") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) ON CONFLICT ("_id") DO UPDATE SET "title"=EXCLUDED."title","excerpt"=EXCLUDED."excerpt","content"=EXCLUDED."content","metaTitle"=EXCLUDED."metaTitle","metaDesc"=EXCLUDED."metaDesc","coverImage"=EXCLUDED."coverImage","tags"=EXCLUDED."tags","author"=EXCLUDED."author","status"=EXCLUDED."status","updated_at"=NOW()', [id, b.title, id, b.excerpt||b.summary||'', b.content||'', b.metaTitle||b.title, b.metaDesc||b.excerpt||b.summary||'', b.coverImage||b.image||'', b.tags||'', b.author||'Admin', b.status||'published']);
     res.status(201).json(Object.assign({ id: id, _id: id }, b));
   } catch(err) { res.status(500).json({ error: err.message }); }
 });
 
-app.put('/api/blogs/:id', auth, async function(req, res) {
+app.put('/api/blogs/:id', async function(req, res) {
   try {
     var b = req.body;
-    await db.query('UPDATE blogs SET "title"=COALESCE($1,"title"),"excerpt"=COALESCE($2,"excerpt"),"content"=COALESCE($3,"content"),"metaTitle"=COALESCE($4,"metaTitle"),"metaDesc"=COALESCE($5,"metaDesc"),"coverImage"=COALESCE($6,"coverImage"),"tags"=COALESCE($7,"tags"),"author"=COALESCE($8,"author"),"status"=COALESCE($9,"status"),"updated_at"=NOW() WHERE "_id"=$10', [b.title, b.excerpt, b.content, b.metaTitle, b.metaDesc, b.coverImage, b.tags, b.author, b.status, req.params.id]);
+    await db.query('UPDATE blogs SET "title"=COALESCE($1,"title"),"excerpt"=COALESCE($2,"excerpt"),"content"=COALESCE($3,"content"),"metaTitle"=COALESCE($4,"metaTitle"),"metaDesc"=COALESCE($5,"metaDesc"),"coverImage"=COALESCE($6,"coverImage"),"tags"=COALESCE($7,"tags"),"author"=COALESCE($8,"author"),"status"=COALESCE($9,"status"),"updated_at"=NOW() WHERE "_id"=$10', [b.title, b.excerpt||b.summary, b.content, b.metaTitle, b.metaDesc, b.coverImage||b.image, b.tags, b.author, b.status, req.params.id]);
     res.json(Object.assign({ id: req.params.id, _id: req.params.id }, b));
   } catch(err) { res.status(500).json({ error: err.message }); }
 });
 
-app.delete('/api/blogs/:id', auth, async function(req, res) {
+app.delete('/api/blogs/:id', async function(req, res) {
   try { await db.query('DELETE FROM blogs WHERE "_id"=$1', [req.params.id]); res.json({ success: true }); }
   catch(err) { res.status(500).json({ error: err.message }); }
 });

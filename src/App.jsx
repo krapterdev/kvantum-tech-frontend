@@ -88,9 +88,18 @@ export default function App() {
       // 2. Blogs
       try {
         const data = await blogService.getAllBlogs();
-        setBlogs(data);
+        let localSaved = [];
+        try { localSaved = JSON.parse(localStorage.getItem('kts_saved_blogs') || '[]'); } catch(e) {}
+        const map = new Map();
+        (Array.isArray(data) ? data : []).forEach(b => map.set(b.id || b._id || b.slug, b));
+        localSaved.forEach(b => map.set(b.id || b._id || b.slug, b));
+        const merged = Array.from(map.values());
+        if (merged.length > 0) setBlogs(merged);
       } catch (err) {
         console.warn('[API CONNECTION] Blogs offline.');
+        let localSaved = [];
+        try { localSaved = JSON.parse(localStorage.getItem('kts_saved_blogs') || '[]'); } catch(e) {}
+        if (localSaved.length > 0) setBlogs(localSaved);
       } finally {
         setBlogsLoading(false);
       }
