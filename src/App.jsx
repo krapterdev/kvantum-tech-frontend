@@ -155,26 +155,32 @@ export default function App() {
 
   // Dynamic Browser SEO Metadata Injection & Custom Scripts
   useEffect(() => {
-    let title = 'Custom Software Development Company | Kvantum Tech Solutions';
-    let description = 'Kvantum Tech Solutions is a custom software development company building scalable business software, CRM, HRMS, ERP, web and mobile apps, and automation solutions.';
-    let keywords = 'custom software development company, software development company, custom software development services, business software development company';
+    let title = 'IT Solutions Company in Delhi NCR | Kvantum Tech Solutions';
+    let description = 'Kvantum Tech Solutions offers reliable IT services, software development, cloud solutions, web development, and digital transformation services across Delhi NCR.';
+    let keywords = 'IT Solutions Company in Delhi NCR, Kvantum Tech Solutions, software development, cloud solutions, web development, digital transformation';
     
     const path = location.pathname;
     const siteUrl = 'https://kvantumtechsolutions.com';
     let canonicalUrl = `${siteUrl}${path === '/' ? '/' : path}`;
 
+    let ogTitle = '';
+    let ogDesc = '';
+    let ogImage = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg';
+
     if (path === '/') {
       const homeSeo = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'home') : null;
-      if (homeSeo) {
-        title = homeSeo.title || title;
-        description = homeSeo.description || description;
-        keywords = homeSeo.keywords || keywords;
-      }
+      title = homeSeo?.title || 'IT Solutions Company in Delhi NCR | Kvantum Tech Solutions';
+      description = homeSeo?.description || 'Kvantum Tech Solutions offers reliable IT services, software development, cloud solutions, web development, and digital transformation services across Delhi NCR.';
+      keywords = homeSeo?.keywords || 'IT Solutions Company in Delhi NCR, Kvantum Tech Solutions, software development, cloud solutions, web development, digital transformation';
+      ogTitle = title;
+      ogDesc = description;
     } else if (path === '/services') {
       const servicesSeo = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'services') : null;
       title = servicesSeo?.title || 'IT Services | Web Development, SEO & AI Solutions | Kvantum Tech Solutions';
       description = servicesSeo?.description || 'Explore Kvantum Tech Solutions\' expert IT services, including web development, SEO, digital marketing, AI chatbots, app development, UI/UX design, and scalable business solutions.';
-      keywords = servicesSeo?.keywords || 'software development, mobile app development, web design services, seo agency';
+      keywords = servicesSeo?.keywords || 'IT Services, Web Development, SEO, AI Solutions, Kvantum Tech Solutions';
+      ogTitle = 'IT Services | Web Development, SEO & AI Solutions | Kvantum Tech Solutions';
+      ogDesc = 'Discover enterprise-grade IT services from Kvantum Tech Solutions, including web development, SEO, AI chatbots, digital marketing, app development, and UI/UX design.';
     } else if (path.startsWith('/services/')) {
       const slug = path.replace('/services/', '').trim();
       const activeService = services.find(s => s.id === slug || s.slug === slug);
@@ -186,48 +192,71 @@ export default function App() {
         title = `${formattedSlug} Services | Kvantum Tech Solutions`;
         description = `Enterprise ${formattedSlug} services engineered by Kvantum Tech Solutions in Delhi NCR.`;
       }
+      ogTitle = title;
+      ogDesc = description;
     } else if (path === '/about') {
       const aboutSeo = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'about') : null;
       title = aboutSeo?.title || 'About Kvantum Tech Solutions | IT & AI Innovation Experts';
       description = aboutSeo?.description || 'Learn about Kvantum Tech Solutions, a trusted IT company delivering AI-powered solutions, web development, digital marketing, and enterprise technology services.';
       keywords = aboutSeo?.keywords || 'about kvantum tech solutions, software development company, developer team';
+      ogTitle = 'About Kvantum Tech Solutions | IT & AI Innovation Experts';
+      ogDesc = 'Discover Kvantum Tech Solutions, delivering innovative AI, web development, digital marketing, and enterprise IT solutions for business growth.';
     } else if (path === '/projects' || path === '/portfolio') {
       const projectsSeo = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'projects') : null;
       title = projectsSeo?.title || 'Featured Software & Engineering Projects | Kvantum Tech Solutions';
       description = projectsSeo?.description || 'Explore web products, apps, and custom platforms built for our clients.';
       keywords = projectsSeo?.keywords || 'web products, apps, and custom platforms';
+      ogTitle = title;
+      ogDesc = description;
     } else if (path === '/blog') {
       const blogSeo = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'blog') : null;
       title = blogSeo?.title || 'Tech Blog | AI, SEO, Web Development & Digital Marketing | Kvantum Tech Solutions';
       description = blogSeo?.description || 'Explore the Kvantum Tech Solutions blog for expert insights on AI, SEO, web development, digital marketing, software solutions, and the latest technology trends to grow your business.';
       keywords = blogSeo?.keywords || 'tech blog, web development articles, software engineering insights';
+      ogTitle = 'Tech Blog | AI, SEO, Web Development & Digital Marketing | Kvantum Tech Solutions';
+      ogDesc = 'Read the latest articles from Kvantum Tech Solutions covering AI, SEO, web development, digital marketing, software innovation, and business technology .';
     } else if (path.startsWith('/blog/')) {
       const slug = path.replace('/blog/', '').trim();
       const activePost = blogs.find(b => b.slug === slug || b.id === slug || b._id === slug);
       if (activePost) {
         title = activePost.metaTitle || activePost.title || title;
         description = activePost.metaDesc || activePost.summary || description;
+        ogTitle = activePost.ogTitle || activePost.metaTitle || activePost.title || title;
+        ogDesc = activePost.ogDesc || activePost.metaDesc || activePost.summary || description;
+        if (activePost.image) ogImage = activePost.image;
       } else {
         const formattedSlug = slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
         title = `${formattedSlug} | Kvantum Tech Blog`;
+        ogTitle = title;
+        ogDesc = description;
       }
     } else if (path === '/contact') {
       const contactSeo = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'contact') : null;
       title = contactSeo?.title || 'Contact Kvantum Tech Solutions | Let\'s Build Your Digital Future';
       description = contactSeo?.description || 'Get in touch with Kvantum Tech Solutions for web development, AI solutions, SEO, digital marketing, mobile apps, and enterprise IT services. Contact our experts today.';
       keywords = contactSeo?.keywords || 'contact kvantum tech solutions, hire developers, start custom software project';
+      ogTitle = 'Contact Kvantum Tech Solutions | Let\'s Build Your Digital Future';
+      ogDesc = 'Contact Kvantum Tech Solutions to discuss your next digital project. Our experts deliver innovative web, AI, SEO, app development, and digital marketing solutions.';
     } else if (path === '/privacy') {
       title = 'Privacy Policy | Kvantum Tech Solutions';
       description = 'Privacy Policy for Kvantum Tech Solutions. Read how we protect and handle your information.';
+      ogTitle = title;
+      ogDesc = description;
     } else if (path === '/terms') {
       title = 'Terms & Conditions | Kvantum Tech Solutions';
       description = 'Terms and Conditions for Kvantum Tech Solutions software development and digital engineering services.';
+      ogTitle = title;
+      ogDesc = description;
     } else if (path === '/thank-you') {
       title = 'Thank You | Kvantum Tech Solutions';
       description = 'Thank you for contacting Kvantum Tech Solutions. Our technical team will reach out to you shortly.';
+      ogTitle = title;
+      ogDesc = description;
     } else if (path === '/admin') {
       title = 'Admin Portal | Kvantum Tech Solutions';
       description = 'Kvantum Tech Solutions Admin Portal to manage content, service items, blogs, and SEO details.';
+      ogTitle = title;
+      ogDesc = description;
     } else if (path.startsWith('/keyword/')) {
       const slug = path.replace('/keyword/', '').trim();
       const activePage = seoPages.find(p => p.slug === slug || p.id === slug);
@@ -240,16 +269,26 @@ export default function App() {
         title = `${formattedSlug} | Kvantum Tech Solutions`;
         description = `Top-rated ${formattedSlug}. Custom software engineering, CRM, ERP, and business automation services in Delhi NCR.`;
       }
+      ogTitle = title;
+      ogDesc = description;
     }
+
+    if (!ogTitle) ogTitle = title;
+    if (!ogDesc) ogDesc = description;
 
     document.title = title;
     document.querySelector('meta[name="description"]')?.setAttribute('content', description);
     document.querySelector('meta[name="keywords"]')?.setAttribute('content', keywords);
-    document.querySelector('meta[property="og:title"]')?.setAttribute('content', title);
-    document.querySelector('meta[property="og:description"]')?.setAttribute('content', description);
+    document.querySelector('meta[property="og:title"]')?.setAttribute('content', ogTitle);
+    document.querySelector('meta[property="og:description"]')?.setAttribute('content', ogDesc);
     document.querySelector('meta[property="og:url"]')?.setAttribute('content', canonicalUrl);
     document.querySelector('meta[property="og:site_name"]')?.setAttribute('content', 'Kvantum Tech Solutions');
     document.querySelector('meta[property="og:type"]')?.setAttribute('content', 'website');
+    document.querySelector('meta[property="og:image"]')?.setAttribute('content', ogImage);
+    document.querySelector('meta[property="og:image:secure_url"]')?.setAttribute('content', ogImage);
+    document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', ogTitle);
+    document.querySelector('meta[name="twitter:description"]')?.setAttribute('content', ogDesc);
+    document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', ogImage);
     
     // Ensure base canonical tag exists and set to exact active page canonical URL
     let canonicalEl = document.querySelector('link[rel="canonical"]');
@@ -258,6 +297,7 @@ export default function App() {
       canonicalEl.setAttribute('rel', 'canonical');
       document.head.appendChild(canonicalEl);
     }
+    canonicalEl.setAttribute('href', canonicalUrl);
     canonicalEl.setAttribute('href', canonicalUrl);
 
     // Clean old injected other SEO tags

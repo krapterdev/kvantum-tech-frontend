@@ -300,11 +300,19 @@ app.get('/api/assets', async function(req, res) {
   } catch(err) { res.json(localAssets); }
 });
 
+function getShortCleanName(origName) {
+  if (!origName) return 'file_' + Math.floor(1000 + Math.random() * 9000) + '.png';
+  var parts = origName.split('.');
+  var ext = parts.length > 1 ? parts.pop().toLowerCase() : 'png';
+  var base = parts.join('_').toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/_+/g, '_').replace(/^_+|_+$/g, '');
+  if (base.length > 25) base = base.substring(0, 25).replace(/_+$/g, '');
+  if (!base) base = 'img';
+  return base + '_' + Math.floor(1000 + Math.random() * 9000) + '.' + ext;
+}
+
 app.post('/api/assets/upload', upload.single('file'), async function(req, res) {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-  var ts = Date.now();
-  var safeName = req.file.originalname.replace(/[^a-zA-Z0-9_.-]/g, '_');
-  var fileName = ts + '_' + safeName;
+  var fileName = getShortCleanName(req.file.originalname);
   var publicUrl = SUPABASE_PUBLIC_URL + '/' + S3_BUCKET + '/' + fileName;
   
   try {
@@ -587,13 +595,39 @@ app.use('/api', function(req, res) {
 });
 
 // ── SEO META MAP ──────────────────────────────────────────────
+// ── SEO META MAP ──────────────────────────────────────────────
 var META = {
-  '/': { title: 'Custom Software Development Company | Kvantum Tech Solutions', desc: 'Kvantum Tech Solutions is a custom software development company building scalable business software, CRM, HRMS, ERP, web and mobile apps, and automation solutions.' },
-  '/about': { title: 'About Kvantum Tech Solutions | IT & Digital Engineering Experts', desc: 'Learn about Kvantum Tech Solutions, a trusted digital engineering agency delivering custom software, web applications, CRM engines, and business automation.' },
-  '/services': { title: 'Enterprise IT & Automation Services | Kvantum Tech Solutions', desc: 'Explore custom software development, CRM systems, HRMS payroll, ERP platforms, WhatsApp API automation, and scalable web apps built by Kvantum Tech Solutions.' },
-  '/projects': { title: 'Featured Software & Engineering Projects | Kvantum Tech Solutions', desc: 'Explore enterprise case studies, custom CRM systems, HRMS platforms, and web applications engineered by Kvantum Tech Solutions.' },
-  '/blog': { title: 'Tech Blog | AI, SEO, Web Development & Automation | Kvantum Tech Solutions', desc: 'Read expert articles, technical guides, system architecture blueprints, and SEO strategies published weekly by Kvantum Tech Solutions.' },
-  '/contact': { title: 'Contact Kvantum Tech Solutions | Direct Technical Contact', desc: 'Get in touch with Kvantum Tech Solutions for custom software, CRM, HRMS, ERP, web apps, and business automation.' },
+  '/': {
+    title: 'IT Solutions Company in Delhi NCR | Kvantum Tech Solutions',
+    desc: 'Kvantum Tech Solutions offers reliable IT services, software development, cloud solutions, web development, and digital transformation services across Delhi NCR.',
+    ogTitle: 'IT Solutions Company in Delhi NCR | Kvantum Tech Solutions',
+    ogDesc: 'Kvantum Tech Solutions offers reliable IT services, software development, cloud solutions, web development, and digital transformation services across Delhi NCR.'
+  },
+  '/about': {
+    title: 'About Kvantum Tech Solutions | IT & AI Innovation Experts',
+    desc: 'Learn about Kvantum Tech Solutions, a trusted IT company delivering AI-powered solutions, web development, digital marketing, and enterprise technology services.',
+    ogTitle: 'About Kvantum Tech Solutions | IT & AI Innovation Experts',
+    ogDesc: 'Discover Kvantum Tech Solutions, delivering innovative AI, web development, digital marketing, and enterprise IT solutions for business growth.'
+  },
+  '/services': {
+    title: 'IT Services | Web Development, SEO & AI Solutions | Kvantum Tech Solutions',
+    desc: 'Explore Kvantum Tech Solutions\' expert IT services, including web development, SEO, digital marketing, AI chatbots, app development, UI/UX design, and scalable business solutions.',
+    ogTitle: 'IT Services | Web Development, SEO & AI Solutions | Kvantum Tech Solutions',
+    ogDesc: 'Discover enterprise-grade IT services from Kvantum Tech Solutions, including web development, SEO, AI chatbots, digital marketing, app development, and UI/UX design.'
+  },
+  '/blog': {
+    title: 'Tech Blog | AI, SEO, Web Development & Digital Marketing | Kvantum Tech Solutions',
+    desc: 'Explore the Kvantum Tech Solutions blog for expert insights on AI, SEO, web development, digital marketing, software solutions, and the latest technology trends to grow your business.',
+    ogTitle: 'Tech Blog | AI, SEO, Web Development & Digital Marketing | Kvantum Tech Solutions',
+    ogDesc: 'Read the latest articles from Kvantum Tech Solutions covering AI, SEO, web development, digital marketing, software innovation, and business technology .'
+  },
+  '/contact': {
+    title: 'Contact Kvantum Tech Solutions | Let\'s Build Your Digital Future',
+    desc: 'Get in touch with Kvantum Tech Solutions for web development, AI solutions, SEO, digital marketing, mobile apps, and enterprise IT services. Contact our experts today.',
+    ogTitle: 'Contact Kvantum Tech Solutions | Let\'s Build Your Digital Future',
+    ogDesc: 'Contact Kvantum Tech Solutions to discuss your next digital project. Our experts deliver innovative web, AI, SEO, app development, and digital marketing solutions.'
+  },
+  '/projects': { title: 'Featured Software & Engineering Projects | Kvantum Tech Solutions', desc: 'Explore web products, apps, and custom platforms built for our clients.' },
   '/thank-you': { title: 'Thank You | Kvantum Tech Solutions', desc: 'Thank you for contacting Kvantum Tech Solutions. Our technical team will reach out shortly.' }
 };
 
@@ -647,20 +681,22 @@ module.exports = async function handler(req, res) {
     var indexPath = path.join(process.cwd(), 'dist', 'index.html');
     var html = fs.readFileSync(indexPath, 'utf8');
     var siteUrl = 'https://kvantumtechsolutions.com';
-    var canonicalUrl = siteUrl + pathname;
+    var canonicalUrl = siteUrl + (pathname === '/' ? '/' : pathname);
     var meta = getMeta(pathname);
-    var ogImage = siteUrl + '/assets/og-image.jpg';
+    var ogTitle = meta.ogTitle || meta.title;
+    var ogDesc = meta.ogDesc || meta.desc;
+    var ogImage = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg';
 
     html = html.replace(/<title[^>]*?>[\s\S]*?<\/title>/gi, '<title>' + meta.title + '</title>');
     html = html.replace(/<meta\s+[^>]*?name=["']description["'][^>]*?\/?>/gi, '<meta name="description" content="' + meta.desc + '" />');
     html = html.replace(/<link\s+[^>]*?rel=["']canonical["'][^>]*?\/?>/gi, '<link rel="canonical" href="' + canonicalUrl + '" />');
     html = html.replace(/<meta\s+[^>]*?property=["']og:url["'][^>]*?\/?>/gi, '<meta property="og:url" content="' + canonicalUrl + '" />');
-    html = html.replace(/<meta\s+[^>]*?property=["']og:title["'][^>]*?\/?>/gi, '<meta property="og:title" content="' + meta.title + '" />');
-    html = html.replace(/<meta\s+[^>]*?property=["']og:description["'][^>]*?\/?>/gi, '<meta property="og:description" content="' + meta.desc + '" />');
+    html = html.replace(/<meta\s+[^>]*?property=["']og:title["'][^>]*?\/?>/gi, '<meta property="og:title" content="' + ogTitle + '" />');
+    html = html.replace(/<meta\s+[^>]*?property=["']og:description["'][^>]*?\/?>/gi, '<meta property="og:description" content="' + ogDesc + '" />');
     html = html.replace(/<meta\s+[^>]*?property=["']og:image["'][^>]*?\/?>/gi, '<meta property="og:image" content="' + ogImage + '" />');
     html = html.replace(/<meta\s+[^>]*?property=["']og:image:secure_url["'][^>]*?\/?>/gi, '<meta property="og:image:secure_url" content="' + ogImage + '" />');
-    html = html.replace(/<meta\s+[^>]*?name=["']twitter:title["'][^>]*?\/?>/gi, '<meta name="twitter:title" content="' + meta.title + '" />');
-    html = html.replace(/<meta\s+[^>]*?name=["']twitter:description["'][^>]*?\/?>/gi, '<meta name="twitter:description" content="' + meta.desc + '" />');
+    html = html.replace(/<meta\s+[^>]*?name=["']twitter:title["'][^>]*?\/?>/gi, '<meta name="twitter:title" content="' + ogTitle + '" />');
+    html = html.replace(/<meta\s+[^>]*?name=["']twitter:description["'][^>]*?\/?>/gi, '<meta name="twitter:description" content="' + ogDesc + '" />');
     html = html.replace(/<meta\s+[^>]*?name=["']twitter:image["'][^>]*?\/?>/gi, '<meta name="twitter:image" content="' + ogImage + '" />');
 
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
