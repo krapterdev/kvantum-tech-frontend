@@ -19,68 +19,54 @@ export default function HomeContact({ settings }) {
   const [fieldErrors, setFieldErrors] = useState({});
   const [status, setStatus] = useState({ loading: false, error: '' });
 
-  const validate = () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     const errors = {};
-    const trimmedName = formData.name.trim();
-    if (!trimmedName || trimmedName.length < 2) {
-      errors.name = 'Please enter your full name (at least 2 characters).';
+    const trimmedName = (formData.name || '').trim();
+    if (!trimmedName) {
+      errors.name = 'Please enter your name.';
     }
 
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    const trimmedEmail = formData.email.trim();
+    const trimmedEmail = (formData.email || '').trim();
     if (!trimmedEmail) {
       errors.email = 'Email address is required.';
-    } else if (!emailRegex.test(trimmedEmail)) {
-      errors.email = 'Invalid email format (e.g. name@company.com). Please enter a valid email.';
     }
 
-    const cleanPhone = formData.phone.replace(/[^0-9]/g, '');
-    const indianPhoneRegex = /^[6-9]\d{9}$/;
-    if (!formData.phone.trim()) {
+    const rawPhone = (formData.phone || '').trim();
+    const phoneDigits = rawPhone.replace(/[^0-9]/g, '');
+    if (!rawPhone) {
       errors.phone = 'Phone number is required.';
-    } else if (cleanPhone.length !== 10) {
-      errors.phone = `Phone number must be exactly 10 digits (you entered ${cleanPhone.length} digits).`;
-    } else if (!indianPhoneRegex.test(cleanPhone)) {
-      errors.phone = 'Indian mobile numbers must start with 6, 7, 8, or 9 (e.g. 9811661828).';
+    } else if (phoneDigits.length < 10) {
+      errors.phone = 'Please enter a valid 10-digit mobile number.';
     }
 
-    const trimmedMsg = formData.message.trim();
+    const trimmedMsg = (formData.message || '').trim();
     if (!trimmedMsg) {
       errors.message = 'Please describe your project requirements.';
-    } else if (trimmedMsg.length < 10) {
-      errors.message = `Message is too short (currently ${trimmedMsg.length} chars). Please write at least 10 characters so we understand your requirement.`;
     }
 
     setFieldErrors(errors);
-    return errors;
-  };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const errors = validate();
-    const errorKeys = Object.keys(errors);
-
-    if (errorKeys.length > 0) {
-      const firstErrorField = errorKeys[0];
-      setStatus({ 
-        loading: false, 
-        error: `Please fix errors in the form: ${errors[firstErrorField]}` 
-      });
+    if (Object.keys(errors).length > 0) {
+      const firstError = Object.values(errors)[0];
+      setStatus({ loading: false, error: firstError });
       return;
     }
 
     setStatus({ loading: true, error: '' });
 
     try {
-      await submitContact({
-        name: formData.name.trim(),
-        email: formData.email.trim(),
-        phone: formData.phone.trim(),
-        company: formData.company.trim(),
-        service: formData.service,
-        notes: `Message: ${formData.message.trim()}`,
-      });
+      const payload = {
+        name: trimmedName,
+        email: trimmedEmail,
+        phone: phoneDigits.length >= 10 ? phoneDigits.slice(-10) : rawPhone,
+        company: (formData.company || '').trim(),
+        service: formData.service || 'Custom Software Development',
+        message: trimmedMsg,
+        notes: `Company: ${(formData.company || '').trim()} | Message: ${trimmedMsg}`,
+      };
 
+      await submitContact(payload);
       setStatus({ loading: false, error: '' });
       navigate('/thank-you');
     } catch (err) {

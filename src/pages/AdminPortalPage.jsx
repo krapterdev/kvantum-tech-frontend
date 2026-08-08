@@ -237,10 +237,13 @@ ${allEntries.map(entry => `    <url>
     setRobotsSaving(true);
     try {
       await seoService.updateSeoSetting('robots', { key: 'robots', content: robotsInput });
+      localStorage.setItem('kts_saved_robots', robotsInput);
+      alert('✅ [SUCCESS] robots.txt directives saved successfully.');
     } catch (err) {
       console.warn('[OFFLINE SAVE] robots.txt updated locally:', err.message);
+      localStorage.setItem('kts_saved_robots', robotsInput);
+      alert('✅ [SUCCESS] robots.txt directives saved locally.');
     } finally {
-      alert('[SUCCESS] robots.txt directives saved successfully.');
       setRobotsSaving(false);
     }
   };
@@ -249,10 +252,13 @@ ${allEntries.map(entry => `    <url>
     setSitemapSaving(true);
     try {
       await seoService.updateSeoSetting('sitemap', { key: 'sitemap', content: sitemapInput });
+      localStorage.setItem('kts_saved_sitemap', sitemapInput);
+      alert('✅ [SUCCESS] sitemap.xml saved successfully.');
     } catch (err) {
       console.warn('[OFFLINE SAVE] sitemap.xml updated locally:', err.message);
+      localStorage.setItem('kts_saved_sitemap', sitemapInput);
+      alert('✅ [SUCCESS] sitemap.xml saved locally.');
     } finally {
-      alert('[SUCCESS] sitemap.xml saved successfully.');
       setSitemapSaving(false);
     }
   };
@@ -428,17 +434,40 @@ ${allEntries.map(entry => `    <url>
       const data = await seoService.getSeoSettings();
       setSeoSettings(data || {});
 
+      let rVal = null;
+      let sVal = null;
+
       if (Array.isArray(data)) {
         const r = data.find(s => s.key === 'robots');
         const s = data.find(s => s.key === 'sitemap');
-        if (r?.content) setRobotsInput(r.content);
-        if (s?.content) setSitemapInput(s.content);
+        rVal = r?.content;
+        sVal = s?.content;
       } else if (data && typeof data === 'object') {
-        if (data.robots?.content) setRobotsInput(data.robots.content);
-        if (data.sitemap?.content) setSitemapInput(data.sitemap.content);
+        rVal = data.robots?.content;
+        sVal = data.sitemap?.content;
+      }
+
+      if (rVal) {
+        setRobotsInput(rVal);
+        localStorage.setItem('kts_saved_robots', rVal);
+      } else {
+        const localR = localStorage.getItem('kts_saved_robots');
+        if (localR) setRobotsInput(localR);
+      }
+
+      if (sVal) {
+        setSitemapInput(sVal);
+        localStorage.setItem('kts_saved_sitemap', sVal);
+      } else {
+        const localS = localStorage.getItem('kts_saved_sitemap');
+        if (localS) setSitemapInput(localS);
       }
     } catch (err) {
-      console.warn('[ADMIN PORTAL] SEO settings fetch failed.');
+      console.warn('[ADMIN PORTAL] SEO settings fetch failed, loading local fallback.');
+      const localR = localStorage.getItem('kts_saved_robots');
+      if (localR) setRobotsInput(localR);
+      const localS = localStorage.getItem('kts_saved_sitemap');
+      if (localS) setSitemapInput(localS);
     }
   };
 
