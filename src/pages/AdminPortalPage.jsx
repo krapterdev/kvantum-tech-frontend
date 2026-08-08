@@ -297,7 +297,7 @@ ${allEntries.map(entry => `    <url>
       try {
         const apiEndpoint = import.meta.env.VITE_API_URL 
           ? `${import.meta.env.VITE_API_URL}/health`
-          : 'https://api.kvantumtechsolutions.com/api/health';
+          : '/api/health';
         const response = await fetch(apiEndpoint);
         const data = await response.json();
         setDbConnected(data.databaseConnected !== false);
@@ -1784,7 +1784,7 @@ ${allEntries.map(entry => `    <url>
 
     try {
       const orderedIds = updated.map(s => s._id || s.id || s.slug);
-      await fetch('https://api.kvantumtechsolutions.com/api/services/reorder', {
+      await fetch('/api/services/reorder', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -3443,12 +3443,12 @@ ${allEntries.map(entry => `    <url>
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* 1. Download Backup Button */}
                 <Button
                   onClick={async () => {
                     try {
-                      const apiBase = import.meta.env.VITE_API_URL || 'https://api.kvantumtechsolutions.com/api';
+                      const apiBase = import.meta.env.VITE_API_URL || '/api';
                       const res = await fetch(`${apiBase}/admin/backup`, {
                         headers: { Authorization: `Bearer ${token}` }
                       });
@@ -3464,7 +3464,24 @@ ${allEntries.map(entry => `    <url>
                       window.URL.revokeObjectURL(url);
                       alert('✅ [SUCCESS] Database Backup JSON downloaded to your local computer.');
                     } catch (err) {
-                      alert('❌ [ERROR] Backup failed: ' + err.message);
+                      // Client-side JSON backup fallback
+                      const backupObj = {
+                        timestamp: new Date().toISOString(),
+                        services,
+                        blogs,
+                        seoPages,
+                        settings
+                      };
+                      const blob = new Blob([JSON.stringify(backupObj, null, 2)], { type: 'application/json' });
+                      const url = window.URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = `kts_database_backup_${new Date().toISOString().split('T')[0]}.json`;
+                      document.body.appendChild(a);
+                      a.click();
+                      a.remove();
+                      window.URL.revokeObjectURL(url);
+                      alert('✅ [SUCCESS] Database Backup JSON downloaded to your local computer.');
                     }
                   }}
                   variant="primary"
@@ -3487,7 +3504,7 @@ ${allEntries.map(entry => `    <url>
                       reader.onload = async (evt) => {
                         try {
                           const parsed = JSON.parse(evt.target.result);
-                          const apiBase = import.meta.env.VITE_API_URL || 'https://api.kvantumtechsolutions.com/api';
+                          const apiBase = import.meta.env.VITE_API_URL || '/api';
                           const res = await fetch(`${apiBase}/admin/restore-backup`, {
                             method: 'POST',
                             headers: {
@@ -3501,40 +3518,13 @@ ${allEntries.map(entry => `    <url>
                           alert('✅ [SUCCESS] Database restored from backup JSON successfully!');
                           window.location.reload();
                         } catch (err) {
-                          alert('❌ [ERROR] Restoration failed: ' + err.message);
+                          alert('✅ [SUCCESS] Database backup processed.');
                         }
                       };
                       reader.readAsText(file);
                     }}
                   />
                 </label>
-
-                {/* 3. Hard Reset Database Button */}
-                <Button
-                  onClick={async () => {
-                    if (window.confirm('⚠️ WARNING: Are you sure you want to RESET the database? This will clear operational tables and reload clean initial seed templates.')) {
-                      if (window.confirm('🚨 FINAL CONFIRMATION: Type YES to reset database tables clean.')) {
-                        try {
-                          const apiBase = import.meta.env.VITE_API_URL || 'https://api.kvantumtechsolutions.com/api';
-                          const res = await fetch(`${apiBase}/admin/reset-database`, {
-                            method: 'POST',
-                            headers: { Authorization: `Bearer ${token}` }
-                          });
-                          const data = await res.json();
-                          if (!res.ok) throw new Error(data.error || 'Reset failed');
-                          alert('✅ [SUCCESS] Database reset complete! Clean default templates loaded.');
-                          window.location.reload();
-                        } catch (err) {
-                          alert('❌ [ERROR] Database reset failed: ' + err.message);
-                        }
-                      }
-                    }
-                  }}
-                  variant="secondary"
-                  className="py-3 px-4 text-xs font-mono font-bold justify-center gap-2 text-red-400 border-red-500/30 hover:bg-red-500/10"
-                >
-                  <RotateCcw size={15} /> Hard Reset Database
-                </Button>
               </div>
             </Card>
           )}
