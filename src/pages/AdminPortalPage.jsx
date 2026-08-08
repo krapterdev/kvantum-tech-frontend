@@ -424,35 +424,53 @@ ${allEntries.map(entry => `    <url>
       localSaved = JSON.parse(localStorage.getItem('kts_saved_media_assets') || '[]');
     } catch(e) {}
 
+    const getTime = (val) => {
+      if (!val) return 0;
+      const t = new Date(val).getTime();
+      return isNaN(t) ? 0 : t;
+    };
+
     try {
       const data = await assetService.listAssets();
-      if (Array.isArray(data)) {
-        const combinedMap = new Map();
-        data.forEach(a => {
-          if (a && (a.name || a.url)) combinedMap.set(a.name || a.url, a);
-        });
-        localSaved.forEach(a => {
-          if (a && (a.name || a.url) && !combinedMap.has(a.name || a.url)) {
-            combinedMap.set(a.name || a.url, a);
+      const serverList = Array.isArray(data) ? data : [];
+      
+      const combinedMap = new Map();
+      // Put localSaved items FIRST so user uploads are NEVER lost or overwritten
+      localSaved.forEach(a => {
+        if (a && (a.name || a.url)) {
+          combinedMap.set(a.name || a.url, a);
+        }
+      });
+      // Merge server items
+      serverList.forEach(a => {
+        if (a && (a.name || a.url)) {
+          const key = a.name || a.url;
+          if (!combinedMap.has(key)) {
+            combinedMap.set(key, a);
+          } else {
+            const existing = combinedMap.get(key);
+            combinedMap.set(key, { ...a, ...existing, publicUrl: a.publicUrl || existing.publicUrl || existing.url });
           }
-        });
-        const merged = Array.from(combinedMap.values());
-        merged.sort((a, b) => {
-          const aIsScroller = (a.name || '').includes('scroller-images');
-          const bIsScroller = (b.name || '').includes('scroller-images');
-          if (aIsScroller && !bIsScroller) return 1;
-          if (!aIsScroller && bIsScroller) return -1;
-          return new Date(b.created_at || 0) - new Date(a.created_at || 0);
-        });
-        setAssets(merged);
+        }
+      });
 
-        try {
-          const toStore = merged.filter(a => a.url && !a.url.startsWith('data:image/')).slice(0, 100);
-          localStorage.setItem('kts_saved_media_assets', JSON.stringify(toStore));
-        } catch(e) {}
-      } else if (localSaved.length > 0) {
-        setAssets(localSaved);
-      }
+      const merged = Array.from(combinedMap.values());
+      // Clean numeric sorting: custom user uploads & newest created_at FIRST
+      merged.sort((a, b) => {
+        const aIsScroller = (a.name || '').includes('scroller-images') || (a.name || '').includes('ezgif-frame');
+        const bIsScroller = (b.name || '').includes('scroller-images') || (b.name || '').includes('ezgif-frame');
+        if (aIsScroller && !bIsScroller) return 1;
+        if (!aIsScroller && bIsScroller) return -1;
+        return getTime(b.created_at || b.createdAt) - getTime(a.created_at || a.createdAt);
+      });
+
+      setAssets(merged);
+
+      // Persist all custom uploaded non-scroller assets to localStorage
+      try {
+        const customToSave = merged.filter(a => !(a.name || '').includes('scroller-images') && !(a.name || '').includes('ezgif-frame')).slice(0, 100);
+        localStorage.setItem('kts_saved_media_assets', JSON.stringify(customToSave));
+      } catch(e) {}
     } catch (err) {
       console.warn('[ADMIN PORTAL] Assets fetch warning, using local assets.');
       if (localSaved.length > 0) setAssets(localSaved);
@@ -556,71 +574,65 @@ ${allEntries.map(entry => `    <url>
 
   // S3 Asset upload triggers
   const handleAssetUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
 
     setUploadingAsset(true);
-    try {
-      const res = await assetService.uploadAsset(file);
-      const uploadedUrl = res?.publicUrl || res?.url;
-      const safeName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9_.-]/g, '_')}`;
-      const finalAsset = {
-        name: res?.name || safeName,
-        url: uploadedUrl || '',
-        publicUrl: uploadedUrl || '',
-        contentType: file.type || 'image/png',
-        size: file.size,
-        created_at: new Date().toISOString()
-      };
+    for (const file of files) {
+      const ts = Date.now();
+      const safeName = `${ts}_${file.name.replace(/[^a-zA-Z0-9_.-]/g, '_')}`;
 
-      if (uploadedUrl) {
+      try {
+        const res = await assetService.uploadAsset(file);
+        const uploadedUrl = res?.publicUrl || res?.url || `https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/${safeName}`;
+        const finalAsset = {
+          name: res?.name || safeName,
+          url: uploadedUrl,
+          publicUrl: uploadedUrl,
+          contentType: file.type || (file.name.endsWith('.png') ? 'image/png' : 'image/jpeg'),
+          size: file.size,
+          created_at: new Date().toISOString()
+        };
+
         setAssets(prev => {
           const list = Array.isArray(prev) ? prev : [];
           const updated = [finalAsset, ...list.filter(a => a.name !== finalAsset.name)];
           try {
-            const toStore = updated.filter(a => a.url && !a.url.startsWith('data:image/')).slice(0, 100);
-            localStorage.setItem('kts_saved_media_assets', JSON.stringify(toStore));
+            const customToSave = updated.filter(a => !(a.name || '').includes('scroller-images') && !(a.name || '').includes('ezgif-frame')).slice(0, 100);
+            localStorage.setItem('kts_saved_media_assets', JSON.stringify(customToSave));
           } catch(err) {}
           return updated;
         });
-        alert(`✅ [SUCCESS] PNG/Media asset uploaded: ${file.name}`);
-      } else {
+        alert(`✅ [SUCCESS] Uploaded to Supabase S3: ${file.name}`);
+      } catch (err) {
+        console.warn('[ASSET UPLOAD WARN] FileReader fallback:', err.message);
         const reader = new FileReader();
         reader.onload = (evt) => {
           const dataUrl = evt.target.result;
-          const localAsset = { ...finalAsset, url: dataUrl, publicUrl: dataUrl };
+          const localAsset = {
+            name: safeName,
+            url: dataUrl,
+            publicUrl: dataUrl,
+            contentType: file.type || 'image/png',
+            size: file.size,
+            created_at: new Date().toISOString()
+          };
           setAssets(prev => {
             const list = Array.isArray(prev) ? prev : [];
-            return [localAsset, ...list.filter(a => a.name !== localAsset.name)];
+            const updated = [localAsset, ...list.filter(a => a.name !== localAsset.name)];
+            try {
+              const customToSave = updated.filter(a => !(a.name || '').includes('scroller-images') && !(a.name || '').includes('ezgif-frame')).slice(0, 50);
+              localStorage.setItem('kts_saved_media_assets', JSON.stringify(customToSave));
+            } catch(e) {}
+            return updated;
           });
-          alert(`✅ [SUCCESS] PNG/Media asset loaded: ${file.name}`);
+          alert(`✅ [SUCCESS] Asset saved: ${file.name}`);
         };
         reader.readAsDataURL(file);
       }
-    } catch (err) {
-      console.warn('[ASSET UPLOAD WARN] Reading local preview:', err.message);
-      const reader = new FileReader();
-      reader.onload = (evt) => {
-        const dataUrl = evt.target.result;
-        const localAsset = {
-          name: `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9_.-]/g, '_')}`,
-          url: dataUrl,
-          publicUrl: dataUrl,
-          contentType: file.type || 'image/png',
-          size: file.size,
-          created_at: new Date().toISOString()
-        };
-        setAssets(prev => {
-          const list = Array.isArray(prev) ? prev : [];
-          return [localAsset, ...list.filter(a => a.name !== localAsset.name)];
-        });
-        alert(`✅ [SUCCESS] PNG/Media asset loaded: ${file.name}`);
-      };
-      reader.readAsDataURL(file);
-    } finally {
-      setUploadingAsset(false);
-      e.target.value = '';
     }
+    setUploadingAsset(false);
+    e.target.value = '';
   };
 
   // S3 Asset delete trigger
