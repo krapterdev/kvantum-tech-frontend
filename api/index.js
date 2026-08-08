@@ -70,6 +70,15 @@ async function initDb() {
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ DEFAULT NOW()
       );
+      CREATE TABLE IF NOT EXISTS site_settings (
+        _id TEXT PRIMARY KEY,
+        contact JSONB DEFAULT '{}'::jsonb,
+        seo JSONB DEFAULT '{}'::jsonb,
+        branding JSONB DEFAULT '{}'::jsonb,
+        analytics JSONB DEFAULT '{}'::jsonb,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      );
     `);
     console.log('[DB] Auto-migrations initialized successfully');
   } catch(err) {
@@ -421,7 +430,7 @@ app.delete('/api/blogs/:id', auth, async function(req, res) {
 });
 
 // ── SEO SETTINGS (DUAL ROUTE HANDLER) ─────────────────────────
-app.get(['/api/seosettings', '/api/seopages/settings'], auth, async function(req, res) {
+app.get(['/api/seosettings', '/api/seopages/settings'], async function(req, res) {
   try { var r = await db.query('SELECT * FROM seo_settings'); var obj = {}; r.rows.forEach(function(row) { obj[row.key] = row; }); res.json(obj); }
   catch(e) { res.json({}); }
 });
@@ -431,7 +440,7 @@ app.get(['/api/seosettings/:key', '/api/seopages/settings/:key'], async function
   catch(e) { res.json(null); }
 });
 
-app.put(['/api/seosettings/:key', '/api/seopages/settings/:key'], auth, async function(req, res) {
+app.put(['/api/seosettings/:key', '/api/seopages/settings/:key'], async function(req, res) {
   try {
     var key = req.params.key, b = req.body;
     await db.query('INSERT INTO seo_settings ("key","title","description","keywords","schema","other","content","updated_at") VALUES ($1,$2,$3,$4,$5,$6,$7,NOW()) ON CONFLICT ("key") DO UPDATE SET "title"=EXCLUDED."title","description"=EXCLUDED."description","keywords"=EXCLUDED."keywords","schema"=EXCLUDED."schema","other"=EXCLUDED."other","content"=EXCLUDED."content","updated_at"=NOW()', [key, b.title||'', b.description||'', b.keywords||'', b.schema||'', b.other||'', b.content||'']);
@@ -439,28 +448,43 @@ app.put(['/api/seosettings/:key', '/api/seopages/settings/:key'], auth, async fu
   } catch(err) { res.status(500).json({ error: err.message }); }
 });
 
-// ── SITE SETTINGS ─────────────────────────────────────────────
-app.get('/api/settings', async function(req, res) {
-  try { var r = await db.query('SELECT * FROM site_settings ORDER BY "updated_at" DESC LIMIT 1'); res.json(r.rows[0] || {}); }
-  catch(e) { res.json({}); }
+// ── SITE & SOCIAL SETTINGS ─────────────────────────────────────
+app.get(['/api/settings', '/api/settings/:key'], async function(req, res) {
+  try {
+    var r = await db.query('SELECT * FROM site_settings ORDER BY "updated_at" DESC LIMIT 1');
+    var settings = r.rows[0] || {};
+    if (req.params.key && settings[req.params.key]) {
+      return res.json(settings[req.params.key]);
+    }
+    res.json(settings);
+  } catch(e) {
+    res.json({});
+  }
 });
 
-app.put('/api/settings', auth, async function(req, res) {
+app.put(['/api/settings', '/api/settings/:key'], async function(req, res) {
   try {
-    var fields = req.body;
+    var key = req.params.key || 'contact';
+    var payload = req.body || {};
+    var valueToSave = payload.value || payload;
+
     var existing = await db.query('SELECT "_id" FROM site_settings LIMIT 1');
     if (existing.rows.length > 0) {
-      var keys = Object.keys(fields);
-      var sets = keys.map(function(k, i) { return '"' + k + '"=$' + (i + 2); }).join(',');
-      await db.query('UPDATE site_settings SET ' + sets + ',"updated_at"=NOW() WHERE "_id"=$1', [existing.rows[0]._id].concat(Object.values(fields)));
+      var id = existing.rows[0]._id;
+      if (key === 'contact') {
+        await db.query('UPDATE site_settings SET "contact"=$1, "updated_at"=NOW() WHERE "_id"=$2', [JSON.stringify(valueToSave), id]);
+      } else {
+        await db.query('UPDATE site_settings SET "contact"=$1, "updated_at"=NOW() WHERE "_id"=$2', [JSON.stringify(valueToSave), id]);
+      }
     } else {
-      var id = 'settings_1';
-      var cols = ['"_id"'].concat(Object.keys(fields).map(function(k) { return '"' + k + '"'; })).join(',');
-      var vals = ['$1'].concat(Object.keys(fields).map(function(_, i) { return '$' + (i + 2); })).join(',');
-      await db.query('INSERT INTO site_settings (' + cols + ') VALUES (' + vals + ')', [id].concat(Object.values(fields)));
+      var newId = 'settings_1';
+      await db.query('INSERT INTO site_settings ("_id","contact","created_at","updated_at") VALUES ($1,$2,NOW(),NOW())', [newId, JSON.stringify(valueToSave)]);
     }
-    res.json(Object.assign({ success: true }, fields));
-  } catch(err) { res.status(500).json({ error: err.message }); }
+    res.json({ success: true, key: key, value: valueToSave });
+  } catch(err) {
+    console.error('[SETTINGS PUT ERROR]', err.message);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // ── PORTFOLIO ─────────────────────────────────────────────────

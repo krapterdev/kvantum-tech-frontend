@@ -107,10 +107,21 @@ export default function App() {
       try {
         const data = await settingService.getSettings();
         if (data && Object.keys(data).length > 0) {
-          setSettings(prev => ({ ...prev, ...data }));
+          let contactObj = data.contact || {};
+          if (typeof contactObj === 'string') {
+            try { contactObj = JSON.parse(contactObj); } catch(e) {}
+          }
+          setSettings(prev => ({ ...prev, ...data, contact: { ...(prev?.contact || {}), ...contactObj } }));
         }
       } catch (err) {
         console.warn('[API CONNECTION] Site settings offline.');
+      }
+      const localContact = localStorage.getItem('kts_saved_contact_settings');
+      if (localContact) {
+        try {
+          const parsed = JSON.parse(localContact);
+          setSettings(prev => ({ ...prev, contact: { ...(prev?.contact || {}), ...parsed } }));
+        } catch(e) {}
       }
 
       // 5. Portfolios
