@@ -49,65 +49,77 @@ export const fallbackBlogs = [ DEFAULT_SEED_BLOG ];
 
 // ─── Dynamic Relative Time Ago Parser & Calculator ────────────────────────
 export function parseAndFormatTimeAgo(customInput, fallbackCreatedAt) {
-  if (!customInput && !fallbackCreatedAt) return 'Recently';
+  const now = new Date();
+  let targetDate = null;
 
-  const str = String(customInput || fallbackCreatedAt).trim();
+  // 1. Try parsing fallbackCreatedAt (e.g. ISO timestamp or date string)
+  if (fallbackCreatedAt) {
+    const parsed = new Date(fallbackCreatedAt);
+    if (!isNaN(parsed.getTime())) {
+      targetDate = parsed;
+    }
+  }
 
-  // Pattern 1: Relative input like "3d ago", "3d", "2h ago", "2h", "5m ago", "1w ago"
-  const relMatch = str.match(/^(\d+)\s*([a-z]+)(\s*ago)?$/i);
-  if (relMatch) {
-    const amount = parseInt(relMatch[1], 10);
-    const unit = relMatch[2].toLowerCase();
-    const now = new Date();
-    let baseTimeMs = now.getTime();
+  // 2. If no valid fallbackCreatedAt, try parsing customInput if it's a date string
+  if (!targetDate && customInput) {
+    const parsed = new Date(customInput);
+    if (!isNaN(parsed.getTime())) {
+      targetDate = parsed;
+    }
+  }
 
-    if (unit.startsWith('m') && !unit.startsWith('mo')) {
-      baseTimeMs -= amount * 60 * 1000;
-    } else if (unit.startsWith('h')) {
-      baseTimeMs -= amount * 60 * 60 * 1000;
-    } else if (unit.startsWith('d')) {
-      baseTimeMs -= amount * 24 * 60 * 60 * 1000;
-    } else if (unit.startsWith('w')) {
-      baseTimeMs -= amount * 7 * 24 * 60 * 60 * 1000;
-    } else if (unit.startsWith('mo')) {
-      baseTimeMs -= amount * 30 * 24 * 60 * 60 * 1000;
-    } else if (unit.startsWith('y')) {
-      baseTimeMs -= amount * 365 * 24 * 60 * 60 * 1000;
+  // 3. If we have a valid targetDate, calculate real-time difference from now!
+  if (targetDate) {
+    const diffInSeconds = Math.max(0, Math.floor((now.getTime() - targetDate.getTime()) / 1000));
+    if (diffInSeconds < 60) return 'Just now';
+    const mins = Math.floor(diffInSeconds / 60);
+    if (mins < 60) return `${mins}m ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs}h ago`;
+    const days = Math.floor(hrs / 24);
+    if (days < 30) return `${days}d ago`;
+    const months = Math.floor(days / 30);
+    if (months < 12) return `${months} mo ago`;
+    const yrs = Math.floor(months / 12);
+    return `${yrs}y ago`;
+  }
+
+  // 4. Fallback for relative strings if date parsing failed
+  if (typeof customInput === 'string' && customInput.trim()) {
+    const str = customInput.trim();
+    if (str.toLowerCase().includes('just') || str.toLowerCase() === 'now') return 'Just now';
+
+    const relMatch = str.match(/^(\d+)\s*([a-z]+)(\s*ago)?$/i);
+    if (relMatch) {
+      const amount = parseInt(relMatch[1], 10);
+      const unit = relMatch[2].toLowerCase();
+
+      let baseTimeMs = now.getTime();
+      if (unit.startsWith('m') && !unit.startsWith('mo')) baseTimeMs -= amount * 60 * 1000;
+      else if (unit.startsWith('h')) baseTimeMs -= amount * 60 * 60 * 1000;
+      else if (unit.startsWith('d')) baseTimeMs -= amount * 24 * 60 * 60 * 1000;
+      else if (unit.startsWith('w')) baseTimeMs -= amount * 7 * 24 * 60 * 60 * 1000;
+      else if (unit.startsWith('mo')) baseTimeMs -= amount * 30 * 24 * 60 * 60 * 1000;
+      else if (unit.startsWith('y')) baseTimeMs -= amount * 365 * 24 * 60 * 60 * 1000;
+
+      const diffInSeconds = Math.max(0, Math.floor((now.getTime() - baseTimeMs) / 1000));
+      if (diffInSeconds < 60) return 'Just now';
+      const mins = Math.floor(diffInSeconds / 60);
+      if (mins < 60) return `${mins}m ago`;
+      const hrs = Math.floor(mins / 60);
+      if (hrs < 24) return `${hrs}h ago`;
+      const days = Math.floor(hrs / 24);
+      if (days < 30) return `${days}d ago`;
+      const months = Math.floor(days / 30);
+      if (months < 12) return `${months} mo ago`;
+      const yrs = Math.floor(months / 12);
+      return `${yrs}y ago`;
     }
 
-    const diffInSeconds = Math.max(0, Math.floor((now.getTime() - baseTimeMs) / 1000));
-    if (diffInSeconds < 60) return 'Just now';
-    const mins = Math.floor(diffInSeconds / 60);
-    if (mins < 60) return `${mins}m ago`;
-    const hrs = Math.floor(mins / 60);
-    if (hrs < 24) return `${hrs}h ago`;
-    const days = Math.floor(hrs / 24);
-    if (days < 30) return `${days}d ago`;
-    const months = Math.floor(days / 30);
-    if (months < 12) return `${months} mo ago`;
-    const yrs = Math.floor(months / 12);
-    return `${yrs}y ago`;
+    return str;
   }
 
-  // Pattern 2: ISO or Date String e.g. "2026-08-01"
-  const parsedDate = new Date(str);
-  if (!isNaN(parsedDate.getTime())) {
-    const now = new Date();
-    const diffInSeconds = Math.max(0, Math.floor((now.getTime() - parsedDate.getTime()) / 1000));
-    if (diffInSeconds < 60) return 'Just now';
-    const mins = Math.floor(diffInSeconds / 60);
-    if (mins < 60) return `${mins}m ago`;
-    const hrs = Math.floor(mins / 60);
-    if (hrs < 24) return `${hrs}h ago`;
-    const days = Math.floor(hrs / 24);
-    if (days < 30) return `${days}d ago`;
-    const months = Math.floor(days / 30);
-    if (months < 12) return `${months} mo ago`;
-    const yrs = Math.floor(months / 12);
-    return `${yrs}y ago`;
-  }
-
-  return customInput || 'Recently';
+  return 'Recently';
 }
 
 export function formatTimeAgo(readTimeOrPost, fallbackDate) {

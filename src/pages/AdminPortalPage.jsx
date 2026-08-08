@@ -875,7 +875,19 @@ ${allEntries.map(entry => `    <url>
                   let unit = unitMatch ? unitMatch[1] : 'd';
                   if (unit === 'now' || unit === 'Just') unit = 'd';
                   const formatted = val ? `${val}${unit} ago` : 'Just now';
-                  setEditItem(prev => ({ ...prev, readTime: formatted }));
+                  
+                  const num = parseInt(val, 10) || 0;
+                  const nowMs = Date.now();
+                  let offsetMs = 0;
+                  if (unit === 'm') offsetMs = num * 60 * 1000;
+                  else if (unit === 'h') offsetMs = num * 60 * 60 * 1000;
+                  else if (unit === 'd') offsetMs = num * 24 * 60 * 60 * 1000;
+                  else if (unit === 'w') offsetMs = num * 7 * 24 * 60 * 60 * 1000;
+                  else if (unit === 'mo') offsetMs = num * 30 * 24 * 60 * 60 * 1000;
+                  else if (unit === 'y') offsetMs = num * 365 * 24 * 60 * 60 * 1000;
+                  const newCreatedAt = new Date(nowMs - offsetMs).toISOString();
+
+                  setEditItem(prev => ({ ...prev, readTime: formatted, createdAt: newCreatedAt }));
                 }}
                 className="w-1/3 bg-zinc-950/40 border border-white/8 rounded-xl px-3 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono"
               />
@@ -895,7 +907,19 @@ ${allEntries.map(entry => `    <url>
                   if (unit !== 'now') {
                     formatted = `${currentNum}${unit} ago`;
                   }
-                  setEditItem(prev => ({ ...prev, readTime: formatted }));
+
+                  const num = parseInt(currentNum, 10) || 0;
+                  const nowMs = Date.now();
+                  let offsetMs = 0;
+                  if (unit === 'm') offsetMs = num * 60 * 1000;
+                  else if (unit === 'h') offsetMs = num * 60 * 60 * 1000;
+                  else if (unit === 'd') offsetMs = num * 24 * 60 * 60 * 1000;
+                  else if (unit === 'w') offsetMs = num * 7 * 24 * 60 * 60 * 1000;
+                  else if (unit === 'mo') offsetMs = num * 30 * 24 * 60 * 60 * 1000;
+                  else if (unit === 'y') offsetMs = num * 365 * 24 * 60 * 60 * 1000;
+                  const newCreatedAt = unit === 'now' ? new Date().toISOString() : new Date(nowMs - offsetMs).toISOString();
+
+                  setEditItem(prev => ({ ...prev, readTime: formatted, createdAt: newCreatedAt }));
                 }}
                 className="w-2/3 bg-zinc-950/40 border border-white/8 rounded-xl px-3 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono text-zinc-200"
               >
@@ -916,7 +940,15 @@ ${allEntries.map(entry => `    <url>
               required 
               placeholder="e.g. July 19, 2026"
               value={editItem.date || ''}
-              onChange={(e) => setEditItem(prev => ({ ...prev, date: e.target.value }))}
+              onChange={(e) => {
+                const newDateStr = e.target.value;
+                let computed = editItem.createdAt;
+                const pDate = new Date(newDateStr);
+                if (!isNaN(pDate.getTime())) {
+                  computed = pDate.toISOString();
+                }
+                setEditItem(prev => ({ ...prev, date: newDateStr, createdAt: computed }));
+              }}
               className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono"
             />
           </div>
