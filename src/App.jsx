@@ -16,7 +16,7 @@ import ServiceDetailPage from '@/pages/ServiceDetailPage';
 import ProjectsPage from '@/pages/ProjectsPage';
 import ContactPage from '@/pages/ContactPage';
 import ThankYouPage from '@/pages/ThankYouPage';
-import BlogPage, { DEFAULT_SEED_BLOG } from '@/pages/BlogPage';
+import BlogPage, { DEFAULT_SEED_BLOG, fallbackBlogs } from '@/pages/BlogPage';
 import DynamicSeoPage from '@/pages/DynamicSeoPage';
 import AdminPortalPage from '@/pages/AdminPortalPage';
 import TermsPage from '@/pages/TermsPage';
@@ -37,7 +37,7 @@ import { fallbackSettings } from '@/data/settings';
 export default function App() {
   const [theme, setTheme] = useState('dark');
   const [services, setServices] = useState(fallbackServices);
-  const [blogs, setBlogs] = useState([DEFAULT_SEED_BLOG]);
+  const [blogs, setBlogs] = useState(fallbackBlogs);
   const [blogsLoading, setBlogsLoading] = useState(true);
   const [seoPages, setSeoPages] = useState([]);
   const [portfolios, setPortfolios] = useState([]);

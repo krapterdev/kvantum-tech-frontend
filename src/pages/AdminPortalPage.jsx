@@ -2691,36 +2691,80 @@ ${allEntries.map(entry => `    <url>
               </h2>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {Array.isArray(seoSettings) && seoSettings.filter(s => s.key !== 'robots' && s.key !== 'sitemap').map(setting => (
-                  <Card key={setting.key} className="p-6 border flex flex-col justify-between items-start gap-4 h-full">
-                    <div className="text-left w-full flex flex-col justify-between flex-1">
-                      <div>
-                        <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-zinc-800 text-zinc-300 font-bold uppercase block w-fit mb-3">
-                          {setting.key}
-                        </span>
-                        <div className="flex flex-col gap-1.5 min-h-[5.5rem] justify-center">
-                          <h4 className="text-zinc-200 text-sm font-semibold line-clamp-1" title={setting.title || 'Untitled Page'}>
-                            {setting.title || 'Untitled Page'}
-                          </h4>
-                          <p className="text-zinc-400 text-xs line-clamp-3 leading-relaxed" title={setting.description || 'No description'}>
-                            {setting.description || 'No description'}
-                          </p>
+                {(() => {
+                  const DEFAULT_PAGE_SEO_ITEMS = [
+                    {
+                      key: 'home',
+                      title: 'Custom Software Development Company | Kvantum Tech Solutions',
+                      description: 'Kvantum Tech Solutions is a custom software development company building scalable business software, CRM, HRMS, ERP, web and mobile apps, and automation solutions.',
+                      keywords: 'custom software development company, software development company, custom software development services, business software development company'
+                    },
+                    {
+                      key: 'about',
+                      title: 'About Kvantum Tech Solutions | Enterprise Software & IT Services',
+                      description: 'Learn about Kvantum Tech Solutions, a trusted custom software development company specializing in CRM, HRMS, web apps, and business automation in Delhi NCR.',
+                      keywords: 'about kvantum tech solutions, software engineering team, custom software company'
+                    },
+                    {
+                      key: 'services',
+                      title: 'Enterprise IT & Custom Software Services | Kvantum Tech Solutions',
+                      description: 'Explore custom software development, SaaS products, WhatsApp API integration, CRM/HRMS development, and web and mobile app development services.',
+                      keywords: 'custom software services, CRM software development, HRMS development, web application development'
+                    },
+                    {
+                      key: 'blog',
+                      title: 'Engineering & Tech Insights | Kvantum Tech Solutions Blog',
+                      description: 'Latest articles on custom software development, business automation, CRM tools, SaaS engineering, and enterprise digital transformation.',
+                      keywords: 'software engineering blog, tech insights, custom software development guides'
+                    },
+                    {
+                      key: 'contact',
+                      title: 'Contact Kvantum Tech Solutions | Direct Technical Contact',
+                      description: 'Get in touch with Kvantum Tech Solutions for custom software, CRM, HRMS, ERP, web apps, and business automation. Book a live demo or request project quotes.',
+                      keywords: 'contact software company, request software proposal, custom software quote'
+                    }
+                  ];
+
+                  const fetchedList = Array.isArray(seoSettings) 
+                    ? seoSettings 
+                    : (seoSettings && typeof seoSettings === 'object' ? Object.values(seoSettings) : []);
+
+                  const mergedList = DEFAULT_PAGE_SEO_ITEMS.map(defItem => {
+                    const found = fetchedList.find(s => s.key === defItem.key);
+                    return found ? { ...defItem, ...found } : defItem;
+                  });
+
+                  return mergedList.map(setting => (
+                    <Card key={setting.key} className="p-6 border flex flex-col justify-between items-start gap-4 h-full">
+                      <div className="text-left w-full flex flex-col justify-between flex-1">
+                        <div>
+                          <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-zinc-800 text-zinc-300 font-bold uppercase block w-fit mb-3">
+                            {setting.key}
+                          </span>
+                          <div className="flex flex-col gap-1.5 min-h-[5.5rem] justify-center">
+                            <h4 className="text-zinc-200 text-sm font-semibold line-clamp-1" title={setting.title || 'Untitled Page'}>
+                              {setting.title || 'Untitled Page'}
+                            </h4>
+                            <p className="text-zinc-400 text-xs line-clamp-3 leading-relaxed" title={setting.description || 'No description'}>
+                              {setting.description || 'No description'}
+                            </p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    
-                    <Button 
-                      onClick={() => {
-                        setEditingSeoSettingItem({ ...setting });
-                        setIsEditingSeoSetting(true);
-                      }}
-                      variant="secondary"
-                      className="w-full py-2 text-xs rounded-lg mt-4 cursor-pointer"
-                    >
-                      Configure Meta Node
-                    </Button>
-                  </Card>
-                ))}
+                      
+                      <Button 
+                        onClick={() => {
+                          setEditingSeoSettingItem({ ...setting });
+                          setIsEditingSeoSetting(true);
+                        }}
+                        variant="secondary"
+                        className="w-full py-2 text-xs rounded-lg mt-4 cursor-pointer"
+                      >
+                        Configure Meta Node
+                      </Button>
+                    </Card>
+                  ));
+                })()}
               </div>
             </div>
 
