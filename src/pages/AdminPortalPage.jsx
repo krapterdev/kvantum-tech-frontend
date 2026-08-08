@@ -2550,8 +2550,14 @@ ${allEntries.map(entry => `    <url>
                   {Array.isArray(leads) && leads.length > 0 ? (
                     leads.map((lead) => (
                       <tr key={lead._id} className="hover:bg-white/[0.01]">
-                        <td className="px-5 py-4 text-xs font-mono text-zinc-500 whitespace-nowrap">
-                          {new Date(lead.createdAt).toLocaleString()}
+                        <td className="px-5 py-4 text-xs font-mono text-zinc-400 whitespace-nowrap">
+                          {(() => {
+                            const rawDate = lead.created_at || lead.createdAt || lead.submittedAt;
+                            if (rawDate && !isNaN(new Date(rawDate).getTime())) {
+                              return new Date(rawDate).toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                            }
+                            return new Date().toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                          })()}
                         </td>
                         <td className="px-5 py-4 font-bold text-zinc-200">{lead.name}</td>
                         <td className="px-5 py-4 font-mono text-xs">{lead.email}</td>

@@ -1,93 +1,143 @@
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 
 const TOOLBAR_BUTTONS = [
-  { cmd: 'bold', label: 'B', title: 'Bold', style: 'font-bold' },
-  { cmd: 'italic', label: 'I', title: 'Italic', style: 'italic' },
-  { cmd: 'underline', label: 'U', title: 'Underline', style: 'underline' },
-  { cmd: 'strikeThrough', label: 'S̶', title: 'Strikethrough', style: 'line-through' },
+  { cmd: 'bold', label: 'B', title: 'Bold (Ctrl+B)', style: 'font-bold text-xs' },
+  { cmd: 'italic', label: 'I', title: 'Italic (Ctrl+I)', style: 'italic text-xs' },
+  { cmd: 'underline', label: 'U', title: 'Underline (Ctrl+U)', style: 'underline text-xs' },
+  { cmd: 'strikeThrough', label: 'S̶', title: 'Strikethrough', style: 'line-through text-xs' },
   { type: 'sep' },
-  { cmd: 'formatBlock', value: 'h1', label: 'H1', title: 'Heading 1', style: 'font-bold' },
-  { cmd: 'formatBlock', value: 'h2', label: 'H2', title: 'Heading 2', style: 'font-bold' },
-  { cmd: 'formatBlock', value: 'h3', label: 'H3', title: 'Heading 3', style: 'font-bold' },
-  { cmd: 'formatBlock', value: 'p', label: 'P', title: 'Paragraph', style: '' },
+  { cmd: 'formatBlock', value: 'h2', label: 'H2 (Heading)', title: 'Heading 2', style: 'font-bold text-xs' },
+  { cmd: 'formatBlock', value: 'h3', label: 'H3 (Subheading)', title: 'Heading 3', style: 'font-bold text-xs' },
+  { cmd: 'formatBlock', value: 'p', label: 'P (Paragraph)', title: 'Normal Text', style: 'text-xs' },
   { type: 'sep' },
-  { cmd: 'insertUnorderedList', label: '• List', title: 'Bullet List' },
-  { cmd: 'insertOrderedList', label: '1. List', title: 'Numbered List' },
+  { cmd: 'insertUnorderedList', label: '• Bullet List', title: 'Bullet List' },
+  { cmd: 'insertOrderedList', label: '1. Numbered List', title: 'Numbered List' },
   { type: 'sep' },
-  { cmd: 'justifyLeft', label: '⬅', title: 'Align Left' },
-  { cmd: 'justifyCenter', label: '≡', title: 'Align Center' },
-  { cmd: 'justifyRight', label: '➡', title: 'Align Right' },
+  { cmd: 'createLink', label: '🔗 Link', title: 'Insert Link', prompt: true },
+  { cmd: 'insertImage', label: '🖼️ Image', title: 'Insert Image URL', prompt: true },
   { type: 'sep' },
-  { cmd: 'createLink', label: '🔗', title: 'Insert Link', prompt: true },
-  { cmd: 'insertImage', label: '🖼', title: 'Insert Image URL', prompt: true },
-  { type: 'sep' },
-  { cmd: 'removeFormat', label: '✕ Format', title: 'Clear Formatting' },
+  { cmd: 'removeFormat', label: '🧹 Clear Format', title: 'Clear Formatting & Bolding' },
 ];
 
-export default function RichTextEditor({ value, onChange, placeholder }) {
+export default function RichTextEditor({ value = '', onChange, placeholder }) {
   const editorRef = useRef(null);
+  const [mode, setMode] = useState('visual'); // 'visual' | 'html'
+  const isInternalChange = useRef(false);
 
-  const exec = useCallback((cmd, val = null, prompt = false) => {
+  // Sync content into editable div ONLY when external value changes and not from active typing
+  useEffect(() => {
+    if (editorRef.current && mode === 'visual') {
+      if (isInternalChange.current) {
+        isInternalChange.current = false;
+        return;
+      }
+      if (editorRef.current.innerHTML !== value) {
+        editorRef.current.innerHTML = value || '';
+      }
+    }
+  }, [value, mode]);
+
+  const exec = (cmd, val = null, prompt = false) => {
     if (prompt) {
-      const url = window.prompt(cmd === 'createLink' ? 'Enter URL:' : 'Enter image URL:');
-      if (url) document.execCommand(cmd, false, url);
+      const url = window.prompt(cmd === 'createLink' ? 'Enter Link URL (e.g. https://...):' : 'Enter Image URL:');
+      if (url) {
+        document.execCommand(cmd, false, url);
+      }
     } else {
       document.execCommand(cmd, false, val);
     }
-    editorRef.current?.focus();
-    onChange(editorRef.current?.innerHTML || '');
-  }, [onChange]);
-
-  const handleInput = () => {
-    onChange(editorRef.current?.innerHTML || '');
+    if (editorRef.current) {
+      editorRef.current.focus();
+      isInternalChange.current = true;
+      onChange(editorRef.current.innerHTML);
+    }
   };
 
-  // Sync content on mount
-  const handleRef = (el) => {
-    editorRef.current = el;
-    if (el && value && el.innerHTML !== value) {
-      el.innerHTML = value;
+  const handleInput = () => {
+    if (editorRef.current) {
+      isInternalChange.current = true;
+      onChange(editorRef.current.innerHTML);
     }
   };
 
   return (
-    <div className="flex flex-col border border-white/10 rounded-xl overflow-hidden bg-zinc-950/40">
-      {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-1 p-2 bg-zinc-900/80 border-b border-white/10">
-        {TOOLBAR_BUTTONS.map((btn, idx) =>
-          btn.type === 'sep' ? (
-            <span key={idx} className="w-px h-5 bg-white/15 mx-1" />
-          ) : (
-            <button
-              key={idx}
-              type="button"
-              title={btn.title}
-              onMouseDown={(e) => { e.preventDefault(); exec(btn.cmd, btn.value || null, btn.prompt); }}
-              className="px-2 py-1 rounded text-[11px] font-mono text-zinc-300 hover:bg-white/10 hover:text-white transition-colors cursor-pointer select-none"
-            >
-              {btn.label}
-            </button>
-          )
-        )}
+    <div className="flex flex-col border border-white/10 rounded-2xl overflow-hidden bg-zinc-950/60 shadow-xl">
+      {/* Editor Top Bar with Mode Switcher */}
+      <div className="flex flex-wrap items-center justify-between gap-2 p-2.5 bg-zinc-900 border-b border-white/10 select-none">
+        <div className="flex flex-wrap items-center gap-1">
+          {mode === 'visual' && TOOLBAR_BUTTONS.map((btn, idx) =>
+            btn.type === 'sep' ? (
+              <span key={idx} className="w-px h-5 bg-white/15 mx-1" />
+            ) : (
+              <button
+                key={idx}
+                type="button"
+                title={btn.title}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  exec(btn.cmd, btn.value || null, btn.prompt);
+                }}
+                className={`px-2.5 py-1 rounded-lg text-xs font-mono text-zinc-300 hover:bg-white/10 hover:text-white transition-colors cursor-pointer select-none ${btn.style || ''}`}
+              >
+                {btn.label}
+              </button>
+            )
+          )}
+          {mode === 'html' && (
+            <span className="text-xs font-mono text-cyanCustom px-2">Raw HTML Mode (Direct Control)</span>
+          )}
+        </div>
+
+        <div className="flex items-center gap-1.5 font-mono text-xs">
+          <button
+            type="button"
+            onClick={() => setMode('visual')}
+            className={`px-3 py-1 rounded-lg transition-colors cursor-pointer ${
+              mode === 'visual' ? 'bg-cyanCustom/20 text-cyanCustom border border-cyanCustom/30 font-bold' : 'text-zinc-400 hover:bg-white/5'
+            }`}
+          >
+            🎨 Visual Editor
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode('html')}
+            className={`px-3 py-1 rounded-lg transition-colors cursor-pointer ${
+              mode === 'html' ? 'bg-cyanCustom/20 text-cyanCustom border border-cyanCustom/30 font-bold' : 'text-zinc-400 hover:bg-white/5'
+            }`}
+          >
+            📝 Code / HTML Mode
+          </button>
+        </div>
       </div>
 
-      {/* Editable Area */}
-      <div
-        ref={handleRef}
-        contentEditable
-        suppressContentEditableWarning
-        onInput={handleInput}
-        onBlur={handleInput}
-        data-placeholder={placeholder || 'Write your blog content here...'}
-        className="min-h-[320px] p-5 text-zinc-100 text-sm leading-relaxed outline-none overflow-y-auto
-          [&_h1]:text-2xl [&_h1]:font-black [&_h1]:font-headline [&_h1]:text-white [&_h1]:mt-4 [&_h1]:mb-2
-          [&_h2]:text-xl [&_h2]:font-bold [&_h2]:font-headline [&_h2]:text-white [&_h2]:mt-4 [&_h2]:mb-2
-          [&_h3]:text-lg [&_h3]:font-bold [&_h3]:text-white [&_h3]:mt-3 [&_h3]:mb-1
-          [&_p]:mb-3 [&_p]:leading-relaxed [&_a]:text-cyanCustom [&_a]:underline
-          [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-3 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-3
-          [&_li]:mb-1 [&_strong]:font-bold [&_em]:italic [&_img]:max-w-full [&_img]:rounded-lg [&_img]:my-2
-          empty:before:content-[attr(data-placeholder)] empty:before:text-zinc-600 empty:before:pointer-events-none"
-      />
+      {/* Editor Body */}
+      {mode === 'visual' ? (
+        <div
+          ref={editorRef}
+          contentEditable
+          suppressContentEditableWarning
+          onInput={handleInput}
+          onBlur={handleInput}
+          data-placeholder={placeholder || 'Write your blog content here...'}
+          className="min-h-[350px] max-h-[600px] p-6 text-zinc-100 text-sm leading-relaxed outline-none overflow-y-auto font-sans
+            [&_h1]:text-2xl [&_h1]:font-black [&_h1]:text-white [&_h1]:mt-6 [&_h1]:mb-3
+            [&_h2]:text-xl [&_h2]:font-bold [&_h2]:text-white [&_h2]:mt-5 [&_h2]:mb-2.5 [&_h2]:border-b [&_h2]:border-white/10 [&_h2]:pb-1
+            [&_h3]:text-lg [&_h3]:font-bold [&_h3]:text-cyanCustom [&_h3]:mt-4 [&_h3]:mb-2
+            [&_p]:mb-4 [&_p]:leading-relaxed [&_p]:text-zinc-200
+            [&_a]:text-cyanCustom [&_a]:underline [&_a]:font-medium
+            [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-4
+            [&_li]:mb-1.5 [&_strong]:font-bold [&_strong]:text-white [&_em]:italic [&_img]:max-w-full [&_img]:rounded-xl [&_img]:my-4 [&_img]:border [&_img]:border-white/10
+            empty:before:content-[attr(data-placeholder)] empty:before:text-zinc-600 empty:before:pointer-events-none"
+        />
+      ) : (
+        <textarea
+          rows={15}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="Paste or write HTML tags directly (e.g. <h2>Subheading</h2><p>Text...</p>)"
+          className="min-h-[350px] w-full p-6 text-zinc-200 text-xs leading-relaxed outline-none bg-zinc-950 font-mono resize-y focus:border-cyanCustom/40"
+        />
+      )}
     </div>
   );
 }
