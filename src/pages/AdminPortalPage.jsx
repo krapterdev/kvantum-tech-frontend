@@ -69,8 +69,37 @@ export default function AdminPortalPage({
   const [generatedSitemapText, setGeneratedSitemapText] = useState('');
   const [sitemapCopied, setSitemapCopied] = useState(false);
 
-  const [robotsInput, setRobotsInput] = useState('');
-  const [sitemapInput, setSitemapInput] = useState('');
+  const DEFAULT_ROBOTS = `User-agent: *
+Allow: /
+Sitemap: https://kvantumtechsolutions.com/sitemap.xml`;
+
+  const DEFAULT_SITEMAP = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://kvantumtechsolutions.com/</loc>
+    <lastmod>2026-08-01</lastmod>
+  </url>
+  <url>
+    <loc>https://kvantumtechsolutions.com/about</loc>
+    <lastmod>2026-08-01</lastmod>
+  </url>
+  <url>
+    <loc>https://kvantumtechsolutions.com/services</loc>
+    <lastmod>2026-08-01</lastmod>
+  </url>
+  <url>
+    <loc>https://kvantumtechsolutions.com/blog</loc>
+    <lastmod>2026-08-01</lastmod>
+  </url>
+  <url>
+    <loc>https://kvantumtechsolutions.com/contact</loc>
+    <lastmod>2026-08-01</lastmod>
+  </url>
+</urlset>`;
+
+  const [showAssetPicker, setShowAssetPicker] = useState(false);
+  const [robotsInput, setRobotsInput] = useState(DEFAULT_ROBOTS);
+  const [sitemapInput, setSitemapInput] = useState(DEFAULT_SITEMAP);
   const [robotsSaving, setRobotsSaving] = useState(false);
   const [sitemapSaving, setSitemapSaving] = useState(false);
   const [robotsCopied, setRobotsCopied] = useState(false);
@@ -271,14 +300,11 @@ ${allEntries.map(entry => `    <url>
   useEffect(() => {
     if (!token || !currentUser) return;
 
-    if (activeTab === 'leads' && (currentUser.role === 'admin' || currentUser.role === 'sales')) {
-      fetchLeadsList();
-    } else if (activeTab === 'assets' && (currentUser.role === 'admin' || currentUser.role === 'seo')) {
-      fetchAssetsList();
-    } else if (activeTab === 'users' && currentUser.role === 'admin') {
+    fetchLeadsList();
+    fetchAssetsList();
+    fetchSeoSettingsList();
+    if (currentUser.role === 'admin') {
       fetchUsersList();
-    } else if ((activeTab === 'seo' || activeTab === 'robots_sitemap') && (currentUser.role === 'admin' || currentUser.role === 'seo')) {
-      fetchSeoSettingsList();
     }
   }, [activeTab, token, currentUser]);
 
@@ -3763,6 +3789,63 @@ ${allEntries.map(entry => `    <url>
                   <Save size={14} /> Save Directly to Sitemap Node
                 </Button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Media Asset Picker Modal for CMS Forms */}
+      {showAssetPicker && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-zinc-900 border border-white/10 rounded-2xl w-full max-w-4xl max-h-[85vh] flex flex-col overflow-hidden shadow-2xl">
+            <div className="p-4 border-b border-white/10 flex justify-between items-center bg-zinc-950/60">
+              <h3 className="text-sm font-bold font-mono text-cyanCustom flex items-center gap-2">
+                <ImageIcon size={16} /> Select Media Asset Image
+              </h3>
+              <button
+                type="button"
+                onClick={() => setShowAssetPicker(false)}
+                className="p-1 rounded-lg hover:bg-white/10 text-zinc-400 hover:text-white cursor-pointer"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="p-6 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              {assets && assets.length > 0 ? (
+                assets.map((ast, i) => (
+                  <div key={i} className="group relative rounded-xl border border-white/10 bg-zinc-950 overflow-hidden flex flex-col justify-between">
+                    <div className="aspect-video w-full overflow-hidden bg-black">
+                      <img src={ast.url} alt={ast.name} className="w-full h-full object-cover" />
+                    </div>
+                    <div className="p-2 flex flex-col gap-1">
+                      <span className="text-[10px] font-mono text-zinc-400 truncate">{ast.name}</span>
+                      <Button
+                        type="button"
+                        variant="primary"
+                        className="py-1 text-[11px] w-full"
+                        onClick={() => {
+                          if (editItem) {
+                            setEditItem(prev => ({
+                              ...prev,
+                              coverImage: ast.url,
+                              image: ast.url,
+                              ogImage: prev?.ogImage || ast.url
+                            }));
+                          }
+                          setShowAssetPicker(false);
+                        }}
+                      >
+                        Select Image
+                      </Button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="col-span-full py-12 text-center text-zinc-500 font-mono text-xs">
+                  No S3 assets uploaded yet. Upload images via the "Media Assets [S3]" tab or paste image URLs directly.
+                </div>
+              )}
             </div>
           </div>
         </div>
