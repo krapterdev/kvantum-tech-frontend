@@ -94,7 +94,14 @@ const iconMap = {
 
 export default function Services({ services = [] }) {
   // Combine CMS services or fallback cards
-  const allServices = Array.isArray(services) && services.length > 0 ? services : serviceCards;
+  const rawServices = Array.isArray(services) && services.length > 0 ? services : serviceCards;
+
+  // Sort explicitly by sortOrder
+  const allServices = [...rawServices].sort((a, b) => {
+    const orderA = a.sortOrder !== undefined && a.sortOrder !== null ? Number(a.sortOrder) : 999;
+    const orderB = b.sortOrder !== undefined && b.sortOrder !== null ? Number(b.sortOrder) : 999;
+    return orderA - orderB;
+  });
 
   // Filter only services marked to show in Homepage (showInHome !== false)
   const homeServices = allServices.filter(s => s.showInHome !== false);

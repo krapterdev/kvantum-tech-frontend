@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { BookOpen, Calendar, Clock, ArrowRight, User } from 'lucide-react';
 import Badge from '../ui/Badge';
-import { formatTimeAgo } from '@/pages/BlogPage';
+import { formatTimeAgo, fallbackBlogs } from '@/pages/BlogPage';
 
 export default function BlogPreview({ blogs = [], blogsLoading = false }) {
   if (blogsLoading) {
@@ -25,7 +25,8 @@ export default function BlogPreview({ blogs = [], blogsLoading = false }) {
     );
   }
 
-  const displayBlogs = blogs.slice(0, 3);
+  const activeBlogs = Array.isArray(blogs) && blogs.length > 0 ? blogs : fallbackBlogs;
+  const displayBlogs = activeBlogs.slice(0, 3);
   if (displayBlogs.length === 0) return null;
 
   return (

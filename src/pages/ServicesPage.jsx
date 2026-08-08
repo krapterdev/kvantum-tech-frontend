@@ -32,11 +32,18 @@ const iconMap = {
 
 export default function ServicesPage({ services = [] }) {
   // Use dynamic services if available, otherwise fall back to fallbackServices
-  const activeServicesList = Array.isArray(services) && services.length > 0 ? services : fallbackServices;
+  const rawServices = Array.isArray(services) && services.length > 0 ? services : fallbackServices;
 
-  const [selectedServiceId, setSelectedServiceId] = useState(activeServicesList[0]?.id || 'custom-software-development');
+  // Sort explicitly by sortOrder
+  const activeServicesList = [...rawServices].sort((a, b) => {
+    const orderA = a.sortOrder !== undefined && a.sortOrder !== null ? Number(a.sortOrder) : 999;
+    const orderB = b.sortOrder !== undefined && b.sortOrder !== null ? Number(b.sortOrder) : 999;
+    return orderA - orderB;
+  });
 
-  const selectedService = activeServicesList.find(s => s.id === selectedServiceId) || activeServicesList[0];
+  const [selectedServiceId, setSelectedServiceId] = useState(activeServicesList[0]?.id || activeServicesList[0]?.slug || 'custom-software-development');
+
+  const selectedService = activeServicesList.find(s => s.id === selectedServiceId || s._id === selectedServiceId || s.slug === selectedServiceId) || activeServicesList[0];
 
   return (
     <div className="container mx-auto max-w-[1280px] px-4 sm:px-6 py-10 text-left select-none space-y-20">

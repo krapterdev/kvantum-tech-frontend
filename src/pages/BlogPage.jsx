@@ -45,6 +45,8 @@ export const DEFAULT_SEED_BLOG = {
   keywords: 'Best IT solutions company Delhi NCR, Custom software development, WhatsApp automation, CRM software'
 };
 
+export const fallbackBlogs = [ DEFAULT_SEED_BLOG ];
+
 // ─── Dynamic Relative Time Ago Parser & Calculator ────────────────────────
 export function parseAndFormatTimeAgo(customInput, fallbackCreatedAt) {
   if (!customInput && !fallbackCreatedAt) return 'Recently';
