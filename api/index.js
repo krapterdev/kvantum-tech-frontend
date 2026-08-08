@@ -14,34 +14,34 @@ export default async function handler(req, res) {
     }
 
     if (pathname === '/robots.txt') {
+      res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+      res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate, s-maxage=0');
       try {
         const { db } = await import('./backend/config/db.js');
         const resSetting = await db.query('SELECT "content" FROM seo_settings WHERE "key" = $1', ['robots']);
         const setting = resSetting.rows[0];
         const content = setting && setting.content ? setting.content : `User-agent: *\nAllow: /\nSitemap: https://kvantumtechsolutions.com/sitemap.xml`;
-        res.setHeader('Content-Type', 'text/plain');
         return res.status(200).send(content);
       } catch (err) {
         const staticRobots = fs.readFileSync(path.join(process.cwd(), 'public', 'robots.txt'), 'utf8');
-        res.setHeader('Content-Type', 'text/plain');
         return res.status(200).send(staticRobots);
       }
     }
 
     if (pathname === '/sitemap.xml') {
+      res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+      res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate, s-maxage=0');
       try {
         const { db } = await import('./backend/config/db.js');
         const resSetting = await db.query('SELECT "content" FROM seo_settings WHERE "key" = $1', ['sitemap']);
         const setting = resSetting.rows[0];
         if (setting && setting.content) {
-          res.setHeader('Content-Type', 'application/xml');
           return res.status(200).send(setting.content);
         }
       } catch (err) {
         // fallback to static file
       }
       const staticSitemap = fs.readFileSync(path.join(process.cwd(), 'public', 'sitemap.xml'), 'utf8');
-      res.setHeader('Content-Type', 'application/xml');
       return res.status(200).send(staticSitemap);
     }
 

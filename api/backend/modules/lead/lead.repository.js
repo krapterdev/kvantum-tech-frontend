@@ -51,7 +51,7 @@ export const createLead = async (leadData) => {
     message,
     status: 'New',
     quality: 'Warm',
-    notes: leadData.notes || '',
+    notes: leadData.notes || message || '',
     createdAt: new Date(),
     updatedAt: new Date()
   };
@@ -61,12 +61,12 @@ export const createLead = async (leadData) => {
       `INSERT INTO leads ("_id", "name", "email", "phone", "service", "message") VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
       [id, name, email, phone || '', service, message]
     );
-    const lead = mapLead(result.rows[0]);
-    localLeads.push(lead);
+    const lead = mapLead(result.rows[0]) || mapped;
+    localLeads.unshift(lead);
     return lead;
   } catch (err) {
-    console.warn('[OFFLINE FALLBACK] Lead creation failed. Storing in local memory:', err.message);
-    localLeads.push(mapped);
+    console.warn('[DB LEAD SAVE] DB save fallback:', err.message);
+    localLeads.unshift(mapped);
     return mapped;
   }
 };
@@ -74,13 +74,15 @@ export const createLead = async (leadData) => {
 export const getAllLeads = async () => {
   try {
     const result = await db.query('SELECT * FROM leads ORDER BY "created_at" DESC');
-    const dbLeads = result.rows.map(mapLead);
-    if (dbLeads.length > 0) {
-      localLeads = dbLeads;
-    }
-    return localLeads;
+    const dbLeads = (result.rows || []).map(mapLead);
+    const combinedMap = new Map();
+    [...localLeads, ...dbLeads].forEach(item => {
+      if (item && item.id) {
+        combinedMap.set(item.id, item);
+      }
+    });
+    return Array.from(combinedMap.values());
   } catch (err) {
-    console.warn('[OFFLINE FALLBACK] Leads list fetch failed. Returning local in-memory array.');
     return localLeads;
   }
 };
