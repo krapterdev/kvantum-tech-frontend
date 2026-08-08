@@ -3044,55 +3044,78 @@ ${allEntries.map(entry => `    <url>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {(Array.isArray(assets) ? assets : []).map((asset, idx) => (
-              <Card key={idx} className="p-4 border flex flex-col justify-between items-start gap-4">
-                
-                {/* Image Thumbnail preview */}
-                <div className="w-full h-36 bg-zinc-950/60 rounded-xl overflow-hidden flex items-center justify-center border border-white/8 relative group">
-                  {asset.contentType && asset.contentType.startsWith('image/') ? (
-                    <img 
-                      src={asset.url} 
-                      alt={asset.name} 
-                      className="w-full h-full object-contain p-2 hover:scale-105 transition-transform" 
-                    />
-                  ) : (
-                    <FileText size={40} className="text-zinc-600" />
-                  )}
-                  <span className="absolute bottom-2 left-2 px-2 py-0.5 bg-black/60 backdrop-blur rounded text-[10px] font-mono text-zinc-400">
-                    {asset.size ? `${(asset.size / 1024).toFixed(1)} KB` : 'S3 Data'}
-                  </span>
-                </div>
-
-                {/* Info & Copy Link triggers */}
-                <div className="w-full text-left">
-                  <h4 className="text-zinc-200 text-xs font-mono font-bold truncate mb-3" title={asset.name}>
-                    {asset.name}
-                  </h4>
+            {Array.isArray(assets) && assets.length > 0 ? (
+              assets.map((asset, idx) => (
+                <Card key={idx} className="p-4 border flex flex-col justify-between items-start gap-4">
                   
-                  <div className="flex gap-2 w-full">
-                    <Button 
-                      onClick={() => copyToClipboard(asset.url, idx)} 
-                      variant="secondary" 
-                      className="flex-grow py-2 rounded-lg text-[10px] gap-1.5"
-                    >
-                      {copiedIndex === idx ? <Check size={11} className="text-emerald-400" /> : <Copy size={11} />}
-                      {copiedIndex === idx ? 'URL Copied' : 'Copy CDN URL'}
-                    </Button>
-                    
-                    {currentUser.role === 'admin' && (
-                      <button 
-                        onClick={() => handleAssetDelete(asset.name)}
-                        className="p-2 bg-white/[0.02] border border-white/8 rounded-lg hover:border-red-500/30 hover:text-red-400 transition-colors"
-                        title="Delete asset (Admin only)"
-                      >
-                        <Trash2 size={12} />
-                      </button>
+                  {/* Image Thumbnail preview */}
+                  <div className="w-full h-36 bg-zinc-950/60 rounded-xl overflow-hidden flex items-center justify-center border border-white/8 relative group">
+                    {asset.contentType && asset.contentType.startsWith('image/') ? (
+                      <img 
+                        src={asset.url} 
+                        alt={asset.name} 
+                        className="w-full h-full object-contain p-2 hover:scale-105 transition-transform" 
+                      />
+                    ) : (
+                      <FileText size={40} className="text-zinc-600" />
                     )}
+                    <span className="absolute bottom-2 left-2 px-2 py-0.5 bg-black/60 backdrop-blur rounded text-[10px] font-mono text-zinc-400">
+                      {asset.size ? `${(asset.size / 1024).toFixed(1)} KB` : 'S3 Data'}
+                    </span>
                   </div>
-                </div>
 
-              </Card>
-            ))}
+                  {/* Info & Copy Link triggers */}
+                  <div className="w-full text-left">
+                    <h4 className="text-zinc-200 text-xs font-mono font-bold truncate mb-3" title={asset.name}>
+                      {asset.name}
+                    </h4>
+                    
+                    <div className="flex gap-2 w-full">
+                      <Button 
+                        onClick={() => copyToClipboard(asset.url, idx)} 
+                        variant="secondary" 
+                        className="flex-grow py-2 rounded-lg text-[10px] gap-1.5"
+                      >
+                        {copiedIndex === idx ? <Check size={11} className="text-emerald-400" /> : <Copy size={11} />}
+                        {copiedIndex === idx ? 'URL Copied' : 'Copy CDN URL'}
+                      </Button>
+                      
+                      {currentUser.role === 'admin' && (
+                        <button 
+                          onClick={() => handleAssetDelete(asset.name)}
+                          className="p-2 bg-white/[0.02] border border-white/8 rounded-lg hover:border-red-500/30 hover:text-red-400 transition-colors"
+                          title="Delete asset (Admin only)"
+                        >
+                          <Trash2 size={12} />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                </Card>
+              ))
+            ) : (
+              <div className="col-span-full py-16 px-6 bg-zinc-950/40 border border-white/8 rounded-2xl flex flex-col items-center justify-center text-center gap-4">
+                <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyanCustom">
+                  <Folder size={32} />
+                </div>
+                <div className="max-w-md flex flex-col gap-1">
+                  <h4 className="text-zinc-200 font-bold font-headline text-base">No S3 Media Assets Uploaded Yet</h4>
+                  <p className="text-zinc-400 text-xs font-mono leading-relaxed">
+                    Upload images or media documents to AWS S3 storage using the "Upload File to S3" button above. Uploaded files will appear here with instant CDN link copy buttons.
+                  </p>
+                </div>
+                <label className="btn-primary px-5 py-2.5 rounded-xl text-xs gap-2 cursor-pointer mt-2 font-mono font-bold">
+                  <UploadCloud size={16} /> Upload First File to S3
+                  <input 
+                    type="file" 
+                    className="hidden" 
+                    onChange={handleAssetUpload} 
+                    disabled={uploadingAsset} 
+                  />
+                </label>
+              </div>
+            )}
           </div>
         </div>
       )}
