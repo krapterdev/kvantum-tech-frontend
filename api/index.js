@@ -128,9 +128,29 @@ export default async function handler(req, res) {
     return res.status(200).send(html);
   } catch (err) {
     console.error('SSR Handler Error:', err);
-    const indexPath = path.join(process.cwd(), 'dist', 'index.html');
-    const html = fs.readFileSync(indexPath, 'utf8');
-    res.setHeader('Content-Type', 'text/html; charset=utf-8');
-    return res.status(200).send(html);
+    try {
+      const indexPath = path.join(process.cwd(), 'dist', 'index.html');
+      let html = fs.readFileSync(indexPath, 'utf8');
+      const siteUrl = 'https://kvantumtechsolutions.com';
+      const reqUrl = req.url || '/';
+      const parsedUrl = new URL(reqUrl, siteUrl);
+      const pathname = parsedUrl.pathname;
+      const canonicalUrl = `${siteUrl}${pathname === '/' ? '/' : pathname}`;
+      
+      let title = "Contact Kvantum Tech Solutions | Direct Technical Contact";
+      if (pathname === '/contact') {
+        title = "Contact Kvantum Tech Solutions | Direct Technical Contact";
+      } else if (pathname === '/services') {
+        title = "Enterprise IT & Automation Services | Kvantum Tech Solutions";
+      }
+      
+      html = html.replace(/<title>.*?<\/title>/gi, `<title>${title}</title>`);
+      html = html.replace(/<link\s+rel="canonical"\s+href=".*?"\s*\/?>/gi, `<link rel="canonical" href="${canonicalUrl}" />`);
+      html = html.replace(/<meta\s+property="og:url"\s+content=".*?"\s*\/?>/gi, `<meta property="og:url" content="${canonicalUrl}" />`);
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      return res.status(200).send(html);
+    } catch (e2) {
+      return res.status(500).send('Server Error');
+    }
   }
 }

@@ -78,7 +78,27 @@ const serviceCards = [
   },
 ];
 
+const iconMap = {
+  Settings: Code,
+  Code: Code,
+  Users: Database,
+  Database: Database,
+  Cpu: Cpu,
+  Layers: Shield,
+  Shield: Shield,
+  MessageSquare: MessageSquare,
+  Smartphone: Smartphone,
+  Globe: Globe,
+  Zap: Zap
+};
+
 export default function Services({ services = [] }) {
+  // Combine CMS services or fallback cards
+  const allServices = Array.isArray(services) && services.length > 0 ? services : serviceCards;
+
+  // Filter only services marked to show in Homepage (showInHome !== false)
+  const homeServices = allServices.filter(s => s.showInHome !== false);
+
   return (
     <section id="services" className="container mx-auto max-w-[1280px] px-6 py-24 select-none text-left relative z-10">
 
@@ -95,21 +115,25 @@ export default function Services({ services = [] }) {
         </p>
       </div>
 
-      {/* 8 Core Service Cards */}
+      {/* Dynamic Homepage Service Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
-        {serviceCards.map((card, idx) => {
-          const Icon = card.icon;
+        {homeServices.map((card, idx) => {
+          const Icon = (card.iconName && iconMap[card.iconName]) || card.icon || Code;
+          const cardLink = card.link || `/services/${card.slug || card.id || card._id}`;
+          const ctaText = card.ctaText || `Explore ${card.title} →`;
+          const numStr = (idx + 1).toString().padStart(2, '0');
+
           return (
             <div
-              key={idx}
+              key={card.id || card._id || idx}
               className="p-8 rounded-3xl bg-white dark:bg-zinc-900/80 border border-slate-200 dark:border-white/10 hover:border-sky-500/40 transition-all duration-300 flex flex-col justify-between gap-6 cursor-default group hover:-translate-y-1 shadow-md dark:shadow-xl"
             >
               <div>
                 <div className="flex justify-between items-center mb-5">
                   <span className="text-xs font-mono font-bold px-3 py-1 rounded-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400">
-                    {card.num}
+                    {numStr}
                   </span>
-                  <div className={`p-2.5 rounded-xl border ${card.color}`}>
+                  <div className={`p-2.5 rounded-xl border ${card.color || 'text-sky-500 bg-sky-500/10 border-sky-500/20'}`}>
                     <Icon size={20} />
                   </div>
                 </div>
@@ -118,22 +142,32 @@ export default function Services({ services = [] }) {
                   {card.title}
                 </h3>
                 <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed mb-4">
-                  {card.desc}
+                  {card.shortDesc || card.desc}
                 </p>
               </div>
 
               <div className="border-t border-slate-100 dark:border-white/8 pt-4">
                 <Link 
-                  to={card.link}
+                  to={cardLink}
                   className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-sky-500 dark:text-cyanCustom hover:underline group-hover:translate-x-1 transition-transform"
                 >
-                  {card.ctaText}
+                  {ctaText}
                 </Link>
               </div>
 
             </div>
           );
         })}
+      </div>
+
+      {/* Explore All Services Button */}
+      <div className="mt-14 text-center">
+        <Link
+          to="/services"
+          className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-sm font-bold bg-sky-500 hover:bg-sky-600 text-white transition-all duration-200 shadow-md hover:shadow-sky-500/30 hover:scale-[1.03] cursor-pointer"
+        >
+          Explore All Services <ArrowRight size={16} />
+        </Link>
       </div>
 
     </section>

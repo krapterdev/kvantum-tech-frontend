@@ -488,6 +488,24 @@ ${allEntries.map(entry => `    <url>
           </div>
         </div>
 
+        <div className="flex items-center gap-3 p-4 rounded-xl bg-zinc-950/40 border border-white/8">
+          <input 
+            type="checkbox" 
+            id="showInHome"
+            checked={editItem.showInHome !== false}
+            onChange={(e) => setEditItem(prev => ({ ...prev, showInHome: e.target.checked }))}
+            className="w-5 h-5 accent-cyanCustom rounded cursor-pointer"
+          />
+          <div>
+            <label htmlFor="showInHome" className="text-sm font-bold text-zinc-100 cursor-pointer block">
+              Show in Homepage (Services Section)
+            </label>
+            <span className="text-xs text-zinc-500 block">
+              If checked, this service will be displayed in the Homepage Services grid.
+            </span>
+          </div>
+        </div>
+
         <div>
           <label className="block text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-1.5 font-bold">Short Card Description</label>
           <input 
@@ -1443,7 +1461,7 @@ ${allEntries.map(entry => `    <url>
     setEditType(type);
     setIsEditing(true);
     if (item) {
-      setEditItem({ ...item });
+      setEditItem({ showInHome: item.showInHome !== false, ...item });
       setOriginalId(item.id || item._id || item.slug || null);
       if (type === 'blog') {
         setBlogTouched({
@@ -1479,7 +1497,8 @@ ${allEntries.map(entry => `    <url>
           metaDesc: '',
           ogTitle: '',
           ogDesc: '',
-          ogImage: ''
+          ogImage: '',
+          showInHome: true
         });
       } else if (type === 'blog') {
         setBlogTouched({
@@ -2305,7 +2324,16 @@ ${allEntries.map(entry => `    <url>
               {(Array.isArray(services) ? services : []).map(ser => (
                 <Card key={ser.id} className="p-6 border flex justify-between items-start gap-4">
                   <div className="text-left flex flex-col gap-2">
-                    <span className="text-[10px] font-mono text-zinc-500 uppercase">NODE_ID: {ser.id}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-mono text-zinc-500 uppercase">NODE_ID: {ser.id}</span>
+                      <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${
+                        ser.showInHome !== false 
+                          ? 'bg-cyanCustom/10 text-cyanCustom border border-cyanCustom/30' 
+                          : 'bg-zinc-800 text-zinc-400 border border-zinc-700'
+                      }`}>
+                        {ser.showInHome !== false ? '✓ Homepage' : 'Hidden on Home'}
+                      </span>
+                    </div>
                     <h3 className="text-lg font-bold font-headline text-zinc-200">{ser.title}</h3>
                     <p className="text-zinc-400 text-xs leading-relaxed max-w-[400px]">{ser.shortDesc}</p>
                   </div>

@@ -1,4 +1,9 @@
 {
+  "functions": {
+    "api/index.js": {
+      "includeFiles": "dist/index.html"
+    }
+  },
   "redirects": [
     {
       "source": "/services/web-development",
