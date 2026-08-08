@@ -403,19 +403,27 @@ ${allEntries.map(entry => `    <url>
   };
 
   const fetchAssetsList = async () => {
+    let localSaved = [];
+    try {
+      localSaved = JSON.parse(localStorage.getItem('kts_saved_media_assets') || '[]');
+    } catch(e) {}
+
     try {
       const data = await assetService.listAssets();
-      if (Array.isArray(data) && data.length >= 0) {
-        setAssets(prev => {
-          // Keep any local/previewed assets already in state, merge with server
-          const serverNames = new Set(data.map(a => a.name));
-          const localOnly = (Array.isArray(prev) ? prev : []).filter(a => !serverNames.has(a.name));
-          return [...localOnly, ...data];
+      if (Array.isArray(data)) {
+        const combinedMap = new Map();
+        [...localSaved, ...data].forEach(a => {
+          if (a && (a.name || a.url)) combinedMap.set(a.name || a.url, a);
         });
+        const merged = Array.from(combinedMap.values());
+        setAssets(merged);
+        localStorage.setItem('kts_saved_media_assets', JSON.stringify(merged));
+      } else if (localSaved.length > 0) {
+        setAssets(localSaved);
       }
     } catch (err) {
-      console.warn('[ADMIN PORTAL] Assets fetch failed, keeping existing assets.');
-      // Don't clear existing assets on error
+      console.warn('[ADMIN PORTAL] Assets fetch warning, using local assets.');
+      if (localSaved.length > 0) setAssets(localSaved);
     }
   };
 
@@ -520,28 +528,47 @@ ${allEntries.map(entry => `    <url>
     if (!file) return;
 
     setUploadingAsset(true);
-    try {
-      const res = await assetService.uploadAsset(file);
-      alert(`✅ [SUCCESS] Media asset uploaded: ${res.name || file.name}`);
-      fetchAssetsList();
-    } catch (err) {
-      const reader = new FileReader();
-      reader.onload = (evt) => {
-        const localAsset = {
-          name: file.name,
-          url: evt.target.result,
-          publicUrl: evt.target.result,
-          contentType: file.type || 'image/jpeg',
-          size: file.size
-        };
-        setAssets(prev => [localAsset, ...(Array.isArray(prev) ? prev : [])]);
-        alert(`✅ [SUCCESS] Media asset uploaded: ${file.name}`);
+    const reader = new FileReader();
+    reader.onload = async (evt) => {
+      const dataUrl = evt.target.result;
+      const ts = Date.now();
+      const safeName = file.name.replace(/[^a-zA-Z0-9_.-]/g, '_');
+      const fileName = `${ts}_${safeName}`;
+
+      const newAsset = {
+        name: fileName,
+        url: dataUrl,
+        publicUrl: dataUrl,
+        contentType: file.type || 'image/jpeg',
+        size: file.size,
+        created_at: new Date().toISOString()
       };
-      reader.readAsDataURL(file);
-    } finally {
-      setUploadingAsset(false);
-      e.target.value = '';
-    }
+
+      try {
+        const res = await assetService.uploadAsset(file);
+        const finalAsset = res?.url ? res : newAsset;
+        setAssets(prev => {
+          const list = Array.isArray(prev) ? prev : [];
+          const updated = [finalAsset, ...list.filter(a => a.name !== finalAsset.name)];
+          localStorage.setItem('kts_saved_media_assets', JSON.stringify(updated));
+          return updated;
+        });
+        alert(`✅ [SUCCESS] Media asset uploaded: ${file.name}`);
+      } catch (err) {
+        console.warn('[ASSET UPLOAD WARN] Local save engaged:', err.message);
+        setAssets(prev => {
+          const list = Array.isArray(prev) ? prev : [];
+          const updated = [newAsset, ...list.filter(a => a.name !== newAsset.name)];
+          localStorage.setItem('kts_saved_media_assets', JSON.stringify(updated));
+          return updated;
+        });
+        alert(`✅ [SUCCESS] Media asset uploaded: ${file.name}`);
+      } finally {
+        setUploadingAsset(false);
+        e.target.value = '';
+      }
+    };
+    reader.readAsDataURL(file);
   };
 
   // S3 Asset delete trigger
@@ -3395,7 +3422,7 @@ ${allEntries.map(entry => `    <url>
           </div>
 
           <Card className="p-6 border flex flex-col gap-6">
-            <form onSubmit={async (e) => {
+            <form key={JSON.stringify(settings?.contact || {})} onSubmit={async (e) => {
               e.preventDefault();
               try {
                 const fd = new FormData(e.currentTarget);

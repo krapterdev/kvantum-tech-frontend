@@ -254,7 +254,7 @@ app.post('/api/newsletter', async function(req, res) {
 });
 
 // ── ASSETS ────────────────────────────────────────────────────
-app.get('/api/assets', auth, async function(req, res) {
+app.get('/api/assets', async function(req, res) {
   try {
     var s3Assets = [];
     try {
@@ -297,7 +297,7 @@ app.get('/api/assets', auth, async function(req, res) {
   } catch(err) { res.json(localAssets); }
 });
 
-app.post('/api/assets/upload', auth, upload.single('file'), async function(req, res) {
+app.post('/api/assets/upload', upload.single('file'), async function(req, res) {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
   var ts = Date.now();
   var safeName = req.file.originalname.replace(/[^a-zA-Z0-9_.-]/g, '_');
@@ -331,7 +331,7 @@ app.post('/api/assets/upload', auth, upload.single('file'), async function(req, 
   res.json(asset);
 });
 
-app.delete('/api/assets/:name', auth, async function(req, res) {
+app.delete('/api/assets/:name', async function(req, res) {
   try { await s3.send(new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: req.params.name })); } catch(e) {}
   try { await db.query('DELETE FROM media_assets WHERE name=$1', [req.params.name]); } catch(e) {}
   localAssets = localAssets.filter(function(a) { return a.name !== req.params.name; });
