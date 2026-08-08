@@ -424,12 +424,28 @@ ${allEntries.map(entry => `    <url>
       const data = await assetService.listAssets();
       if (Array.isArray(data)) {
         const combinedMap = new Map();
-        [...localSaved, ...data].forEach(a => {
+        data.forEach(a => {
           if (a && (a.name || a.url)) combinedMap.set(a.name || a.url, a);
         });
+        localSaved.forEach(a => {
+          if (a && (a.name || a.url) && !combinedMap.has(a.name || a.url)) {
+            combinedMap.set(a.name || a.url, a);
+          }
+        });
         const merged = Array.from(combinedMap.values());
+        merged.sort((a, b) => {
+          const aIsScroller = (a.name || '').includes('scroller-images');
+          const bIsScroller = (b.name || '').includes('scroller-images');
+          if (aIsScroller && !bIsScroller) return 1;
+          if (!aIsScroller && bIsScroller) return -1;
+          return new Date(b.created_at || 0) - new Date(a.created_at || 0);
+        });
         setAssets(merged);
-        localStorage.setItem('kts_saved_media_assets', JSON.stringify(merged));
+
+        try {
+          const toStore = merged.filter(a => a.url && !a.url.startsWith('data:image/')).slice(0, 100);
+          localStorage.setItem('kts_saved_media_assets', JSON.stringify(toStore));
+        } catch(e) {}
       } else if (localSaved.length > 0) {
         setAssets(localSaved);
       }
@@ -540,47 +556,67 @@ ${allEntries.map(entry => `    <url>
     if (!file) return;
 
     setUploadingAsset(true);
-    const reader = new FileReader();
-    reader.onload = async (evt) => {
-      const dataUrl = evt.target.result;
-      const ts = Date.now();
-      const safeName = file.name.replace(/[^a-zA-Z0-9_.-]/g, '_');
-      const fileName = `${ts}_${safeName}`;
-
-      const newAsset = {
-        name: fileName,
-        url: dataUrl,
-        publicUrl: dataUrl,
-        contentType: file.type || 'image/jpeg',
+    try {
+      const res = await assetService.uploadAsset(file);
+      const uploadedUrl = res?.publicUrl || res?.url;
+      const safeName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9_.-]/g, '_')}`;
+      const finalAsset = {
+        name: res?.name || safeName,
+        url: uploadedUrl || '',
+        publicUrl: uploadedUrl || '',
+        contentType: file.type || 'image/png',
         size: file.size,
         created_at: new Date().toISOString()
       };
 
-      try {
-        const res = await assetService.uploadAsset(file);
-        const finalAsset = res?.url ? res : newAsset;
+      if (uploadedUrl) {
         setAssets(prev => {
           const list = Array.isArray(prev) ? prev : [];
           const updated = [finalAsset, ...list.filter(a => a.name !== finalAsset.name)];
-          localStorage.setItem('kts_saved_media_assets', JSON.stringify(updated));
+          try {
+            const toStore = updated.filter(a => a.url && !a.url.startsWith('data:image/')).slice(0, 100);
+            localStorage.setItem('kts_saved_media_assets', JSON.stringify(toStore));
+          } catch(err) {}
           return updated;
         });
-        alert(`✅ [SUCCESS] Media asset uploaded: ${file.name}`);
-      } catch (err) {
-        console.warn('[ASSET UPLOAD WARN] Local save engaged:', err.message);
+        alert(`✅ [SUCCESS] PNG/Media asset uploaded: ${file.name}`);
+      } else {
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          const dataUrl = evt.target.result;
+          const localAsset = { ...finalAsset, url: dataUrl, publicUrl: dataUrl };
+          setAssets(prev => {
+            const list = Array.isArray(prev) ? prev : [];
+            return [localAsset, ...list.filter(a => a.name !== localAsset.name)];
+          });
+          alert(`✅ [SUCCESS] PNG/Media asset loaded: ${file.name}`);
+        };
+        reader.readAsDataURL(file);
+      }
+    } catch (err) {
+      console.warn('[ASSET UPLOAD WARN] Reading local preview:', err.message);
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        const dataUrl = evt.target.result;
+        const localAsset = {
+          name: `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9_.-]/g, '_')}`,
+          url: dataUrl,
+          publicUrl: dataUrl,
+          contentType: file.type || 'image/png',
+          size: file.size,
+          created_at: new Date().toISOString()
+        };
         setAssets(prev => {
           const list = Array.isArray(prev) ? prev : [];
-          const updated = [newAsset, ...list.filter(a => a.name !== newAsset.name)];
-          localStorage.setItem('kts_saved_media_assets', JSON.stringify(updated));
-          return updated;
+          return [localAsset, ...list.filter(a => a.name !== localAsset.name)];
         });
-        alert(`✅ [SUCCESS] Media asset uploaded: ${file.name}`);
-      } finally {
-        setUploadingAsset(false);
-        e.target.value = '';
-      }
-    };
-    reader.readAsDataURL(file);
+        alert(`✅ [SUCCESS] PNG/Media asset loaded: ${file.name}`);
+      };
+      reader.readAsDataURL(file);
+    } finally {
+      setUploadingAsset(false);
+      e.target.value = '';
+    }
   };
 
   // S3 Asset delete trigger
