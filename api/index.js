@@ -26,6 +26,58 @@ const { Pool } = pg;
 const pool = new Pool({ connectionString: DB_URL, ssl: { rejectUnauthorized: false } });
 const db = { query: (t, p) => pool.query(t, p) };
 
+async function initDb() {
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS leads (
+        _id TEXT PRIMARY KEY,
+        name TEXT,
+        email TEXT,
+        phone TEXT,
+        service TEXT,
+        message TEXT,
+        notes TEXT,
+        status TEXT DEFAULT 'New',
+        quality TEXT DEFAULT 'Warm',
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      );
+      CREATE TABLE IF NOT EXISTS seo_settings (
+        key TEXT PRIMARY KEY,
+        title TEXT,
+        description TEXT,
+        keywords TEXT,
+        schema TEXT,
+        other TEXT,
+        content TEXT,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      );
+      CREATE TABLE IF NOT EXISTS media_assets (
+        name TEXT PRIMARY KEY,
+        url TEXT,
+        public_url TEXT,
+        size BIGINT,
+        content_type TEXT,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      );
+      CREATE TABLE IF NOT EXISTS users (
+        _id TEXT PRIMARY KEY,
+        name TEXT,
+        email TEXT UNIQUE,
+        password TEXT,
+        role TEXT DEFAULT 'seo',
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      );
+    `);
+    console.log('[DB] Auto-migrations initialized successfully');
+  } catch(err) {
+    console.warn('[DB INIT WARN]', err.message);
+  }
+}
+initDb().catch(console.error);
+
 // ── S3 ────────────────────────────────────────────────────────
 const s3 = new S3Client({
   endpoint: S3_ENDPOINT,
@@ -71,7 +123,7 @@ function auth(req, res, next) {
 app.get('/api/health', async function(req, res) {
   var dbConnected = false;
   try { var r = await db.query('SELECT NOW()'); dbConnected = r.rows.length > 0; } catch(e) {}
-  res.json({ status: 'active', server: 'Kvantum Engine v5-CJS', databaseConnected: dbConnected });
+  res.json({ status: 'active', server: 'Kvantum Engine v6-CJS', databaseConnected: dbConnected });
 });
 
 // ── LOGIN ─────────────────────────────────────────────────────
@@ -96,12 +148,28 @@ app.get('/api/admin/me', auth, function(req, res) {
 // ── LEADS ─────────────────────────────────────────────────────
 app.post('/api/leads', async function(req, res) {
   try {
-    var body = req.body;
+    var body = req.body || {};
     var id = 'lead_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
     var msg = body.message || body.notes || 'Inquiry';
-    var lead = { id: id, _id: id, name: body.name || 'Client', email: body.email || '', phone: body.phone || '', service: body.service || 'Inquiry', message: msg, notes: msg, status: 'New', quality: 'Warm', createdAt: new Date().toISOString(), created_at: new Date().toISOString() };
+    var lead = {
+      id: id,
+      _id: id,
+      name: body.name || 'Client',
+      email: body.email || '',
+      phone: body.phone || '',
+      service: body.service || 'Inquiry',
+      message: msg,
+      notes: msg,
+      status: 'New',
+      quality: 'Warm',
+      createdAt: new Date().toISOString(),
+      created_at: new Date().toISOString()
+    };
     try {
-      await db.query('INSERT INTO leads ("_id","name","email","phone","service","message","notes","status","quality") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)', [id, lead.name, lead.email, lead.phone, lead.service, msg, msg, 'New', 'Warm']);
+      await db.query(
+        'INSERT INTO leads ("_id","name","email","phone","service","message","notes","status","quality") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)',
+        [id, lead.name, lead.email, lead.phone, lead.service, msg, msg, 'New', 'Warm']
+      );
     } catch(dbErr) {
       console.warn('[LEAD DB]', dbErr.message);
       localLeads.unshift(lead);
@@ -113,7 +181,22 @@ app.post('/api/leads', async function(req, res) {
 app.get('/api/leads', auth, async function(req, res) {
   try {
     var result = await db.query('SELECT * FROM leads ORDER BY "created_at" DESC');
-    var dbLeads = result.rows.map(function(r) { return { id: r._id, _id: r._id, name: r.name, email: r.email, phone: r.phone, service: r.service, message: r.message, notes: r.notes || r.message, status: r.status, quality: r.quality, createdAt: r.created_at, created_at: r.created_at }; });
+    var dbLeads = result.rows.map(function(r) {
+      return {
+        id: r._id,
+        _id: r._id,
+        name: r.name,
+        email: r.email,
+        phone: r.phone,
+        service: r.service,
+        message: r.message,
+        notes: r.notes || r.message,
+        status: r.status,
+        quality: r.quality,
+        createdAt: r.created_at,
+        created_at: r.created_at
+      };
+    });
     var combined = new Map();
     localLeads.concat(dbLeads).forEach(function(l) { if (l && l.id) combined.set(l.id, l); });
     res.json(Array.from(combined.values()));
@@ -132,16 +215,79 @@ app.delete('/api/leads/:id', auth, async function(req, res) {
   catch(err) { res.status(500).json({ error: err.message }); }
 });
 
+// ── NEWSLETTER ────────────────────────────────────────────────
+app.post('/api/newsletter', async function(req, res) {
+  try {
+    var email = (req.body && req.body.email) || '';
+    if (!email) return res.status(400).json({ error: 'Email required' });
+    var id = 'news_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+    var lead = {
+      id: id,
+      _id: id,
+      name: 'Newsletter Subscriber',
+      email: email,
+      phone: 'N/A',
+      service: 'Newsletter Subscription',
+      message: 'Subscribed to tech newsletter',
+      notes: 'Subscribed to tech newsletter',
+      status: 'New',
+      quality: 'Warm',
+      createdAt: new Date().toISOString(),
+      created_at: new Date().toISOString()
+    };
+    try {
+      await db.query(
+        'INSERT INTO leads ("_id","name","email","phone","service","message","notes","status","quality") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)',
+        [id, lead.name, lead.email, lead.phone, lead.service, lead.message, lead.notes, 'New', 'Warm']
+      );
+    } catch(dbErr) {
+      localLeads.unshift(lead);
+    }
+    res.json({ success: true, message: 'Subscribed successfully' });
+  } catch(err) { res.status(500).json({ error: err.message }); }
+});
+
 // ── ASSETS ────────────────────────────────────────────────────
 app.get('/api/assets', auth, async function(req, res) {
   try {
-    var data = await s3.send(new ListObjectsV2Command({ Bucket: S3_BUCKET }));
-    var assets = (data.Contents || []).map(function(item) {
-      var ext = (item.Key.split('.').pop() || '').toLowerCase();
-      var imgs = ['png','jpg','jpeg','svg','gif','webp'];
-      return { name: item.Key, created_at: item.LastModified, publicUrl: SUPABASE_PUBLIC_URL + '/' + S3_BUCKET + '/' + item.Key, url: SUPABASE_PUBLIC_URL + '/' + S3_BUCKET + '/' + item.Key, size: item.Size || 0, contentType: imgs.indexOf(ext) >= 0 ? ('image/' + (ext === 'jpg' ? 'jpeg' : ext)) : 'application/octet-stream' };
+    var s3Assets = [];
+    try {
+      var data = await s3.send(new ListObjectsV2Command({ Bucket: S3_BUCKET }));
+      s3Assets = (data.Contents || []).map(function(item) {
+        var ext = (item.Key.split('.').pop() || '').toLowerCase();
+        var imgs = ['png','jpg','jpeg','svg','gif','webp'];
+        return {
+          name: item.Key,
+          created_at: item.LastModified,
+          publicUrl: SUPABASE_PUBLIC_URL + '/' + S3_BUCKET + '/' + item.Key,
+          url: SUPABASE_PUBLIC_URL + '/' + S3_BUCKET + '/' + item.Key,
+          size: item.Size || 0,
+          contentType: imgs.indexOf(ext) >= 0 ? ('image/' + (ext === 'jpg' ? 'jpeg' : ext)) : 'application/octet-stream'
+        };
+      });
+    } catch(e) {}
+
+    var dbAssets = [];
+    try {
+      var r = await db.query('SELECT * FROM media_assets ORDER BY created_at DESC');
+      dbAssets = r.rows.map(function(row) {
+        return {
+          name: row.name,
+          created_at: row.created_at,
+          publicUrl: row.public_url || row.url,
+          url: row.url,
+          size: parseInt(row.size || '0', 10),
+          contentType: row.content_type || 'image/jpeg'
+        };
+      });
+    } catch(e) {}
+
+    var combinedMap = new Map();
+    localAssets.concat(dbAssets, s3Assets).forEach(function(ast) {
+      if (ast && ast.name) combinedMap.set(ast.name, ast);
     });
-    res.json(localAssets.concat(assets));
+
+    res.json(Array.from(combinedMap.values()));
   } catch(err) { res.json(localAssets); }
 });
 
@@ -150,14 +296,38 @@ app.post('/api/assets/upload', auth, upload.single('file'), async function(req, 
   var ts = Date.now();
   var safeName = req.file.originalname.replace(/[^a-zA-Z0-9_.-]/g, '_');
   var fileName = ts + '_' + safeName;
-  var asset = { name: fileName, created_at: new Date().toISOString(), publicUrl: SUPABASE_PUBLIC_URL + '/' + S3_BUCKET + '/' + fileName, url: SUPABASE_PUBLIC_URL + '/' + S3_BUCKET + '/' + fileName, size: req.file.size, contentType: req.file.mimetype };
-  try { await s3.send(new PutObjectCommand({ Bucket: S3_BUCKET, Key: fileName, Body: req.file.buffer, ContentType: req.file.mimetype })); }
-  catch(err) { console.warn('[S3]', err.message); localAssets.unshift(asset); }
+  var publicUrl = SUPABASE_PUBLIC_URL + '/' + S3_BUCKET + '/' + fileName;
+  var asset = {
+    name: fileName,
+    created_at: new Date().toISOString(),
+    publicUrl: publicUrl,
+    url: publicUrl,
+    size: req.file.size,
+    contentType: req.file.mimetype
+  };
+
+  try {
+    await s3.send(new PutObjectCommand({ Bucket: S3_BUCKET, Key: fileName, Body: req.file.buffer, ContentType: req.file.mimetype }));
+  } catch(err) {
+    console.warn('[S3 Upload Warning]', err.message);
+  }
+
+  try {
+    await db.query(
+      'INSERT INTO media_assets (name, url, public_url, size, content_type) VALUES ($1,$2,$3,$4,$5) ON CONFLICT (name) DO NOTHING',
+      [fileName, publicUrl, publicUrl, req.file.size, req.file.mimetype]
+    );
+  } catch(dbErr) {
+    console.warn('[DB Asset Save Warning]', dbErr.message);
+    localAssets.unshift(asset);
+  }
+
   res.json(asset);
 });
 
 app.delete('/api/assets/:name', auth, async function(req, res) {
   try { await s3.send(new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: req.params.name })); } catch(e) {}
+  try { await db.query('DELETE FROM media_assets WHERE name=$1', [req.params.name]); } catch(e) {}
   localAssets = localAssets.filter(function(a) { return a.name !== req.params.name; });
   res.json({ success: true, name: req.params.name });
 });
@@ -250,18 +420,18 @@ app.delete('/api/blogs/:id', auth, async function(req, res) {
   catch(err) { res.status(500).json({ error: err.message }); }
 });
 
-// ── SEO SETTINGS ──────────────────────────────────────────────
-app.get('/api/seosettings', auth, async function(req, res) {
+// ── SEO SETTINGS (DUAL ROUTE HANDLER) ─────────────────────────
+app.get(['/api/seosettings', '/api/seopages/settings'], auth, async function(req, res) {
   try { var r = await db.query('SELECT * FROM seo_settings'); var obj = {}; r.rows.forEach(function(row) { obj[row.key] = row; }); res.json(obj); }
   catch(e) { res.json({}); }
 });
 
-app.get('/api/seosettings/:key', async function(req, res) {
+app.get(['/api/seosettings/:key', '/api/seopages/settings/:key'], async function(req, res) {
   try { var r = await db.query('SELECT * FROM seo_settings WHERE "key"=$1', [req.params.key]); res.json(r.rows[0] || null); }
   catch(e) { res.json(null); }
 });
 
-app.put('/api/seosettings/:key', auth, async function(req, res) {
+app.put(['/api/seosettings/:key', '/api/seopages/settings/:key'], auth, async function(req, res) {
   try {
     var key = req.params.key, b = req.body;
     await db.query('INSERT INTO seo_settings ("key","title","description","keywords","schema","other","content","updated_at") VALUES ($1,$2,$3,$4,$5,$6,$7,NOW()) ON CONFLICT ("key") DO UPDATE SET "title"=EXCLUDED."title","description"=EXCLUDED."description","keywords"=EXCLUDED."keywords","schema"=EXCLUDED."schema","other"=EXCLUDED."other","content"=EXCLUDED."content","updated_at"=NOW()', [key, b.title||'', b.description||'', b.keywords||'', b.schema||'', b.other||'', b.content||'']);
