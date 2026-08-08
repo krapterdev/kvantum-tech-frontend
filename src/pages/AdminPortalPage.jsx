@@ -580,20 +580,20 @@ ${allEntries.map(entry => `    <url>
     setUploadingAsset(true);
     for (const file of files) {
       const getShortCleanName = (origName) => {
-        if (!origName) return `img_${Math.floor(1000 + Math.random() * 9000)}.png`;
+        if (!origName) return `img_${Math.floor(10 + Math.random() * 90)}.png`;
         const parts = origName.split('.');
         const ext = parts.length > 1 ? parts.pop().toLowerCase() : 'png';
         let base = parts.join('_').toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/_+/g, '_').replace(/^_+|_+$/g, '');
-        if (base.length > 25) base = base.substring(0, 25).replace(/_+$/g, '');
+        if (base.length > 12) base = base.substring(0, 12).replace(/_+$/g, '');
         if (!base) base = 'img';
-        return `${base}_${Math.floor(1000 + Math.random() * 9000)}.${ext}`;
+        return `${base}_${Math.floor(10 + Math.random() * 90)}.${ext}`;
       };
 
       const safeName = getShortCleanName(file.name);
 
       try {
         const res = await assetService.uploadAsset(file);
-        const uploadedUrl = res?.publicUrl || res?.url || `https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/${safeName}`;
+        const uploadedUrl = res?.publicUrl || res?.url || `https://kvantumtechsolutions.com/img/${safeName}`;
         const finalAsset = {
           name: res?.name || safeName,
           url: uploadedUrl,

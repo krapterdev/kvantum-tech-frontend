@@ -301,19 +301,27 @@ app.get('/api/assets', async function(req, res) {
 });
 
 function getShortCleanName(origName) {
-  if (!origName) return 'file_' + Math.floor(1000 + Math.random() * 9000) + '.png';
+  if (!origName) return 'img_' + Math.floor(10 + Math.random() * 90) + '.png';
   var parts = origName.split('.');
   var ext = parts.length > 1 ? parts.pop().toLowerCase() : 'png';
   var base = parts.join('_').toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/_+/g, '_').replace(/^_+|_+$/g, '');
-  if (base.length > 25) base = base.substring(0, 25).replace(/_+$/g, '');
+  if (base.length > 12) base = base.substring(0, 12).replace(/_+$/g, '');
   if (!base) base = 'img';
-  return base + '_' + Math.floor(1000 + Math.random() * 9000) + '.' + ext;
+  return base + '_' + Math.floor(10 + Math.random() * 90) + '.' + ext;
 }
+
+app.get('/img/:name', function(req, res) {
+  var fileName = req.params.name;
+  var s3Url = SUPABASE_PUBLIC_URL + '/' + S3_BUCKET + '/' + fileName;
+  res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+  res.redirect(302, s3Url);
+});
 
 app.post('/api/assets/upload', upload.single('file'), async function(req, res) {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
   var fileName = getShortCleanName(req.file.originalname);
-  var publicUrl = SUPABASE_PUBLIC_URL + '/' + S3_BUCKET + '/' + fileName;
+  var s3Url = SUPABASE_PUBLIC_URL + '/' + S3_BUCKET + '/' + fileName;
+  var publicUrl = 'https://kvantumtechsolutions.com/img/' + fileName;
   
   try {
     await s3.send(new PutObjectCommand({
@@ -651,6 +659,15 @@ module.exports = async function handler(req, res) {
     // ── API → Express ────────────────────────────────────────
     if (pathname.startsWith('/api')) {
       return app(req, res);
+    }
+
+    // ── Image CDN Proxy Redirect ──────────────────────────────
+    if (pathname.startsWith('/img/')) {
+      var imageName = pathname.replace('/img/', '').trim();
+      var s3Target = SUPABASE_PUBLIC_URL + '/' + S3_BUCKET + '/' + imageName;
+      res.setHeader('Location', s3Target);
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      return res.status(302).end();
     }
 
     // ── robots.txt ───────────────────────────────────────────
