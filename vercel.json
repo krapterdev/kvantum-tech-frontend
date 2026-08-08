@@ -1,7 +1,9 @@
 {
   "functions": {
     "api/index.js": {
-      "includeFiles": "dist/index.html"
+      "includeFiles": "dist/**,api/backend/**",
+      "memory": 1024,
+      "maxDuration": 30
     }
   },
   "redirects": [
