@@ -1,7 +1,7 @@
 {
   "functions": {
     "api/index.js": {
-      "includeFiles": "dist/**,api/backend/**",
+      "includeFiles": "dist/**,api/backend/**,public/**",
       "memory": 1024,
       "maxDuration": 30
     }
@@ -54,6 +54,14 @@
     }
   ],
   "rewrites": [
+    {
+      "source": "/sitemap.xml",
+      "destination": "/api/index"
+    },
+    {
+      "source": "/robots.txt",
+      "destination": "/api/index"
+    },
     {
       "source": "/((?!assets|_next|favicon.ico|web-icons|og_banners|.*\\..*).*)",
       "destination": "/api/index"
