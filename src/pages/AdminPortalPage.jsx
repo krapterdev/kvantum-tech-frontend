@@ -943,11 +943,31 @@ ${allEntries.map(entry => `    <url>
               onChange={(e) => {
                 const newDateStr = e.target.value;
                 let computed = editItem.createdAt;
+                let autoReadTime = editItem.readTime || 'Just now';
                 const pDate = new Date(newDateStr);
                 if (!isNaN(pDate.getTime())) {
                   computed = pDate.toISOString();
+                  const diffInSec = Math.max(0, Math.floor((Date.now() - pDate.getTime()) / 1000));
+                  if (diffInSec < 60) autoReadTime = 'Just now';
+                  else {
+                    const mins = Math.floor(diffInSec / 60);
+                    if (mins < 60) autoReadTime = `${mins}m ago`;
+                    else {
+                      const hrs = Math.floor(mins / 60);
+                      if (hrs < 24) autoReadTime = `${hrs}h ago`;
+                      else {
+                        const days = Math.floor(hrs / 24);
+                        if (days < 30) autoReadTime = `${days}d ago`;
+                        else {
+                          const mos = Math.floor(days / 30);
+                          if (mos < 12) autoReadTime = `${mos} mo ago`;
+                          else autoReadTime = `${Math.floor(mos / 12)}y ago`;
+                        }
+                      }
+                    }
+                  }
                 }
-                setEditItem(prev => ({ ...prev, date: newDateStr, createdAt: computed }));
+                setEditItem(prev => ({ ...prev, date: newDateStr, createdAt: computed, readTime: autoReadTime }));
               }}
               className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono"
             />
