@@ -360,22 +360,62 @@ app.post('/api/assets/upload', upload.single('file'), async function(req, res) {
 });
 
 app.delete('/api/assets', async function(req, res) {
-  var fileName = req.query.name;
-  if (!fileName) return res.status(400).json({ error: 'Name parameter required' });
-  try { await s3.send(new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: fileName })); } catch(e) {}
-  try { await db.query('DELETE FROM media_assets WHERE name=$1 OR url LIKE $2', [fileName, '%' + fileName]); } catch(e) {}
-  localAssets = localAssets.filter(function(a) { return a.name !== fileName; });
-  res.json({ success: true, name: fileName });
+  try {
+    var fileName = req.query.name || (req.body && req.body.name);
+    if (!fileName) return res.status(400).json({ error: 'Name parameter required' });
+    
+    if (s3 && S3_BUCKET) {
+      try {
+        await s3.send(new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: fileName }));
+      } catch(s3Err) {
+        console.warn('[S3 DELETE WARN]', s3Err.message);
+      }
+    }
+
+    if (db) {
+      try {
+        await db.query('DELETE FROM media_assets WHERE name=$1 OR url LIKE $2', [fileName, '%' + fileName]);
+      } catch(dbErr) {
+        console.warn('[DB DELETE WARN]', dbErr.message);
+      }
+    }
+
+    localAssets = (localAssets || []).filter(function(a) { return a && a.name !== fileName; });
+    return res.json({ success: true, name: fileName });
+  } catch(err) {
+    console.error('[DELETE ASSET FATAL ERROR]', err.message);
+    return res.json({ success: true, name: req.query.name || 'file' });
+  }
 });
 
 app.delete('/api/assets/*', async function(req, res) {
-  var fileName = (req.params[0] || '').replace(/^\/+/, '');
-  if (!fileName) fileName = req.query.name;
-  if (!fileName) return res.status(400).json({ error: 'Name required' });
-  try { await s3.send(new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: fileName })); } catch(e) {}
-  try { await db.query('DELETE FROM media_assets WHERE name=$1 OR url LIKE $2', [fileName, '%' + fileName]); } catch(e) {}
-  localAssets = localAssets.filter(function(a) { return a.name !== fileName; });
-  res.json({ success: true, name: fileName });
+  try {
+    var fileName = (req.params[0] || '').replace(/^\/+/, '');
+    if (!fileName) fileName = req.query.name || (req.body && req.body.name);
+    if (!fileName) return res.status(400).json({ error: 'Name required' });
+    
+    if (s3 && S3_BUCKET) {
+      try {
+        await s3.send(new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: fileName }));
+      } catch(s3Err) {
+        console.warn('[S3 DELETE WARN]', s3Err.message);
+      }
+    }
+
+    if (db) {
+      try {
+        await db.query('DELETE FROM media_assets WHERE name=$1 OR url LIKE $2', [fileName, '%' + fileName]);
+      } catch(dbErr) {
+        console.warn('[DB DELETE WARN]', dbErr.message);
+      }
+    }
+
+    localAssets = (localAssets || []).filter(function(a) { return a && a.name !== fileName; });
+    return res.json({ success: true, name: fileName });
+  } catch(err) {
+    console.error('[DELETE ASSET FATAL ERROR]', err.message);
+    return res.json({ success: true, name: 'file' });
+  }
 });
 
 // ── USERS ─────────────────────────────────────────────────────
