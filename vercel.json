@@ -18,6 +18,7 @@
     { "source": "/services/whatsapp", "destination": "/services/whatsapp-automation", "permanent": true }
   ],
   "rewrites": [
+    { "source": "/api/:path*", "destination": "/api/index" },
     { "source": "/sitemap.xml", "destination": "/api/index" },
     { "source": "/robots.txt", "destination": "/api/index" },
     { "source": "/img/:path*", "destination": "https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/:path*" },
