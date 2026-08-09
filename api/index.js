@@ -779,8 +779,6 @@ app.use(function(req, res) {
 });
 
 // ============================================================
-// MAIN VERCEL HANDLER (CommonJS)
+// MAIN VERCEL HANDLER (CommonJS Express)
 // ============================================================
-module.exports = function handler(req, res) {
-  return app(req, res);
-};
+module.exports = app;
