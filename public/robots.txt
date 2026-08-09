@@ -113,6 +113,8 @@ Disallow: /
 User-agent: PetalBot
 Disallow: /
 
+Disallow: /admin
+Disallow: /api/
 
 # ---------------------------------------------------------
 # DEFAULT CRAWLING POLICY
