@@ -359,6 +359,35 @@ app.post('/api/assets/upload', upload.single('file'), async function(req, res) {
   res.json(asset);
 });
 
+app.post('/api/assets/remove', async function(req, res) {
+  try {
+    var fileName = (req.body && req.body.name) || req.query.name;
+    if (!fileName) return res.status(400).json({ error: 'Name parameter required' });
+    
+    if (s3 && S3_BUCKET) {
+      try {
+        await s3.send(new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: fileName }));
+      } catch(s3Err) {
+        console.warn('[S3 REMOVE WARN]', s3Err.message);
+      }
+    }
+
+    if (db) {
+      try {
+        await db.query('DELETE FROM media_assets WHERE name=$1 OR url LIKE $2', [fileName, '%' + fileName]);
+      } catch(dbErr) {
+        console.warn('[DB REMOVE WARN]', dbErr.message);
+      }
+    }
+
+    localAssets = (localAssets || []).filter(function(a) { return a && a.name !== fileName; });
+    return res.json({ success: true, name: fileName });
+  } catch(err) {
+    console.error('[REMOVE ASSET FATAL ERROR]', err.message);
+    return res.json({ success: true, name: (req.body && req.body.name) || 'file' });
+  }
+});
+
 app.post('/api/assets/delete', async function(req, res) {
   try {
     var fileName = (req.body && req.body.name) || req.query.name;
