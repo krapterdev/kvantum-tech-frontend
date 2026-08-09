@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
+import { useSafeNavigate as useNavigate } from '@/utils/navigation';
 import { Menu, X, Sun, Moon, ArrowRight } from 'lucide-react';
 import MobileMenu from './MobileMenu';
 import { InstagramIcon, LinkedinIcon, FacebookIcon, TwitterIcon } from '../ui/SocialIcons';

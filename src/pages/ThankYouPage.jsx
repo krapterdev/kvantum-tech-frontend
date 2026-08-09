@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import Link from '@/components/ui/SafeLink';
+import { useSafeNavigate as useNavigate } from '@/utils/navigation';
 import { CheckCircle2, ArrowLeft, PhoneCall, Sparkles, Clock, ShieldCheck } from 'lucide-react';
 import Badge from '@/components/ui/Badge';
 import Card from '@/components/ui/Card';

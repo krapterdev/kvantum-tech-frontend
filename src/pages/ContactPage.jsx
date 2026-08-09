@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useSafeNavigate as useNavigate } from '@/utils/navigation';
 import { Mail, Phone, MapPin, Send, Clock, ShieldCheck, Sparkles, AlertCircle } from 'lucide-react';
 import Badge from '@/components/ui/Badge';
 import FAQ, { contactFaqs } from '@/components/sections/FAQ';

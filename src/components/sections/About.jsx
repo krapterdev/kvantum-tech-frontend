@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useSafeNavigate as useNavigate } from '@/utils/navigation';
 import { ArrowRight, CheckCircle2, Building2, Users, Code } from 'lucide-react';
 import Card from '../ui/Card';
 import Badge from '../ui/Badge';

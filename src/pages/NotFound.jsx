@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { ShieldAlert, ArrowLeft } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
@@ -7,8 +6,6 @@ import GradientText from '@/components/ui/GradientText';
 import { setPageSeoStatus } from '@/utils/seoUtils';
 
 export default function NotFound() {
-  const navigate = useNavigate();
-
   useEffect(() => {
     setPageSeoStatus({
       status: 404,
@@ -32,7 +29,7 @@ export default function NotFound() {
       </p>
 
       <Button
-        onClick={() => navigate('/')}
+        onClick={() => { if (typeof window !== 'undefined') window.location.href = '/'; }}
         variant="primary"
         className="mt-6 gap-2"
       >

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Link from '@/components/ui/SafeLink';
 import { 
   Award, CheckCircle2, ShieldCheck, Zap, Code, ArrowRight, Target, Lightbulb, 
   Cpu, Layers, Smartphone, LayoutGrid, Check, Sparkles, Building2, Rocket, Globe

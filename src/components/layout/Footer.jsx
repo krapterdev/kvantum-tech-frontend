@@ -1,5 +1,7 @@
+'use client';
+
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Link from '../ui/SafeLink';
 import EarthGlobe from '../sections/EarthGlobe';
 import { 
   InstagramIcon, LinkedinIcon, FacebookIcon, TwitterIcon, 

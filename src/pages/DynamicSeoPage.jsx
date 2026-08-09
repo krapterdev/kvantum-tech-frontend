@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import Link from '@/components/ui/SafeLink';
 import { Link2, ShieldCheck, Cpu, ArrowRight, Server, Key, AlertTriangle } from 'lucide-react';
 import Card from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Link from '../ui/SafeLink';
 import { ArrowRight, Sparkles, Phone } from 'lucide-react';
 import Badge from '../ui/Badge';
 

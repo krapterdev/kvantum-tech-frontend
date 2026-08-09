@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useSafeNavigate as useNavigate } from '@/utils/navigation';
 import { Send, CheckCircle, Mail, Phone, MapPin, Sparkles, AlertCircle } from 'lucide-react';
 import Badge from '../ui/Badge';
 import { submitContact } from '@/services/contactService';

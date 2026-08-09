@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import Link from '@/components/ui/SafeLink';
+import { useSafeNavigate as useNavigate } from '@/utils/navigation';
 import { 
   BookOpen, Calendar, Clock, ArrowRight, User, Search, ArrowLeft, 
   Sparkles, Eye, Share2, MessageSquare, Send, CheckCircle2
@@ -569,7 +570,7 @@ function BlogDetail({ post, allBlogs = [] }) {
 
 // ─── Blog Listing Main Grid (Clean Professional 3-Column Grid) ─────────────
 export default function BlogPage({ blogs = [], loading = false }) {
-  const { slug } = useParams();
+  const slug = null;
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
 

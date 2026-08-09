@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useSafeNavigate as useNavigate } from '@/utils/navigation';
 import { MessageSquare, Phone, X, Send, CheckCircle2, ArrowUp, Headphones } from 'lucide-react';
 import { submitContact } from '@/services/contactService';
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from '@/components/ui/SafeLink';
 import { 
   Layers, Code, Database, Cpu, MessageSquare, Smartphone, Shield, ArrowRight, 
   CheckCircle2, Zap, Award, PhoneCall, Mail, MapPin, Sparkles, Star, ChevronRight, Check

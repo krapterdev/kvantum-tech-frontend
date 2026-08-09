@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useSafeNavigate as useNavigate } from '@/utils/navigation';
+const useLocation = () => ({ pathname: typeof window !== 'undefined' ? window.location.pathname : '/admin' });
 import { 
   Plus, Edit2, Trash2, Save, X, Globe, Layers, BookOpen, Key, Link2, Eye, 
   UserCheck, Image, Image as ImageIcon, Copy, Check, UploadCloud, LogOut, Lock, Mail, FileText, CheckCircle2, AlertTriangle, Settings, Menu, Activity, Share2,
@@ -32,7 +33,7 @@ export default function AdminPortalPage({
 }) {
   // Current user state
   const [currentUser, setCurrentUser] = useState(() => userService.getCurrentUser());
-  const [token, setToken] = useState(() => localStorage.getItem('kts_admin_token') || '');
+  const [token, setToken] = useState(() => typeof window !== 'undefined' ? (localStorage.getItem('kts_admin_token') || '') : '');
   
   // Login credentials states
   const [loginData, setLoginData] = useState({ email: '', password: '' });
@@ -44,7 +45,8 @@ export default function AdminPortalPage({
   const navigate = useNavigate();
 
   const getTabFromPath = () => {
-    const parts = location.pathname.split('/');
+    if (typeof window === 'undefined') return 'leads';
+    const parts = (location.pathname || '').split('/');
     if (parts[1] === 'admin' && parts[2]) {
       return parts[2];
     }
@@ -54,7 +56,9 @@ export default function AdminPortalPage({
   const activeTab = getTabFromPath();
 
   const setActiveTab = (tabKey) => {
-    localStorage.setItem('kts_admin_active_tab', tabKey);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('kts_admin_active_tab', tabKey);
+    }
     navigate(`/admin/${tabKey}`, { replace: true });
   };
 
@@ -181,6 +185,7 @@ Sitemap: https://kvantumtechsolutions.com/sitemap.xml`;
   const [assetZoomModal, setAssetZoomModal] = useState(null);
 
   const [socialState, setSocialState] = useState(() => {
+    if (typeof window === 'undefined') return {};
     const local = localStorage.getItem('kts_saved_contact_settings');
     if (local) {
       try { return JSON.parse(local); } catch(e) {}

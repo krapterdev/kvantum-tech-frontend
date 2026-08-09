@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Link from '../ui/SafeLink';
 import { BookOpen, Calendar, Clock, ArrowRight, User } from 'lucide-react';
 import Badge from '../ui/Badge';
 import { formatTimeAgo, fallbackBlogs } from '@/pages/BlogPage';

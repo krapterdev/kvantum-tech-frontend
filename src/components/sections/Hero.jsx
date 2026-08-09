@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useSafeNavigate as useNavigate } from '@/utils/navigation';
 import { ArrowRight, Sparkles, Play, CheckCircle2 } from 'lucide-react';
 import Badge from '../ui/Badge';
 

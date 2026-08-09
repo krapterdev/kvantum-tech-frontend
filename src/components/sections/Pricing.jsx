@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useSafeNavigate as useNavigate } from '@/utils/navigation';
 import { Sparkles, ArrowRight, ShieldCheck, Zap, Check, X } from 'lucide-react';
 import Badge from '../ui/Badge';
 

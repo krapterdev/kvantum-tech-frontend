@@ -1,12 +1,19 @@
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
-const pg = require('pg');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
-const multer = require('multer');
-const { S3Client, PutObjectCommand, ListObjectsV2Command } = require('@aws-sdk/client-s3');
-const cookieParser = require('cookie-parser');
+let pg, jwt, bcrypt, multer, cookieParser, S3Client, PutObjectCommand, ListObjectsV2Command;
+
+try { pg = require('pg'); } catch(e) {}
+try { jwt = require('jsonwebtoken'); } catch(e) {}
+try { bcrypt = require('bcryptjs'); } catch(e) {}
+try { multer = require('multer'); } catch(e) {}
+try { cookieParser = require('cookie-parser'); } catch(e) {}
+try {
+  const awsS3 = require('@aws-sdk/client-s3');
+  S3Client = awsS3.S3Client;
+  PutObjectCommand = awsS3.PutObjectCommand;
+  ListObjectsV2Command = awsS3.ListObjectsV2Command;
+} catch(e) {}
 
 // ── CONFIG ───────────────────────────────────────────────────
 const DB_URL = process.env.DATABASE_URL || 'postgresql://postgres.bwdtxlosvptlqtixgcip:kEM3onWoT9AT82mr@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres';
@@ -19,9 +26,40 @@ const S3_BUCKET = process.env.S3_BUCKET_NAME || 'kvantumtechsolutions_storage';
 const SUPABASE_PUBLIC_URL = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public';
 
 // ── DATABASE ──────────────────────────────────────────────────
-const { Pool } = pg;
-const pool = new Pool({ connectionString: DB_URL, ssl: { rejectUnauthorized: false } });
-const db = { query: (t, p) => pool.query(t, p) };
+let poolInstance = null;
+function getPool() {
+  if (!poolInstance) {
+    try {
+      if (pg && pg.Pool) {
+        poolInstance = new pg.Pool({
+          connectionString: DB_URL,
+          ssl: { rejectUnauthorized: false },
+          connectionTimeoutMillis: 3000,
+          idleTimeoutMillis: 3000
+        });
+        poolInstance.on('error', function(err) {
+          console.warn('[DB SOCKET WARN]', err ? err.message : err);
+        });
+      }
+    } catch(e) {
+      console.warn('[DB POOL INIT WARN]', e.message);
+    }
+  }
+  return poolInstance;
+}
+
+const db = {
+  query: async (text, params) => {
+    try {
+      const p = getPool();
+      if (!p) return { rows: [] };
+      return await p.query(text, params);
+    } catch(err) {
+      console.warn('[DB QUERY WARN]', err.message);
+      return { rows: [] };
+    }
+  }
+};
 
 async function initDb() {
   try {

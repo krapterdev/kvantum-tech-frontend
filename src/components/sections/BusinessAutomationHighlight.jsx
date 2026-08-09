@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from '../ui/SafeLink';
 import { ArrowRight, MessageSquare, Database, Mail, BarChart3, Sparkles, Zap, CheckCircle2 } from 'lucide-react';
 import Badge from '../ui/Badge';
 

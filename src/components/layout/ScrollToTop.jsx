@@ -1,12 +1,15 @@
-import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+'use client';
 
-// Component that scrolls the page back to top automatically when navigating to another route
+import { useEffect } from 'react';
+import { usePathname } from 'next/navigation';
+
 export default function ScrollToTop() {
-  const { pathname } = useLocation();
+  const pathname = usePathname();
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0);
+    }
   }, [pathname]);
 
   return null;

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from '../ui/SafeLink';
 import {
   Users, Layers, BarChart2, Target, TrendingUp, Package,
   Warehouse, HeadphonesIcon, MessageSquare, CheckSquare,
