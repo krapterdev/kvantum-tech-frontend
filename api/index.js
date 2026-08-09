@@ -730,6 +730,16 @@ function getMeta(pathname) {
   return META['/'];
 }
 
+async function safeDeleteS3(key) {
+  try {
+    if (!key || !s3) return;
+    const command = new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: key });
+    await s3.send(command);
+  } catch(e) {
+    console.warn('[S3 Delete Warning]', e ? e.message : e);
+  }
+}
+
 // ============================================================
 // MAIN VERCEL HANDLER (CommonJS)
 // ============================================================
@@ -747,7 +757,7 @@ module.exports = async function handler(req, res) {
         if (match) targetName = decodeURIComponent(match);
       }
       if (targetName) {
-        try { await s3.send(new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: targetName })); } catch(e) {}
+        safeDeleteS3(targetName).catch(function() {});
         try { await db.query('DELETE FROM media_assets WHERE name=$1 OR url LIKE $2', [targetName, '%' + targetName]); } catch(e) {}
         localAssets = (localAssets || []).filter(function(a) { return a && a.name !== targetName; });
       }
