@@ -1,12 +1,12 @@
-import fs from 'fs';
-import path from 'path';
-import express from 'express';
-import pg from 'pg';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
-import multer from 'multer';
-import { S3Client, PutObjectCommand, ListObjectsV2Command } from '@aws-sdk/client-s3';
-import cookieParser from 'cookie-parser';
+const fs = require('fs');
+const path = require('path');
+const express = require('express');
+const pg = require('pg');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+const multer = require('multer');
+const { S3Client, PutObjectCommand, ListObjectsV2Command } = require('@aws-sdk/client-s3');
+const cookieParser = require('cookie-parser');
 
 // ── CONFIG ───────────────────────────────────────────────────
 const DB_URL = process.env.DATABASE_URL || 'postgresql://postgres.bwdtxlosvptlqtixgcip:kEM3onWoT9AT82mr@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres';
@@ -741,8 +741,8 @@ app.use(function(req, res) {
 });
 
 // ============================================================
-// MAIN VERCEL HANDLER (ESM)
+// MAIN VERCEL HANDLER (CommonJS)
 // ============================================================
-export default function handler(req, res) {
+module.exports = function handler(req, res) {
   return app(req, res);
-}
+};
