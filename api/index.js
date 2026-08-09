@@ -26,20 +26,34 @@ const S3_BUCKET = process.env.S3_BUCKET_NAME || 'kvantumtechsolutions_storage';
 const SUPABASE_PUBLIC_URL = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public';
 
 // ── DATABASE ──────────────────────────────────────────────────
-let pool;
-try {
-  if (pg && pg.Pool) {
-    pool = new pg.Pool({ connectionString: DB_URL, ssl: { rejectUnauthorized: false } });
+let poolInstance = null;
+function getPool() {
+  if (!poolInstance) {
+    try {
+      if (pg && pg.Pool) {
+        poolInstance = new pg.Pool({
+          connectionString: DB_URL,
+          ssl: { rejectUnauthorized: false },
+          connectionTimeoutMillis: 3000,
+          idleTimeoutMillis: 3000
+        });
+        poolInstance.on('error', function(err) {
+          console.warn('[DB SOCKET WARN]', err ? err.message : err);
+        });
+      }
+    } catch(e) {
+      console.warn('[DB POOL INIT WARN]', e.message);
+    }
   }
-} catch(e) {
-  console.warn('[DB POOL INIT WARN]', e.message);
+  return poolInstance;
 }
 
 const db = {
   query: async (text, params) => {
-    if (!pool) return { rows: [] };
     try {
-      return await pool.query(text, params);
+      const p = getPool();
+      if (!p) return { rows: [] };
+      return await p.query(text, params);
     } catch(err) {
       console.warn('[DB QUERY WARN]', err.message);
       return { rows: [] };
