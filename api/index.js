@@ -684,6 +684,15 @@ function getMeta(pathname) {
   return META['/'];
 }
 
+// ============================================================
+// MAIN VERCEL HANDLER (CommonJS)
+// ============================================================
+module.exports = async function handler(req, res) {
+  try {
+    var reqUrl = req.url || '/';
+    var parsedUrl = new URL(reqUrl, 'https://kvantumtechsolutions.com');
+    var pathname = parsedUrl.pathname;
+
     // ── Direct Asset Delete Interceptor ──────────────────────
     if (pathname.includes('/delete-asset') || pathname.includes('/assets/delete') || pathname.includes('/assets/remove') || (pathname.includes('/assets') && req.method === 'DELETE')) {
       var targetName = 'file';
