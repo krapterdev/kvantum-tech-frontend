@@ -739,6 +739,22 @@ module.exports = async function handler(req, res) {
     var parsedUrl = new URL(reqUrl, 'https://kvantumtechsolutions.com');
     var pathname = parsedUrl.pathname;
 
+    // ── Direct Asset Delete Interceptor ──────────────────────
+    if (pathname.includes('/delete-asset') || pathname.includes('/assets/delete') || (pathname.includes('/assets') && req.method === 'DELETE')) {
+      var targetName = req.query.name || (req.body && req.body.name) || parsedUrl.searchParams.get('name');
+      if (!targetName) {
+        var match = pathname.split('/assets/')[1];
+        if (match) targetName = decodeURIComponent(match);
+      }
+      if (targetName) {
+        try { await s3.send(new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: targetName })); } catch(e) {}
+        try { await db.query('DELETE FROM media_assets WHERE name=$1 OR url LIKE $2', [targetName, '%' + targetName]); } catch(e) {}
+        localAssets = (localAssets || []).filter(function(a) { return a && a.name !== targetName; });
+      }
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
+      return res.status(200).send(JSON.stringify({ success: true, name: targetName || 'file' }));
+    }
+
     // ── API → Express ────────────────────────────────────────
     if (pathname.startsWith('/api')) {
       return app(req, res);
