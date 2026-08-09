@@ -481,6 +481,22 @@ export default function App() {
               setSeoSettings={setSeoSettings}
             />
           } />
+          <Route path="/admin/:tab" element={
+            <AdminPortalPage 
+              services={services} 
+              setServices={setServices} 
+              blogs={blogs} 
+              setBlogs={setBlogs} 
+              seoPages={seoPages} 
+              setSeoPages={setSeoPages} 
+              settings={settings}
+              setSettings={setSettings}
+              portfolios={portfolios}
+              setPortfolios={setPortfolios}
+              seoSettings={seoSettings}
+              setSeoSettings={setSeoSettings}
+            />
+          } />
           
           <Route path="*" element={<NotFound />} />
         </Routes>

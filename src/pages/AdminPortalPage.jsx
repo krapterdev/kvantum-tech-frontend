@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   Plus, Edit2, Trash2, Save, X, Globe, Layers, BookOpen, Key, Link2, Eye, 
   UserCheck, Image, Image as ImageIcon, Copy, Check, UploadCloud, LogOut, Lock, Mail, FileText, CheckCircle2, AlertTriangle, Settings, Menu, Activity, Share2,
@@ -38,10 +39,24 @@ export default function AdminPortalPage({
   const [loginError, setLoginError] = useState('');
   const [loggingIn, setLoggingIn] = useState(false);
 
-  // Active navigation tab (persisted in localStorage across page reloads)
-  const [activeTab, setActiveTab] = useState(() => {
+  // Active navigation tab (synced with URL /admin/:tab & persisted in localStorage across reloads)
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const getTabFromPath = () => {
+    const parts = location.pathname.split('/');
+    if (parts[1] === 'admin' && parts[2]) {
+      return parts[2];
+    }
     return localStorage.getItem('kts_admin_active_tab') || 'leads';
-  });
+  };
+
+  const activeTab = getTabFromPath();
+
+  const setActiveTab = (tabKey) => {
+    localStorage.setItem('kts_admin_active_tab', tabKey);
+    navigate(`/admin/${tabKey}`, { replace: true });
+  };
 
   // CRM leads list
   const [leads, setLeads] = useState([]);
@@ -162,7 +177,7 @@ Sitemap: https://kvantumtechsolutions.com/sitemap.xml`;
   const [sitemapDirectCopied, setSitemapDirectCopied] = useState(false);
 
   const [assetSearchTerm, setAssetSearchTerm] = useState('');
-  const [hideScrollerFrames, setHideScrollerFrames] = useState(true);
+  const [hideScrollerFrames, setHideScrollerFrames] = useState(false);
   const [assetZoomModal, setAssetZoomModal] = useState(null);
 
   const [socialState, setSocialState] = useState(() => {
@@ -3443,6 +3458,10 @@ ${allEntries.map(entry => `    <url>
                   <img
                     src={assetZoomModal.url || assetZoomModal.publicUrl}
                     alt={assetZoomModal.name}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg';
+                    }}
                     className="w-full h-full object-contain"
                   />
                 </div>
