@@ -6,10 +6,13 @@ export const listAssets = async () => {
   return response.data;
 };
 
-// Upload file to S3 bucket (admin/seo only)
-export const uploadAsset = async (fileObject) => {
+// Upload file to S3 bucket (admin/seo only, with optional folder sub-directory)
+export const uploadAsset = async (fileObject, folderPath = '') => {
   const formData = new FormData();
   formData.append('file', fileObject);
+  if (folderPath) {
+    formData.append('folder', folderPath);
+  }
   
   const response = await api.post('/assets/upload', formData);
   return response.data;
@@ -17,6 +20,6 @@ export const uploadAsset = async (fileObject) => {
 
 // Delete S3 media object (admin only)
 export const deleteAsset = async (name) => {
-  const response = await api.delete(`/assets/${name}`);
+  const response = await api.delete(`/assets?name=${encodeURIComponent(name)}`);
   return response.data;
 };

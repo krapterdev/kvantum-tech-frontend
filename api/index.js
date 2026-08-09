@@ -320,8 +320,9 @@ app.get('/img/:name', function(req, res) {
 app.post('/api/assets/upload', upload.single('file'), async function(req, res) {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
   
-  // Clean original file name without adding extra random numbers
-  var fileName = req.file.originalname.replace(/[^a-zA-Z0-9_.-]/g, '_');
+  var folder = (req.body.folder || '').trim().replace(/^\/+|\/+$/g, '');
+  var cleanName = req.file.originalname.replace(/[^a-zA-Z0-9_.-]/g, '_');
+  var fileName = folder ? (folder + '/' + cleanName) : cleanName;
   var publicUrl = SUPABASE_PUBLIC_URL + '/' + S3_BUCKET + '/' + fileName;
   
   try {
@@ -358,11 +359,23 @@ app.post('/api/assets/upload', upload.single('file'), async function(req, res) {
   res.json(asset);
 });
 
-app.delete('/api/assets/:name', async function(req, res) {
-  try { await s3.send(new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: req.params.name })); } catch(e) {}
-  try { await db.query('DELETE FROM media_assets WHERE name=$1', [req.params.name]); } catch(e) {}
-  localAssets = localAssets.filter(function(a) { return a.name !== req.params.name; });
-  res.json({ success: true, name: req.params.name });
+app.delete('/api/assets', async function(req, res) {
+  var fileName = req.query.name;
+  if (!fileName) return res.status(400).json({ error: 'Name parameter required' });
+  try { await s3.send(new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: fileName })); } catch(e) {}
+  try { await db.query('DELETE FROM media_assets WHERE name=$1 OR url LIKE $2', [fileName, '%' + fileName]); } catch(e) {}
+  localAssets = localAssets.filter(function(a) { return a.name !== fileName; });
+  res.json({ success: true, name: fileName });
+});
+
+app.delete('/api/assets/*', async function(req, res) {
+  var fileName = (req.params[0] || '').replace(/^\/+/, '');
+  if (!fileName) fileName = req.query.name;
+  if (!fileName) return res.status(400).json({ error: 'Name required' });
+  try { await s3.send(new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: fileName })); } catch(e) {}
+  try { await db.query('DELETE FROM media_assets WHERE name=$1 OR url LIKE $2', [fileName, '%' + fileName]); } catch(e) {}
+  localAssets = localAssets.filter(function(a) { return a.name !== fileName; });
+  res.json({ success: true, name: fileName });
 });
 
 // ── USERS ─────────────────────────────────────────────────────

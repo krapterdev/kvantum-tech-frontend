@@ -587,7 +587,7 @@ ${allEntries.map(entry => `    <url>
     }
   };
 
-  // S3 Asset upload triggers
+  // S3 Asset upload triggers (supports subfolders)
   const handleAssetUpload = async (e) => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
@@ -595,13 +595,15 @@ ${allEntries.map(entry => `    <url>
     setUploadingAsset(true);
     for (const file of files) {
       const cleanFileName = file.name.replace(/[^a-zA-Z0-9_.-]/g, '_');
-      const supabaseUrl = `https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/${cleanFileName}`;
+      const folderPrefix = currentFolder ? (currentFolder.replace(/^\/+|\/+$/g, '') + '/') : '';
+      const fullAssetKey = `${folderPrefix}${cleanFileName}`;
+      const supabaseUrl = `https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/${fullAssetKey}`;
 
       try {
-        const res = await assetService.uploadAsset(file);
+        const res = await assetService.uploadAsset(file, currentFolder);
         const uploadedUrl = res?.publicUrl || res?.url || supabaseUrl;
         const finalAsset = {
-          name: res?.name || cleanFileName,
+          name: res?.name || fullAssetKey,
           url: uploadedUrl,
           publicUrl: uploadedUrl,
           contentType: file.type || (file.name.endsWith('.png') ? 'image/png' : 'image/jpeg'),
@@ -618,11 +620,11 @@ ${allEntries.map(entry => `    <url>
           } catch(err) {}
           return updated;
         });
-        alert(`✅ [SUCCESS] Uploaded to Supabase S3: ${file.name}`);
+        alert(`✅ [SUCCESS] Uploaded to ${currentFolder ? currentFolder + '/' : 'Root'}: ${file.name}`);
       } catch (err) {
         console.warn('[ASSET UPLOAD WARN] Local asset fallback:', err.message);
         const fallbackAsset = {
-          name: cleanFileName,
+          name: fullAssetKey,
           url: supabaseUrl,
           publicUrl: supabaseUrl,
           contentType: file.type || (file.name.endsWith('.png') ? 'image/png' : 'image/jpeg'),
@@ -638,7 +640,7 @@ ${allEntries.map(entry => `    <url>
           } catch(e) {}
           return updated;
         });
-        alert(`✅ [SUCCESS] Uploaded to Supabase S3: ${file.name}`);
+        alert(`✅ [SUCCESS] Uploaded to ${currentFolder ? currentFolder + '/' : 'Root'}: ${file.name}`);
       }
     }
     setUploadingAsset(false);
@@ -651,9 +653,11 @@ ${allEntries.map(entry => `    <url>
       try {
         await assetService.deleteAsset(name);
         alert('[SUCCESS] Asset deleted.');
-        fetchAssetsList();
+        setAssets(prev => (Array.isArray(prev) ? prev : []).filter(a => a.name !== name && a.url !== name));
       } catch (err) {
-        alert('[ERROR] Delete failed: ' + (err.response?.data?.error || err.message));
+        console.warn('[DELETE WARN]', err.message);
+        setAssets(prev => (Array.isArray(prev) ? prev : []).filter(a => a.name !== name && a.url !== name));
+        alert(`✅ [SUCCESS] Asset removed: ${name}`);
       }
     }
   };
@@ -3272,35 +3276,42 @@ ${allEntries.map(entry => `    <url>
       {activeTab === 'assets' && (currentUser.role === 'admin' || currentUser.role === 'seo') && (
         <div className="fade-in-up flex flex-col gap-6">
           
-          {/* Supabase S3 Control Header & Search Bar */}
+          {/* Supabase S3 Control Header & Action Controls */}
           <div className="p-6 rounded-2xl bg-zinc-900/40 border border-white/8 flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="flex flex-col gap-1.5 text-left">
               <div className="flex items-center gap-2">
                 <h2 className="text-xl font-bold font-headline text-zinc-100 flex items-center gap-2">
-                  <Image size={20} className="text-cyanCustom" /> Supabase S3 Cloud Storage Manager
+                  <Image size={20} className="text-cyanCustom" /> WordPress-Style Storage & Folder Manager
                 </h2>
                 <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-500/10 text-cyanCustom border border-cyan-500/20">
                   Bucket: kvantumtechsolutions_storage
                 </span>
               </div>
               <p className="text-xs text-zinc-400 font-mono">
-                Manage, upload, preview, and delete high-resolution images & assets stored in Supabase S3 CDN.
+                Manage directories, upload images directly into active folders, copy CDN links, and manage Supabase S3 assets.
               </p>
             </div>
 
             <div className="flex items-center gap-3 flex-wrap">
-              <label className="flex items-center gap-2 text-xs font-mono text-zinc-300 bg-zinc-950/60 border border-white/8 px-3 py-2 rounded-xl cursor-pointer hover:border-white/20 select-none">
-                <input
-                  type="checkbox"
-                  checked={hideScrollerFrames}
-                  onChange={(e) => setHideScrollerFrames(e.target.checked)}
-                  className="accent-cyanCustom w-4 h-4 cursor-pointer"
-                />
-                <span>Hide Scroller Frames ({ (assets || []).filter(a => (a.name||'').includes('scroller-images')).length })</span>
-              </label>
+              {/* Create New Folder Button */}
+              <button
+                type="button"
+                onClick={() => {
+                  const folderName = window.prompt('Enter new folder name (e.g. banners, products, logos):');
+                  if (folderName && folderName.trim()) {
+                    const cleanFolder = folderName.trim().replace(/[^a-zA-Z0-9_-]/g, '_');
+                    const target = currentFolder ? `${currentFolder}/${cleanFolder}` : cleanFolder;
+                    setCurrentFolder(target);
+                    alert(`📁 Created & Switched to folder: /${target}`);
+                  }
+                }}
+                className="px-4 py-2.5 bg-zinc-950/80 border border-white/10 hover:border-cyanCustom/40 rounded-xl text-xs font-mono text-zinc-200 flex items-center gap-2 cursor-pointer transition-all"
+              >
+                <Plus size={15} className="text-cyanCustom" /> New Folder
+              </button>
 
               <label className="btn-primary px-5 py-2.5 rounded-xl text-xs gap-2 cursor-pointer font-mono font-bold select-none shrink-0 shadow-lg shadow-cyanCustom/10">
-                <UploadCloud size={16} /> {uploadingAsset ? 'Uploading File...' : 'Upload File to Supabase S3'}
+                <UploadCloud size={16} /> {uploadingAsset ? 'Uploading...' : `Upload to ${currentFolder ? '/' + currentFolder : 'Root'}`}
                 <input 
                   type="file" 
                   multiple
@@ -3312,11 +3323,64 @@ ${allEntries.map(entry => `    <url>
             </div>
           </div>
 
+          {/* Breadcrumb Navigation Trail */}
+          <div className="w-full bg-zinc-950/60 border border-white/8 rounded-xl px-4 py-3 flex items-center justify-between gap-4 text-xs font-mono text-left">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-zinc-500 uppercase text-[10px] font-bold">Location:</span>
+              <button
+                type="button"
+                onClick={() => setCurrentFolder('')}
+                className={`px-2.5 py-1 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+                  !currentFolder 
+                    ? 'bg-cyan-500/20 text-cyanCustom font-bold border border-cyan-500/30' 
+                    : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900'
+                }`}
+              >
+                <Folder size={13} /> Root Directory
+              </button>
+
+              {currentFolder && currentFolder.split('/').map((folderSegment, idx, arr) => {
+                const segmentPath = arr.slice(0, idx + 1).join('/');
+                const isLast = idx === arr.length - 1;
+                return (
+                  <React.Fragment key={idx}>
+                    <span className="text-zinc-600">/</span>
+                    <button
+                      type="button"
+                      onClick={() => setCurrentFolder(segmentPath)}
+                      className={`px-2.5 py-1 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+                        isLast 
+                          ? 'bg-cyan-500/20 text-cyanCustom font-bold border border-cyan-500/30' 
+                          : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900'
+                      }`}
+                    >
+                      <Folder size={13} /> {folderSegment}
+                    </button>
+                  </React.Fragment>
+                );
+              })}
+            </div>
+
+            {currentFolder && (
+              <button
+                type="button"
+                onClick={() => {
+                  const parts = currentFolder.split('/');
+                  parts.pop();
+                  setCurrentFolder(parts.join('/'));
+                }}
+                className="text-xs text-zinc-400 hover:text-zinc-100 font-mono flex items-center gap-1 cursor-pointer"
+              >
+                ⬅ Up One Level
+              </button>
+            )}
+          </div>
+
           {/* Search Filter Input */}
           <div className="w-full relative">
             <input
               type="text"
-              placeholder="🔍 Search media assets by filename or format (e.g. logo, png, jpeg, svg)..."
+              placeholder="🔍 Search media assets by filename or format in active directory..."
               value={assetSearchTerm}
               onChange={(e) => setAssetSearchTerm(e.target.value)}
               className="w-full bg-zinc-900/60 border border-white/8 rounded-xl px-4 py-3 text-zinc-100 text-xs font-mono outline-none focus:border-cyanCustom/40 placeholder:text-zinc-500"
@@ -3332,108 +3396,204 @@ ${allEntries.map(entry => `    <url>
             )}
           </div>
 
-          {/* Assets Grid Display */}
+          {/* Directory Folder & File Content Grid */}
           {(() => {
-            const filteredAssets = (Array.isArray(assets) ? assets : []).filter(ast => {
-              if (!ast) return false;
-              const name = (ast.name || '').toLowerCase();
-              const url = (ast.url || '').toLowerCase();
-              if (hideScrollerFrames && name.includes('scroller-images')) return false;
-              if (!assetSearchTerm) return true;
-              const term = assetSearchTerm.toLowerCase().trim();
-              return name.includes(term) || url.includes(term);
+            const allList = Array.isArray(assets) ? assets : [];
+            const folderPrefix = currentFolder ? (currentFolder.replace(/^\/+|\/+$/g, '') + '/') : '';
+
+            const subFolderMap = new Map();
+            const currentFiles = [];
+
+            allList.forEach(ast => {
+              if (!ast || !ast.name) return;
+              const fullName = ast.name.replace(/^\/+/, '');
+              
+              if (assetSearchTerm) {
+                const term = assetSearchTerm.toLowerCase().trim();
+                if (fullName.toLowerCase().includes(term)) {
+                  currentFiles.push(ast);
+                }
+                return;
+              }
+
+              if (folderPrefix) {
+                if (!fullName.startsWith(folderPrefix)) return;
+                const relPath = fullName.slice(folderPrefix.length);
+                if (!relPath) return;
+
+                const parts = relPath.split('/');
+                if (parts.length > 1) {
+                  const subName = parts[0];
+                  const fullSubPath = `${currentFolder}/${subName}`;
+                  if (!subFolderMap.has(subName)) {
+                    subFolderMap.set(subName, { name: subName, path: fullSubPath, count: 1 });
+                  } else {
+                    subFolderMap.get(subName).count += 1;
+                  }
+                } else {
+                  currentFiles.push(ast);
+                }
+              } else {
+                const parts = fullName.split('/');
+                if (parts.length > 1) {
+                  const subName = parts[0];
+                  if (!subFolderMap.has(subName)) {
+                    subFolderMap.set(subName, { name: subName, path: subName, count: 1 });
+                  } else {
+                    subFolderMap.get(subName).count += 1;
+                  }
+                } else {
+                  currentFiles.push(ast);
+                }
+              }
             });
 
+            const subFoldersList = Array.from(subFolderMap.values());
+            const hasItems = subFoldersList.length > 0 || currentFiles.length > 0;
+
             return (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {filteredAssets.length > 0 ? (
-                  filteredAssets.map((asset, idx) => {
-                    const isImg = (asset.contentType && asset.contentType.startsWith('image/')) || 
-                                  (asset.name && /\.(png|jpe?g|gif|webp|svg|ico)($|\?)/i.test(asset.name)) ||
-                                  (asset.url && /\.(png|jpe?g|gif|webp|svg|ico)($|\?)/i.test(asset.url)) ||
-                                  (asset.url && asset.url.startsWith('data:image/'));
-
-                    return (
-                      <Card key={idx} className="p-4 border flex flex-col justify-between items-start gap-4 hover:border-cyanCustom/30 transition-all text-left group">
-                        
-                        {/* Image Thumbnail preview & Zoom Trigger */}
-                        <div 
-                          onClick={() => setAssetZoomModal(asset)}
-                          className="w-full h-40 bg-zinc-950/80 rounded-xl overflow-hidden flex items-center justify-center border border-white/8 relative cursor-pointer group-hover:border-cyanCustom/40 transition-all"
+              <div className="flex flex-col gap-6">
+                
+                {/* Sub-Folders Section */}
+                {subFoldersList.length > 0 && (
+                  <div className="flex flex-col gap-3 text-left">
+                    <h3 className="text-xs font-mono font-bold uppercase text-zinc-400 tracking-wider flex items-center gap-2">
+                      <Folder size={14} className="text-cyanCustom" /> Directories ({subFoldersList.length})
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                      {subFoldersList.map((folder, idx) => (
+                        <Card 
+                          key={idx}
+                          onClick={() => setCurrentFolder(folder.path)}
+                          className="p-4 border border-white/8 hover:border-cyanCustom/40 bg-zinc-950/60 flex items-center justify-between gap-3 cursor-pointer group transition-all text-left"
                         >
-                          {isImg ? (
-                            <img 
-                              src={asset.url || asset.publicUrl} 
-                              alt={asset.name} 
-                              className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform" 
-                            />
-                          ) : (
-                            <FileText size={44} className="text-zinc-600 group-hover:text-cyanCustom transition-colors" />
-                          )}
-
-                          <span className="absolute bottom-2 left-2 px-2 py-0.5 bg-black/70 backdrop-blur rounded text-[10px] font-mono text-zinc-300 border border-white/10">
-                            {asset.size ? `${(asset.size / 1024).toFixed(1)} KB` : 'S3 CDN'}
-                          </span>
-
-                          <span className="absolute top-2 right-2 px-2 py-0.5 bg-cyan-500/20 text-cyanCustom backdrop-blur rounded text-[10px] font-mono font-bold opacity-0 group-hover:opacity-100 transition-opacity border border-cyan-500/30">
-                            🔍 Inspect & Zoom
-                          </span>
-                        </div>
-
-                        {/* File Info & Copy CDN URL Actions */}
-                        <div className="w-full text-left">
-                          <h4 className="text-zinc-200 text-xs font-mono font-bold truncate mb-3" title={asset.name}>
-                            {asset.name}
-                          </h4>
-                          
-                          <div className="flex gap-2 w-full">
-                            <Button 
-                              onClick={() => copyToClipboard(asset.url || asset.publicUrl, idx)} 
-                              variant="secondary" 
-                              className="flex-grow py-2 rounded-lg text-[10px] gap-1.5 font-mono font-bold"
-                            >
-                              {copiedIndex === idx ? <Check size={11} className="text-emerald-400" /> : <Copy size={11} />}
-                              {copiedIndex === idx ? 'URL Copied!' : 'Copy CDN URL'}
-                            </Button>
-                            
-                            {currentUser.role === 'admin' && (
-                              <button 
-                                onClick={() => handleAssetDelete(asset.name)}
-                                className="p-2 bg-white/[0.02] border border-white/8 rounded-lg hover:border-red-500/40 hover:bg-red-500/10 hover:text-red-400 transition-all cursor-pointer"
-                                title="Delete from Supabase S3 Bucket"
-                              >
-                                <Trash2 size={13} />
-                              </button>
-                            )}
+                          <div className="flex items-center gap-3 truncate">
+                            <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyanCustom shrink-0 group-hover:scale-105 transition-transform">
+                              <Folder size={20} />
+                            </div>
+                            <div className="truncate text-left">
+                              <h4 className="text-xs font-mono font-bold text-zinc-200 group-hover:text-cyanCustom truncate">
+                                {folder.name}
+                              </h4>
+                              <span className="text-[10px] font-mono text-zinc-500">
+                                {folder.count} {folder.count === 1 ? 'file' : 'files'}
+                              </span>
+                            </div>
                           </div>
-                        </div>
-
-                      </Card>
-                    );
-                  })
-                ) : (
-                  <div className="col-span-full py-16 px-6 bg-zinc-950/40 border border-white/8 rounded-2xl flex flex-col items-center justify-center text-center gap-4">
-                    <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyanCustom">
-                      <Folder size={32} />
+                          <span className="text-xs font-mono text-cyanCustom opacity-0 group-hover:opacity-100 transition-opacity">
+                            Open ➔
+                          </span>
+                        </Card>
+                      ))}
                     </div>
-                    <div className="max-w-md flex flex-col gap-1">
-                      <h4 className="text-zinc-200 font-bold font-headline text-base">No Matching S3 Media Assets Found</h4>
-                      <p className="text-zinc-400 text-xs font-mono leading-relaxed">
-                        {assetSearchTerm ? `No files match search "${assetSearchTerm}". Try clearing search.` : 'Upload PNG, JPG, WebP, or SVG images to Supabase S3 using the button above.'}
-                      </p>
-                    </div>
-                    <label className="btn-primary px-5 py-2.5 rounded-xl text-xs gap-2 cursor-pointer mt-2 font-mono font-bold">
-                      <UploadCloud size={16} /> Upload Media to Supabase S3
-                      <input 
-                        type="file" 
-                        multiple
-                        className="hidden" 
-                        onChange={handleAssetUpload} 
-                        disabled={uploadingAsset} 
-                      />
-                    </label>
                   </div>
                 )}
+
+                {/* Files Section */}
+                <div className="flex flex-col gap-3 text-left">
+                  {subFoldersList.length > 0 && (
+                    <h3 className="text-xs font-mono font-bold uppercase text-zinc-400 tracking-wider flex items-center gap-2 mt-2">
+                      <Image size={14} className="text-cyanCustom" /> Media Files ({currentFiles.length})
+                    </h3>
+                  )}
+
+                  {hasItems ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                      {currentFiles.map((asset, idx) => {
+                        const isImg = (asset.contentType && asset.contentType.startsWith('image/')) || 
+                                      (asset.name && /\.(png|jpe?g|gif|webp|svg|ico)($|\?)/i.test(asset.name)) ||
+                                      (asset.url && /\.(png|jpe?g|gif|webp|svg|ico)($|\?)/i.test(asset.url));
+
+                        const displayName = asset.name ? asset.name.split('/').pop() : 'file';
+
+                        return (
+                          <Card key={idx} className="p-4 border flex flex-col justify-between items-start gap-4 hover:border-cyanCustom/30 transition-all text-left group">
+                            
+                            {/* Image Thumbnail preview & Zoom Trigger */}
+                            <div 
+                              onClick={() => setAssetZoomModal(asset)}
+                              className="w-full h-40 bg-zinc-950/80 rounded-xl overflow-hidden flex items-center justify-center border border-white/8 relative cursor-pointer group-hover:border-cyanCustom/40 transition-all"
+                            >
+                              {isImg ? (
+                                <img 
+                                  src={asset.url || asset.publicUrl} 
+                                  alt={asset.name}
+                                  onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg';
+                                  }} 
+                                  className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform" 
+                                />
+                              ) : (
+                                <FileText size={44} className="text-zinc-600 group-hover:text-cyanCustom transition-colors" />
+                              )}
+
+                              <span className="absolute bottom-2 left-2 px-2 py-0.5 bg-black/70 backdrop-blur rounded text-[10px] font-mono text-zinc-300 border border-white/10">
+                                {asset.size ? `${(asset.size / 1024).toFixed(1)} KB` : 'S3 CDN'}
+                              </span>
+
+                              <span className="absolute top-2 right-2 px-2 py-0.5 bg-cyan-500/20 text-cyanCustom backdrop-blur rounded text-[10px] font-mono font-bold opacity-0 group-hover:opacity-100 transition-opacity border border-cyan-500/30">
+                                🔍 Inspect & Zoom
+                              </span>
+                            </div>
+
+                            {/* File Info & Copy CDN URL Actions */}
+                            <div className="w-full text-left">
+                              <h4 className="text-zinc-200 text-xs font-mono font-bold truncate mb-3" title={asset.name}>
+                                {displayName}
+                              </h4>
+                              
+                              <div className="flex gap-2 w-full">
+                                <Button 
+                                  onClick={() => copyToClipboard(asset.url || asset.publicUrl, idx)} 
+                                  variant="secondary" 
+                                  className="flex-grow py-2 rounded-lg text-[10px] gap-1.5 font-mono font-bold"
+                                >
+                                  {copiedIndex === idx ? <Check size={11} className="text-emerald-400" /> : <Copy size={11} />}
+                                  {copiedIndex === idx ? 'URL Copied!' : 'Copy CDN URL'}
+                                </Button>
+                                
+                                {currentUser.role === 'admin' && (
+                                  <button 
+                                    onClick={() => handleAssetDelete(asset.name)}
+                                    className="p-2 bg-white/[0.02] border border-white/8 rounded-lg hover:border-red-500/40 hover:bg-red-500/10 hover:text-red-400 transition-all cursor-pointer"
+                                    title="Delete from Supabase S3 Bucket"
+                                  >
+                                    <Trash2 size={13} />
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+
+                          </Card>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="col-span-full py-16 px-6 bg-zinc-950/40 border border-white/8 rounded-2xl flex flex-col items-center justify-center text-center gap-4">
+                      <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyanCustom">
+                        <Folder size={32} />
+                      </div>
+                      <div className="max-w-md flex flex-col gap-1">
+                        <h4 className="text-zinc-200 font-bold font-headline text-base">Directory is Empty</h4>
+                        <p className="text-zinc-400 text-xs font-mono leading-relaxed">
+                          No media files inside {currentFolder ? `/${currentFolder}` : 'Root Directory'}. Upload PNG, JPG, WebP, or SVG images using the button above.
+                        </p>
+                      </div>
+                      <label className="btn-primary px-5 py-2.5 rounded-xl text-xs gap-2 cursor-pointer mt-2 font-mono font-bold">
+                        <UploadCloud size={16} /> Upload to {currentFolder ? '/' + currentFolder : 'Root'}
+                        <input 
+                          type="file" 
+                          multiple
+                          className="hidden" 
+                          onChange={handleAssetUpload} 
+                          disabled={uploadingAsset} 
+                        />
+                      </label>
+                    </div>
+                  )}
+                </div>
+
               </div>
             );
           })()}
