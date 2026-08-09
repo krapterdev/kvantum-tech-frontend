@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import NavbarNext from '@/components/layout/NavbarNext';
 import Footer from '@/components/layout/Footer';
 import ScrollToTop from '@/components/layout/ScrollToTop';
@@ -10,6 +11,8 @@ import CookieConsent from '@/components/ui/CookieConsent';
 import { fallbackSettings } from '@/data/settings';
 
 export default function ClientLayoutWrapper({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const isAdmin = pathname?.startsWith('/admin');
   const [theme, setTheme] = useState('dark');
 
   useEffect(() => {
@@ -34,6 +37,11 @@ export default function ClientLayoutWrapper({ children }: { children: React.Reac
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
   };
+
+  // If visiting /admin or any /admin/* sub-route, render ONLY the standalone Admin Portal UI
+  if (isAdmin) {
+    return <div className="min-h-screen bg-slate-950 text-white">{children}</div>;
+  }
 
   return (
     <>

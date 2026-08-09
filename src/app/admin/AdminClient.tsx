@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import AdminPortalPage from '@/pages/AdminPortalPage';
 import { fallbackServices } from '@/data/services';
-import { fallbackBlogs } from '@/pages/BlogPage';
+import { fallbackBlogs } from '@/data/blogs';
 import { fallbackSettings } from '@/data/settings';
 import * as serviceService from '@/services/serviceService';
 import * as blogService from '@/services/blogService';
