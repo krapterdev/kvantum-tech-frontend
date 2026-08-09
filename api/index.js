@@ -8,7 +8,7 @@ const pg = require('pg');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
-const { S3Client, PutObjectCommand, ListObjectsV2Command, DeleteObjectCommand } = require('@aws-sdk/client-s3');
+const { S3Client, PutObjectCommand, ListObjectsV2Command } = require('@aws-sdk/client-s3');
 const cookieParser = require('cookie-parser');
 
 // ── CONFIG ───────────────────────────────────────────────────
@@ -363,14 +363,6 @@ app.post('/api/assets/remove', async function(req, res) {
   try {
     var fileName = (req.body && req.body.name) || req.query.name;
     if (!fileName) return res.status(400).json({ error: 'Name parameter required' });
-    
-    if (s3 && S3_BUCKET) {
-      try {
-        await s3.send(new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: fileName }));
-      } catch(s3Err) {
-        console.warn('[S3 REMOVE WARN]', s3Err.message);
-      }
-    }
 
     if (db) {
       try {
@@ -385,94 +377,6 @@ app.post('/api/assets/remove', async function(req, res) {
   } catch(err) {
     console.error('[REMOVE ASSET FATAL ERROR]', err.message);
     return res.json({ success: true, name: (req.body && req.body.name) || 'file' });
-  }
-});
-
-app.post('/api/assets/delete', async function(req, res) {
-  try {
-    var fileName = (req.body && req.body.name) || req.query.name;
-    if (!fileName) return res.status(400).json({ error: 'Name parameter required' });
-    
-    if (s3 && S3_BUCKET) {
-      try {
-        await s3.send(new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: fileName }));
-      } catch(s3Err) {
-        console.warn('[S3 DELETE WARN]', s3Err.message);
-      }
-    }
-
-    if (db) {
-      try {
-        await db.query('DELETE FROM media_assets WHERE name=$1 OR url LIKE $2', [fileName, '%' + fileName]);
-      } catch(dbErr) {
-        console.warn('[DB DELETE WARN]', dbErr.message);
-      }
-    }
-
-    localAssets = (localAssets || []).filter(function(a) { return a && a.name !== fileName; });
-    return res.json({ success: true, name: fileName });
-  } catch(err) {
-    console.error('[DELETE ASSET FATAL ERROR]', err.message);
-    return res.json({ success: true, name: (req.body && req.body.name) || 'file' });
-  }
-});
-
-app.delete('/api/assets', async function(req, res) {
-  try {
-    var fileName = req.query.name || (req.body && req.body.name);
-    if (!fileName) return res.status(400).json({ error: 'Name parameter required' });
-    
-    if (s3 && S3_BUCKET) {
-      try {
-        await s3.send(new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: fileName }));
-      } catch(s3Err) {
-        console.warn('[S3 DELETE WARN]', s3Err.message);
-      }
-    }
-
-    if (db) {
-      try {
-        await db.query('DELETE FROM media_assets WHERE name=$1 OR url LIKE $2', [fileName, '%' + fileName]);
-      } catch(dbErr) {
-        console.warn('[DB DELETE WARN]', dbErr.message);
-      }
-    }
-
-    localAssets = (localAssets || []).filter(function(a) { return a && a.name !== fileName; });
-    return res.json({ success: true, name: fileName });
-  } catch(err) {
-    console.error('[DELETE ASSET FATAL ERROR]', err.message);
-    return res.json({ success: true, name: req.query.name || 'file' });
-  }
-});
-
-app.delete('/api/assets/*', async function(req, res) {
-  try {
-    var fileName = (req.params[0] || '').replace(/^\/+/, '');
-    if (!fileName) fileName = req.query.name || (req.body && req.body.name);
-    if (!fileName) return res.status(400).json({ error: 'Name required' });
-    
-    if (s3 && S3_BUCKET) {
-      try {
-        await s3.send(new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: fileName }));
-      } catch(s3Err) {
-        console.warn('[S3 DELETE WARN]', s3Err.message);
-      }
-    }
-
-    if (db) {
-      try {
-        await db.query('DELETE FROM media_assets WHERE name=$1 OR url LIKE $2', [fileName, '%' + fileName]);
-      } catch(dbErr) {
-        console.warn('[DB DELETE WARN]', dbErr.message);
-      }
-    }
-
-    localAssets = (localAssets || []).filter(function(a) { return a && a.name !== fileName; });
-    return res.json({ success: true, name: fileName });
-  } catch(err) {
-    console.error('[DELETE ASSET FATAL ERROR]', err.message);
-    return res.json({ success: true, name: 'file' });
   }
 });
 
@@ -759,27 +663,8 @@ function getMeta(pathname) {
   return META['/'];
 }
 
-async function safeDeleteS3(key) {
-  try {
-    if (!key || !s3) return;
-    const command = new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: key });
-    await s3.send(command);
-  } catch(e) {
-    console.warn('[S3 Delete Warning]', e ? e.message : e);
-  }
-}
-
-// ============================================================
-// MAIN VERCEL HANDLER (CommonJS)
-// ============================================================
-module.exports = async function handler(req, res) {
-  try {
-    var reqUrl = req.url || '/';
-    var parsedUrl = new URL(reqUrl, 'https://kvantumtechsolutions.com');
-    var pathname = parsedUrl.pathname;
-
     // ── Direct Asset Delete Interceptor ──────────────────────
-    if (pathname.includes('/delete-asset') || pathname.includes('/assets/delete') || (pathname.includes('/assets') && req.method === 'DELETE')) {
+    if (pathname.includes('/delete-asset') || pathname.includes('/assets/delete') || pathname.includes('/assets/remove') || (pathname.includes('/assets') && req.method === 'DELETE')) {
       var targetName = 'file';
       try {
         targetName = parsedUrl.searchParams.get('name') || (req.query && req.query.name) || (req.body && req.body.name);
@@ -790,9 +675,6 @@ module.exports = async function handler(req, res) {
       } catch(e) {}
 
       if (targetName) {
-        try {
-          if (s3 && S3_BUCKET) s3.send(new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: targetName })).catch(function() {});
-        } catch(e) {}
         try {
           if (pool) pool.query('DELETE FROM media_assets WHERE name=$1 OR url LIKE $2', [targetName, '%' + targetName]).catch(function() {});
         } catch(e) {}
