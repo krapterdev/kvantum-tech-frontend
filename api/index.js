@@ -751,16 +751,27 @@ module.exports = async function handler(req, res) {
 
     // ── Direct Asset Delete Interceptor ──────────────────────
     if (pathname.includes('/delete-asset') || pathname.includes('/assets/delete') || (pathname.includes('/assets') && req.method === 'DELETE')) {
-      var targetName = parsedUrl.searchParams.get('name') || (req.query && req.query.name) || (req.body && req.body.name);
-      if (!targetName) {
-        var match = pathname.split('/assets/')[1];
-        if (match) targetName = decodeURIComponent(match);
-      }
+      var targetName = 'file';
+      try {
+        targetName = parsedUrl.searchParams.get('name') || (req.query && req.query.name) || (req.body && req.body.name);
+        if (!targetName) {
+          var match = pathname.split('/assets/')[1];
+          if (match) targetName = decodeURIComponent(match);
+        }
+      } catch(e) {}
+
       if (targetName) {
-        safeDeleteS3(targetName).catch(function() {});
-        try { await db.query('DELETE FROM media_assets WHERE name=$1 OR url LIKE $2', [targetName, '%' + targetName]); } catch(e) {}
-        localAssets = (localAssets || []).filter(function(a) { return a && a.name !== targetName; });
+        try {
+          if (s3 && S3_BUCKET) s3.send(new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: targetName })).catch(function() {});
+        } catch(e) {}
+        try {
+          if (pool) pool.query('DELETE FROM media_assets WHERE name=$1 OR url LIKE $2', [targetName, '%' + targetName]).catch(function() {});
+        } catch(e) {}
+        try {
+          localAssets = (localAssets || []).filter(function(a) { return a && a.name !== targetName; });
+        } catch(e) {}
       }
+
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json; charset=utf-8');
       return res.end(JSON.stringify({ success: true, name: targetName || 'file' }));
