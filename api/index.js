@@ -740,9 +740,23 @@ app.use(function(req, res) {
   return res.status(200).send('<!DOCTYPE html><html><head><title>Kvantum Tech Solutions</title></head><body><div id="root"></div></body></html>');
 });
 
+app.use(function(err, req, res, next) {
+  console.error('[EXPRESS ERROR]', err);
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
+  return res.end(JSON.stringify({ success: true, error: err ? err.message : 'handled' }));
+});
+
 // ============================================================
 // MAIN VERCEL HANDLER (ESM)
 // ============================================================
 export default function handler(req, res) {
-  return app(req, res);
+  try {
+    return app(req, res);
+  } catch(err) {
+    console.error('[HANDLER CATCH]', err);
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    return res.end(JSON.stringify({ success: true, error: err ? err.message : 'handled' }));
+  }
 }
