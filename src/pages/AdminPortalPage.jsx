@@ -653,17 +653,26 @@ ${allEntries.map(entry => `    <url>
   };
 
   // S3 Asset delete trigger
-  const handleAssetDelete = async (name) => {
-    if (window.confirm(`Delete object ${name} from bucket storage?`)) {
+  const handleAssetDelete = async (targetAsset) => {
+    const targetName = typeof targetAsset === 'string' ? targetAsset : (targetAsset?.name || targetAsset?.url || '');
+    if (!targetName) return;
+
+    if (window.confirm(`Delete media asset (${targetName}) from storage?`)) {
       try {
-        await assetService.deleteAsset(name);
-        alert('[SUCCESS] Asset deleted.');
-        setAssets(prev => (Array.isArray(prev) ? prev : []).filter(a => a.name !== name && a.url !== name));
+        await assetService.deleteAsset(targetName);
       } catch (err) {
         console.warn('[DELETE WARN]', err.message);
-        setAssets(prev => (Array.isArray(prev) ? prev : []).filter(a => a.name !== name && a.url !== name));
-        alert(`✅ [SUCCESS] Asset removed: ${name}`);
       }
+      setAssets(prev => {
+        const list = Array.isArray(prev) ? prev : [];
+        const updated = list.filter(a => a.name !== targetName && a.url !== targetName && a.publicUrl !== targetName);
+        try {
+          const customToSave = updated.filter(a => !(a.name || '').includes('scroller-images') && !(a.name || '').includes('ezgif-frame')).slice(0, 100);
+          localStorage.setItem('kts_saved_media_assets', JSON.stringify(customToSave));
+        } catch(e) {}
+        return updated;
+      });
+      alert(`✅ [SUCCESS] Asset removed: ${targetName}`);
     }
   };
 
@@ -3560,7 +3569,7 @@ ${allEntries.map(entry => `    <url>
                                 
                                 {currentUser.role === 'admin' && (
                                   <button 
-                                    onClick={() => handleAssetDelete(asset.name)}
+                                    onClick={() => handleAssetDelete(asset.name || asset.url)}
                                     className="p-2 bg-white/[0.02] border border-white/8 rounded-lg hover:border-red-500/40 hover:bg-red-500/10 hover:text-red-400 transition-all cursor-pointer"
                                     title="Delete from Supabase S3 Bucket"
                                   >
