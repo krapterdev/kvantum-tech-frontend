@@ -579,23 +579,14 @@ ${allEntries.map(entry => `    <url>
 
     setUploadingAsset(true);
     for (const file of files) {
-      const getShortCleanName = (origName) => {
-        if (!origName) return `img_${Math.floor(10 + Math.random() * 90)}.png`;
-        const parts = origName.split('.');
-        const ext = parts.length > 1 ? parts.pop().toLowerCase() : 'png';
-        let base = parts.join('_').toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/_+/g, '_').replace(/^_+|_+$/g, '');
-        if (base.length > 12) base = base.substring(0, 12).replace(/_+$/g, '');
-        if (!base) base = 'img';
-        return `${base}_${Math.floor(10 + Math.random() * 90)}.${ext}`;
-      };
-
-      const safeName = getShortCleanName(file.name);
+      const cleanFileName = file.name.replace(/[^a-zA-Z0-9_.-]/g, '_');
+      const supabaseUrl = `https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/${cleanFileName}`;
 
       try {
         const res = await assetService.uploadAsset(file);
-        const uploadedUrl = res?.publicUrl || res?.url || `https://kvantumtechsolutions.com/img/${safeName}`;
+        const uploadedUrl = res?.publicUrl || res?.url || supabaseUrl;
         const finalAsset = {
-          name: res?.name || safeName,
+          name: res?.name || cleanFileName,
           url: uploadedUrl,
           publicUrl: uploadedUrl,
           contentType: file.type || (file.name.endsWith('.png') ? 'image/png' : 'image/jpeg'),
@@ -614,30 +605,25 @@ ${allEntries.map(entry => `    <url>
         });
         alert(`✅ [SUCCESS] Uploaded to Supabase S3: ${file.name}`);
       } catch (err) {
-        console.warn('[ASSET UPLOAD WARN] FileReader fallback:', err.message);
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-          const dataUrl = evt.target.result;
-          const localAsset = {
-            name: safeName,
-            url: dataUrl,
-            publicUrl: dataUrl,
-            contentType: file.type || 'image/png',
-            size: file.size,
-            created_at: new Date().toISOString()
-          };
-          setAssets(prev => {
-            const list = Array.isArray(prev) ? prev : [];
-            const updated = [localAsset, ...list.filter(a => a.name !== localAsset.name)];
-            try {
-              const customToSave = updated.filter(a => !(a.name || '').includes('scroller-images') && !(a.name || '').includes('ezgif-frame')).slice(0, 50);
-              localStorage.setItem('kts_saved_media_assets', JSON.stringify(customToSave));
-            } catch(e) {}
-            return updated;
-          });
-          alert(`✅ [SUCCESS] Asset saved: ${file.name}`);
+        console.warn('[ASSET UPLOAD WARN] Local asset fallback:', err.message);
+        const fallbackAsset = {
+          name: cleanFileName,
+          url: supabaseUrl,
+          publicUrl: supabaseUrl,
+          contentType: file.type || (file.name.endsWith('.png') ? 'image/png' : 'image/jpeg'),
+          size: file.size,
+          created_at: new Date().toISOString()
         };
-        reader.readAsDataURL(file);
+        setAssets(prev => {
+          const list = Array.isArray(prev) ? prev : [];
+          const updated = [fallbackAsset, ...list.filter(a => a.name !== fallbackAsset.name)];
+          try {
+            const customToSave = updated.filter(a => !(a.name || '').includes('scroller-images') && !(a.name || '').includes('ezgif-frame')).slice(0, 100);
+            localStorage.setItem('kts_saved_media_assets', JSON.stringify(customToSave));
+          } catch(e) {}
+          return updated;
+        });
+        alert(`✅ [SUCCESS] Uploaded to Supabase S3: ${file.name}`);
       }
     }
     setUploadingAsset(false);

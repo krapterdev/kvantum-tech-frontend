@@ -319,9 +319,10 @@ app.get('/img/:name', function(req, res) {
 
 app.post('/api/assets/upload', upload.single('file'), async function(req, res) {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-  var fileName = getShortCleanName(req.file.originalname);
-  var s3Url = SUPABASE_PUBLIC_URL + '/' + S3_BUCKET + '/' + fileName;
-  var publicUrl = 'https://kvantumtechsolutions.com/img/' + fileName;
+  
+  // Clean original file name without adding extra random numbers
+  var fileName = req.file.originalname.replace(/[^a-zA-Z0-9_.-]/g, '_');
+  var publicUrl = SUPABASE_PUBLIC_URL + '/' + S3_BUCKET + '/' + fileName;
   
   try {
     await s3.send(new PutObjectCommand({
