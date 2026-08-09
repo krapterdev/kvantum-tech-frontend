@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import Link from '@/components/ui/SafeLink';
 import { useSafeNavigate as useNavigate } from '@/utils/navigation';

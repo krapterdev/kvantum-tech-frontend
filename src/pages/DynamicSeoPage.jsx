@@ -6,8 +6,8 @@ import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
 import { setPageSeoStatus } from '@/utils/seoUtils';
 
-export default function DynamicSeoPage({ seoPages = [] }) {
-  const { slug } = useParams();
+export default function DynamicSeoPage({ seoPages = [], keywordSlug }) {
+  const slug = keywordSlug;
   const page = seoPages.find(p => p.slug === slug);
 
   useEffect(() => {

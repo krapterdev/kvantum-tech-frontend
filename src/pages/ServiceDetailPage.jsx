@@ -10,8 +10,8 @@ import { getAllServices } from '@/services/serviceService';
 
 import { setPageSeoStatus } from '@/utils/seoUtils';
 
-export default function ServiceDetailPage({ services = [] }) {
-  const { id } = useParams();
+export default function ServiceDetailPage({ services = [], serviceId }) {
+  const id = serviceId;
   const navigate = useNavigate();
   const [localService, setLocalService] = useState(null);
   const [loading, setLoading] = useState(true);
