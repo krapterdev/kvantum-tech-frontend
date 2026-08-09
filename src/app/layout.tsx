@@ -2,8 +2,7 @@ import React from 'react';
 import type { Metadata } from 'next';
 import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
 import '../index.css';
-import NavbarNext from '@/components/layout/NavbarNext';
-import Footer from '@/components/layout/Footer';
+import ClientLayoutWrapper from './ClientLayoutWrapper';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -74,8 +73,6 @@ export const metadata: Metadata = {
   },
 };
 
-import { fallbackSettings } from '@/data/settings';
-
 export default function RootLayout({
   children,
 }: {
@@ -87,11 +84,9 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" />
       </head>
       <body className="bg-slate-950 text-slate-100 antialiased selection:bg-cyan-500 selection:text-white min-h-screen flex flex-col">
-        <NavbarNext theme="dark" settings={fallbackSettings as any} />
-        <main className="flex-grow pt-24">
+        <ClientLayoutWrapper>
           {children}
-        </main>
-        <Footer theme="dark" settings={fallbackSettings as any} />
+        </ClientLayoutWrapper>
       </body>
     </html>
   );
