@@ -1,11 +1,4 @@
 {
-  "functions": {
-    "api/index.js": {
-      "includeFiles": "dist/**,public/**",
-      "memory": 1024,
-      "maxDuration": 30
-    }
-  },
   "redirects": [
     { "source": "/services/web-development", "destination": "/services/web-mobile-app-development", "permanent": true },
     { "source": "/services/mobile-apps", "destination": "/services/web-mobile-app-development", "permanent": true },
