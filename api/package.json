@@ -1,5 +1,3 @@
 {
-  "name": "kvantum-api",
-  "version": "1.0.0",
-  "type": "commonjs"
+  "type": "module"
 }

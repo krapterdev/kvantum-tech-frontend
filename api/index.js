@@ -1,15 +1,12 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-'use strict';
-
-const fs = require('fs');
-const path = require('path');
-const express = require('express');
-const pg = require('pg');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
-const multer = require('multer');
-const { S3Client, PutObjectCommand, ListObjectsV2Command } = require('@aws-sdk/client-s3');
-const cookieParser = require('cookie-parser');
+import fs from 'fs';
+import path from 'path';
+import express from 'express';
+import pg from 'pg';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
+import multer from 'multer';
+import { S3Client, PutObjectCommand, ListObjectsV2Command } from '@aws-sdk/client-s3';
+import cookieParser from 'cookie-parser';
 
 // ── CONFIG ───────────────────────────────────────────────────
 const DB_URL = process.env.DATABASE_URL || 'postgresql://postgres.bwdtxlosvptlqtixgcip:kEM3onWoT9AT82mr@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres';
@@ -683,9 +680,9 @@ function getMeta(pathname) {
 }
 
 // ============================================================
-// MAIN VERCEL HANDLER (CommonJS)
+// MAIN VERCEL HANDLER (ESM)
 // ============================================================
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   try {
     var reqUrl = req.url || '/';
     var parsedUrl = new URL(reqUrl, 'https://kvantumtechsolutions.com');
