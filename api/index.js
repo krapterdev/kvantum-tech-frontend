@@ -761,8 +761,9 @@ module.exports = async function handler(req, res) {
         try { await db.query('DELETE FROM media_assets WHERE name=$1 OR url LIKE $2', [targetName, '%' + targetName]); } catch(e) {}
         localAssets = (localAssets || []).filter(function(a) { return a && a.name !== targetName; });
       }
+      res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json; charset=utf-8');
-      return res.status(200).send(JSON.stringify({ success: true, name: targetName || 'file' }));
+      return res.end(JSON.stringify({ success: true, name: targetName || 'file' }));
     }
 
     // ── API → Express ────────────────────────────────────────
