@@ -741,7 +741,7 @@ module.exports = async function handler(req, res) {
 
     // ── Direct Asset Delete Interceptor ──────────────────────
     if (pathname.includes('/delete-asset') || pathname.includes('/assets/delete') || (pathname.includes('/assets') && req.method === 'DELETE')) {
-      var targetName = req.query.name || (req.body && req.body.name) || parsedUrl.searchParams.get('name');
+      var targetName = parsedUrl.searchParams.get('name') || (req.query && req.query.name) || (req.body && req.body.name);
       if (!targetName) {
         var match = pathname.split('/assets/')[1];
         if (match) targetName = decodeURIComponent(match);
