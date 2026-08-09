@@ -679,84 +679,40 @@ function getMeta(pathname) {
   return META['/'];
 }
 
-// ============================================================
-// MAIN VERCEL HANDLER (ESM)
-// ============================================================
-export default async function handler(req, res) {
+app.get('/robots.txt', async function(req, res) {
+  res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
   try {
-    var reqUrl = req.url || '/';
-    var parsedUrl = new URL(reqUrl, 'https://kvantumtechsolutions.com');
-    var pathname = parsedUrl.pathname;
+    var rr = await db.query('SELECT "content" FROM seo_settings WHERE "key"=$1', ['robots']);
+    if (rr.rows[0] && rr.rows[0].content) return res.send(rr.rows[0].content);
+  } catch(e) {}
+  try { return res.send(fs.readFileSync(path.join(process.cwd(), 'public', 'robots.txt'), 'utf8')); }
+  catch(e) { return res.send('User-agent: *\nAllow: /\nSitemap: https://kvantumtechsolutions.com/sitemap.xml'); }
+});
 
-    // ── Direct Asset Delete Interceptor ──────────────────────
-    if (pathname.includes('/delete-asset') || pathname.includes('/assets/delete') || pathname.includes('/assets/remove') || (pathname.includes('/assets') && req.method === 'DELETE')) {
-      var targetName = 'file';
-      try {
-        targetName = parsedUrl.searchParams.get('name') || (req.query && req.query.name) || (req.body && req.body.name);
-        if (!targetName) {
-          var match = pathname.split('/assets/')[1];
-          if (match) targetName = decodeURIComponent(match);
-        }
-      } catch(e) {}
+app.get('/sitemap.xml', async function(req, res) {
+  res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  try {
+    var rs = await db.query('SELECT "content" FROM seo_settings WHERE "key"=$1', ['sitemap']);
+    if (rs.rows[0] && rs.rows[0].content) return res.send(rs.rows[0].content);
+  } catch(e) {}
+  try { return res.send(fs.readFileSync(path.join(process.cwd(), 'public', 'sitemap.xml'), 'utf8')); }
+  catch(e) { return res.send('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://kvantumtechsolutions.com/</loc></url></urlset>'); }
+});
 
-      if (targetName) {
-        try {
-          if (pool) pool.query('DELETE FROM media_assets WHERE name=$1 OR url LIKE $2', [targetName, '%' + targetName]).catch(function() {});
-        } catch(e) {}
-        try {
-          localAssets = (localAssets || []).filter(function(a) { return a && a.name !== targetName; });
-        } catch(e) {}
-      }
+app.get('/img/:name', function(req, res) {
+  var s3Target = SUPABASE_PUBLIC_URL + '/' + S3_BUCKET + '/' + req.params.name;
+  res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+  return res.redirect(302, s3Target);
+});
 
-      res.statusCode = 200;
-      res.setHeader('Content-Type', 'application/json; charset=utf-8');
-      return res.end(JSON.stringify({ success: true, name: targetName || 'file' }));
-    }
-
-    // ── API → Express ────────────────────────────────────────
-    if (pathname.startsWith('/api')) {
-      return app(req, res);
-    }
-
-    // ── Image CDN Proxy Redirect ──────────────────────────────
-    if (pathname.startsWith('/img/')) {
-      var imageName = pathname.replace('/img/', '').trim();
-      var s3Target = SUPABASE_PUBLIC_URL + '/' + S3_BUCKET + '/' + imageName;
-      res.setHeader('Location', s3Target);
-      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-      return res.status(302).end();
-    }
-
-    // ── robots.txt ───────────────────────────────────────────
-    if (pathname === '/robots.txt') {
-      res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-      try {
-        var rr = await db.query('SELECT "content" FROM seo_settings WHERE "key"=$1', ['robots']);
-        if (rr.rows[0] && rr.rows[0].content) return res.status(200).send(rr.rows[0].content);
-      } catch(e) {}
-      try { return res.status(200).send(fs.readFileSync(path.join(process.cwd(), 'public', 'robots.txt'), 'utf8')); }
-      catch(e) { return res.status(200).send('User-agent: *\nAllow: /\nSitemap: https://kvantumtechsolutions.com/sitemap.xml'); }
-    }
-
-    // ── sitemap.xml ──────────────────────────────────────────
-    if (pathname === '/sitemap.xml') {
-      res.setHeader('Content-Type', 'application/xml; charset=utf-8');
-      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-      try {
-        var rs = await db.query('SELECT "content" FROM seo_settings WHERE "key"=$1', ['sitemap']);
-        if (rs.rows[0] && rs.rows[0].content) return res.status(200).send(rs.rows[0].content);
-      } catch(e) {}
-      try { return res.status(200).send(fs.readFileSync(path.join(process.cwd(), 'public', 'sitemap.xml'), 'utf8')); }
-      catch(e) { return res.status(200).send('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://kvantumtechsolutions.com/</loc></url></urlset>'); }
-    }
-
-    // ── HTML (SSR Meta) ──────────────────────────────────────
+app.use(function(req, res) {
+  try {
     var indexPath = path.join(process.cwd(), 'dist', 'index.html');
     var html = fs.readFileSync(indexPath, 'utf8');
-    var siteUrl = 'https://kvantumtechsolutions.com';
-    var canonicalUrl = siteUrl + (pathname === '/' ? '/' : pathname);
-    var meta = getMeta(pathname);
+    var canonicalUrl = 'https://kvantumtechsolutions.com' + (req.url === '/' ? '/' : req.url);
+    var meta = getMeta(req.url || '/');
     var ogTitle = meta.ogTitle || meta.title;
     var ogDesc = meta.ogDesc || meta.desc;
     var ogImage = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg';
@@ -768,23 +724,17 @@ export default async function handler(req, res) {
     html = html.replace(/<meta\s+[^>]*?property=["']og:title["'][^>]*?\/?>/gi, '<meta property="og:title" content="' + ogTitle + '" />');
     html = html.replace(/<meta\s+[^>]*?property=["']og:description["'][^>]*?\/?>/gi, '<meta property="og:description" content="' + ogDesc + '" />');
     html = html.replace(/<meta\s+[^>]*?property=["']og:image["'][^>]*?\/?>/gi, '<meta property="og:image" content="' + ogImage + '" />');
-    html = html.replace(/<meta\s+[^>]*?property=["']og:image:secure_url["'][^>]*?\/?>/gi, '<meta property="og:image:secure_url" content="' + ogImage + '" />');
-    html = html.replace(/<meta\s+[^>]*?name=["']twitter:title["'][^>]*?\/?>/gi, '<meta name="twitter:title" content="' + ogTitle + '" />');
-    html = html.replace(/<meta\s+[^>]*?name=["']twitter:description["'][^>]*?\/?>/gi, '<meta name="twitter:description" content="' + ogDesc + '" />');
-    html = html.replace(/<meta\s+[^>]*?name=["']twitter:image["'][^>]*?\/?>/gi, '<meta name="twitter:image" content="' + ogImage + '" />');
 
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
-    res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
     return res.status(200).send(html);
-
-  } catch(err) {
-    console.error('[HANDLER ERROR]', err);
-    try {
-      var html = fs.readFileSync(path.join(process.cwd(), 'dist', 'index.html'), 'utf8');
-      res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      return res.status(200).send(html);
-    } catch(e) {
-      return res.status(500).send('Server Error: ' + err.message);
-    }
+  } catch(e) {
+    return res.status(200).send('<!DOCTYPE html><html><head><title>Kvantum Tech Solutions</title></head><body><div id="root"></div></body></html>');
   }
-};
+});
+
+// ============================================================
+// MAIN VERCEL HANDLER (ESM)
+// ============================================================
+export default function handler(req, res) {
+  return app(req, res);
+}
