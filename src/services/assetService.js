@@ -21,11 +21,11 @@ export const uploadAsset = async (fileObject, folderPath = '') => {
 // Delete S3 media object (admin only)
 export const deleteAsset = async (name) => {
   try {
-    const response = await api.post('/assets/remove', { name });
+    const response = await api.post('/media/remove', { name });
     return response.data;
   } catch (err) {
     try {
-      const fb = await api.post('/assets/delete', { name });
+      const fb = await api.post('/assets/remove', { name });
       return fb.data;
     } catch(e) {
       return { success: true, name };
