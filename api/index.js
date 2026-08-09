@@ -77,12 +77,10 @@ async function initDb() {
         updated_at TIMESTAMPTZ DEFAULT NOW()
       );
     `);
-    console.log('[DB] Auto-migrations initialized successfully');
   } catch(err) {
     console.warn('[DB INIT WARN]', err.message);
   }
 }
-initDb().catch(console.error);
 
 // ── S3 ────────────────────────────────────────────────────────
 const s3 = new S3Client({
