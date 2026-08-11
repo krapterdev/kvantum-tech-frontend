@@ -1,17 +1,60 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Component, ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import { MessageCircle, X } from 'lucide-react';
-import dynamic from 'next/dynamic';
+import { MessageCircle, X, AlertTriangle, RotateCcw } from 'lucide-react';
+import ChatWindow from './ChatWindow';
 
-const ChatWindow = dynamic(() => import('./ChatWindow'), { ssr: false });
+// React Error Boundary to prevent chatbot errors from crashing the page
+class ChatErrorBoundary extends Component<{ children: ReactNode; onClose: () => void }, { hasError: boolean }> {
+  constructor(props: { children: ReactNode; onClose: () => void }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, errorInfo: any) {
+    console.error('[CHATBOT ERROR BOUNDARY]', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex flex-col items-center justify-center h-full p-6 text-center bg-slate-950 border border-slate-800 rounded-2xl text-white">
+          <AlertTriangle size={32} className="text-amber-400 mb-3" />
+          <h3 className="text-base font-bold mb-1">Chat Assistant Error</h3>
+          <p className="text-xs text-slate-400 mb-4">
+            An unexpected error occurred in the assistant window.
+          </p>
+          <div className="flex gap-2">
+            <button
+              onClick={() => this.setState({ hasError: false })}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl bg-cyan-500 text-slate-950 hover:bg-cyan-400 transition-colors"
+            >
+              <RotateCcw size={13} /> Reset Chat
+            </button>
+            <button
+              onClick={this.props.onClose}
+              className="px-3 py-1.5 text-xs font-semibold rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 export default function ChatWidget() {
-  const [open, setOpen]         = useState(false);
+  const [open, setOpen]           = useState(false);
   const [minimized, setMinimized] = useState(false);
-  const [unread, setUnread]     = useState(1);
-  const [mounted, setMounted]   = useState(false);
+  const [unread, setUnread]       = useState(1);
+  const [mounted, setMounted]     = useState(false);
 
   useEffect(() => { setMounted(true); }, []);
 
@@ -19,7 +62,7 @@ export default function ChatWidget() {
     if (open) setUnread(0);
   }, [open]);
 
-  if (!mounted) return null;
+  if (!mounted || typeof document === 'undefined') return null;
 
   const handleToggle = () => {
     if (minimized) { setMinimized(false); setOpen(true); }
@@ -27,26 +70,22 @@ export default function ChatWidget() {
     setUnread(0);
   };
 
-  // Render ChatWindow via portal so it ALWAYS sits at document.body root level
-  // This completely bypasses any parent z-index / overflow / stacking context
-  const chatWindowPortal = open && !minimized
+  const portalContent = open && !minimized && document.body
     ? createPortal(
-        /* ── Mobile: full-screen overlay | Desktop: floating card ── */
         <div
           className="
-            /* Mobile: fixed full screen */
-            fixed inset-0 z-[99999]
-            flex flex-col
-            /* Desktop: position above the button (bottom-right) */
+            fixed inset-0 z-[99999] flex flex-col
             sm:inset-auto sm:bottom-28 sm:right-6
             sm:w-[360px] sm:h-[520px]
           "
         >
-          <div className="animate-slide-up h-full">
-            <ChatWindow
-              onClose={() => setOpen(false)}
-              onMinimize={() => { setMinimized(true); setOpen(false); }}
-            />
+          <div className="animate-slide-up h-full w-full">
+            <ChatErrorBoundary onClose={() => setOpen(false)}>
+              <ChatWindow
+                onClose={() => setOpen(false)}
+                onMinimize={() => { setMinimized(true); setOpen(false); }}
+              />
+            </ChatErrorBoundary>
           </div>
         </div>,
         document.body
@@ -55,15 +94,10 @@ export default function ChatWidget() {
 
   return (
     <>
-      {/* Render ChatWindow at body root via portal */}
-      {chatWindowPortal}
+      {portalContent}
 
-      {/* ── Floating toggle button ── */}
-      {/* 
-        Desktop: bottom-6 right-6 — ABOVE the FloatingQuickActions which are below 
-        Mobile:  bottom-6 left-4  — left side, FloatingQuickActions stay on right 
-      */}
-      <div className="fixed bottom-6 left-4 sm:left-auto sm:right-6 sm:bottom-48 z-[9999]">
+      {/* Floating toggle button */}
+      <div className="fixed bottom-6 left-4 sm:left-auto sm:right-6 sm:bottom-24 z-[9999]">
         <button
           onClick={handleToggle}
           className={`
@@ -83,12 +117,10 @@ export default function ChatWidget() {
           ) : (
             <>
               <MessageCircle size={24} className="text-white" />
-              {/* Pulse ring animation */}
               <span className="absolute inset-0 rounded-full animate-ping bg-cyan-400 opacity-20 pointer-events-none" />
             </>
           )}
 
-          {/* Unread badge */}
           {!open && unread > 0 && (
             <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-[10px] font-bold text-white flex items-center justify-center shadow-lg animate-bounce">
               {unread}
@@ -96,7 +128,6 @@ export default function ChatWidget() {
           )}
         </button>
 
-        {/* Tooltip label below button */}
         {!open && (
           <p className="mt-1 text-center text-[9px] text-white/70 font-mono whitespace-nowrap leading-tight select-none">
             Chat

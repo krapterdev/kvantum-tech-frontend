@@ -9,7 +9,7 @@ export interface MessageData {
   content: string;
   intent?: string;
   confidence?: number;
-  timestamp?: Date;
+  timestamp?: Date | string;
 }
 
 interface MessageProps {
@@ -27,8 +27,21 @@ export default function Message({ msg, onFeedback }: MessageProps) {
     onFeedback?.(msg.id, helpful);
   };
 
+  // Safe timestamp formatting that will never throw TypeError
+  const timeString = React.useMemo(() => {
+    if (!msg.timestamp) return null;
+    try {
+      const dateObj = typeof msg.timestamp === 'string' ? new Date(msg.timestamp) : msg.timestamp;
+      if (!dateObj || isNaN(dateObj.getTime())) return null;
+      return dateObj.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+    } catch (e) {
+      return null;
+    }
+  }, [msg.timestamp]);
+
   // Render markdown-like formatting for bot messages
   const renderContent = (text: string) => {
+    if (!text || typeof text !== 'string') return '';
     return text
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
       .replace(/\*(.+?)\*/g, '<em>$1</em>')
@@ -43,7 +56,7 @@ export default function Message({ msg, onFeedback }: MessageProps) {
         </div>
       )}
 
-      <div className={`max-w-[80%] ${isBot ? 'items-start' : 'items-end'} flex flex-col gap-1`}>
+      <div className={`max-w-[85%] ${isBot ? 'items-start' : 'items-end'} flex flex-col gap-1`}>
         <div
           className={`
             px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed
@@ -58,9 +71,9 @@ export default function Message({ msg, onFeedback }: MessageProps) {
         </div>
 
         {/* Timestamp */}
-        {msg.timestamp && (
+        {timeString && (
           <span className="text-[10px] text-slate-500 font-mono px-1">
-            {msg.timestamp.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
+            {timeString}
           </span>
         )}
 
