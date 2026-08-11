@@ -130,10 +130,8 @@ export default function ChatWindow({ onClose, onMinimize }: ChatWindowProps) {
 
   return (
     <div className="
-      flex flex-col bg-slate-950 overflow-hidden
-      fixed inset-0 z-[9995]
-      sm:static sm:inset-auto sm:w-[360px] sm:max-w-[95vw] sm:h-[520px] sm:max-h-[80vh]
-      sm:border sm:border-slate-800 sm:rounded-2xl sm:shadow-2xl sm:shadow-black/50
+      flex flex-col w-full h-full bg-slate-950 overflow-hidden
+      border border-slate-800 sm:rounded-2xl shadow-2xl shadow-black/50
     ">
 
       {/* Header */}
