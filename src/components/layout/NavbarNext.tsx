@@ -138,14 +138,12 @@ export default function NavbarNext({ theme, toggleTheme, settings }: any) {
       </header>
 
       {/* Mobile Drawer Navigation */}
-      {mobileMenuOpen && (
-        <MobileMenu 
-          isOpen={mobileMenuOpen} 
-          onClose={() => setMobileMenuOpen(false)} 
-          theme={theme}
-          settings={settings}
-        />
-      )}
+      <MobileMenu 
+        isOpen={mobileMenuOpen} 
+        onClose={() => setMobileMenuOpen(false)} 
+        theme={theme}
+        settings={settings}
+      />
     </>
   );
 }
