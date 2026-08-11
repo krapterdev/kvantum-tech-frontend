@@ -13,9 +13,12 @@ import { ContextBuilder } from './ContextBuilder';
 import { ResponseEngine, assessConfidence, GeneratedResponse } from './ResponseEngine';
 import { chatbotQuery } from '../database/db';
 
+import { Language } from '../config/responses';
+
 export interface ChatRequest {
   message: string;
   sessionKey: string;
+  language?: Language;
   ip?: string;
 }
 
@@ -42,7 +45,7 @@ const responseEngine   = new ResponseEngine();
 const LEAD_TRIGGER_INTENTS = new Set(['booking', 'quotation', 'human_agent', 'lead']);
 
 export async function processChat(req: ChatRequest): Promise<ChatResponse> {
-  const { message, sessionKey, ip } = req;
+  const { message, sessionKey, language = 'hinglish', ip } = req;
 
   // 1. Get or create chat session
   let sessionId: string;
@@ -111,7 +114,7 @@ export async function processChat(req: ChatRequest): Promise<ChatResponse> {
   const confidence = assessConfidence(intentResult.confidence, fusedContext.topScore);
 
   // 11. Generate Response via Context Synthesis
-  const generated: GeneratedResponse = responseEngine.generate(fusedContext, confidence);
+  const generated: GeneratedResponse = responseEngine.generate(fusedContext, confidence, language);
 
   // 12. Log low confidence queries for admin training
   if (confidence.level === 'fallback' && message.trim().length > 3) {

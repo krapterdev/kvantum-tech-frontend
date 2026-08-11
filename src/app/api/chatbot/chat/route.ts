@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { message, sessionKey, leadData } = body;
+    const { message, sessionKey, language, leadData } = body;
 
     // Handle lead form submission
     if (leadData && body.sessionId) {
@@ -66,6 +66,7 @@ export async function POST(req: NextRequest) {
     const response = await processChat({
       message: sanitized,
       sessionKey: sessionId,
+      language: language === 'en' || language === 'hi' || language === 'hinglish' ? language : 'hinglish',
       ip,
     });
 
