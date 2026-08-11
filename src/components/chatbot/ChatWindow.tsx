@@ -6,12 +6,7 @@ import Message, { MessageData } from './Message';
 import TypingIndicator from './TypingIndicator';
 import LeadForm from './LeadForm';
 
-const BOT_WELCOME: MessageData = {
-  id: 'welcome',
-  role: 'bot',
-  content: 'Namaste! 🙏 Main Kvantum Tech Solutions ka virtual assistant hoon.\n\nAap **services**, **pricing**, **portfolio** ya **contact** ke baare mein kuch bhi pooch sakte hain!',
-  timestamp: new Date(),
-};
+const BOT_WELCOME_CONTENT = 'Namaste! 🙏 Main Kvantum Tech Solutions ka virtual assistant hoon.\n\nAap **services**, **pricing**, **portfolio** ya **contact** ke baare mein kuch bhi pooch sakte hain!';
 
 const INITIAL_QUICK_REPLIES = ['Services kya hain?', 'Pricing batao', 'Contact details', 'Demo chahiye'];
 
@@ -21,7 +16,14 @@ interface ChatWindowProps {
 }
 
 export default function ChatWindow({ onClose, onMinimize }: ChatWindowProps) {
-  const [messages, setMessages] = useState<MessageData[]>([BOT_WELCOME]);
+  const [messages, setMessages] = useState<MessageData[]>(() => [
+    {
+      id: 'welcome',
+      role: 'bot',
+      content: BOT_WELCOME_CONTENT,
+      timestamp: new Date(),
+    }
+  ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [quickReplies, setQuickReplies] = useState(INITIAL_QUICK_REPLIES);
@@ -35,7 +37,13 @@ export default function ChatWindow({ onClose, onMinimize }: ChatWindowProps) {
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    try {
+      if (messagesEndRef.current && typeof messagesEndRef.current.scrollIntoView === 'function') {
+        messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
+    } catch (e) {
+      // Ignore scroll errors in unsupported environments
+    }
   }, [messages, loading, showLeadForm]);
 
   const sendMessage = async (text: string) => {
@@ -104,7 +112,12 @@ export default function ChatWindow({ onClose, onMinimize }: ChatWindowProps) {
   };
 
   const handleClear = () => {
-    setMessages([BOT_WELCOME]);
+    setMessages([{
+      id: 'welcome',
+      role: 'bot',
+      content: BOT_WELCOME_CONTENT,
+      timestamp: new Date(),
+    }]);
     setQuickReplies(INITIAL_QUICK_REPLIES);
     setShowLeadForm(false);
     setLeadSubmitted(false);

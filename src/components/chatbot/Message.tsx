@@ -27,7 +27,7 @@ export default function Message({ msg, onFeedback }: MessageProps) {
     onFeedback?.(msg.id, helpful);
   };
 
-  // Safe timestamp formatting that will never throw TypeError
+  // Safe timestamp formatting
   const timeString = React.useMemo(() => {
     if (!msg.timestamp) return null;
     try {
@@ -57,18 +57,17 @@ export default function Message({ msg, onFeedback }: MessageProps) {
       )}
 
       <div className={`max-w-[85%] ${isBot ? 'items-start' : 'items-end'} flex flex-col gap-1`}>
-        <div
-          className={`
-            px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed
-            ${isBot
-              ? 'bg-slate-800/90 border border-slate-700/60 text-slate-100 rounded-tl-none shadow-md'
-              : 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white rounded-tr-none shadow-lg shadow-cyan-500/20'
-            }
-          `}
-          dangerouslySetInnerHTML={isBot ? { __html: renderContent(msg.content) } : undefined}
-        >
-          {!isBot && msg.content}
-        </div>
+        {/* Render Bot message with dangerouslySetInnerHTML OR User message as text — never mix children with dangerouslySetInnerHTML */}
+        {isBot ? (
+          <div
+            className="px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed bg-slate-800/90 border border-slate-700/60 text-slate-100 rounded-tl-none shadow-md"
+            dangerouslySetInnerHTML={{ __html: renderContent(msg.content) }}
+          />
+        ) : (
+          <div className="px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed bg-gradient-to-br from-cyan-500 to-blue-600 text-white rounded-tr-none shadow-lg shadow-cyan-500/20">
+            {msg.content}
+          </div>
+        )}
 
         {/* Timestamp */}
         {timeString && (
