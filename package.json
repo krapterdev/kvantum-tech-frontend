@@ -40,6 +40,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@types/pg": "^8.21.0",
     "@vitejs/plugin-react": "^6.0.3",
     "autoprefixer": "^10.5.4",
     "postcss": "^8.5.19",

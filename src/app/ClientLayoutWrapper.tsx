@@ -8,6 +8,7 @@ import ScrollToTop from '@/components/layout/ScrollToTop';
 import ScrollVideoPlayer from '@/components/ScrollVideoPlayer';
 import FloatingQuickActions from '@/components/sections/FloatingQuickActions';
 import CookieConsent from '@/components/ui/CookieConsent';
+import ChatWidget from '@/components/chatbot/ChatWidget';
 import { fallbackSettings } from '@/data/settings';
 
 export default function ClientLayoutWrapper({ children }: { children: React.ReactNode }) {
@@ -61,6 +62,9 @@ export default function ClientLayoutWrapper({ children }: { children: React.Reac
 
       {/* Floating Quick Action Buttons */}
       <FloatingQuickActions settings={fallbackSettings as any} />
+
+      {/* AI-Free Website Intelligence Chatbot */}
+      <ChatWidget />
 
       {/* Cookie Consent Banner */}
       <CookieConsent />
