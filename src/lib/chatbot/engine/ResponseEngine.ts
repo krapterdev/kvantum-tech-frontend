@@ -1,6 +1,5 @@
-import { SearchResult } from '../search/SearchEngine';
-import { pickTemplate, QUICK_REPLIES, RESPONSE_TEMPLATES } from '../config/responses';
-import { Entities } from './EntityEngine';
+import { FusedContext } from './ContextBuilder';
+import { pickTemplate, QUICK_REPLIES } from '../config/responses';
 
 export interface ConfidenceResult {
   level: 'high' | 'medium' | 'low' | 'fallback';
@@ -8,12 +7,11 @@ export interface ConfidenceResult {
 }
 
 export function assessConfidence(intentConfidence: number, searchScore: number): ConfidenceResult {
-  // Combine intent confidence + search result quality
-  const combined = intentConfidence * 0.7 + Math.min(searchScore, 1) * 0.3;
+  const combined = intentConfidence * 0.6 + Math.min(searchScore, 1) * 0.4;
 
-  if (combined >= 0.75) return { level: 'high', confidence: combined };
-  if (combined >= 0.50) return { level: 'medium', confidence: combined };
-  if (combined >= 0.30) return { level: 'low', confidence: combined };
+  if (combined >= 0.70) return { level: 'high', confidence: combined };
+  if (combined >= 0.45) return { level: 'medium', confidence: combined };
+  if (combined >= 0.25) return { level: 'low', confidence: combined };
   return { level: 'fallback', confidence: combined };
 }
 
@@ -22,92 +20,75 @@ export interface GeneratedResponse {
   quickReplies: string[];
   intent: string;
   confidence: number;
-  leadCollected?: boolean;
 }
 
 export class ResponseEngine {
-  generate(
-    intent: string,
-    confidence: ConfidenceResult,
-    searchResults: SearchResult[],
-    entities: Entities,
-    history: any[],
-  ): GeneratedResponse {
-    let text: string;
+  /**
+   * Generates a context-fused natural response combining Structured DB data + Hybrid RAG chunks.
+   */
+  generate(fused: FusedContext, confidenceRes: ConfidenceResult): GeneratedResponse {
+    const { intent, entities, dbResult, ragChunks, routePlan } = fused;
+    let text = '';
     const quickReplies = QUICK_REPLIES[intent] ?? QUICK_REPLIES['fallback'];
 
-    switch (confidence.level) {
-      case 'high': {
-        // Try to use search result content for knowledge-based intents
-        if (
-          searchResults.length > 0 &&
-          !['greeting','goodbye','contact','location','working_hours','human_agent'].includes(intent)
-        ) {
-          const top = searchResults[0];
-          if (top.score > 0.3 && top.source_type === 'faq') {
-            // FAQ answer directly
-            text = top.content;
-            break;
-          }
-          if (top.score > 0.4 && top.source_type === 'service') {
-            // Service info + template
-            const tpl = pickTemplate(intent);
-            text = tpl.template + `\n\n📎 **${top.title}**: ${top.content.slice(0, 200)}...`;
-            break;
-          }
+    // 1. STRUCTURED DB / HYBRID ROUTE WITH LIVE DB RESULT
+    if (dbResult && (routePlan.destination === 'STRUCTURED_DB' || routePlan.destination === 'HYBRID')) {
+      if (dbResult.entityType === 'service' && dbResult.data) {
+        const s = dbResult.data;
+        const name = s.name || s.title || 'Service';
+        const priceStr = s.price ? `₹${s.price.toLocaleString('en-IN')}` : '₹25,000';
+        const desc = s.shortDesc || s.desc || s.description || '';
+        const features = Array.isArray(s.features) && s.features.length > 0
+          ? `\n\n✨ **Key Features:**\n${s.features.slice(0, 4).map((f: string) => `• ${f}`).join('\n')}`
+          : '';
+
+        text = `**${name}** ki pricing **${priceStr}** se shuru hoti hai.\n\n${desc}${features}\n\nExact quotation aur free consultation ke liye call ya WhatsApp karein: **+91 98116 61828** 📞`;
+
+        // If Hybrid mode has additional RAG chunks (e.g. payment gateway details)
+        if (ragChunks.length > 0 && ragChunks[0].score > 0.35) {
+          const topRag = ragChunks[0];
+          text += `\n\n💡 **Additional Info** (${topRag.title}): ${topRag.content.slice(0, 180)}...`;
         }
-        // Use template
-        text = pickTemplate(intent).template;
-        break;
+
+        return { text, quickReplies: quickReplies.slice(0, 4), intent, confidence: confidenceRes.confidence };
       }
 
-      case 'medium': {
-        const tpl = pickTemplate(intent);
-        text = tpl.template + '\n\nKya aap thoda aur detail de sakte hain? Main better help kar sakta hoon! 😊';
-        break;
-      }
-
-      case 'low': {
-        text = pickTemplate('clarification').template;
-        break;
-      }
-
-      default: {
-        // Check if there's any useful search result
-        if (searchResults.length > 0 && searchResults[0].score > 0.2) {
-          const top = searchResults[0];
-          text = `Yeh information mili mujhe:\n\n**${top.title}**\n${top.content.slice(0, 300)}\n\nKya yeh helpful tha? Aur kuch jaanna chahte hain?`;
-        } else {
-          text = pickTemplate('fallback').template;
-        }
-        break;
+      if (dbResult.entityType === 'contact') {
+        text = dbResult.summary;
+        return { text, quickReplies: quickReplies.slice(0, 4), intent, confidence: confidenceRes.confidence };
       }
     }
 
-    // Entity-specific augmentation
-    if (entities.service && intent === 'pricing') {
-      const serviceMap: Record<string, string> = {
-        'website_development': '₹25,000 – ₹1,50,000',
-        'ecommerce_website': '₹40,000 – ₹2,00,000',
-        'crm_software': '₹50,000 – ₹3,00,000',
-        'hrms_software': '₹60,000 – ₹2,50,000',
-        'whatsapp_automation': '₹15,000 – ₹80,000',
-        'mobile_app': '₹75,000 – ₹4,00,000',
-        'business_automation': '₹30,000 – ₹2,00,000',
-        'custom_software': '₹75,000+',
-      };
-      const price = serviceMap[entities.service];
-      if (price) {
-        const serviceName = entities.service.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-        text = `**${serviceName}** ki pricing generally **${price}** hoti hai.\n\nYeh aapki exact requirements par depend karega. Free consultation ke liye contact karo! 📞\n\n+91 98116 61828 | info@kvantumtechsolutions.com`;
+    // 2. HYBRID RAG ROUTE (UNSTRUCTURED KNOWLEDGE)
+    if (ragChunks.length > 0 && ragChunks[0].score > 0.30) {
+      const top = ragChunks[0];
+
+      if (top.source_type === 'faq') {
+        text = top.content;
+      } else if (top.source_type === 'service' || top.source_type === 'website') {
+        const tpl = pickTemplate(intent);
+        text = `${tpl.template}\n\n📎 **${top.title}**:\n${top.content.slice(0, 280)}...`;
+      } else {
+        text = `**${top.title}**\n${top.content.slice(0, 320)}`;
       }
+
+      return { text, quickReplies: quickReplies.slice(0, 4), intent, confidence: confidenceRes.confidence };
+    }
+
+    // 3. INTENT TEMPLATE FALLBACKS
+    if (confidenceRes.level === 'high' || confidenceRes.level === 'medium') {
+      text = pickTemplate(intent).template;
+    } else if (confidenceRes.level === 'low') {
+      text = pickTemplate('clarification').template;
+    } else {
+      text = pickTemplate('fallback').template;
     }
 
     return {
       text,
       quickReplies: quickReplies.slice(0, 4),
       intent,
-      confidence: confidence.confidence,
+      confidence: confidenceRes.confidence,
     };
   }
 }

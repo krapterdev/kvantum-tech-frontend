@@ -5,8 +5,9 @@ import { removeStopWords } from '../nlp/StopWords';
 import { stemTokens } from '../nlp/Stemmer';
 import { expandWithSynonyms } from '../nlp/Synonyms';
 import { termFrequency, tfidfVector, cosineSimilarity, TermFreqMap } from './TFIDF';
+import { Entities } from '../engine/EntityEngine';
 
-export interface SearchResult {
+export interface RAGChunkResult {
   id: string;
   source_type: string;
   title: string;
@@ -15,20 +16,35 @@ export interface SearchResult {
   keywords?: string[];
 }
 
+export interface HybridRAGResult {
+  chunks: RAGChunkResult[];
+  topScore: number;
+  contextSnippet: string;
+}
+
 export class SearchEngine {
   /**
-   * Full search pipeline:
-   * 1. PostgreSQL full-text search (fast initial filter)
-   * 2. TF-IDF re-ranking on top results
+   * Hybrid RAG Retrieval Engine:
+   * 1. PostgreSQL Full Text Search (BM25 / tsvector ranking)
+   * 2. Synonym expansion & Stemming
+   * 3. TF-IDF vector similarity re-ranking
+   * 4. Entity match boosting
    */
-  async search(rawQuery: string, limit = 5): Promise<SearchResult[]> {
+  async search(rawQuery: string, limit = 5, entities?: Entities): Promise<RAGChunkResult[]> {
+    const res = await this.retrieveHybridRAG(rawQuery, limit, entities);
+    return res.chunks;
+  }
+
+  async retrieveHybridRAG(rawQuery: string, limit = 5, entities?: Entities): Promise<HybridRAGResult> {
     const normalized = normalize(rawQuery);
     const tokens = removeStopWords(tokenize(normalized));
     const stemmed = stemTokens(tokens);
     const expanded = expandWithSynonyms([...tokens, ...stemmed]);
     const tsQuery = expanded.filter(t => t.length > 2).slice(0, 10).join(' | ');
 
-    if (!tsQuery) return [];
+    if (!tsQuery && tokens.length === 0) {
+      return { chunks: [], topScore: 0, contextSnippet: '' };
+    }
 
     let chunks: any[] = [];
     let faqs: any[] = [];
@@ -43,10 +59,10 @@ export class SearchEngine {
            AND status = 'active'
          ORDER BY pg_rank DESC
          LIMIT 20`,
-        [tsQuery]
+        [tsQuery || 'kvantum']
       );
     } catch (e) {
-      // Fallback: plain ILIKE search
+      // Fallback: ILIKE search
       const likeQuery = `%${tokens.slice(0, 3).join('%')}%`;
       chunks = await chatbotQuery<any>(
         `SELECT id, source_type, title, content, keywords, 0 as pg_rank
@@ -68,7 +84,7 @@ export class SearchEngine {
            AND status = 'active'
          ORDER BY pg_rank DESC
          LIMIT 10`,
-        [tsQuery]
+        [tsQuery || 'kvantum']
       );
     } catch (e) {
       faqs = await chatbotQuery<any>(
@@ -81,38 +97,69 @@ export class SearchEngine {
     }
 
     const allResults = [...faqs, ...chunks];
-    if (allResults.length === 0) return [];
+    if (allResults.length === 0) {
+      return { chunks: [], topScore: 0, contextSnippet: '' };
+    }
 
-    // 3. TF-IDF re-ranking
+    // 3. TF-IDF + Hybrid scoring
     const queryTF = termFrequency([...tokens, ...stemmed]);
 
-    // Build corpus from result contents
     const corpus: TermFreqMap[] = allResults.map(r =>
       termFrequency(removeStopWords(tokenize(normalize(r.title + ' ' + r.content))))
     );
 
-    // Simple IDF: treat query tokens as common (weight 1)
     const idf = new Map<string, number>();
     for (const t of tokens) idf.set(t, 1.5);
 
     const queryVec = tfidfVector(queryTF, idf);
 
-    const scored: SearchResult[] = allResults.map((r, i) => {
+    const targetService = entities?.service?.toLowerCase();
+
+    const scored: RAGChunkResult[] = allResults.map((r, i) => {
       const docVec = tfidfVector(corpus[i], idf);
-      const tfidfScore = cosineSimilarity(queryVec, docVec);
-      const pgBoost = (r.pg_rank ?? 0) * 0.3;
-      const faqBoost = r.source_type === 'faq' ? 0.15 : 0;
+      let score = cosineSimilarity(queryVec, docVec);
+
+      // FTS rank boost
+      score += (r.pg_rank ?? 0) * 0.3;
+
+      // FAQ boost
+      if (r.source_type === 'faq') score += 0.15;
+
+      // Entity match boost
+      if (targetService) {
+        const titleLower = r.title.toLowerCase();
+        const contentLower = r.content.toLowerCase();
+        const servName = targetService.replace(/_/g, ' ');
+        if (titleLower.includes(targetService) || titleLower.includes(servName)) {
+          score += 0.35;
+        } else if (contentLower.includes(targetService) || contentLower.includes(servName)) {
+          score += 0.20;
+        }
+      }
 
       return {
         id: r.id,
         source_type: r.source_type,
         title: r.title,
         content: r.content,
-        score: tfidfScore + pgBoost + faqBoost,
+        score,
         keywords: r.keywords,
       };
     });
 
-    return scored.sort((a, b) => b.score - a.score).slice(0, limit);
+    const sorted = scored.sort((a, b) => b.score - a.score).slice(0, limit);
+    const topScore = sorted[0]?.score ?? 0;
+
+    // Context snippet for RAG fusion
+    const contextSnippet = sorted
+      .slice(0, 3)
+      .map(c => `[${c.title}]: ${c.content}`)
+      .join('\n\n');
+
+    return {
+      chunks: sorted,
+      topScore,
+      contextSnippet,
+    };
   }
 }

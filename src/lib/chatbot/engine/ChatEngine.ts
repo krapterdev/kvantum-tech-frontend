@@ -1,12 +1,15 @@
 /**
- * ChatEngine — main orchestrator
- * Coordinates: NLP → Intent → Entity → Context → Search → Rank → Confidence → Response → Persist
+ * ChatEngine — Master Architecture Orchestrator
+ * Pipeline: NLP → Intent → Entity → Context → Query Router → (Structured DB + Hybrid RAG) → Context Builder → Response Engine → Persist
  */
 
 import { IntentEngine } from './IntentEngine';
 import { EntityEngine, Entities } from './EntityEngine';
 import { ContextEngine } from './ContextEngine';
-import { SearchEngine } from '../search/SearchEngine';
+import { QueryRouter } from './QueryRouter';
+import { DatabaseResolver } from './DatabaseResolver';
+import { SearchEngine, RAGChunkResult } from '../search/SearchEngine';
+import { ContextBuilder } from './ContextBuilder';
 import { ResponseEngine, assessConfidence, GeneratedResponse } from './ResponseEngine';
 import { chatbotQuery } from '../database/db';
 
@@ -27,24 +30,25 @@ export interface ChatResponse {
   needsLead?: boolean;
 }
 
-const intentEngine   = new IntentEngine();
-const entityEngine   = new EntityEngine();
-const contextEngine  = new ContextEngine();
-const searchEngine   = new SearchEngine();
-const responseEngine = new ResponseEngine();
+const intentEngine     = new IntentEngine();
+const entityEngine     = new EntityEngine();
+const contextEngine    = new ContextEngine();
+const queryRouter      = new QueryRouter();
+const databaseResolver = new DatabaseResolver();
+const searchEngine     = new SearchEngine();
+const contextBuilder   = new ContextBuilder();
+const responseEngine   = new ResponseEngine();
 
-// Intents that should trigger lead form
 const LEAD_TRIGGER_INTENTS = new Set(['booking', 'quotation', 'human_agent', 'lead']);
 
 export async function processChat(req: ChatRequest): Promise<ChatResponse> {
   const { message, sessionKey, ip } = req;
 
-  // 1. Get/create session
+  // 1. Get or create chat session
   let sessionId: string;
   try {
     sessionId = await contextEngine.getOrCreateSession(sessionKey, ip);
   } catch (e) {
-    // DB not available — generate temp session ID
     sessionId = `tmp_${sessionKey}`;
   }
 
@@ -56,55 +60,72 @@ export async function processChat(req: ChatRequest): Promise<ChatResponse> {
     context = { sessionId, lastIntent: '', entities: {}, turnCount: 0, history: [] };
   }
 
-  // 3. Context resolution — handle follow-ups
+  // 3. Resolve follow-up queries using context memory
   const ctxResolved = contextEngine.resolve(message, context);
 
-  // 4. Intent detection
+  // 4. Intent Detection
   const intentResult = intentEngine.detect(message, ctxResolved.intent ?? context.lastIntent);
   const finalIntent = intentResult.intent;
 
-  // 5. Entity extraction + context merge
+  // 5. Entity Extraction & Context Merge
   const freshEntities = entityEngine.extract(message);
   const mergedEntities: Entities = contextEngine.mergeEntities(
     ctxResolved.entities ?? context.entities,
     freshEntities
   );
 
-  // 6. Search relevant knowledge
-  let searchResults: import('../search/SearchEngine').SearchResult[] = [];
-  try {
-    searchResults = await searchEngine.search(message, 5);
-  } catch (e) {
-    // Non-critical — continue without search results
-    console.warn('[CHAT ENGINE] Search failed:', e);
+  // 6. Query Router — decides execution path (Structured DB vs Hybrid RAG vs Both)
+  const routePlan = queryRouter.route(finalIntent, mergedEntities, message);
+
+  // 7. Structured DB Resolver (Live Data: Pricing, Contact, Services)
+  let dbResult = null;
+  if (routePlan.needsDb) {
+    try {
+      dbResult = await databaseResolver.resolve(finalIntent, mergedEntities);
+    } catch (e) {
+      console.warn('[CHAT ENGINE] DB Resolver error:', e);
+    }
   }
 
-  // 7. Assess confidence
-  const topSearchScore = searchResults[0]?.score ?? 0;
-  const confidence = assessConfidence(intentResult.confidence, topSearchScore);
+  // 8. Hybrid RAG Search (Unstructured Knowledge: About, Services Features, Blogs, FAQs)
+  let ragChunks: RAGChunkResult[] = [];
+  if (routePlan.needsRag) {
+    try {
+      ragChunks = await searchEngine.search(message, 5, mergedEntities);
+    } catch (e) {
+      console.warn('[CHAT ENGINE] Hybrid RAG error:', e);
+    }
+  }
 
-  // 8. Generate response
-  const generated: GeneratedResponse = responseEngine.generate(
+  // 9. Context Builder — Fuses DB data + RAG chunks + Entities + History into unified context
+  const fusedContext = contextBuilder.build(
     finalIntent,
-    confidence,
-    searchResults,
     mergedEntities,
-    context.history,
+    routePlan,
+    dbResult,
+    ragChunks,
+    context.history
   );
 
-  // 9. Log unanswered questions if confidence is very low
+  // 10. Assess Confidence
+  const confidence = assessConfidence(intentResult.confidence, fusedContext.topScore);
+
+  // 11. Generate Response via Context Synthesis
+  const generated: GeneratedResponse = responseEngine.generate(fusedContext, confidence);
+
+  // 12. Log low confidence queries for admin training
   if (confidence.level === 'fallback' && message.trim().length > 3) {
     logUnanswered(message, confidence.confidence).catch(() => null);
   }
 
-  // 10. Persist messages and context
+  // 13. Persist turn in database
   let botMsgId: string | null = null;
   try {
     await contextEngine.saveMessage(sessionId, 'user', message, finalIntent, confidence.confidence, mergedEntities);
     botMsgId = await contextEngine.saveMessage(sessionId, 'bot', generated.text, finalIntent, confidence.confidence);
     await contextEngine.save(sessionId, finalIntent, mergedEntities, context.turnCount + 1);
   } catch (e) {
-    console.warn('[CHAT ENGINE] Persistence failed (non-critical):', e);
+    console.warn('[CHAT ENGINE] Persistence error:', e);
   }
 
   return {
@@ -115,7 +136,7 @@ export async function processChat(req: ChatRequest): Promise<ChatResponse> {
     confidence: confidence.confidence,
     quickReplies: generated.quickReplies,
     messageId: botMsgId ?? undefined,
-    needsLead: LEAD_TRIGGER_INTENTS.has(finalIntent),
+    needsLead: LEAD_TRIGGER_INTENTS.has(finalIntent) || routePlan.needsLeadForm,
   };
 }
 
@@ -133,9 +154,6 @@ async function logUnanswered(question: string, confidence: number): Promise<void
   ).catch(() => null);
 }
 
-/**
- * Save lead from chat
- */
 export async function saveChatLead(sessionId: string, leadData: {
   name?: string; phone?: string; email?: string;
   service?: string; budget?: string; requirement?: string;
