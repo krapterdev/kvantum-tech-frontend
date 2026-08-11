@@ -7,7 +7,8 @@ export interface ConfidenceResult {
 }
 
 export function assessConfidence(intentConfidence: number, searchScore: number): ConfidenceResult {
-  const combined = intentConfidence * 0.6 + Math.min(searchScore, 1) * 0.4;
+  // Take maximum of intent confidence or RAG search score
+  const combined = Math.max(intentConfidence, Math.min(searchScore * 1.5, 1));
 
   if (combined >= 0.70) return { level: 'high', confidence: combined };
   if (combined >= 0.45) return { level: 'medium', confidence: combined };
@@ -22,12 +23,18 @@ export interface GeneratedResponse {
   confidence: number;
 }
 
+const CORE_INTENTS = new Set([
+  'greeting', 'goodbye', 'about', 'services', 'pricing',
+  'portfolio', 'contact', 'location', 'working_hours',
+  'booking', 'quotation', 'support', 'human_agent', 'blog', 'faq'
+]);
+
 export class ResponseEngine {
   /**
    * Generates a context-fused natural response combining Structured DB data + Hybrid RAG chunks.
    */
   generate(fused: FusedContext, confidenceRes: ConfidenceResult): GeneratedResponse {
-    const { intent, entities, dbResult, ragChunks, routePlan } = fused;
+    const { intent, dbResult, ragChunks, routePlan } = fused;
     let text = '';
     const quickReplies = QUICK_REPLIES[intent] ?? QUICK_REPLIES['fallback'];
 
@@ -37,14 +44,11 @@ export class ResponseEngine {
         const s = dbResult.data;
         const name = s.name || s.title || 'Service';
         const priceStr = s.price ? `₹${s.price.toLocaleString('en-IN')}` : '₹25,000';
-        const desc = s.shortDesc || s.desc || s.description || '';
-        const features = Array.isArray(s.features) && s.features.length > 0
-          ? `\n\n✨ **Key Features:**\n${s.features.slice(0, 4).map((f: string) => `• ${f}`).join('\n')}`
-          : '';
+        const desc = s.shortDesc || s.desc || s.description || s.longDesc || '';
+        const tech = s.techStack ? `\n\n💻 **Tech Stack:** ${s.techStack}` : '';
 
-        text = `**${name}** ki pricing **${priceStr}** se shuru hoti hai.\n\n${desc}${features}\n\nExact quotation aur free consultation ke liye call ya WhatsApp karein: **+91 98116 61828** 📞`;
+        text = `**${name}** ki pricing **${priceStr}** se shuru hoti hai.\n\n${desc}${tech}\n\nExact quotation aur free consultation ke liye call ya WhatsApp karein: **+91 98116 61828** 📞`;
 
-        // If Hybrid mode has additional RAG chunks (e.g. payment gateway details)
         if (ragChunks.length > 0 && ragChunks[0].score > 0.35) {
           const topRag = ragChunks[0];
           text += `\n\n💡 **Additional Info** (${topRag.title}): ${topRag.content.slice(0, 180)}...`;
@@ -75,8 +79,19 @@ export class ResponseEngine {
       return { text, quickReplies: quickReplies.slice(0, 4), intent, confidence: confidenceRes.confidence };
     }
 
-    // 3. INTENT TEMPLATE FALLBACKS
-    if (confidenceRes.level === 'high' || confidenceRes.level === 'medium') {
+    // 3. CORE INTENT DIRECT TEMPLATES (Guarantees fast, accurate answers for Services, Portfolio, Pricing, Contact, etc.)
+    if (CORE_INTENTS.has(intent)) {
+      text = pickTemplate(intent).template;
+      return {
+        text,
+        quickReplies: quickReplies.slice(0, 4),
+        intent,
+        confidence: Math.max(confidenceRes.confidence, 0.85),
+      };
+    }
+
+    // 4. FALLBACK & CLARIFICATION
+    if (confidenceRes.level === 'medium') {
       text = pickTemplate(intent).template;
     } else if (confidenceRes.level === 'low') {
       text = pickTemplate('clarification').template;

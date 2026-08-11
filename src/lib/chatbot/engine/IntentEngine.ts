@@ -1,7 +1,7 @@
 import { normalize } from '../nlp/Normalizer';
 import { tokenize, phrases as makePhrs } from '../nlp/Tokenizer';
 import { removeStopWords } from '../nlp/StopWords';
-import { INTENTS, IntentDef } from '../config/intents';
+import { INTENTS } from '../config/intents';
 
 export interface IntentResult {
   intent: string;
@@ -12,13 +12,15 @@ export interface IntentResult {
 
 export class IntentEngine {
   /**
-   * Detect intent and return confidence score (0–1)
+   * Detect intent and return normalized confidence score (0–1)
    */
   detect(rawText: string, prevIntent?: string): IntentResult {
     const normalized = normalize(rawText);
-    const tokens = removeStopWords(tokenize(normalized));
+    const rawTokens = tokenize(normalized);
+    const tokens = removeStopWords(rawTokens);
     const tokenSet = new Set(tokens);
-    const phrsList = makePhrs(tokenize(normalized));
+    const rawTokenSet = new Set(rawTokens);
+    const phrsList = makePhrs(rawTokens);
     const phraseSet = new Set(phrsList);
 
     const scores: Record<string, number> = {};
@@ -28,23 +30,29 @@ export class IntentEngine {
 
       let score = 0;
 
-      // Keyword match: +5 each
-      for (const kw of intent.keywords) {
-        if (tokenSet.has(kw)) score += 5;
-        // partial contains
-        else if (normalized.includes(kw)) score += 3;
-      }
-
-      // Phrase match: +10 each
-      for (const ph of intent.phrases) {
-        if (normalized.includes(ph)) score += 10;
-        else if (phraseSet.has(ph)) score += 8;
-      }
-
-      // Exact phrase match: +20 each
+      // Exact phrase match: +25
       for (const ep of intent.exactPhrases) {
-        if (normalized === ep || normalized.startsWith(ep + ' ') || normalized.endsWith(' ' + ep)) {
-          score += 20;
+        const normEp = normalize(ep);
+        if (normalized === normEp || normalized.includes(normEp)) {
+          score += 25;
+        }
+      }
+
+      // Phrase match: +12 each
+      for (const ph of intent.phrases) {
+        const normPh = normalize(ph);
+        if (normalized.includes(normPh) || phraseSet.has(normPh)) {
+          score += 12;
+        }
+      }
+
+      // Keyword match: +6 each
+      for (const kw of intent.keywords) {
+        const normKw = normalize(kw);
+        if (tokenSet.has(normKw) || rawTokenSet.has(normKw)) {
+          score += 6;
+        } else if (normalized.includes(normKw)) {
+          score += 3;
         }
       }
 
@@ -64,8 +72,16 @@ export class IntentEngine {
       }
     }
 
-    // Normalize confidence (max possible score ~100 for very strong signals)
-    const confidence = Math.min(1, topScore / 50);
+    // Realistic confidence calibration:
+    // score >= 20 -> 0.95 (strong match)
+    // score >= 10 -> 0.85 (good match)
+    // score >= 5  -> 0.70 (clear keyword match)
+    // score > 0   -> 0.50
+    let confidence = 0;
+    if (topScore >= 20) confidence = 0.95;
+    else if (topScore >= 10) confidence = 0.85;
+    else if (topScore >= 5) confidence = 0.75;
+    else if (topScore > 0) confidence = 0.50;
 
     return {
       intent: topIntent,

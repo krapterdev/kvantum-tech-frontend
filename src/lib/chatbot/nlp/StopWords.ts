@@ -1,5 +1,6 @@
 /**
- * StopWords — English + Hinglish stop words to remove before scoring
+ * StopWords — English + Hinglish stop words to remove before search vector indexing
+ * Important: Intent triggers like 'hello', 'hi', 'pricing', 'service' are kept OUT of stop words.
  */
 export const STOP_WORDS = new Set([
   // English
@@ -19,21 +20,19 @@ export const STOP_WORDS = new Set([
   'though','although','since','unless','however','therefore',
   'thus','hence','nevertheless','moreover','furthermore',
 
-  // Hinglish common
+  // Hinglish common stop words (excluding greetings and intent triggers)
   'hai','h','hain','tha','thi','the','hoga','hogi','honge',
-  'kya','kya?','kaise','kaun','kab','kahan','kyun','kyunki',
+  'kaise','kaun','kab','kahan','kyun','kyunki',
   'mujhe','mujhko','main','mai','aap','tum','hum','wo','ve',
   'mein','me','se','ko','ka','ki','ke','par','pe','tak','hi',
-  'bhi','to','toh','na','nahi','nhi','ni','ya','aur','or',
+  'bhi','to','toh','na','nhi','ni','ya','aur','or',
   'lekin','par','magar','lekn','phir','fir','ab','abhi','jab',
   'tab','yahan','vahan','wahan','yaha','vaha','waha','kuch',
   'sab','ek','do','teen','char','paanch','bahut','thoda','zyada',
-  'sirf','only','bas','acha','theek','sahi','ok','haan','nahi',
-  'ji','bhai','sir','madam','jee','please','plz','pls',
-  'thank','thanks','dhanyawad','shukriya','namaste','namaskar',
-  'hello','hi','hey','bye','goodbye','alvida',
+  'sirf','bas','acha','theek','sahi','ok','ji','bhai','sir','madam','jee',
+  'pls',
 ]);
 
 export function removeStopWords(tokens: string[]): string[] {
-  return tokens.filter(t => !STOP_WORDS.has(t) && t.length > 1);
+  return tokens.filter(t => !STOP_WORDS.has(t.toLowerCase()) && t.length > 1);
 }

@@ -4,17 +4,17 @@
 
 export interface IntentDef {
   name: string;
-  keywords: string[];        // +5 each match
-  phrases: string[];         // +10 each match
-  exactPhrases: string[];    // +20 each match
+  keywords: string[];        // +6 each match
+  phrases: string[];         // +12 each match
+  exactPhrases: string[];    // +25 each match
 }
 
 export const INTENTS: IntentDef[] = [
   {
     name: 'greeting',
-    keywords: ['hello','hi','hey','namaste','namaskar','hii','helo','hlw','sup'],
-    phrases: ['good morning','good evening','good afternoon','shubh pratham'],
-    exactPhrases: ['hello','hi','hey','namaste'],
+    keywords: ['hello','hi','hey','namaste','namaskar','hii','helo','hlw','sup','greetings'],
+    phrases: ['good morning','good evening','good afternoon','shubh pratham','hi there','hello team'],
+    exactPhrases: ['hello','hi','hey','namaste','hii','helo','namaskar'],
   },
   {
     name: 'goodbye',
@@ -25,14 +25,14 @@ export const INTENTS: IntentDef[] = [
   {
     name: 'about',
     keywords: ['about','company','kvantum','team','who','founded','kaun','kab','experience','background','profile','history','established'],
-    phrases: ['about you','about company','kaun ho','kya hai company','tell me about','who are you','aap kaun'],
-    exactPhrases: ['who are you','about kvantum','company ke baare mein'],
+    phrases: ['about you','about company','kaun ho','kya hai company','tell me about','who are you','aap kaun','company ke baare me'],
+    exactPhrases: ['who are you','about kvantum','company ke baare mein','about company','tell me about kvantum'],
   },
   {
     name: 'services',
-    keywords: ['service','services','offer','provide','kaam','karte','solutions','develop'],
-    phrases: ['kya karte ho','kya services','what services','what do you offer','aap kya karte','kya provide'],
-    exactPhrases: ['kya services dete ho','what services do you offer','services kya hain'],
+    keywords: ['service','services','offer','provide','kaam','karte','solutions','develop','offerings'],
+    phrases: ['kya karte ho','kya services','what services','what do you offer','aap kya karte','kya provide','services batao','services dikhao','list services'],
+    exactPhrases: ['services kya hain','services kya hain?','services batao','what services do you offer','kya services dete ho','services list','services dikhao'],
   },
   {
     name: 'service_detail',
@@ -43,20 +43,20 @@ export const INTENTS: IntentDef[] = [
   {
     name: 'pricing',
     keywords: ['price','pricing','cost','charges','rate','kitna','kharcha','fees','fee','amount','budget','kitne','kitni','rupees','rs','inr','lakh','thousand','k'],
-    phrases: ['how much','kitna kharch','kya rate','price kya hai','cost kya hai','kitna lagega','kya charges','price list','pricing plan','rate kya hai','budget kya'],
-    exactPhrases: ['price kya hai','kitna price','how much does it cost','pricing kya hai'],
+    phrases: ['how much','kitna kharch','kya rate','price kya hai','cost kya hai','kitna lagega','kya charges','price list','pricing plan','rate kya hai','budget kya','pricing batao','price batao'],
+    exactPhrases: ['price kya hai','kitna price','how much does it cost','pricing kya hai','pricing batao','price batao','cost kitni hai'],
   },
   {
     name: 'portfolio',
     keywords: ['portfolio','projects','work','clients','examples','case','previous','past','purane','kaam','done','banaye'],
-    phrases: ['past work','previous work','client work','example projects','kya banaya','show me work','portfolio dikhao'],
-    exactPhrases: ['portfolio dikhao','show portfolio','past projects'],
+    phrases: ['past work','previous work','client work','example projects','kya banaya','show me work','portfolio dikhao','projects dikhao','recent work'],
+    exactPhrases: ['portfolio dikhao','show portfolio','past projects','projects dikhao','portfolio','work dikhao'],
   },
   {
     name: 'contact',
-    keywords: ['contact','call','phone','email','reach','connect','address','location','office','visit','sampark','milna','WhatsApp'],
-    phrases: ['how to contact','contact kaise','phone number','email address','office address','kahan hai','kahan ho','location kya'],
-    exactPhrases: ['contact karo','call karo','contact details','office kahan hai'],
+    keywords: ['contact','call','phone','email','reach','connect','address','location','office','visit','sampark','milna','whatsapp','number'],
+    phrases: ['how to contact','contact kaise','phone number','email address','office address','kahan hai','kahan ho','location kya','contact details','contact karo'],
+    exactPhrases: ['contact details','contact karo','call karo','contact details batao','phone number kya hai','office address'],
   },
   {
     name: 'location',
@@ -73,14 +73,14 @@ export const INTENTS: IntentDef[] = [
   {
     name: 'booking',
     keywords: ['book','booking','appointment','schedule','meet','meeting','call','demo','consultation'],
-    phrases: ['book appointment','schedule meeting','demo book','call schedule','consultation book','milna chahta'],
-    exactPhrases: ['book appointment','demo chahiye','meeting schedule karo'],
+    phrases: ['book appointment','schedule meeting','demo book','call schedule','consultation book','milna chahta','demo chahiye'],
+    exactPhrases: ['book appointment','demo chahiye','meeting schedule karo','demo book karo'],
   },
   {
     name: 'quotation',
     keywords: ['quote','quotation','proposal','estimate','requirement','requirement send','project'],
-    phrases: ['get quote','send quote','quotation chahiye','proposal send','estimate bhejo','requirement discuss'],
-    exactPhrases: ['quotation chahiye','quote de do','send me a quote'],
+    phrases: ['get quote','send quote','quotation chahiye','proposal send','estimate bhejo','requirement discuss','quote chahiye'],
+    exactPhrases: ['quotation chahiye','quote de do','send me a quote','quote chahiye'],
   },
   {
     name: 'support',
