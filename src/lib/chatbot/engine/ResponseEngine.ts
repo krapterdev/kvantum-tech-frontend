@@ -28,21 +28,64 @@ const CORE_INTENTS = new Set([
   'booking', 'quotation', 'support', 'human_agent', 'blog', 'faq'
 ]);
 
+// Dynamic Conversational Lead-in Prefixes
+const DYNAMIC_LEAD_INS: Record<Language, string[]> = {
+  en: [
+    "Great question! ",
+    "Here is complete information regarding your request:\n\n",
+    "Thanks for asking! Here are the details:\n\n",
+    "Here is an overview of our custom solution:\n\n",
+  ],
+  hinglish: [
+    "Aapka sawaal bhot achha hai! ",
+    "Yahan complete details hain:\n\n",
+    "Poochhne ke liye shukriya! Yahan details hain:\n\n",
+    "Kvantum Tech Solutions ke paas iska complete solution hai:\n\n",
+  ],
+  hi: [
+    "आपके प्रश्न के लिए धन्यवाद! ",
+    "यहाँ आपकी आवश्यकता के संबंध में पूरी जानकारी है:\n\n",
+    "क्वैंटम टेक सॉल्यूशंस के पास इसका संपूर्ण समाधान है:\n\n",
+  ],
+};
+
+// Dynamic Conversational Follow-up Prompts
+const DYNAMIC_FOLLOW_UPS: Record<Language, string[]> = {
+  en: [
+    "\n\nWould you like to schedule a quick 10-minute demo, or request a custom quotation?",
+    "\n\nFeel free to select a quick action below or request an instant callback!",
+    "\n\nWould you like to see live portfolio examples of our work in this area?",
+  ],
+  hinglish: [
+    "\n\nKya aap live client demo dekhna chahenge, ya direct quotation receive karna prefer karenge?",
+    "\n\nNeeche suggestion click karke instant callback request bhej sakte hain!",
+    "\n\nKya aap iska live portfolio/example dekhna chahenge?",
+  ],
+  hi: [
+    "\n\nक्या आप लाइव डेमो देखना चाहेंगे या अपने प्रोजेक्ट के लिए मूल्य अनुमान प्राप्त करना चाहेंगे?",
+    "\n\nत्वरित सहायता के लिए नीचे दिए गए बटन का उपयोग करें!",
+  ],
+};
+
+function getRandom<T>(arr: T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
 // Multi-language high-detail service responses
 const DEDICATED_SERVICE_RESPONSES_BY_LANG: Record<Language, Record<string, string>> = {
   en: {
-    website_development: `🌐 **Website Development Services**\n\nWe build high-speed, SEO-friendly, and mobile-responsive websites.\n\n✨ **Includes:**\n• Custom UI/UX Design\n• Next.js & React High Speed Engine\n• Mobile & Tablet Responsive\n• SEO Meta Optimization\n• Admin CMS Control\n\n💰 **Pricing**: ₹25,000 – ₹75,000 (starting ₹25k)\n⏱️ **Timeline**: 2–4 Weeks\n\nContact us for a free consultation & demo! 📞`,
-    ecommerce_website: `🛒 **eCommerce Website Solutions**\n\nComplete online shopping store with payment gateway, product management, and order tracking.\n\n✨ **Includes:**\n• Payment Gateway (Razorpay, Paytm, Stripe)\n• Product Inventory & Stock Sync\n• Order Management Dashboard\n• Discount Coupons & Offers\n• WhatsApp Order Alert Integration\n\n💰 **Pricing**: ₹40,000 – ₹2,00,000 (starting ₹40k)\n⏱️ **Timeline**: 4–8 Weeks`,
-    whatsapp_automation: `🤖 **WhatsApp Automation & API Integration**\n\nAutomate your business messaging, customer support, and lead generation on WhatsApp!\n\n✨ **Includes:**\n• Official WhatsApp Business API\n• Automated Lead Capture Bot\n• Bulk Notification & Broadcasts\n• Interactive Button Menus\n• CRM & Website Integration\n\n💰 **Pricing**: ₹15,000 – ₹80,000 (starting ₹15k)\n⚡ **Setup**: 3–7 Days`,
-    crm_software: `📊 **Custom CRM Software**\n\nManage leads, sales pipelines, team performance, and follow-ups in one portal.\n\n✨ **Includes:**\n• Lead Capture & Pipeline Board\n• Automated Follow-up Reminders\n• Team Productivity Log\n• Invoice & Quotation Generator\n• WhatsApp & Email Alert System\n\n💰 **Pricing**: ₹50,000 – ₹3,00,000 (starting ₹50k)\n⏱️ **Timeline**: 6–12 Weeks`,
-    hrms_software: `👥 **HRMS & Payroll System**\n\nComplete HR, employee attendance, payroll calculation, and leave management.\n\n✨ **Includes:**\n• Employee Self-Service Portal\n• Automated Attendance & Biometric Sync\n• Monthly Salary & Payslip Generator\n• Leave Approval Workflow\n• Performance Evaluation Reports\n\n💰 **Pricing**: ₹60,000 – ₹2,50,000 (starting ₹60k)`,
-    mobile_app: `📱 **Mobile App Development (Android & iOS)**\n\nHigh-performance native and cross-platform mobile applications.\n\n✨ **Includes:**\n• Flutter & React Native Cross-Platform\n• Play Store & App Store Publishing\n• Push Notifications Engine\n• Admin Control Panel\n• Offline Data Caching\n\n💰 **Pricing**: ₹75,000 – ₹4,00,000 (starting ₹75k)\n⏱️ **Timeline**: 8–16 Weeks`,
-    business_automation: `⚡ **Business Workflow & Process Automation**\n\nEliminate repetitive tasks, approval delays, and human errors in daily operations.\n\n✨ **Includes:**\n• Workflow & Approval Engines\n• Automated PDF Report Generation\n• Database & API Integrations\n• Task Scheduling & Reminders\n\n💰 **Pricing**: ₹30,000 – ₹2,00,000 (starting ₹30k)`,
-    custom_software: `💻 **Enterprise Custom Software Development**\n\nBespoke software architecture tailored specifically to your unique business workflow.\n\n✨ **Includes:**\n• Tailored Database & Architecture\n• Multi-role Admin & User Management\n• Cloud Infrastructure (AWS / Vercel)\n• REST & GraphQL API Integration\n• 6 Months Support & Maintenance\n\n💰 **Pricing**: ₹75,000 onwards`,
+    website_development: `🌐 **Website Development Services**\n\nWe build high-speed, SEO-friendly, and mobile-responsive websites.\n\n✨ **Key Features:**\n• Custom UI/UX Design\n• Next.js & React High Speed Engine\n• Mobile & Tablet Responsive\n• SEO Meta Optimization\n• Admin CMS Control\n\n💰 **Pricing**: ₹25,000 – ₹75,000 (starting ₹25k)\n⏱️ **Timeline**: 2–4 Weeks`,
+    ecommerce_website: `🛒 **eCommerce Website Solutions**\n\nComplete online shopping store with payment gateway, product management, and order tracking.\n\n✨ **Key Features:**\n• Payment Gateway (Razorpay, Paytm, Stripe)\n• Product Inventory & Stock Sync\n• Order Management Dashboard\n• Discount Coupons & Offers\n• WhatsApp Order Alert Integration\n\n💰 **Pricing**: ₹40,000 – ₹2,00,000 (starting ₹40k)\n⏱️ **Timeline**: 4–8 Weeks`,
+    whatsapp_automation: `🤖 **WhatsApp Automation & API Integration**\n\nAutomate your business messaging, customer support, and lead generation on WhatsApp!\n\n✨ **Key Features:**\n• Official WhatsApp Business API\n• Automated Lead Capture Bot\n• Bulk Notification & Broadcasts\n• Interactive Button Menus\n• CRM & Website Integration\n\n💰 **Pricing**: ₹15,000 – ₹80,000 (starting ₹15k)\n⚡ **Setup**: 3–7 Days`,
+    crm_software: `📊 **Custom CRM Software**\n\nManage leads, sales pipelines, team performance, and follow-ups in one portal.\n\n✨ **Key Features:**\n• Lead Capture & Pipeline Board\n• Automated Follow-up Reminders\n• Team Productivity Log\n• Invoice & Quotation Generator\n• WhatsApp & Email Alert System\n\n💰 **Pricing**: ₹50,000 – ₹3,00,000 (starting ₹50k)\n⏱️ **Timeline**: 6–12 Weeks`,
+    hrms_software: `👥 **HRMS & Payroll System**\n\nComplete HR, employee attendance, payroll calculation, and leave management.\n\n✨ **Key Features:**\n• Employee Self-Service Portal\n• Automated Attendance & Biometric Sync\n• Monthly Salary & Payslip Generator\n• Leave Approval Workflow\n• Performance Evaluation Reports\n\n💰 **Pricing**: ₹60,000 – ₹2,50,000 (starting ₹60k)`,
+    mobile_app: `📱 **Mobile App Development (Android & iOS)**\n\nHigh-performance native and cross-platform mobile applications.\n\n✨ **Key Features:**\n• Flutter & React Native Cross-Platform\n• Play Store & App Store Publishing\n• Push Notifications Engine\n• Admin Control Panel\n• Offline Data Caching\n\n💰 **Pricing**: ₹75,000 – ₹4,00,000 (starting ₹75k)\n⏱️ **Timeline**: 8–16 Weeks`,
+    business_automation: `⚡ **Business Workflow & Process Automation**\n\nEliminate repetitive tasks, approval delays, and human errors in daily operations.\n\n✨ **Key Features:**\n• Workflow & Approval Engines\n• Automated PDF Report Generation\n• Database & API Integrations\n• Task Scheduling & Reminders\n\n💰 **Pricing**: ₹30,000 – ₹2,00,000 (starting ₹30k)`,
+    custom_software: `💻 **Enterprise Custom Software Development**\n\nBespoke software architecture tailored specifically to your unique business workflow.\n\n✨ **Key Features:**\n• Tailored Database & Architecture\n• Multi-role Admin & User Management\n• Cloud Infrastructure (AWS / Vercel)\n• REST & GraphQL API Integration\n• 6 Months Support & Maintenance\n\n💰 **Pricing**: ₹75,000 onwards`,
   },
 
   hinglish: {
-    website_development: `🌐 **Website Development Services**\n\nHum high-speed, SEO-friendly aur mobile-responsive websites build karte hain.\n\n✨ **Includes:**\n• Custom UI/UX Design\n• Next.js & React High Speed Engine\n• Mobile & Tablet Responsive\n• SEO Meta Optimization\n• Admin CMS Control\n\n💰 **Pricing**: ₹25,000 – ₹75,000 (starting ₹25k)\n⏱️ **Timeline**: 2–4 Weeks\n\nFree consultation & demo ke liye contact karein! 📞`,
+    website_development: `🌐 **Website Development Services**\n\nHum high-speed, SEO-friendly aur mobile-responsive websites build karte hain.\n\n✨ **Includes:**\n• Custom UI/UX Design\n• Next.js & React High Speed Engine\n• Mobile & Tablet Responsive\n• SEO Meta Optimization\n• Admin CMS Control\n\n💰 **Pricing**: ₹25,000 – ₹75,000 (starting ₹25k)\n⏱️ **Timeline**: 2–4 Weeks`,
     ecommerce_website: `🛒 **eCommerce Website Solutions**\n\nComplete online shopping store with payment gateway, product management, and order tracking.\n\n✨ **Includes:**\n• Payment Gateway (Razorpay, Paytm, Stripe)\n• Product Inventory & Stock Sync\n• Order Management Dashboard\n• Discount Coupons & Offers\n• WhatsApp Order Alert Integration\n\n💰 **Pricing**: ₹40,000 – ₹2,00,000 (starting ₹40k)\n⏱️ **Timeline**: 4–8 Weeks`,
     whatsapp_automation: `🤖 **WhatsApp Automation & API Integration**\n\nApne business messaging aur lead support ko WhatsApp par fully automate karein!\n\n✨ **Includes:**\n• Official WhatsApp Business API\n• Automated Lead Capture Bot\n• Bulk Notification & Broadcasts\n• Interactive Button Menus\n• CRM & Website Integration\n\n💰 **Pricing**: ₹15,000 – ₹80,000 (starting ₹15k)\n⚡ **Setup**: 3–7 Days`,
     crm_software: `📊 **Custom CRM Software**\n\nManage leads, sales pipelines, team performance, and follow-ups in one portal.\n\n✨ **Includes:**\n• Lead Capture & Pipeline Board\n• Automated Follow-up Reminders\n• Team Productivity Log\n• Invoice & Quotation Generator\n• WhatsApp & Email Alert System\n\n💰 **Pricing**: ₹50,000 – ₹3,00,000 (starting ₹50k)\n⏱️ **Timeline**: 6–12 Weeks`,
@@ -53,10 +96,10 @@ const DEDICATED_SERVICE_RESPONSES_BY_LANG: Record<Language, Record<string, strin
   },
 
   hi: {
-    website_development: `🌐 **वेबसाइट विकास सेवाएं**\n\nहम हाई-स्पीड, एसईओ-अनुकूल और मोबाइल-अनुकूल वेबसाइटों का निर्माण करते हैं।\n\n✨ **विशेषताएं:**\n• कस्टम यूआई/यूएक्स डिज़ाइन\n• नेक्स्ट.जेएस और रिएक्ट हाई स्पीड इंजन\n• मोबाइल और टैबलेट अनुकूल\n• एसईओ मेटा ऑप्टिमाइजेशन\n• व्यवस्थापक सीएमएस नियंत्रण\n\n💰 **कीमत**: ₹25,000 – ₹75,000 (शुरुआती ₹25k)\n⏱️ **समय सीमा**: 2-4 सप्ताह\n\nनिःशुल्क परामर्श के लिए संपर्क करें! 📞`,
+    website_development: `🌐 **वेबसाइट विकास सेवाएं**\n\nहम हाई-स्पीड, एसईओ-अनुकूल और मोबाइल-अनुकूल वेबसाइटों का निर्माण करते हैं।\n\n✨ **विशेषताएं:**\n• कस्टम यूआई/यूएक्स डिज़ाइन\n• नेक्स्ट.जेएस और रिएक्ट हाई स्पीड इंजन\n• मोबाइल और टैबलेट अनुकूल\n• एसईओ मेटा ऑप्टिमाइजेशन\n• व्यवस्थापक सीएमएस नियंत्रण\n\n💰 **कीमत**: ₹25,000 – ₹75,000 (शुरुआती ₹25k)\n⏱️ **समय सीमा**: 2-4 सप्ताह`,
     ecommerce_website: `🛒 **ई-कॉमर्स वेबसाइट समाधान**\n\nपेमेंट गेटवे, उत्पाद प्रबंधन और ऑर्डर ट्रैकिंग के साथ पूरा ऑनलाइन शॉपिंग स्टोर।\n\n✨ **विशेषताएं:**\n• पेमेंट गेटवे (रेज़रपे, पेटीएम, स्ट्राइप)\n• उत्पाद सूची और स्टॉक सिंक\n• ऑर्डर प्रबंधन डैशबोर्ड\n• डिस्काउंट कूपन और ऑफ़र\n\n💰 **कीमत**: ₹40,000 – ₹2,00,000 (शुरुआती ₹40k)\n⏱️ **समय सीमा**: 4-8 सप्ताह`,
     whatsapp_automation: `🤖 **व्हाट्सएप ऑटोमेशन और एपीआई इंटीग्रेशन**\n\nव्हाट्सएप पर अपने संदेशों और ग्राहक सहायता को पूरी तरह से ऑटोमेट करें!\n\n✨ **विशेषताएं:**\n• आधिकारिक व्हाट्सएप बिजनेस एपीआई\n• ऑटोमेटेड लीड कैप्चर बॉट\n• बल्क नोटिफिकेशन और प्रसारण\n\n💰 **कीमत**: ₹15,000 – ₹80,000 (शुरुआती ₹15k)\n⚡ **सेटअप**: 3-7 दिन`,
-    crm_software: `📊 **कस्टम CRM सॉफ्टवेयर**\n\nएक ही पोर्टल में लीड्स, बिक्री पाइपलाइन, टीम प्रदर्शन और फॉलो-अप प्रबंधित करें।\n\n✨ **विशेषताएं:**\n• लीड कैप्चर और पाइपलाइन बोर्ड\n• ऑटोमेटेड फॉलो-अप रिमाइंडर\n• कोटेशन जनरेटर\n\n💰 **कीमत**: ₹50,000 – ₹3,00,000 (शुरुआती ₹50k)`,
+    crm_software: `📊 **कस्टम CRM सॉफ्टवेयर**\n\nएक ही पोर्टल में लीड्स, बिक्री पाइपलाइन, टीम प्रदर्शन और फॉलो-अप प्रबंधित करें।\n\n✨ **विशेषताएं:**\n• लीड कैप्चर और पाइपलाइन बोर्ड\n• ऑटोमेटed फॉलो-अप रिमाइंडर\n• कोटेशन जनरेटर\n\n💰 **कीमत**: ₹50,000 – ₹3,00,000 (शुरुआती ₹50k)`,
     hrms_software: `👥 **HRMS और पेरोल सिस्टम**\n\nकर्मचारी उपस्थिति, पेरोल गणना और छुट्टी प्रबंधन का संपूर्ण समाधान।\n\n💰 **कीमत**: ₹60,000 – ₹2,50,000 (शुरुआती ₹60k)`,
     mobile_app: `📱 **मोबाइल ऐप डेवलपमेंट (एंड्रॉइड और iOS)**\n\nउच्च प्रदर्शन वाले मोबाइल एप्लिकेशन।\n\n💰 **कीमत**: ₹75,000 – ₹4,00,000 (शुरुआती ₹75k)`,
     business_automation: `⚡ **बिजनेस ऑटोमेशन**\n\nदैनिक कार्यों में दोहराव और मानवीय त्रुटियों को समाप्त करें।\n\n💰 **कीमत**: ₹30,000 – ₹2,00,000 (शुरुआती ₹30k)`,
@@ -68,17 +111,19 @@ export class ResponseEngine {
   /**
    * Generates a context-fused natural response supporting multi-language output.
    */
-  generate(fused: FusedContext, confidenceRes: ConfidenceResult, lang: Language = 'hinglish'): GeneratedResponse {
+  generate(fused: FusedContext, confidenceRes: ConfidenceResult, lang: Language = 'en'): GeneratedResponse {
     const { intent, entities, dbResult, ragChunks, routePlan } = fused;
     let text = '';
 
     const serviceKey = entities.service;
     const quickReplies = getQuickReplies(intent, serviceKey, lang);
+    const leadIn = getRandom(DYNAMIC_LEAD_INS[lang] ?? DYNAMIC_LEAD_INS['en']);
+    const followUp = getRandom(DYNAMIC_FOLLOW_UPS[lang] ?? DYNAMIC_FOLLOW_UPS['en']);
 
     // 1. DEDICATED SERVICE ENTITY RESPONSE PER LANGUAGE
-    const dedicatedLangMap = DEDICATED_SERVICE_RESPONSES_BY_LANG[lang] ?? DEDICATED_SERVICE_RESPONSES_BY_LANG['hinglish'];
+    const dedicatedLangMap = DEDICATED_SERVICE_RESPONSES_BY_LANG[lang] ?? DEDICATED_SERVICE_RESPONSES_BY_LANG['en'];
     if (serviceKey && dedicatedLangMap[serviceKey]) {
-      text = dedicatedLangMap[serviceKey];
+      text = dedicatedLangMap[serviceKey] + followUp;
       return { text, quickReplies: quickReplies.slice(0, 4), intent, confidence: Math.max(confidenceRes.confidence, 0.90) };
     }
 
@@ -90,7 +135,7 @@ export class ResponseEngine {
         const priceStr = s.price ? `₹${s.price.toLocaleString('en-IN')}` : '₹25,000';
         const desc = s.shortDesc || s.desc || s.description || s.longDesc || '';
 
-        text = `**${name}**: ${priceStr}\n\n${desc}\n\nCall/WhatsApp: **+91 98116 61828** 📞`;
+        text = `${leadIn}**${name}**: ${priceStr}\n\n${desc}${followUp}`;
 
         return { text, quickReplies: quickReplies.slice(0, 4), intent, confidence: confidenceRes.confidence };
       }
@@ -109,7 +154,7 @@ export class ResponseEngine {
         text = top.content;
       } else {
         const tpl = pickTemplate(intent, lang);
-        text = `${tpl.template}\n\n📎 **${top.title}**:\n${top.content.slice(0, 280)}...`;
+        text = `${tpl.template}\n\n📎 **${top.title}**:\n${top.content.slice(0, 280)}...${followUp}`;
       }
 
       return { text, quickReplies: quickReplies.slice(0, 4), intent, confidence: confidenceRes.confidence };
@@ -118,6 +163,10 @@ export class ResponseEngine {
     // 4. CORE INTENT TEMPLATES
     if (CORE_INTENTS.has(intent)) {
       text = pickTemplate(intent, lang).template;
+      // Append dynamic follow-up for informative intents (not greeting or goodbye)
+      if (!['greeting', 'goodbye'].includes(intent)) {
+        text += followUp;
+      }
       return {
         text,
         quickReplies: quickReplies.slice(0, 4),

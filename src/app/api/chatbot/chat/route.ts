@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
     const response = await processChat({
       message: sanitized,
       sessionKey: sessionId,
-      language: language === 'en' || language === 'hi' || language === 'hinglish' ? language : 'hinglish',
+      language: language === 'en' || language === 'hi' || language === 'hinglish' ? language : 'en',
       ip,
     });
 

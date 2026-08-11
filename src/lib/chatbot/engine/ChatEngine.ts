@@ -45,7 +45,7 @@ const responseEngine   = new ResponseEngine();
 const LEAD_TRIGGER_INTENTS = new Set(['booking', 'quotation', 'human_agent', 'lead']);
 
 export async function processChat(req: ChatRequest): Promise<ChatResponse> {
-  const { message, sessionKey, language = 'hinglish', ip } = req;
+  const { message, sessionKey, language = 'en', ip } = req;
 
   // 1. Get or create chat session
   let sessionId: string;

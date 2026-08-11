@@ -25,8 +25,8 @@ interface ChatWindowProps {
 }
 
 export default function ChatWindow({ onClose, onMinimize }: ChatWindowProps) {
-  // 1. Language State with localStorage persistence
-  const [language, setLanguage] = useState<Language>('hinglish');
+  // 1. Language State with localStorage persistence (Default: English 'en')
+  const [language, setLanguage] = useState<Language>('en');
 
   // 2. Session Key State
   const [sessionKey, setSessionKey] = useState<string>('');
@@ -49,9 +49,9 @@ export default function ChatWindow({ onClose, onMinimize }: ChatWindowProps) {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    // Language
+    // Language (Default: 'en')
     const savedLang = localStorage.getItem('kts_chat_lang') as Language;
-    const initialLang: Language = (savedLang === 'en' || savedLang === 'hi' || savedLang === 'hinglish') ? savedLang : 'hinglish';
+    const initialLang: Language = (savedLang === 'en' || savedLang === 'hi' || savedLang === 'hinglish') ? savedLang : 'en';
     setLanguage(initialLang);
 
     // Session Key
@@ -78,7 +78,7 @@ export default function ChatWindow({ onClose, onMinimize }: ChatWindowProps) {
       }
     }
 
-    // Default Initial Welcome Message
+    // Default Initial Welcome Message in English / Saved Lang
     setMessages([
       {
         id: 'welcome',
@@ -113,26 +113,25 @@ export default function ChatWindow({ onClose, onMinimize }: ChatWindowProps) {
     }
   }, [messages, loading, showLeadForm]);
 
-  // Handle language switch
+  // Handle language switch — reload chat fresh in the new language
   const handleLangChange = (newLang: Language) => {
     if (newLang === language) return;
     setLanguage(newLang);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('kts_chat_lang', newLang);
+      localStorage.removeItem('kts_chat_messages');
+    }
+    // Start fresh in the newly selected language
+    setMessages([
+      {
+        id: 'welcome',
+        role: 'bot',
+        content: WELCOME_MESSAGES[newLang],
+        timestamp: new Date(),
+      }
+    ]);
     setQuickReplies(INITIAL_QUICK_REPLIES[newLang]);
-
-    // Add a language switch notice message
-    const langNames: Record<Language, string> = {
-      en: '🇬🇧 Switched to English',
-      hinglish: '🇮🇳 Switched to Hinglish',
-      hi: '🇮🇳 हिंदी में स्विच किया गया',
-    };
-
-    const sysMsg: MessageData = {
-      role: 'bot',
-      content: `🌐 **${langNames[newLang]}**`,
-      timestamp: new Date(),
-    };
-
-    setMessages(prev => [...prev, sysMsg]);
+    setShowLeadForm(false);
   };
 
   const sendMessage = async (text: string) => {
