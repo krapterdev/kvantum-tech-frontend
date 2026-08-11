@@ -1,112 +1,122 @@
 /**
- * Response Templates — multi-variant template-based NLG
- * {service}, {price}, {name} etc. are filled dynamically from DB data
+ * Response Templates — multi-variant template-based NLG with dynamic suggestions
  */
 
 export interface ResponseTemplate {
   template: string;
-  hasData: boolean; // needs DB data to fill variables
+  hasData: boolean;
 }
 
 export const RESPONSE_TEMPLATES: Record<string, ResponseTemplate[]> = {
 
   greeting: [
-    { template: "Namaste! 🙏 Main Kvantum Tech Solutions ka virtual assistant hoon. Aap website development, CRM, HRMS, WhatsApp automation ya kisi bhi service ke baare mein pooch sakte hain!", hasData: false },
-    { template: "Hi! 👋 Main aapki help karne ke liye available hoon. Aap hmare services, pricing, portfolio ya contact ke baare mein kuch bhi pooch sakte hain.", hasData: false },
-    { template: "Hello! Kvantum Tech Solutions mein aapka swagat hai. Main aapko apni services, pricing aur solutions ke baare mein sab kuch bata sakta hoon — kya jaanna chahte ho?", hasData: false },
+    { template: "Namaste! 🙏 Main Kvantum Tech Solutions ka AI-powered assistant hoon.\n\nAap **Website**, **WhatsApp Automation**, **CRM**, **HRMS** ya kisi bhi custom software ke baare mein pooch sakte hain! Kaise help karoon?", hasData: false },
+    { template: "Hi! 👋 Welcome to Kvantum Tech Solutions. Main aapko hamari **Services**, **Pricing**, **Portfolio** aur **Solutions** ke baare mein complete details de sakta hoon. Kya jaanna chahte hain?", hasData: false },
+    { template: "Hello! Kvantum Tech team mein aapka swagat hai. Main aapka virtual assistant hoon — website, app, CRM ya WhatsApp bot ke baare mein kuch bhi poochiye! 🚀", hasData: false },
   ],
 
   goodbye: [
-    { template: "Shukriya aapse baat karke! Koi bhi project ya service ke liye, hum hamesha available hain. Shubhkamnayein! 🙏", hasData: false },
-    { template: "Alvida! Agar future mein koi requirement ho, to zaroor sampark karein. Dhanyawad! 👋", hasData: false },
+    { template: "Shukriya aapse baat karke! 🙏 AAP jab bhi ready hon, hum aapka project build karne ke liye available hain.\n\n📞 Direct Call/WhatsApp: **+91 98116 61828**\n📧 Email: **info@kvantumtechsolutions.com**\n\nShubhkamnayein! 👋", hasData: false },
+    { template: "Alvida! Future mein kisi bhi IT solution ya automation ke liye zaroor contact karein. Have a great day! 👋", hasData: false },
   ],
 
   about: [
-    { template: "Kvantum Tech Solutions ek leading IT company hai jo Delhi NCR mein operate karti hai. Hum custom software, web development, CRM, HRMS, WhatsApp automation aur business automation solutions provide karte hain. Humara team experienced professionals se bana hai jo aapke business goals ko technology se achieve karne mein madad karta hai. 💡", hasData: false },
-    { template: "Hum Kvantum Tech Solutions hain — ek full-stack IT solutions company based in Delhi NCR. Hamare services mein custom software development, web & mobile apps, CRM/ERP systems, WhatsApp automation aur digital transformation shamil hain. Clients ki success hamaari priority hai! 🚀", hasData: false },
+    { template: "Kvantum Tech Solutions ek leading IT Company hai based in Delhi NCR 📍.\n\nHum businesses ke liye **Custom Software**, **Responsive Websites**, **eCommerce Platforms**, **CRM Systems**, **HRMS/Payroll** aur **WhatsApp Automation** build karte hain.\n\nHamara goal: Technology se aapke business operations ko simplified aur 10x faster banana! 💡", hasData: false },
+    { template: "Hum Kvantum Tech Solutions hain — full-stack software & automation company from Delhi NCR 🏢.\n\nHamare core expertise:\n• Custom Software & Web Applications\n• eCommerce & Mobile Apps (Android/iOS)\n• WhatsApp Business Automation & Bots\n• Custom CRM & HRMS Platforms\n\n100+ projects successfully delivered across India! 🚀", hasData: false },
   ],
 
   services: [
-    { template: "Kvantum Tech Solutions yeh services provide karta hai:\n\n🌐 **Website Development** — Corporate, landing pages, ecommerce\n🤖 **WhatsApp Automation** — Bulk messaging, chatbots, API integration\n📊 **CRM Software** — Lead management, sales tracking\n👥 **HRMS/ERP** — HR, payroll, attendance systems\n💻 **Custom Software** — Bespoke business solutions\n📱 **Mobile Apps** — Android & iOS\n⚡ **Business Automation** — Workflow & process automation\n\nKis service ke baare mein aur detail chahiye?", hasData: false },
-    { template: "Hamare main services hain:\n• Custom Software Development\n• Web & Mobile App Development\n• WhatsApp Automation & API\n• CRM Software Development\n• HRMS & Payroll Systems\n• Business Process Automation\n• eCommerce Solutions\n\nKoi specific service ke baare mein batao — main detail deta hoon! 😊", hasData: false },
+    { template: "Kvantum Tech Solutions yeh primary services offer karta hai:\n\n🌐 **Website & eCommerce Development** — Starting ₹25,000\n🤖 **WhatsApp Automation & Bots** — Starting ₹15,000\n📊 **Custom CRM Software** — Starting ₹50,000\n👥 **HRMS & Payroll Systems** — Starting ₹60,000\n💻 **Enterprise Custom Software** — Starting ₹75,000\n📱 **Android & iOS Mobile Apps** — Starting ₹75,000\n⚡ **Workflow & Business Automation** — Starting ₹30,000\n\nKisi specific service ke baare mein detail chahiye? Click a suggestion below! 👇", hasData: false },
   ],
 
   pricing: [
-    { template: "Hamare pricing generally project ki complexity aur requirements par depend karti hai:\n\n🌐 **Website** — ₹25,000 se shuru\n🛒 **eCommerce** — ₹40,000 se shuru\n🤖 **WhatsApp Automation** — ₹15,000 se shuru\n📊 **CRM Software** — ₹50,000 se shuru\n👥 **HRMS System** — ₹60,000 se shuru\n💻 **Custom Software** — ₹75,000 se shuru\n\nExact quote ke liye apni requirement share karo — hum free consultation dete hain! 📞", hasData: false },
-    { template: "Pricing aapki specific requirements par depend karti hai. Generally:\n• Simple website: ₹25,000 – ₹75,000\n• eCommerce platform: ₹40,000 – ₹2,00,000\n• WhatsApp automation: ₹15,000 – ₹80,000\n• CRM system: ₹50,000 – ₹3,00,000\n• Custom software: ₹75,000 se upar\n\nFree consultation ke liye contact karo ya neeche form bharo! 💬", hasData: false },
+    { template: "Kvantum Tech Solutions Pricing Overview:\n\n🌐 **Corporate Website**: ₹25,000 – ₹75,000\n🛒 **eCommerce Store**: ₹40,000 – ₹2,00,000\n🤖 **WhatsApp Bot/API**: ₹15,000 – ₹80,000\n📊 **Custom CRM System**: ₹50,000 – ₹3,00,000\n👥 **HRMS/Payroll Software**: ₹60,000 – ₹2,50,000\n💻 **Custom Software**: ₹75,000 onwards\n\nExact quote ke liye apni requirements share karein — free consultation available hai! 📞", hasData: false },
   ],
 
   contact: [
-    { template: "Hum se contact karne ke tarike:\n\n📞 **Phone/WhatsApp**: +91 98116 61828\n📧 **Email**: info@kvantumtechsolutions.com\n📍 **Office**: Delhi NCR\n🌐 **Website**: kvantumtechsolutions.com\n\nYa neeche quick callback form fill karo — team 24 ghante mein contact karegi! ✅", hasData: false },
-    { template: "Kvantum Tech team se baat karne ke liye:\n• 📱 WhatsApp/Call: +91 98116 61828\n• 📧 Email: info@kvantumtechsolutions.com\n• 🌐 Website contact form: kvantumtechsolutions.com/contact\n\nYa mujhe batao aapki requirement — main abhi note kar leta hoon! 📝", hasData: false },
+    { template: "Humse contact karne ke options:\n\n📱 **WhatsApp / Call**: +91 98116 61828\n📧 **Email**: info@kvantumtechsolutions.com\n📍 **Location**: Delhi NCR, India\n🌐 **Website**: kvantumtechsolutions.com\n⏰ **Hours**: Mon – Sat (9 AM – 7 PM)\n\nNeeche **'Demo/Quote'** button press karke callback request bhi bhej sakte hain! ✅", hasData: false },
   ],
 
   location: [
-    { template: "Kvantum Tech Solutions Delhi NCR mein based hai. Hamare clients ke saath mostly online/virtual meetings hoti hain, isliye poore India mein serve karte hain. 📍\n\nMeeting ya site visit ke liye pehle call ya WhatsApp par sampark karo: **+91 98116 61828**", hasData: false },
+    { template: "Kvantum Tech Solutions Delhi NCR mein main office operate karti hai. Hum virtual meetings & remote collaboration ke through poore India & Global clients ko serve karte hain. 📍\n\nContact: **+91 98116 61828**", hasData: false },
   ],
 
   working_hours: [
-    { template: "Kvantum Tech Solutions team **Monday se Saturday, 9 AM – 7 PM** available rehti hai. Emergency support ke liye WhatsApp kar sakte hain. 🕐\n\n📞 +91 98116 61828", hasData: false },
+    { template: "Hamari team **Monday se Saturday, 9:00 AM se 7:00 PM** tak available rehti hai. Urgent WhatsApp messages par 24x7 response milta hai! 🕐\n\n📞 +91 98116 61828", hasData: false },
   ],
 
   booking: [
-    { template: "Bilkul! Main aapka consultation schedule kar deta hoon. Kya aap apna **naam, phone number aur requirement** share karenge? Team 24 ghante mein aapse sampark karegi. 📅", hasData: false },
-    { template: "Free consultation book karne ke liye:\n1. Neeche form fill karo (naam, phone, requirement)\n2. Ya seedha call/WhatsApp karo: **+91 98116 61828**\n3. Ya email karo: info@kvantumtechsolutions.com\n\nKaunsa tarika prefer karenge? 😊", hasData: false },
+    { template: "Bilkul! Main aapka free consultation & demo schedule kar deta hoon. 📅\n\nNeeche **Quick Callback Form** fill karein ya seedha call/WhatsApp karein: **+91 98116 61828**", hasData: false },
   ],
 
   quotation: [
-    { template: "Bilkul! Free quotation ke liye apni requirement share karo:\n• Kya banana hai? (website, app, software, etc.)\n• Features kya chahiye?\n• Budget range?\n• Timeline?\n\nYa neeche form bharo — team detail quote bhejegi! 📋", hasData: false },
+    { template: "Free Project Quotation ke liye details share karein:\n1. Project type (Website, App, CRM, WhatsApp Bot)\n2. Required key features\n3. Preferred timeline\n\nYa neeche form submit karein — 24 ghante mein custom proposal milega! 📋", hasData: false },
   ],
 
   portfolio: [
-    { template: "Hamare portfolio mein diverse projects hain:\n• Corporate websites & landing pages\n• eCommerce platforms\n• WhatsApp automation systems\n• CRM & HRMS implementations\n• Custom business software\n\nDetailed portfolio dekhne ke liye: **kvantumtechsolutions.com/projects** 🎯\n\nYa specific industry/type ka example chahiye?", hasData: false },
+    { template: "Kvantum Tech Solutions Case Studies & Portfolio Highlights:\n\n🌐 **Corporate Websites**: High-conversion Next.js & React sites\n🛒 **eCommerce**: Custom shopping platforms with payment gateway & inventory sync\n🤖 **WhatsApp Bots**: Automated lead capturing & customer support bots\n📊 **CRM & HRMS**: Enterprise lead management & payroll tools\n\nDetailed portfolio URL: **kvantumtechsolutions.com/projects** 🎯", hasData: false },
   ],
 
   support: [
-    { template: "Samajh gaya — support chahiye! Kya issue aa raha hai? Batao:\n• Kya website/software kaam nahi kar raha?\n• Koi error message dikh raha hai?\n• Kya feature add/change karna hai?\n\nYa seedha call karo: **+91 98116 61828** 🛠️", hasData: false },
+    { template: "Technical Support chahiye? Hum help karne ke liye tayyar hain! 🛠️\n\n• Call/WhatsApp: **+91 98116 61828**\n• Email: **info@kvantumtechsolutions.com**\n\nSath hi 3–6 months ka free post-delivery maintenance har project par milta hai!", hasData: false },
   ],
 
   human_agent: [
-    { template: "Bilkul! Main aapko team se connect karta hoon. Apna **naam aur phone number** share karo — ek team member 30 minutes mein call karega. 📞\n\nYa seedha call/WhatsApp karo: **+91 98116 61828**", hasData: false },
-  ],
-
-  lead_collected: [
-    { template: "✅ Aapki requirement note kar li gayi hai! Hamare team member jald hi aapse sampark karenge.\n\nMeanwhile, aap website check kar sakte hain: **kvantumtechsolutions.com**\n\nKoi aur sawaal? 😊", hasData: false },
+    { template: "Sure! Main aapko executive team se connect kar raha hoon. 📞\n\nApna **naam aur phone number** enter karein — hamara expert 30 mins me contact karega:\nWhatsApp/Call: **+91 98116 61828**", hasData: false },
   ],
 
   clarification: [
-    { template: "Interesting! Thoda aur detail de sakte hain? Specifically:\n• Kya banana/chahiye?\n• Kisi particular service ke baare mein pooch rahe hain?\n\nIsse main aapko better help kar sakta hoon! 🤔", hasData: false },
-    { template: "Mujhe thoda aur samajhna hoga. Kya aap specify kar sakte hain kis topic ke baare mein pooch rahe hain? Service, pricing, portfolio, ya kuch aur? 😊", hasData: false },
+    { template: "Thoda aur specify kar sakte hain? Aap inme se kiske baare mein jaanna chahte hain?\n\n• Website / eCommerce\n• WhatsApp Automation\n• CRM / HRMS Software\n• Mobile App / Custom Software\n\nNeeche suggestion click karein! 👇", hasData: false },
   ],
 
   fallback: [
-    { template: "Hmm, is sawaal ka exact answer mujhe website information se nahi mil raha. Kya aap thoda aur detail mein bata sakte hain? Ya seedha team se poochhna chahenge:\n📞 **+91 98116 61828** | 📧 **info@kvantumtechsolutions.com** 🙏", hasData: false },
-    { template: "Maafi chahta hoon — is specific sawaal ka jawab mujhse abhi possible nahi. Lekin aap directly team se sampark kar sakte hain:\n• 📱 WhatsApp: +91 98116 61828\n• 📧 info@kvantumtechsolutions.com\n\nKoi aur cheez mein help karoon? 😊", hasData: false },
+    { template: "Is specific question ki detail website guide se match nahi hui. Kya aap thoda detail bata sakte hain? Ya seedha team se poochhiye:\n\n📱 **WhatsApp**: +91 98116 61828\n📧 **Email**: info@kvantumtechsolutions.com 🙏", hasData: false },
   ],
 
   blog: [
-    { template: "Hamare blog mein technical insights aur business automation guides available hain! Dekhne ke liye: **kvantumtechsolutions.com/blog** 📚\n\nKisi specific topic par article chahiye?", hasData: false },
+    { template: "Hamare latest blogs aur technical guides yahan available hain: **kvantumtechsolutions.com/blog** 📚\n\nTopics: AI Automation, Web Tech, WhatsApp API, Business Growth.", hasData: false },
   ],
 
   unknown: [
-    { template: "Maafi chahta hoon, lekin is sawaal ka jawab mujhe nahi pata. Main sirf Kvantum Tech Solutions ki services, pricing, portfolio aur contact information ke baare mein help kar sakta hoon. Kya aur kuch poochhna chahte hain? 🙏", hasData: false },
+    { template: "Maafi chahta hoon, main sirf Kvantum Tech Solutions ke software, websites, CRM, WhatsApp automation aur pricing ke baare mein answer kar sakta hoon. Kya seekhna chahte hain? 🙏", hasData: false },
   ],
-
-  // Quick reply suggestions per intent
 };
 
+// Dynamic Context-Aware Suggestions per Intent
 export const QUICK_REPLIES: Record<string, string[]> = {
-  greeting:        ['Services kya hain?', 'Pricing batao', 'Contact details'],
-  about:           ['Services kya hain?', 'Portfolio dikhao', 'Contact karo'],
-  services:        ['Pricing kya hai?', 'Portfolio dikhao', 'Quote chahiye'],
-  pricing:         ['Website pricing', 'CRM pricing', 'Quote chahiye', 'Contact karo'],
-  portfolio:       ['Website examples', 'CRM examples', 'Quote le lo'],
-  contact:         ['Call karo', 'WhatsApp karo', 'Quote chahiye'],
-  booking:         ['Call me back', 'Quote chahiye', 'WhatsApp karo'],
-  support:         ['Call karo', 'Email karo', 'WhatsApp karo'],
-  fallback:        ['Services batao', 'Contact karo', 'Quote chahiye'],
-  unknown:         ['Services kya hain?', 'Contact karo', 'Pricing batao'],
+  greeting:        ['Services kya hain?', 'Pricing batao', 'Portfolio dikhao', 'Contact details'],
+  about:           ['Services kya hain?', 'Portfolio dikhao', 'Client list', 'Contact team'],
+  services:        ['Website pricing?', 'WhatsApp Bot pricing', 'CRM pricing', 'Demo schedule karo'],
+  pricing:         ['Website pricing', 'eCommerce pricing', 'CRM pricing', 'Quote chahiye'],
+  portfolio:       ['Website examples', 'CRM portfolio', 'WhatsApp bot demo', 'Quote le lo'],
+  contact:         ['Call karo', 'WhatsApp karo', 'Office location', 'Quote chahiye'],
+  booking:         ['Call me back', 'Demo schedule karo', 'WhatsApp link'],
+  support:         ['Call support', 'WhatsApp support', 'Email support'],
+  fallback:        ['Services batao', 'Pricing batao', 'Portfolio dikhao', 'Contact team'],
+  unknown:         ['Services kya hain?', 'Pricing batao', 'Contact details'],
 };
+
+// Service-Specific Hyper-Relevant Suggestions
+export const SERVICE_QUICK_REPLIES: Record<string, string[]> = {
+  website_development: ['Website pricing?', 'eCommerce banwana hai', 'Portfolio dikhao', 'Quote chahiye'],
+  ecommerce_website:   ['eCommerce pricing?', 'Payment gateway feature?', 'Portfolio dikhao', 'Demo schedule karo'],
+  whatsapp_automation: ['WhatsApp Bot pricing', 'Bulk WhatsApp API', 'Demo schedule karo', 'Contact team'],
+  crm_software:        ['CRM pricing?', 'Lead tracking feature', 'CRM Demo chahiye', 'Quote le lo'],
+  hrms_software:       ['HRMS Payroll feature', 'Attendance tracking', 'HRMS pricing', 'Demo schedule karo'],
+  mobile_app:          ['Android/iOS app cost', 'Flutter/React Native', 'App portfolio', 'Quote chahiye'],
+  business_automation: ['Automation pricing', 'Workflow automation', 'Demo schedule karo', 'Contact team'],
+  custom_software:     ['Custom software cost', 'Tech stack kya hai?', 'Quote chahiye', 'Contact team'],
+};
+
+/**
+ * Get contextually relevant quick reply suggestions
+ */
+export function getQuickReplies(intent: string, serviceKey?: string): string[] {
+  if (serviceKey && SERVICE_QUICK_REPLIES[serviceKey]) {
+    return SERVICE_QUICK_REPLIES[serviceKey];
+  }
+  return QUICK_REPLIES[intent] ?? QUICK_REPLIES['fallback'];
+}
 
 /**
  * Pick a random template variant for the given intent

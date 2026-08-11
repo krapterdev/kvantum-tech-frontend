@@ -1,5 +1,5 @@
 import { FusedContext } from './ContextBuilder';
-import { pickTemplate, QUICK_REPLIES } from '../config/responses';
+import { pickTemplate, getQuickReplies } from '../config/responses';
 
 export interface ConfidenceResult {
   level: 'high' | 'medium' | 'low' | 'fallback';
@@ -7,7 +7,6 @@ export interface ConfidenceResult {
 }
 
 export function assessConfidence(intentConfidence: number, searchScore: number): ConfidenceResult {
-  // Take maximum of intent confidence or RAG search score
   const combined = Math.max(intentConfidence, Math.min(searchScore * 1.5, 1));
 
   if (combined >= 0.70) return { level: 'high', confidence: combined };
@@ -29,16 +28,44 @@ const CORE_INTENTS = new Set([
   'booking', 'quotation', 'support', 'human_agent', 'blog', 'faq'
 ]);
 
+// High-detail service responses when a service entity is detected
+const DEDICATED_SERVICE_RESPONSES: Record<string, string> = {
+  website_development: `🌐 **Website Development Services**\n\nHum high-speed, SEO-friendly aur mobile-responsive websites build karte hain.\n\n✨ **Includes:**\n• Custom UI/UX Design\n• Next.js & React High Speed Engine\n• Mobile & Tablet Responsive\n• SEO Meta Optimization\n• Admin CMS Control\n\n💰 **Pricing**: ₹25,000 – ₹75,000 (starting ₹25k)\n⏱️ **Timeline**: 2–4 Weeks\n\nFree consultation & demo ke liye contact karein! 📞`,
+
+  ecommerce_website: `🛒 **eCommerce Website Solutions**\n\nComplete online shopping store with payment gateway, product management, and order tracking.\n\n✨ **Includes:**\n• Payment Gateway (Razorpay, Paytm, Stripe)\n• Product Inventory & Stock Sync\n• Order Management Dashboard\n• Discount Coupons & Offers\n• WhatsApp Order Alert Integration\n\n💰 **Pricing**: ₹40,000 – ₹2,00,000 (starting ₹40k)\n⏱️ **Timeline**: 4–8 Weeks`,
+
+  whatsapp_automation: `🤖 **WhatsApp Automation & API Integration**\n\nApne business messaging aur lead support ko WhatsApp par fully automate karein!\n\n✨ **Includes:**\n• Official WhatsApp Business API\n• Automated Lead Capture Bot\n• Bulk Notification & Broadcasts\n• Interactive Button Menus\n• CRM & Website Integration\n\n💰 **Pricing**: ₹15,000 – ₹80,000 (starting ₹15k)\n⚡ **Setup**: 3–7 Days`,
+
+  crm_software: `📊 **Custom CRM Software**\n\nManage leads, sales pipelines, team performance, and follow-ups in one portal.\n\n✨ **Includes:**\n• Lead Capture & Pipeline Board\n• Automated Follow-up Reminders\n• Team Productivity Log\n• Invoice & Quotation Generator\n• WhatsApp & Email Alert System\n\n💰 **Pricing**: ₹50,000 – ₹3,00,000 (starting ₹50k)\n⏱️ **Timeline**: 6–12 Weeks`,
+
+  hrms_software: `👥 **HRMS & Payroll System**\n\nComplete HR, employee attendance, payroll calculation, and leave management.\n\n✨ **Includes:**\n• Employee Self-Service Portal\n• Automated Attendance & Biometric Sync\n• Monthly Salary & Payslip Generator\n• Leave Approval Workflow\n• Performance Evaluation Reports\n\n💰 **Pricing**: ₹60,000 – ₹2,50,000 (starting ₹60k)`,
+
+  mobile_app: `📱 **Mobile App Development (Android & iOS)**\n\nHigh-performance native and cross-platform mobile applications.\n\n✨ **Includes:**\n• Flutter & React Native Cross-Platform\n• Play Store & App Store Publishing\n• Push Notifications Engine\n• Admin Control Panel\n• Offline Data Caching\n\n💰 **Pricing**: ₹75,000 – ₹4,00,000 (starting ₹75k)\n⏱️ **Timeline**: 8–16 Weeks`,
+
+  business_automation: `⚡ **Business Workflow & Process Automation**\n\nEliminate repetitive tasks, approval delays, and human errors in daily operations.\n\n✨ **Includes:**\n• Workflow & Approval Engines\n• Automated PDF Report Generation\n• Database & API Integrations\n• Task Scheduling & Reminders\n\n💰 **Pricing**: ₹30,000 – ₹2,00,000 (starting ₹30k)`,
+
+  custom_software: `💻 **Enterprise Custom Software Development**\n\nBespoke software architecture tailored specifically to your unique business workflow.\n\n✨ **Includes:**\n• Tailored Database & Architecture\n• Multi-role Admin & User Management\n• Cloud Infrastructure (AWS / Vercel)\n• REST & GraphQL API Integration\n• 6 Months Support & Maintenance\n\n💰 **Pricing**: ₹75,000 onwards`,
+};
+
 export class ResponseEngine {
   /**
    * Generates a context-fused natural response combining Structured DB data + Hybrid RAG chunks.
    */
   generate(fused: FusedContext, confidenceRes: ConfidenceResult): GeneratedResponse {
-    const { intent, dbResult, ragChunks, routePlan } = fused;
+    const { intent, entities, dbResult, ragChunks, routePlan } = fused;
     let text = '';
-    const quickReplies = QUICK_REPLIES[intent] ?? QUICK_REPLIES['fallback'];
 
-    // 1. STRUCTURED DB / HYBRID ROUTE WITH LIVE DB RESULT
+    // Smart context-aware suggestions
+    const serviceKey = entities.service;
+    const quickReplies = getQuickReplies(intent, serviceKey);
+
+    // 1. DEDICATED SERVICE ENTITY RESPONSE
+    if (serviceKey && DEDICATED_SERVICE_RESPONSES[serviceKey]) {
+      text = DEDICATED_SERVICE_RESPONSES[serviceKey];
+      return { text, quickReplies: quickReplies.slice(0, 4), intent, confidence: Math.max(confidenceRes.confidence, 0.90) };
+    }
+
+    // 2. STRUCTURED DB / HYBRID ROUTE WITH LIVE DB RESULT
     if (dbResult && (routePlan.destination === 'STRUCTURED_DB' || routePlan.destination === 'HYBRID')) {
       if (dbResult.entityType === 'service' && dbResult.data) {
         const s = dbResult.data;
@@ -63,7 +90,7 @@ export class ResponseEngine {
       }
     }
 
-    // 2. HYBRID RAG ROUTE (UNSTRUCTURED KNOWLEDGE)
+    // 3. HYBRID RAG ROUTE (UNSTRUCTURED KNOWLEDGE)
     if (ragChunks.length > 0 && ragChunks[0].score > 0.30) {
       const top = ragChunks[0];
 
@@ -79,7 +106,7 @@ export class ResponseEngine {
       return { text, quickReplies: quickReplies.slice(0, 4), intent, confidence: confidenceRes.confidence };
     }
 
-    // 3. CORE INTENT DIRECT TEMPLATES (Guarantees fast, accurate answers for Services, Portfolio, Pricing, Contact, etc.)
+    // 4. CORE INTENT DIRECT TEMPLATES
     if (CORE_INTENTS.has(intent)) {
       text = pickTemplate(intent).template;
       return {
@@ -90,7 +117,7 @@ export class ResponseEngine {
       };
     }
 
-    // 4. FALLBACK & CLARIFICATION
+    // 5. FALLBACK & CLARIFICATION
     if (confidenceRes.level === 'medium') {
       text = pickTemplate(intent).template;
     } else if (confidenceRes.level === 'low') {
