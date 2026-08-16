@@ -4061,10 +4061,12 @@ ${allEntries.map(entry => `    <url>
                 try {
                   await settingService.updateSetting('contact', updatedContact);
                   localStorage.setItem('kts_saved_contact_settings', JSON.stringify(updatedContact));
+                  if (typeof window !== 'undefined') window.dispatchEvent(new Event('kts_settings_updated'));
                   alert('✅ [SUCCESS] Social Media Links & Network Visibility updated successfully!');
                 } catch (e) {
                   console.warn('[OFFLINE SAVE] Social media updated locally:', e.message);
                   localStorage.setItem('kts_saved_contact_settings', JSON.stringify(updatedContact));
+                  if (typeof window !== 'undefined') window.dispatchEvent(new Event('kts_settings_updated'));
                   alert('✅ [SUCCESS] Social Media Links updated locally.');
                 }
                 setSettings(prev => ({ ...prev, contact: updatedContact }));

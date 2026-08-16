@@ -70,19 +70,19 @@ export default function FloatingQuickActions({ settings }) {
 
   return (
     <>
-      {/* Floating Buttons Stack (Fixed Bottom-Right) */}
-      <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end gap-3 select-none">
+      {/* Scroll To Top Button (Fixed Bottom-Right above Chatbot) */}
+      {showScrollTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-24 right-6 z-[85] flex items-center justify-center w-11 h-11 rounded-full bg-slate-900 dark:bg-zinc-800 text-white border border-slate-700 dark:border-white/20 shadow-lg hover:scale-110 transition-all duration-300 cursor-pointer"
+          title="Scroll to Top"
+        >
+          <ArrowUp size={18} />
+        </button>
+      )}
 
-        {/* Scroll To Top Button (Appears when scrolled down) */}
-        {showScrollTop && (
-          <button
-            onClick={scrollToTop}
-            className="group relative flex items-center justify-center w-11 h-11 rounded-full bg-zinc-900 hover:bg-zinc-800 text-zinc-100 border border-white/20 shadow-[0_10px_25px_rgba(0,0,0,0.5)] transition-all duration-300 hover:scale-110 cursor-pointer"
-            title="Scroll to Top"
-          >
-            <ArrowUp size={18} className="group-hover:-translate-y-1 transition-transform" />
-          </button>
-        )}
+      {/* Floating Action Buttons Stack (Fixed Bottom-Left) */}
+      <div className="fixed bottom-6 left-6 z-[90] flex flex-col items-start gap-3 select-none">
 
         {/* WhatsApp Direct Chat Button */}
         <a
@@ -117,9 +117,9 @@ export default function FloatingQuickActions({ settings }) {
 
       </div>
 
-      {/* Quick Callback Modal Pop-up */}
+      {/* Quick Callback Modal Pop-up (Fixed Bottom-Left) */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 z-[9999] w-[320px] sm:w-[360px] p-6 rounded-3xl bg-zinc-950/95 border border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.85)] backdrop-blur-2xl text-left select-none animate-in fade-in slide-in-from-bottom-4 duration-300">
+        <div className="fixed bottom-24 left-6 z-[90] w-[320px] sm:w-[360px] p-6 rounded-3xl bg-zinc-950/95 border border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.85)] backdrop-blur-2xl text-left select-none animate-in fade-in slide-in-from-bottom-4 duration-300">
           
           <div className="flex justify-between items-center mb-4">
             <span className="text-xs font-mono font-bold uppercase tracking-wider text-pinkCustom bg-pinkCustom/10 border border-pinkCustom/20 px-3 py-1 rounded-full flex items-center gap-1.5">

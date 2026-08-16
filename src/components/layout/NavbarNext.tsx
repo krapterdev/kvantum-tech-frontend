@@ -5,7 +5,10 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, X, Sun, Moon, ArrowRight } from 'lucide-react';
 import MobileMenu from './MobileMenu';
-import { InstagramIcon, LinkedinIcon, FacebookIcon, TwitterIcon } from '../ui/SocialIcons';
+import { 
+  InstagramIcon, LinkedinIcon, FacebookIcon, TwitterIcon, 
+  WhatsappIcon, YoutubeIcon, GithubIcon, PinterestIcon, TelegramIcon 
+} from '../ui/SocialIcons';
 import KvantumLogo from '../ui/KvantumLogo';
 
 export default function NavbarNext({ theme, toggleTheme, settings }: any) {
@@ -13,10 +16,18 @@ export default function NavbarNext({ theme, toggleTheme, settings }: any) {
   const pathname = usePathname();
 
   const contact = settings?.contact || {};
-  const showInstagram = contact.instagramActive !== false && (contact.instagram || 'https://www.instagram.com/kvantumtechsolutions/');
-  const showLinkedin = contact.linkedinActive !== false && (contact.linkedin || 'https://www.linkedin.com/in/kvantum-tech-solutions-75916a41b');
-  const showFacebook = contact.facebookActive !== false && (contact.facebook || 'https://facebook.com/kvantumtechsolutions');
-  const showTwitter = contact.twitterActive !== false && contact.twitter;
+
+  const navbarSocials = [
+    { id: 'instagram', label: 'Instagram', url: contact.instagram || 'https://www.instagram.com/kvantumtechsolutions/', active: contact.instagramActive !== false && Boolean(contact.instagram || 'https://www.instagram.com/kvantumtechsolutions/'), Icon: InstagramIcon, hoverColor: 'text-slate-500 hover:text-pink-500' },
+    { id: 'linkedin', label: 'LinkedIn', url: contact.linkedin, active: contact.linkedinActive === true && Boolean(contact.linkedin), Icon: LinkedinIcon, hoverColor: 'text-slate-500 hover:text-cyan-500' },
+    { id: 'facebook', label: 'Facebook', url: contact.facebook, active: contact.facebookActive === true && Boolean(contact.facebook), Icon: FacebookIcon, hoverColor: 'text-slate-500 hover:text-blue-500' },
+    { id: 'twitter', label: 'Twitter / X', url: contact.twitter, active: contact.twitterActive === true && Boolean(contact.twitter), Icon: TwitterIcon, hoverColor: 'text-slate-500 hover:text-sky-400' },
+    { id: 'whatsapp', label: 'WhatsApp', url: contact.whatsapp, active: contact.whatsappActive === true && Boolean(contact.whatsapp), Icon: WhatsappIcon, hoverColor: 'text-slate-500 hover:text-emerald-500' },
+    { id: 'youtube', label: 'YouTube', url: contact.youtube, active: contact.youtubeActive === true && Boolean(contact.youtube), Icon: YoutubeIcon, hoverColor: 'text-slate-500 hover:text-red-500' },
+    { id: 'github', label: 'GitHub', url: contact.github || 'https://github.com/krapterdev', active: contact.githubActive !== false && Boolean(contact.github || 'https://github.com/krapterdev'), Icon: GithubIcon, hoverColor: 'text-slate-500 hover:text-purple-400' },
+    { id: 'pinterest', label: 'Pinterest', url: contact.pinterest, active: contact.pinterestActive === true && Boolean(contact.pinterest), Icon: PinterestIcon, hoverColor: 'text-slate-500 hover:text-red-400' },
+    { id: 'telegram', label: 'Telegram', url: contact.telegram, active: contact.telegramActive === true && Boolean(contact.telegram), Icon: TelegramIcon, hoverColor: 'text-slate-500 hover:text-sky-500' },
+  ].filter(s => s.active && s.url && s.url.trim() !== '');
 
   const isActive = (path: string) => {
     if (!pathname) return false;
@@ -83,28 +94,22 @@ export default function NavbarNext({ theme, toggleTheme, settings }: any) {
           <div className="flex items-center gap-4">
 
             {/* Social Icons */}
-            <div className="hidden md:flex items-center gap-3 border-r border-slate-200 dark:border-white/10 pr-4">
-              {showInstagram && (
-                <a href={contact.instagram || 'https://www.instagram.com/kvantumtechsolutions/'} target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-pink-500 dark:text-slate-400 transition-colors p-1" title="Instagram">
-                  <InstagramIcon className="w-4 h-4" />
-                </a>
-              )}
-              {showLinkedin && (
-                <a href={contact.linkedin || 'https://www.linkedin.com/in/kvantum-tech-solutions-75916a41b'} target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-cyan-500 dark:text-slate-400 transition-colors p-1" title="LinkedIn">
-                  <LinkedinIcon className="w-4 h-4" />
-                </a>
-              )}
-              {showFacebook && (
-                <a href={contact.facebook || 'https://facebook.com/kvantumtechsolutions'} target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-blue-500 dark:text-slate-400 transition-colors p-1" title="Facebook">
-                  <FacebookIcon className="w-4 h-4" />
-                </a>
-              )}
-              {showTwitter && (
-                <a href={contact.twitter} target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-sky-400 dark:text-slate-400 transition-colors p-1" title="Twitter / X">
-                  <TwitterIcon className="w-4 h-4" />
-                </a>
-              )}
-            </div>
+            {navbarSocials.length > 0 && (
+              <div className="hidden md:flex items-center gap-3 border-r border-slate-200 dark:border-white/10 pr-4">
+                {navbarSocials.map(({ id, label, url, Icon, hoverColor }) => (
+                  <a
+                    key={id}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`${hoverColor} dark:text-slate-400 transition-colors p-1`}
+                    title={label}
+                  >
+                    <Icon className="w-4 h-4" />
+                  </a>
+                ))}
+              </div>
+            )}
 
             {/* Theme Toggle Button */}
             <button

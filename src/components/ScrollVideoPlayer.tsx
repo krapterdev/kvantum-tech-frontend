@@ -12,7 +12,8 @@ export default function ScrollVideoPlayer() {
   // Listen for theme changes
   useEffect(() => {
     const checkTheme = () => {
-      setIsDark(!document.documentElement.classList.contains('light-mode'));
+      const root = document.documentElement;
+      setIsDark(root.classList.contains('dark') && !root.classList.contains('light-mode'));
     };
     checkTheme();
 
@@ -22,10 +23,15 @@ export default function ScrollVideoPlayer() {
     return () => observer.disconnect();
   }, []);
 
-  // Preload all 300 frames on component mount
+  // Preload frames on component mount
   useEffect(() => {
     let loadedCount = 0;
     const preloadedImages: HTMLImageElement[] = [];
+
+    // Fallback timeout to force start canvas drawing even if network is slow
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1500);
 
     for (let i = 1; i <= totalFrames; i++) {
       const img = new Image();
@@ -35,7 +41,7 @@ export default function ScrollVideoPlayer() {
 
       const handleLoadOrError = () => {
         loadedCount++;
-        if (loadedCount === totalFrames) {
+        if (loadedCount >= 10) {
           setLoading(false);
         }
       };
@@ -45,6 +51,7 @@ export default function ScrollVideoPlayer() {
       preloadedImages.push(img);
     }
     setImages(preloadedImages);
+    return () => clearTimeout(timer);
   }, []);
 
   // Handle canvas drawing on scroll and resize
@@ -117,8 +124,8 @@ export default function ScrollVideoPlayer() {
       className="fixed inset-0 w-full h-full pointer-events-none"
       style={{
         zIndex: -20,
-        opacity: 0.18,        /* reduced from full opacity — subtle background */
-        filter: 'blur(2px)',  /* light blur so it doesn't distract from content */
+        opacity: 0.35,        /* subtle dark mode scroller background */
+        filter: 'blur(1px)',
       }}
     />
   );

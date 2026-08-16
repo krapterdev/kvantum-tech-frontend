@@ -96,8 +96,8 @@ export default function ChatWidget() {
     <>
       {portalContent}
 
-      {/* Floating toggle button */}
-      <div className="fixed bottom-6 left-4 sm:left-auto sm:right-6 sm:bottom-24 z-[9999]">
+      {/* Floating toggle button (Fixed Bottom-Right) */}
+      <div className="fixed bottom-6 right-6 z-[95]">
         <button
           onClick={handleToggle}
           className={`

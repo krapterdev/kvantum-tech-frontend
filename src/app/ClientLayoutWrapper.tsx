@@ -15,12 +15,37 @@ export default function ClientLayoutWrapper({ children }: { children: React.Reac
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith('/admin');
   const [theme, setTheme] = useState('dark');
+  const [settings, setSettings] = useState<any>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('kts_saved_contact_settings');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          return { ...fallbackSettings, contact: parsed };
+        } catch (e) {}
+      }
+    }
+    return fallbackSettings;
+  });
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('kts_theme_mode');
     if (savedTheme === 'light' || savedTheme === 'dark') {
       setTheme(savedTheme);
     }
+
+    const handleSettingsUpdate = () => {
+      const saved = localStorage.getItem('kts_saved_contact_settings');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          setSettings((prev: any) => ({ ...prev, contact: parsed }));
+        } catch (e) {}
+      }
+    };
+
+    window.addEventListener('kts_settings_updated', handleSettingsUpdate);
+    return () => window.removeEventListener('kts_settings_updated', handleSettingsUpdate);
   }, []);
 
   useEffect(() => {
@@ -55,7 +80,7 @@ export default function ClientLayoutWrapper({ children }: { children: React.Reac
       <ScrollToTop />
 
       {/* Header Navbar */}
-      <NavbarNext theme={theme} toggleTheme={toggleTheme} settings={fallbackSettings as any} />
+      <NavbarNext theme={theme} toggleTheme={toggleTheme} settings={settings} />
 
       {/* Main Content Area */}
       <main className="flex-grow pt-24 relative z-10">
@@ -63,7 +88,7 @@ export default function ClientLayoutWrapper({ children }: { children: React.Reac
       </main>
 
       {/* Floating Quick Action Buttons */}
-      <FloatingQuickActions settings={fallbackSettings as any} />
+      <FloatingQuickActions settings={settings} />
 
       {/* AI-Free Website Intelligence Chatbot */}
       <ChatWidget />
@@ -72,7 +97,7 @@ export default function ClientLayoutWrapper({ children }: { children: React.Reac
       <CookieConsent />
 
       {/* Footer */}
-      <Footer theme={theme} settings={fallbackSettings as any} />
+      <Footer theme={theme} settings={settings} />
     </>
   );
 }
