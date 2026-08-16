@@ -96,10 +96,14 @@ export default function Services({ services = [] }) {
   // Combine CMS services or fallback cards
   const rawServices = Array.isArray(services) && services.length > 0 ? services : serviceCards;
 
-  // Sort explicitly by sortOrder
+  // Sort explicitly by homeSortOrder or sortOrder
   const allServices = [...rawServices].sort((a, b) => {
-    const orderA = a.sortOrder !== undefined && a.sortOrder !== null ? Number(a.sortOrder) : 999;
-    const orderB = b.sortOrder !== undefined && b.sortOrder !== null ? Number(b.sortOrder) : 999;
+    const orderA = a.homeSortOrder !== undefined && a.homeSortOrder !== null 
+      ? Number(a.homeSortOrder) 
+      : (a.sortOrder !== undefined && a.sortOrder !== null ? Number(a.sortOrder) : 999);
+    const orderB = b.homeSortOrder !== undefined && b.homeSortOrder !== null 
+      ? Number(b.homeSortOrder) 
+      : (b.sortOrder !== undefined && b.sortOrder !== null ? Number(b.sortOrder) : 999);
     return orderA - orderB;
   });
 

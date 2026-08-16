@@ -12,7 +12,18 @@ import * as settingService from '@/services/settingService';
 import * as portfolioService from '@/services/portfolioService';
 
 export default function AdminClient() {
-  const [services, setServices] = useState<any[]>(fallbackServices);
+  const [services, setServices] = useState<any[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('kts_custom_services');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        } catch (e) {}
+      }
+    }
+    return fallbackServices;
+  });
   const [blogs, setBlogs] = useState<any[]>(fallbackBlogs);
   const [portfolios, setPortfolios] = useState<any[]>([]);
   const [seoPages, setSeoPages] = useState<any[]>([]);
@@ -31,7 +42,12 @@ export default function AdminClient() {
           seoService.getSeoSettings()
         ]);
 
-        if (sRes.status === 'fulfilled' && Array.isArray(sRes.value) && sRes.value.length > 0) setServices(sRes.value);
+        if (sRes.status === 'fulfilled' && Array.isArray(sRes.value) && sRes.value.length > 0) {
+          const savedLocal = typeof window !== 'undefined' ? localStorage.getItem('kts_custom_services') : null;
+          if (!savedLocal) {
+            setServices(sRes.value);
+          }
+        }
         if (bRes.status === 'fulfilled' && Array.isArray(bRes.value) && bRes.value.length > 0) setBlogs(bRes.value);
         if (pRes.status === 'fulfilled' && Array.isArray(pRes.value)) setPortfolios(pRes.value);
         if (seoRes.status === 'fulfilled' && Array.isArray(seoRes.value)) setSeoPages(seoRes.value);

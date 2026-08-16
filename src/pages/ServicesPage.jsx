@@ -34,10 +34,14 @@ export default function ServicesPage({ services = [] }) {
   // Use dynamic services if available, otherwise fall back to fallbackServices
   const rawServices = Array.isArray(services) && services.length > 0 ? services : fallbackServices;
 
-  // Sort explicitly by sortOrder
+  // Sort explicitly by servicesSortOrder or sortOrder
   const activeServicesList = [...rawServices].sort((a, b) => {
-    const orderA = a.sortOrder !== undefined && a.sortOrder !== null ? Number(a.sortOrder) : 999;
-    const orderB = b.sortOrder !== undefined && b.sortOrder !== null ? Number(b.sortOrder) : 999;
+    const orderA = a.servicesSortOrder !== undefined && a.servicesSortOrder !== null 
+      ? Number(a.servicesSortOrder) 
+      : (a.sortOrder !== undefined && a.sortOrder !== null ? Number(a.sortOrder) : 999);
+    const orderB = b.servicesSortOrder !== undefined && b.servicesSortOrder !== null 
+      ? Number(b.servicesSortOrder) 
+      : (b.sortOrder !== undefined && b.sortOrder !== null ? Number(b.sortOrder) : 999);
     return orderA - orderB;
   });
 

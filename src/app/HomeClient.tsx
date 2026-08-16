@@ -31,13 +31,29 @@ import { fallbackBlogs } from '@/pages/BlogPage';
 import { fallbackSettings } from '@/data/settings';
 
 export default function HomeClient() {
+  const [services, setServices] = React.useState<any[]>(fallbackServices);
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('kts_custom_services');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setServices(parsed);
+          }
+        } catch (e) {}
+      }
+    }
+  }, []);
+
   return (
     <div className="fade-in-up">
       <SeoSchema />
       <Hero settings={fallbackSettings as any} />
       <TrustedBy />
       <About settings={fallbackSettings as any} />
-      <Services services={fallbackServices as any} />
+      <Services services={services as any} />
       <BusinessAutomationHighlight />
       <AutomationCalculator />
       <SoftwareProducts />

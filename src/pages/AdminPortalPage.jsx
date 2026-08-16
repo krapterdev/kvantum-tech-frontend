@@ -356,18 +356,27 @@ ${allEntries.map(entry => `    <url>
     return () => clearInterval(interval);
   }, []);
 
-  // Auto-switch tabs based on RBAC permissions on login
+  // Preserve active tab on page reloads (from URL or localStorage)
   useEffect(() => {
-    if (currentUser) {
-      if (currentUser.role === 'sales') {
-        setActiveTab('leads');
-      } else if (currentUser.role === 'seo') {
-        setActiveTab('services');
+    if (currentUser && typeof window !== 'undefined') {
+      const pathParts = window.location.pathname.split('/');
+      const urlTab = pathParts[1] === 'admin' && pathParts[2] ? pathParts[2] : null;
+      const savedTab = localStorage.getItem('kts_admin_active_tab');
+      if (urlTab) {
+        setActiveTab(urlTab);
+      } else if (savedTab) {
+        setActiveTab(savedTab);
       } else {
-        setActiveTab('leads');
+        if (currentUser.role === 'sales') {
+          setActiveTab('leads');
+        } else if (currentUser.role === 'seo') {
+          setActiveTab('services');
+        } else {
+          setActiveTab('leads');
+        }
       }
     }
-  }, [currentUser]);
+  }, []);
 
   // 15-Minute Inactivity Security Auto-Logout System
   useEffect(() => {
@@ -1886,11 +1895,19 @@ ${allEntries.map(entry => `    <url>
         const completeItem = { ...editItem, id: payloadId, _id: payloadId, slug: payloadId };
         if (originalId) {
           try { await serviceService.updateService(originalId, completeItem); } catch (apiErr) { console.warn('Offline service update:', apiErr); }
-          setServices(prev => (Array.isArray(prev) ? prev : []).map(s => (s.id === originalId || s._id === originalId || s.slug === originalId) ? { ...completeItem } : s));
+          setServices(prev => {
+            const updated = (Array.isArray(prev) ? prev : []).map(s => (s.id === originalId || s._id === originalId || s.slug === originalId) ? { ...completeItem } : s);
+            if (typeof window !== 'undefined') localStorage.setItem('kts_custom_services', JSON.stringify(updated));
+            return updated;
+          });
         } else {
           let created = completeItem;
           try { created = await serviceService.createService(completeItem); } catch (apiErr) { console.warn('Offline service create:', apiErr); }
-          setServices(prev => [...(Array.isArray(prev) ? prev : []), created || completeItem]);
+          setServices(prev => {
+            const updated = [...(Array.isArray(prev) ? prev : []), created || completeItem];
+            if (typeof window !== 'undefined') localStorage.setItem('kts_custom_services', JSON.stringify(updated));
+            return updated;
+          });
         }
       } else if (editType === 'blog') {
         const payloadId = editItem.id || slugify(editItem.title);
@@ -1970,8 +1987,57 @@ ${allEntries.map(entry => `    <url>
     }
   };
 
-  const handleMoveService = async (index, direction) => {
-    if (!Array.isArray(services)) return;
+  // Kanban Drag-and-Drop & Reorder State for Services CMS
+  const [draggedServiceIndex, setDraggedServiceIndex] = useState(null);
+  const [draggedServiceColumn, setDraggedServiceColumn] = useState(null);
+
+  const saveServicesList = (updatedList) => {
+    setServices(updatedList);
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('kts_custom_services', JSON.stringify(updatedList));
+      } catch (e) {}
+    }
+    try {
+      const orderedIds = updatedList.map(s => s._id || s.id || s.slug);
+      fetch('/api/services/reorder', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${currentUser?.token}`
+        },
+        body: JSON.stringify({ orderedIds, services: updatedList })
+      }).catch(() => null);
+    } catch (e) {}
+  };
+
+  const handleToggleHomeVisibility = (serviceId) => {
+    const updated = (Array.isArray(services) ? services : []).map(s => {
+      const sId = s._id || s.id || s.slug;
+      if (sId === serviceId) {
+        return { ...s, showInHome: s.showInHome === false ? true : false };
+      }
+      return s;
+    });
+    saveServicesList(updated);
+  };
+
+  const handleMoveHomeService = (index, direction) => {
+    const homeList = (Array.isArray(services) ? services : []).filter(s => s.showInHome !== false);
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= homeList.length) return;
+
+    const reorderedHome = [...homeList];
+    const temp = reorderedHome[index];
+    reorderedHome[index] = reorderedHome[targetIndex];
+    reorderedHome[targetIndex] = temp;
+
+    const remappedHome = reorderedHome.map((s, idx) => ({ ...s, homeSortOrder: idx }));
+    const nonHomeList = (Array.isArray(services) ? services : []).filter(s => s.showInHome === false);
+    saveServicesList([...remappedHome, ...nonHomeList]);
+  };
+
+  const handleMoveAllService = (index, direction) => {
     const targetIndex = direction === 'up' ? index - 1 : index + 1;
     if (targetIndex < 0 || targetIndex >= services.length) return;
 
@@ -1980,21 +2046,52 @@ ${allEntries.map(entry => `    <url>
     updated[index] = updated[targetIndex];
     updated[targetIndex] = temp;
 
-    setServices(updated);
+    const reassigned = updated.map((s, idx) => ({ ...s, servicesSortOrder: idx, sortOrder: idx }));
+    saveServicesList(reassigned);
+  };
 
-    try {
-      const orderedIds = updated.map(s => s._id || s.id || s.slug);
-      await fetch('/api/services/reorder', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${currentUser?.token}`
-        },
-        body: JSON.stringify({ orderedIds })
-      });
-    } catch (err) {
-      console.warn('[REORDER] Failed to sync order to server:', err);
+  const handleDragStartService = (e, index, column) => {
+    setDraggedServiceIndex(index);
+    setDraggedServiceColumn(column);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOverService = (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDropOnHomeColumn = (e, dropIndex) => {
+    e.preventDefault();
+    if (draggedServiceIndex === null) return;
+
+    const homeList = (Array.isArray(services) ? services : []).filter(s => s.showInHome !== false);
+    const nonHomeList = (Array.isArray(services) ? services : []).filter(s => s.showInHome === false);
+
+    if (draggedServiceColumn === 'home') {
+      const updatedHome = [...homeList];
+      const [moved] = updatedHome.splice(draggedServiceIndex, 1);
+      updatedHome.splice(dropIndex, 0, moved);
+      const remappedHome = updatedHome.map((s, idx) => ({ ...s, homeSortOrder: idx }));
+      saveServicesList([...remappedHome, ...nonHomeList]);
     }
+    setDraggedServiceIndex(null);
+    setDraggedServiceColumn(null);
+  };
+
+  const handleDropOnAllColumn = (e, dropIndex) => {
+    e.preventDefault();
+    if (draggedServiceIndex === null) return;
+
+    if (draggedServiceColumn === 'all') {
+      const updatedAll = [...services];
+      const [moved] = updatedAll.splice(draggedServiceIndex, 1);
+      updatedAll.splice(dropIndex, 0, moved);
+      const remappedAll = updatedAll.map((s, idx) => ({ ...s, servicesSortOrder: idx, sortOrder: idx }));
+      saveServicesList(remappedAll);
+    }
+    setDraggedServiceIndex(null);
+    setDraggedServiceColumn(null);
   };
 
   const handleDeleteBlog = async (rawId) => {
@@ -2691,75 +2788,204 @@ ${allEntries.map(entry => `    <url>
           renderServiceForm()
         ) : (
           <div className="fade-in-up flex flex-col gap-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-xl font-bold font-headline text-zinc-200 flex items-center gap-2">
-                <Layers size={18} className="text-cyanCustom" /> System Capabilities Nodes
-              </h2>
-              <Button onClick={() => openEditor('service')} variant="primary" className="px-4 py-2 text-xs gap-1.5">
+            <div className="flex justify-between items-center bg-zinc-900/60 p-5 rounded-2xl border border-white/5">
+              <div>
+                <h2 className="text-xl font-bold font-headline text-zinc-200 flex items-center gap-2">
+                  <Layers size={20} className="text-cyanCustom" /> Services Kanban Board & Dual Sorter
+                </h2>
+                <p className="text-xs text-zinc-400 mt-1">
+                  Drag & drop service cards or use controls to set custom ordering for <b>Homepage</b> and <b>Services Page</b> independently.
+                </p>
+              </div>
+              <Button onClick={() => openEditor('service')} variant="primary" className="px-4 py-2.5 text-xs gap-1.5 shadow-lg shadow-cyanCustom/20">
                 <Plus size={14} /> Add Service Node
               </Button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {(Array.isArray(services) ? services : []).map((ser, idx) => {
-                const serKey = ser._id || ser.id || ser.slug || `ser_${idx}`;
-                return (
-                  <Card key={serKey} className="p-6 border flex justify-between items-start gap-4 relative">
-                    <div className="text-left flex flex-col gap-2">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="text-[10px] font-mono text-zinc-500 uppercase">NODE_ID: {serKey}</span>
-                        <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${
-                          ser.showInHome !== false 
-                            ? 'bg-cyanCustom/10 text-cyanCustom border border-cyanCustom/30' 
-                            : 'bg-zinc-800 text-zinc-400 border border-zinc-700'
-                        }`}>
-                          {ser.showInHome !== false ? '✓ Homepage' : 'Hidden on Home'}
-                        </span>
-                      </div>
-                      <h3 className="text-lg font-bold font-headline text-zinc-200">{ser.title}</h3>
-                      <p className="text-zinc-400 text-xs leading-relaxed max-w-[400px]">{ser.shortDesc}</p>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      {/* Sort Order Up/Down Buttons */}
-                      <div className="flex flex-col gap-1 bg-zinc-900 border border-white/8 rounded-lg p-1">
-                        <button
-                          type="button"
-                          disabled={idx === 0}
-                          onClick={() => handleMoveService(idx, 'up')}
-                          title="Move Up"
-                          className="p-1 hover:bg-white/10 rounded text-zinc-300 disabled:opacity-20 cursor-pointer"
-                        >
-                          <ChevronUp size={12} />
-                        </button>
-                        <button
-                          type="button"
-                          disabled={idx === services.length - 1}
-                          onClick={() => handleMoveService(idx, 'down')}
-                          title="Move Down"
-                          className="p-1 hover:bg-white/10 rounded text-zinc-300 disabled:opacity-20 cursor-pointer"
-                        >
-                          <ChevronDown size={12} />
-                        </button>
-                      </div>
+            {/* KANBAN BOARD: DUAL COLUMNS */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              
+              {/* COLUMN 1: HOMEPAGE SERVICES KANBAN */}
+              <div 
+                className="bg-zinc-900/40 border border-cyanCustom/20 p-5 rounded-2xl flex flex-col gap-4"
+                onDragOver={handleDragOverService}
+              >
+                <div className="flex justify-between items-center border-b border-white/10 pb-3">
+                  <div className="flex items-center gap-2">
+                    <span className="w-3 h-3 rounded-full bg-cyanCustom animate-pulse" />
+                    <h3 className="text-sm font-bold font-headline text-zinc-100 uppercase tracking-wider">
+                      🏠 Homepage Services Column
+                    </h3>
+                  </div>
+                  <span className="text-[11px] font-mono font-bold bg-cyanCustom/10 text-cyanCustom border border-cyanCustom/30 px-2.5 py-0.5 rounded-full">
+                    {(Array.isArray(services) ? services : []).filter(s => s.showInHome !== false).length} Active on Home
+                  </span>
+                </div>
+                <p className="text-[11px] text-zinc-400">
+                  Drag & drop or use arrows to adjust the exact order shown on Homepage.
+                </p>
 
-                      <button 
-                        onClick={() => openEditor('service', ser)}
-                        title="Edit Service & SEO"
-                        className="p-2 bg-white/[0.02] border border-white/8 rounded-lg hover:border-cyanCustom/30 hover:text-cyanCustom transition-colors cursor-pointer"
+                <div className="flex flex-col gap-3 min-h-[300px]">
+                  {(Array.isArray(services) ? services : []).filter(s => s.showInHome !== false).map((ser, idx) => {
+                    const serKey = ser._id || ser.id || ser.slug || `home_${idx}`;
+                    return (
+                      <div
+                        key={serKey}
+                        draggable
+                        onDragStart={(e) => handleDragStartService(e, idx, 'home')}
+                        onDrop={(e) => handleDropOnHomeColumn(e, idx)}
+                        onDragOver={handleDragOverService}
+                        className="p-4 bg-zinc-950/80 border border-white/10 hover:border-cyanCustom/50 rounded-xl flex items-center justify-between gap-3 cursor-grab active:cursor-grabbing transition-all shadow-md group"
                       >
-                        <Edit2 size={14} />
-                      </button>
-                      <button 
-                        onClick={() => handleDeleteService(serKey)}
-                        title="Delete Service"
-                        className="p-2 bg-white/[0.02] border border-white/8 rounded-lg hover:border-red-500/30 hover:text-red-400 transition-colors cursor-pointer"
-                      >
-                        <Trash2 size={14} />
-                      </button>
+                        <div className="flex items-center gap-3">
+                          <span className="text-xs font-mono font-bold w-6 h-6 rounded-lg bg-cyanCustom/10 text-cyanCustom border border-cyanCustom/30 flex items-center justify-center shrink-0">
+                            #{idx + 1}
+                          </span>
+                          <div className="text-left">
+                            <h4 className="text-sm font-bold text-zinc-100 group-hover:text-cyanCustom transition-colors">{ser.title}</h4>
+                            <p className="text-[11px] text-zinc-400 line-clamp-1 max-w-[280px]">{ser.shortDesc}</p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 shrink-0">
+                          <div className="flex items-center gap-1 bg-zinc-900 border border-white/10 rounded-lg p-1">
+                            <button
+                              type="button"
+                              disabled={idx === 0}
+                              onClick={() => handleMoveHomeService(idx, 'up')}
+                              title="Move Up on Home"
+                              className="p-1 hover:bg-white/10 rounded text-zinc-300 disabled:opacity-20 cursor-pointer"
+                            >
+                              <ChevronUp size={14} />
+                            </button>
+                            <button
+                              type="button"
+                              disabled={idx === (Array.isArray(services) ? services : []).filter(s => s.showInHome !== false).length - 1}
+                              onClick={() => handleMoveHomeService(idx, 'down')}
+                              title="Move Down on Home"
+                              className="p-1 hover:bg-white/10 rounded text-zinc-300 disabled:opacity-20 cursor-pointer"
+                            >
+                              <ChevronDown size={14} />
+                            </button>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleToggleHomeVisibility(serKey)}
+                            title="Remove from Homepage"
+                            className="px-2.5 py-1 text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-lg hover:bg-amber-500/20 transition-colors cursor-pointer"
+                          >
+                            Hide from Home
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {(Array.isArray(services) ? services : []).filter(s => s.showInHome !== false).length === 0 && (
+                    <div className="p-8 text-center border-2 border-dashed border-white/10 rounded-xl text-zinc-500 text-xs font-mono">
+                      No services currently visible on Homepage. Toggle &quot;Show on Home&quot; from Column 2.
                     </div>
-                  </Card>
-                );
-              })}
+                  )}
+                </div>
+              </div>
+
+              {/* COLUMN 2: ALL SERVICES PAGE KANBAN */}
+              <div 
+                className="bg-zinc-900/40 border border-white/10 p-5 rounded-2xl flex flex-col gap-4"
+                onDragOver={handleDragOverService}
+              >
+                <div className="flex justify-between items-center border-b border-white/10 pb-3">
+                  <div className="flex items-center gap-2">
+                    <span className="w-3 h-3 rounded-full bg-indigo-500" />
+                    <h3 className="text-sm font-bold font-headline text-zinc-100 uppercase tracking-wider">
+                      🌐 All Services Page Column
+                    </h3>
+                  </div>
+                  <span className="text-[11px] font-mono font-bold bg-zinc-800 text-zinc-300 border border-zinc-700 px-2.5 py-0.5 rounded-full">
+                    {(Array.isArray(services) ? services : []).length} Total Services
+                  </span>
+                </div>
+                <p className="text-[11px] text-zinc-400">
+                  Drag & drop or use arrows to set display order for /services page.
+                </p>
+
+                <div className="flex flex-col gap-3 min-h-[300px]">
+                  {(Array.isArray(services) ? services : []).map((ser, idx) => {
+                    const serKey = ser._id || ser.id || ser.slug || `all_${idx}`;
+                    return (
+                      <div
+                        key={serKey}
+                        draggable
+                        onDragStart={(e) => handleDragStartService(e, idx, 'all')}
+                        onDrop={(e) => handleDropOnAllColumn(e, idx)}
+                        onDragOver={handleDragOverService}
+                        className="p-4 bg-zinc-950/80 border border-white/10 hover:border-indigo-500/50 rounded-xl flex items-center justify-between gap-3 cursor-grab active:cursor-grabbing transition-all shadow-md group"
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="text-xs font-mono font-bold w-6 h-6 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/30 flex items-center justify-center shrink-0">
+                            #{idx + 1}
+                          </span>
+                          <div className="text-left">
+                            <div className="flex items-center gap-2 mb-0.5">
+                              <h4 className="text-sm font-bold text-zinc-100 group-hover:text-indigo-400 transition-colors">{ser.title}</h4>
+                              <button
+                                type="button"
+                                onClick={() => handleToggleHomeVisibility(serKey)}
+                                className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded-full border cursor-pointer ${
+                                  ser.showInHome !== false 
+                                    ? 'bg-cyanCustom/10 text-cyanCustom border-cyanCustom/30' 
+                                    : 'bg-zinc-800 text-zinc-400 border-zinc-700'
+                                }`}
+                              >
+                                {ser.showInHome !== false ? '✓ Homepage' : 'Hidden on Home'}
+                              </button>
+                            </div>
+                            <p className="text-[11px] text-zinc-400 line-clamp-1 max-w-[220px]">{ser.shortDesc}</p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 shrink-0">
+                          <div className="flex items-center gap-1 bg-zinc-900 border border-white/10 rounded-lg p-1">
+                            <button
+                              type="button"
+                              disabled={idx === 0}
+                              onClick={() => handleMoveAllService(idx, 'up')}
+                              title="Move Up on /services"
+                              className="p-1 hover:bg-white/10 rounded text-zinc-300 disabled:opacity-20 cursor-pointer"
+                            >
+                              <ChevronUp size={14} />
+                            </button>
+                            <button
+                              type="button"
+                              disabled={idx === (Array.isArray(services) ? services : []).length - 1}
+                              onClick={() => handleMoveAllService(idx, 'down')}
+                              title="Move Down on /services"
+                              className="p-1 hover:bg-white/10 rounded text-zinc-300 disabled:opacity-20 cursor-pointer"
+                            >
+                              <ChevronDown size={14} />
+                            </button>
+                          </div>
+
+                          <button 
+                            onClick={() => openEditor('service', ser)}
+                            title="Edit Service & SEO"
+                            className="p-2 bg-white/[0.02] border border-white/8 rounded-lg hover:border-cyanCustom/30 hover:text-cyanCustom transition-colors cursor-pointer"
+                          >
+                            <Edit2 size={14} />
+                          </button>
+                          <button 
+                            onClick={() => handleDeleteService(serKey)}
+                            title="Delete Service"
+                            className="p-2 bg-white/[0.02] border border-white/8 rounded-lg hover:border-red-500/30 hover:text-red-400 transition-colors cursor-pointer"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
             </div>
           </div>
         )
