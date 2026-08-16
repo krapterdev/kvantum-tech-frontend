@@ -44,11 +44,11 @@ export default function AdminPortalPage({
   const location = useLocation();
   const navigate = useNavigate();
 
-  const validTabs = ['leads', 'analytics', 'services', 'portfolio', 'blogs', 'seo', 'robots_sitemap', 'assets', 'users', 'settings', 'social_matrix'];
+  const validTabs = ['leads', 'analytics', 'services', 'portfolio', 'blogs', 'seo', 'robots_sitemap', 'assets', 'users', 'settings'];
 
   const getTabFromPath = () => {
     if (typeof window === 'undefined') return 'leads';
-    const parts = (location.pathname || '').split('/');
+    const parts = (window.location.pathname || '').split('/');
     if (parts[1] === 'admin' && parts[2] && validTabs.includes(parts[2])) {
       return parts[2];
     }
@@ -59,13 +59,15 @@ export default function AdminPortalPage({
     return 'leads';
   };
 
-  const activeTab = getTabFromPath();
+  const [activeTab, setActiveTabState] = useState(getTabFromPath);
 
   const setActiveTab = (tabKey) => {
+    const target = validTabs.includes(tabKey) ? tabKey : 'leads';
+    setActiveTabState(target);
     if (typeof window !== 'undefined') {
-      localStorage.setItem('kts_admin_active_tab', tabKey);
+      localStorage.setItem('kts_admin_active_tab', target);
     }
-    navigate(`/admin/${tabKey}`, { replace: true });
+    navigate(`/admin/${target}`, { replace: true });
   };
 
   // CRM leads list

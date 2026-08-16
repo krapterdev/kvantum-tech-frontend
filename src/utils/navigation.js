@@ -14,6 +14,12 @@ export function useSafeNavigate() {
     if (typeof window === 'undefined') return;
 
     if (options && options.replace) {
+      if (router && typeof router.replace === 'function') {
+        try {
+          router.replace(path);
+          return;
+        } catch (err) {}
+      }
       if (window.location.pathname !== path) {
         window.history.replaceState(null, '', path);
       }
