@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-// Cross-compatible Next.js + Vite API URL resolution
+// Cross-compatible Next.js API URL resolution
 const API_URL = (typeof process !== 'undefined' && process.env && process.env.NEXT_PUBLIC_API_URL) 
-  || (typeof import.meta !== 'undefined' && import.meta?.env?.VITE_API_URL) 
-  || '/api';
+  ? process.env.NEXT_PUBLIC_API_URL 
+  : '/api';
 
 const api = axios.create({
   baseURL: API_URL,

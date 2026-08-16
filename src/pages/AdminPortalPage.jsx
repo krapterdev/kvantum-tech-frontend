@@ -350,9 +350,7 @@ ${allEntries.map(entry => `    <url>
   useEffect(() => {
     const fetchStatus = async () => {
       try {
-        const baseUrl = (typeof process !== 'undefined' && process?.env?.NEXT_PUBLIC_API_URL)
-          ? process.env.NEXT_PUBLIC_API_URL
-          : (typeof import.meta !== 'undefined' && import.meta?.env?.VITE_API_URL ? import.meta.env.VITE_API_URL : '');
+        const baseUrl = (typeof process !== 'undefined' && process.env && process.env.NEXT_PUBLIC_API_URL) ? process.env.NEXT_PUBLIC_API_URL : '';
         const apiEndpoint = baseUrl ? `${baseUrl}/health` : '/api/health';
         const response = await fetch(apiEndpoint);
         const data = await response.json();
@@ -4066,7 +4064,7 @@ ${allEntries.map(entry => `    <url>
                 <Button
                   onClick={async () => {
                     try {
-                      const apiBase = (typeof process !== 'undefined' && process?.env?.NEXT_PUBLIC_API_URL) ? process.env.NEXT_PUBLIC_API_URL : (typeof import.meta !== 'undefined' && import.meta?.env?.VITE_API_URL ? import.meta.env.VITE_API_URL : '/api');
+                      const apiBase = (typeof process !== 'undefined' && process.env && process.env.NEXT_PUBLIC_API_URL) ? process.env.NEXT_PUBLIC_API_URL : '/api';
                       const res = await fetch(`${apiBase}/admin/backup`, {
                         headers: { Authorization: `Bearer ${token}` }
                       });
@@ -4122,7 +4120,7 @@ ${allEntries.map(entry => `    <url>
                       reader.onload = async (evt) => {
                         try {
                           const parsed = JSON.parse(evt.target.result);
-                          const apiBase = (typeof process !== 'undefined' && process?.env?.NEXT_PUBLIC_API_URL) ? process.env.NEXT_PUBLIC_API_URL : (typeof import.meta !== 'undefined' && import.meta?.env?.VITE_API_URL ? import.meta.env.VITE_API_URL : '/api');
+                          const apiBase = (typeof process !== 'undefined' && process.env && process.env.NEXT_PUBLIC_API_URL) ? process.env.NEXT_PUBLIC_API_URL : '/api';
                           const res = await fetch(`${apiBase}/admin/restore-backup`, {
                             method: 'POST',
                             headers: {
