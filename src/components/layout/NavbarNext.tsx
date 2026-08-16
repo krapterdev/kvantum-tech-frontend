@@ -18,16 +18,16 @@ export default function NavbarNext({ theme, toggleTheme, settings }: any) {
   const contact = settings?.contact || {};
 
   const navbarSocials = [
-    { id: 'instagram', label: 'Instagram', url: contact.instagram || 'https://www.instagram.com/kvantumtechsolutions/', active: contact.instagramActive !== false && Boolean(contact.instagram || 'https://www.instagram.com/kvantumtechsolutions/'), Icon: InstagramIcon, hoverColor: 'text-slate-500 hover:text-pink-500' },
-    { id: 'linkedin', label: 'LinkedIn', url: contact.linkedin, active: contact.linkedinActive === true && Boolean(contact.linkedin), Icon: LinkedinIcon, hoverColor: 'text-slate-500 hover:text-cyan-500' },
-    { id: 'facebook', label: 'Facebook', url: contact.facebook, active: contact.facebookActive === true && Boolean(contact.facebook), Icon: FacebookIcon, hoverColor: 'text-slate-500 hover:text-blue-500' },
-    { id: 'twitter', label: 'Twitter / X', url: contact.twitter, active: contact.twitterActive === true && Boolean(contact.twitter), Icon: TwitterIcon, hoverColor: 'text-slate-500 hover:text-sky-400' },
-    { id: 'whatsapp', label: 'WhatsApp', url: contact.whatsapp, active: contact.whatsappActive === true && Boolean(contact.whatsapp), Icon: WhatsappIcon, hoverColor: 'text-slate-500 hover:text-emerald-500' },
-    { id: 'youtube', label: 'YouTube', url: contact.youtube, active: contact.youtubeActive === true && Boolean(contact.youtube), Icon: YoutubeIcon, hoverColor: 'text-slate-500 hover:text-red-500' },
-    { id: 'github', label: 'GitHub', url: contact.github || 'https://github.com/krapterdev', active: contact.githubActive !== false && Boolean(contact.github || 'https://github.com/krapterdev'), Icon: GithubIcon, hoverColor: 'text-slate-500 hover:text-purple-400' },
-    { id: 'pinterest', label: 'Pinterest', url: contact.pinterest, active: contact.pinterestActive === true && Boolean(contact.pinterest), Icon: PinterestIcon, hoverColor: 'text-slate-500 hover:text-red-400' },
-    { id: 'telegram', label: 'Telegram', url: contact.telegram, active: contact.telegramActive === true && Boolean(contact.telegram), Icon: TelegramIcon, hoverColor: 'text-slate-500 hover:text-sky-500' },
-  ].filter(s => s.active && s.url && s.url.trim() !== '');
+    { id: 'instagram', label: 'Instagram', url: contact.instagram || 'https://www.instagram.com/kvantumtechsolutions/', active: contact.instagramActive === true || (contact.instagramActive !== false && contact.instagramActive !== undefined), Icon: InstagramIcon, hoverColor: 'text-slate-500 hover:text-pink-500' },
+    { id: 'linkedin', label: 'LinkedIn', url: contact.linkedin, active: contact.linkedinActive === true, Icon: LinkedinIcon, hoverColor: 'text-slate-500 hover:text-cyan-500' },
+    { id: 'facebook', label: 'Facebook', url: contact.facebook, active: contact.facebookActive === true, Icon: FacebookIcon, hoverColor: 'text-slate-500 hover:text-blue-500' },
+    { id: 'twitter', label: 'Twitter / X', url: contact.twitter, active: contact.twitterActive === true, Icon: TwitterIcon, hoverColor: 'text-slate-500 hover:text-sky-400' },
+    { id: 'whatsapp', label: 'WhatsApp', url: contact.whatsapp, active: contact.whatsappActive === true, Icon: WhatsappIcon, hoverColor: 'text-slate-500 hover:text-emerald-500' },
+    { id: 'youtube', label: 'YouTube', url: contact.youtube, active: contact.youtubeActive === true, Icon: YoutubeIcon, hoverColor: 'text-slate-500 hover:text-red-500' },
+    { id: 'github', label: 'GitHub', url: contact.github || 'https://github.com/krapterdev', active: contact.githubActive === true || (contact.githubActive !== false && contact.githubActive !== undefined), Icon: GithubIcon, hoverColor: 'text-slate-500 hover:text-purple-400' },
+    { id: 'pinterest', label: 'Pinterest', url: contact.pinterest, active: contact.pinterestActive === true, Icon: PinterestIcon, hoverColor: 'text-slate-500 hover:text-red-400' },
+    { id: 'telegram', label: 'Telegram', url: contact.telegram, active: contact.telegramActive === true, Icon: TelegramIcon, hoverColor: 'text-slate-500 hover:text-sky-500' },
+  ].filter(s => Boolean(s.active) && Boolean(s.url) && s.url.trim() !== '');
 
   const isActive = (path: string) => {
     if (!pathname) return false;
