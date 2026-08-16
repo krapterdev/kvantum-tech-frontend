@@ -16,23 +16,23 @@ export default function Footer({ seoPages = [], theme, settings, services = [], 
   
   // Dynamic Social Media Links with Active / Inactive Filter
   const socialConfig = [
-    { id: 'insta', platform: 'Instagram', urlKey: 'instagram', activeKey: 'instagramActive', icon: InstagramIcon },
-    { id: 'linkedin', platform: 'LinkedIn', urlKey: 'linkedin', activeKey: 'linkedinActive', icon: LinkedinIcon },
-    { id: 'fb', platform: 'Facebook', urlKey: 'facebook', activeKey: 'facebookActive', icon: FacebookIcon },
-    { id: 'tw', platform: 'Twitter / X', urlKey: 'twitter', activeKey: 'twitterActive', icon: TwitterIcon },
-    { id: 'wa', platform: 'WhatsApp', urlKey: 'whatsapp', activeKey: 'whatsappActive', icon: WhatsappIcon },
-    { id: 'yt', platform: 'YouTube', urlKey: 'youtube', activeKey: 'youtubeActive', icon: YoutubeIcon },
-    { id: 'gh', platform: 'GitHub', urlKey: 'github', activeKey: 'githubActive', icon: GithubIcon },
-    { id: 'pin', platform: 'Pinterest', urlKey: 'pinterest', activeKey: 'pinterestActive', icon: PinterestIcon },
-    { id: 'tg', platform: 'Telegram', urlKey: 'telegram', activeKey: 'telegramActive', icon: TelegramIcon },
+    { id: 'insta', platform: 'Instagram', urlKey: 'instagram', activeKey: 'instagramActive', defaultUrl: 'https://www.instagram.com/kvantumtechsolutions/', defaultActive: true, icon: InstagramIcon },
+    { id: 'linkedin', platform: 'LinkedIn', urlKey: 'linkedin', activeKey: 'linkedinActive', defaultUrl: '', defaultActive: false, icon: LinkedinIcon },
+    { id: 'fb', platform: 'Facebook', urlKey: 'facebook', activeKey: 'facebookActive', defaultUrl: '', defaultActive: false, icon: FacebookIcon },
+    { id: 'tw', platform: 'Twitter / X', urlKey: 'twitter', activeKey: 'twitterActive', defaultUrl: '', defaultActive: false, icon: TwitterIcon },
+    { id: 'wa', platform: 'WhatsApp', urlKey: 'whatsapp', activeKey: 'whatsappActive', defaultUrl: '', defaultActive: false, icon: WhatsappIcon },
+    { id: 'yt', platform: 'YouTube', urlKey: 'youtube', activeKey: 'youtubeActive', defaultUrl: '', defaultActive: false, icon: YoutubeIcon },
+    { id: 'gh', platform: 'GitHub', urlKey: 'github', activeKey: 'githubActive', defaultUrl: 'https://github.com/krapterdev', defaultActive: true, icon: GithubIcon },
+    { id: 'pin', platform: 'Pinterest', urlKey: 'pinterest', activeKey: 'pinterestActive', defaultUrl: '', defaultActive: false, icon: PinterestIcon },
+    { id: 'tg', platform: 'Telegram', urlKey: 'telegram', activeKey: 'telegramActive', defaultUrl: '', defaultActive: false, icon: TelegramIcon },
   ];
 
   const socialLinks = socialConfig
-    .map(soc => ({
-      ...soc,
-      url: contact[soc.urlKey] ? String(contact[soc.urlKey]).trim() : '',
-      active: contact[soc.activeKey] === true
-    }))
+    .map(soc => {
+      const urlVal = contact[soc.urlKey] !== undefined ? String(contact[soc.urlKey]).trim() : soc.defaultUrl;
+      const isChecked = contact[soc.activeKey] !== undefined ? Boolean(contact[soc.activeKey]) : soc.defaultActive;
+      return { ...soc, url: urlVal, active: isChecked };
+    })
     .filter(soc => soc.active && soc.url !== '');
 
   return (

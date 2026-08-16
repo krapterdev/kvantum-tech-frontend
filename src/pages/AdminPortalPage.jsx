@@ -185,17 +185,22 @@ Sitemap: https://kvantumtechsolutions.com/sitemap.xml`;
   const [assetZoomModal, setAssetZoomModal] = useState(null);
 
   const [socialState, setSocialState] = useState(() => {
-    if (typeof window === 'undefined') return {};
-    const local = localStorage.getItem('kts_saved_contact_settings');
-    if (local) {
-      try { return JSON.parse(local); } catch(e) {}
+    let base = { ...fallbackSettings.contact };
+    if (typeof window !== 'undefined') {
+      const local = localStorage.getItem('kts_saved_contact_settings');
+      if (local) {
+        try {
+          const parsed = JSON.parse(local);
+          base = { ...base, ...parsed };
+        } catch(e) {}
+      }
     }
-    return {};
+    return base;
   });
 
   useEffect(() => {
     if (settings?.contact) {
-      setSocialState(prev => ({ ...prev, ...settings.contact }));
+      setSocialState(prev => ({ ...fallbackSettings.contact, ...settings.contact, ...prev }));
     }
   }, [settings?.contact]);
 
@@ -4072,10 +4077,10 @@ ${allEntries.map(entry => `    <url>
                 socialNetworksList.forEach(soc => {
                   const isAct = socialState[soc.activeKey] !== undefined 
                     ? Boolean(socialState[soc.activeKey]) 
-                    : (settings?.contact?.[soc.activeKey] !== undefined ? Boolean(settings.contact[soc.activeKey]) : soc.defaultActive);
+                    : soc.defaultActive;
                   const val = socialState[soc.key] !== undefined 
-                    ? socialState[soc.key] 
-                    : (settings?.contact?.[soc.key] !== undefined ? settings.contact[soc.key] : soc.defaultUrl);
+                    ? String(socialState[soc.key]) 
+                    : soc.defaultUrl;
 
                   updatedContact[soc.activeKey] = isAct;
                   updatedContact[soc.key] = val;
@@ -4114,10 +4119,10 @@ ${allEntries.map(entry => `    <url>
                 ].map(soc => {
                   const isActive = socialState[soc.activeKey] !== undefined 
                     ? Boolean(socialState[soc.activeKey]) 
-                    : (settings?.contact?.[soc.activeKey] !== undefined ? Boolean(settings.contact[soc.activeKey]) : soc.defaultActive);
+                    : soc.defaultActive;
                   const currentVal = socialState[soc.key] !== undefined 
-                    ? socialState[soc.key] 
-                    : (settings?.contact?.[soc.key] !== undefined ? settings.contact[soc.key] : soc.defaultUrl);
+                    ? String(socialState[soc.key]) 
+                    : soc.defaultUrl;
 
                   return (
                     <div key={soc.key} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl bg-zinc-950/60 border border-white/8 hover:border-white/15 transition-all">
