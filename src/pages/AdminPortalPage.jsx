@@ -4053,10 +4053,33 @@ ${allEntries.map(entry => `    <url>
             <form onSubmit={async (e) => {
               e.preventDefault();
               try {
-                const updatedContact = {
-                  ...settings?.contact,
-                  ...socialState
-                };
+                const socialNetworksList = [
+                  { key: 'instagram', activeKey: 'instagramActive', defaultActive: true, defaultUrl: 'https://www.instagram.com/kvantumtechsolutions/' },
+                  { key: 'linkedin', activeKey: 'linkedinActive', defaultActive: false, defaultUrl: '' },
+                  { key: 'facebook', activeKey: 'facebookActive', defaultActive: false, defaultUrl: '' },
+                  { key: 'twitter', activeKey: 'twitterActive', defaultActive: false, defaultUrl: '' },
+                  { key: 'whatsapp', activeKey: 'whatsappActive', defaultActive: false, defaultUrl: '' },
+                  { key: 'youtube', activeKey: 'youtubeActive', defaultActive: false, defaultUrl: '' },
+                  { key: 'github', activeKey: 'githubActive', defaultActive: true, defaultUrl: 'https://github.com/krapterdev' },
+                  { key: 'pinterest', activeKey: 'pinterestActive', defaultActive: false, defaultUrl: '' },
+                  { key: 'telegram', activeKey: 'telegramActive', defaultActive: false, defaultUrl: '' },
+                  { key: 'reddit', activeKey: 'redditActive', defaultActive: false, defaultUrl: '' },
+                  { key: 'tiktok', activeKey: 'tiktokActive', defaultActive: false, defaultUrl: '' },
+                ];
+
+                const updatedContact = { ...settings?.contact };
+                
+                socialNetworksList.forEach(soc => {
+                  const isAct = socialState[soc.activeKey] !== undefined 
+                    ? Boolean(socialState[soc.activeKey]) 
+                    : (settings?.contact?.[soc.activeKey] !== undefined ? Boolean(settings.contact[soc.activeKey]) : soc.defaultActive);
+                  const val = socialState[soc.key] !== undefined 
+                    ? socialState[soc.key] 
+                    : (settings?.contact?.[soc.key] !== undefined ? settings.contact[soc.key] : soc.defaultUrl);
+
+                  updatedContact[soc.activeKey] = isAct;
+                  updatedContact[soc.key] = val;
+                });
 
                 try {
                   await settingService.updateSetting('contact', updatedContact);
@@ -4077,20 +4100,24 @@ ${allEntries.map(entry => `    <url>
 
               <div className="flex flex-col gap-4 font-mono text-xs">
                 {[
-                  { key: 'instagram', label: 'Instagram', defaultUrl: 'https://www.instagram.com/kvantumtechsolutions/', activeKey: 'instagramActive' },
-                  { key: 'linkedin', label: 'LinkedIn', defaultUrl: 'https://www.linkedin.com/in/kvantum-tech-solutions-75916a41b/', activeKey: 'linkedinActive' },
-                  { key: 'facebook', label: 'Facebook', defaultUrl: 'https://www.facebook.com/profile.php?id=61591468234442', activeKey: 'facebookActive' },
-                  { key: 'twitter', label: 'Twitter / X', defaultUrl: 'https://twitter.com/kvantumtech', activeKey: 'twitterActive' },
-                  { key: 'whatsapp', label: 'WhatsApp', defaultUrl: 'https://wa.me/919811661828', activeKey: 'whatsappActive' },
-                  { key: 'youtube', label: 'YouTube', defaultUrl: 'https://www.youtube.com/@KvantumTechSolutions', activeKey: 'youtubeActive' },
-                  { key: 'github', label: 'GitHub', defaultUrl: 'https://github.com/krapterdev', activeKey: 'githubActive' },
-                  { key: 'pinterest', label: 'Pinterest', defaultUrl: '', activeKey: 'pinterestActive' },
-                  { key: 'telegram', label: 'Telegram', defaultUrl: '', activeKey: 'telegramActive' },
-                  { key: 'reddit', label: 'Reddit', defaultUrl: '', activeKey: 'redditActive' },
-                  { key: 'tiktok', label: 'TikTok', defaultUrl: '', activeKey: 'tiktokActive' },
+                  { key: 'instagram', label: 'Instagram', defaultUrl: 'https://www.instagram.com/kvantumtechsolutions/', activeKey: 'instagramActive', defaultActive: true },
+                  { key: 'linkedin', label: 'LinkedIn', defaultUrl: '', activeKey: 'linkedinActive', defaultActive: false },
+                  { key: 'facebook', label: 'Facebook', defaultUrl: '', activeKey: 'facebookActive', defaultActive: false },
+                  { key: 'twitter', label: 'Twitter / X', defaultUrl: '', activeKey: 'twitterActive', defaultActive: false },
+                  { key: 'whatsapp', label: 'WhatsApp', defaultUrl: '', activeKey: 'whatsappActive', defaultActive: false },
+                  { key: 'youtube', label: 'YouTube', defaultUrl: '', activeKey: 'youtubeActive', defaultActive: false },
+                  { key: 'github', label: 'GitHub', defaultUrl: 'https://github.com/krapterdev', activeKey: 'githubActive', defaultActive: true },
+                  { key: 'pinterest', label: 'Pinterest', defaultUrl: '', activeKey: 'pinterestActive', defaultActive: false },
+                  { key: 'telegram', label: 'Telegram', defaultUrl: '', activeKey: 'telegramActive', defaultActive: false },
+                  { key: 'reddit', label: 'Reddit', defaultUrl: '', activeKey: 'redditActive', defaultActive: false },
+                  { key: 'tiktok', label: 'TikTok', defaultUrl: '', activeKey: 'tiktokActive', defaultActive: false },
                 ].map(soc => {
-                  const isActive = socialState[soc.activeKey] !== undefined ? socialState[soc.activeKey] : (soc.activeKey.includes('youtube') || soc.activeKey.includes('github') || soc.activeKey.includes('pinterest') || soc.activeKey.includes('telegram') || soc.activeKey.includes('reddit') || soc.activeKey.includes('tiktok') ? false : true);
-                  const currentVal = socialState[soc.key] !== undefined ? socialState[soc.key] : soc.defaultUrl;
+                  const isActive = socialState[soc.activeKey] !== undefined 
+                    ? Boolean(socialState[soc.activeKey]) 
+                    : (settings?.contact?.[soc.activeKey] !== undefined ? Boolean(settings.contact[soc.activeKey]) : soc.defaultActive);
+                  const currentVal = socialState[soc.key] !== undefined 
+                    ? socialState[soc.key] 
+                    : (settings?.contact?.[soc.key] !== undefined ? settings.contact[soc.key] : soc.defaultUrl);
 
                   return (
                     <div key={soc.key} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl bg-zinc-950/60 border border-white/8 hover:border-white/15 transition-all">
