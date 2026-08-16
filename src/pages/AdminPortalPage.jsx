@@ -350,9 +350,10 @@ ${allEntries.map(entry => `    <url>
   useEffect(() => {
     const fetchStatus = async () => {
       try {
-        const apiEndpoint = import.meta.env.VITE_API_URL 
-          ? `${import.meta.env.VITE_API_URL}/health`
-          : '/api/health';
+        const baseUrl = (typeof process !== 'undefined' && process?.env?.NEXT_PUBLIC_API_URL)
+          ? process.env.NEXT_PUBLIC_API_URL
+          : (typeof import.meta !== 'undefined' && import.meta?.env?.VITE_API_URL ? import.meta.env.VITE_API_URL : '');
+        const apiEndpoint = baseUrl ? `${baseUrl}/health` : '/api/health';
         const response = await fetch(apiEndpoint);
         const data = await response.json();
         setDbConnected(data.databaseConnected !== false);
@@ -2480,20 +2481,7 @@ ${allEntries.map(entry => `    <url>
                   </button>
                 )}
 
-                {/* Social Media CMS tab */}
-                {(currentUser.role === 'admin' || currentUser.role === 'seo') && (
-                  <button
-                    onClick={() => handleTabChange('social_matrix')}
-                    className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-all duration-200 cursor-pointer ${
-                      activeTab === 'social_matrix' 
-                        ? 'bg-pinkCustom/15 text-pinkCustom border-l-2 border-pinkCustom shadow-[0_0_10px_rgba(236,72,153,0.1)]' 
-                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/30'
-                    }`}
-                  >
-                    <Share2 size={16} />
-                    Social Media CMS
-                  </button>
-                )}
+
                 {(currentUser.role === 'admin' || currentUser.role === 'seo') && (
                   <button
                     onClick={() => handleTabChange('settings')}
@@ -4044,39 +4032,7 @@ ${allEntries.map(entry => `    <url>
         </div>
       )}
 
-      {/* ================================== TAB: DEDICATED SOCIAL MEDIA CMS ================================== */}
-      {activeTab === 'social_matrix' && (
-        <div className="fade-in-up flex flex-col gap-8 text-left">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-zinc-900/60 p-6 rounded-2xl border border-white/8">
-            <div>
-              <h2 className="text-xl font-black font-headline text-zinc-100 uppercase tracking-tight flex items-center gap-2">
-                <Share2 className="text-pinkCustom" size={22} /> Official Social Media Profiles
-              </h2>
-              <p className="text-xs text-zinc-400 font-mono mt-1">
-                Website social media profile links are statically configured to the official 4 company handles across Navbar, Footer & Contact Page.
-              </p>
-            </div>
-          </div>
 
-          <Card className="p-6 border flex flex-col gap-6">
-            <div className="flex flex-col gap-4 font-mono text-xs">
-              {[
-                { label: 'Instagram', url: 'https://www.instagram.com/kvantumtechsolutions/' },
-                { label: 'LinkedIn', url: 'https://www.linkedin.com/in/kvantum-tech-solutions-75916a41b/' },
-                { label: 'Facebook', url: 'https://www.facebook.com/profile.php?id=61591468234442' },
-                { label: 'GitHub', url: 'https://github.com/krapterdev' },
-              ].map(soc => (
-                <div key={soc.label} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl bg-zinc-950/60 border border-white/8">
-                  <span className="font-bold text-sm text-zinc-200">{soc.label}</span>
-                  <a href={soc.url} target="_blank" rel="noopener noreferrer" className="text-cyanCustom hover:underline text-xs truncate">
-                    {soc.url}
-                  </a>
-                </div>
-              ))}
-            </div>
-          </Card>
-        </div>
-      )}
 
 
 
@@ -4110,7 +4066,7 @@ ${allEntries.map(entry => `    <url>
                 <Button
                   onClick={async () => {
                     try {
-                      const apiBase = import.meta.env.VITE_API_URL || '/api';
+                      const apiBase = (typeof process !== 'undefined' && process?.env?.NEXT_PUBLIC_API_URL) ? process.env.NEXT_PUBLIC_API_URL : (typeof import.meta !== 'undefined' && import.meta?.env?.VITE_API_URL ? import.meta.env.VITE_API_URL : '/api');
                       const res = await fetch(`${apiBase}/admin/backup`, {
                         headers: { Authorization: `Bearer ${token}` }
                       });
@@ -4166,7 +4122,7 @@ ${allEntries.map(entry => `    <url>
                       reader.onload = async (evt) => {
                         try {
                           const parsed = JSON.parse(evt.target.result);
-                          const apiBase = import.meta.env.VITE_API_URL || '/api';
+                          const apiBase = (typeof process !== 'undefined' && process?.env?.NEXT_PUBLIC_API_URL) ? process.env.NEXT_PUBLIC_API_URL : (typeof import.meta !== 'undefined' && import.meta?.env?.VITE_API_URL ? import.meta.env.VITE_API_URL : '/api');
                           const res = await fetch(`${apiBase}/admin/restore-backup`, {
                             method: 'POST',
                             headers: {
