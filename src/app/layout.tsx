@@ -18,6 +18,9 @@ const plusJakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://kvantumtechsolutions.com'),
+  alternates: {
+    canonical: './',
+  },
   title: {
     default: 'IT Solutions Company in Delhi NCR | Kvantum Tech Solutions',
     template: '%s | Kvantum Tech Solutions',

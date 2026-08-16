@@ -1,6 +1,6 @@
 # ==============================================================================
 # KVANTUM TECH SOLUTIONS — Production Apache Configuration (.htaccess)
-# Tailored for Next.js 16 (Node.js Server, Reverse Proxy, Static, cPanel, Hostinger)
+# Strictly Enforces NON-WWW & HTTPS Canonical Domain: https://kvantumtechsolutions.com
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
@@ -10,23 +10,27 @@ Options -Indexes
 ServerSignature Off
 
 # ------------------------------------------------------------------------------
-# 2. REWRITE ENGINE & HTTPS / CANONICAL DOMAIN ENFORCEMENT
+# 2. CANONICAL REDIRECTS (WWW TO NON-WWW & HTTP TO HTTPS 301 REDIRECTS)
 # ------------------------------------------------------------------------------
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteBase /
 
-    # Force HTTPS (SSL Redirect)
+    # Rule A: Redirect WWW (HTTP or HTTPS) -> NON-WWW HTTPS (301 Permanent Redirect)
+    RewriteCond %{HTTP_HOST} ^www\.kvantumtechsolutions\.com$ [NC]
+    RewriteRule ^(.*)$ https://kvantumtechsolutions.com/$1 [L,R=301]
+
+    # Rule B: Redirect HTTP -> HTTPS for NON-WWW (301 Permanent Redirect)
     RewriteCond %{HTTPS} !=on
     RewriteCond %{HTTP:X-Forwarded-Proto} !https
-    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+    RewriteRule ^(.*)$ https://kvantumtechsolutions.com/$1 [L,R=301]
 
-    # Remove trailing slash if not a directory (Clean URLs)
+    # Rule C: Remove trailing slashes (except directories) for clean canonical URLs
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_URI} (.+)/$
     RewriteRule ^ %1 [L,R=301]
 
-    # Next.js Static Export HTML5 Routing
+    # Rule D: Next.js Static Export HTML Routing
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME}.html -f
