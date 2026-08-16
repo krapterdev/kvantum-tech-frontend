@@ -10,6 +10,7 @@ import FloatingQuickActions from '@/components/sections/FloatingQuickActions';
 import CookieConsent from '@/components/ui/CookieConsent';
 import ChatWidget from '@/components/chatbot/ChatWidget';
 import { fallbackSettings } from '@/data/settings';
+import * as settingService from '@/services/settingService';
 
 export default function ClientLayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -29,11 +30,22 @@ export default function ClientLayoutWrapper({ children }: { children: React.Reac
   });
 
   useEffect(() => {
+    // 1. Fetch live settings from backend API / database
+    settingService.getSettings().then((data) => {
+      if (data && data.contact) {
+        setSettings((prev: any) => ({ ...prev, contact: data.contact }));
+      }
+    }).catch((e) => {
+      console.warn('[API SETTINGS LOAD WARN]', e);
+    });
+
+    // 2. Load saved theme
     const savedTheme = localStorage.getItem('kts_theme_mode');
     if (savedTheme === 'light' || savedTheme === 'dark') {
       setTheme(savedTheme);
     }
 
+    // 3. Listen for live settings updates
     const handleSettingsUpdate = () => {
       const saved = localStorage.getItem('kts_saved_contact_settings');
       if (saved) {

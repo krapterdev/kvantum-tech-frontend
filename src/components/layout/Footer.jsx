@@ -15,19 +15,25 @@ export default function Footer({ seoPages = [], theme, settings, services = [], 
   const contact = settings?.contact || {};
   
   // Dynamic Social Media Links with Active / Inactive Filter
-  const defaultSocials = [
-    { id: 'insta', platform: 'Instagram', url: contact.instagram || 'https://www.instagram.com/kvantumtechsolutions/', active: contact.instagramActive !== undefined ? Boolean(contact.instagramActive) : true, icon: InstagramIcon },
-    { id: 'linkedin', platform: 'LinkedIn', url: contact.linkedin, active: Boolean(contact.linkedinActive), icon: LinkedinIcon },
-    { id: 'fb', platform: 'Facebook', url: contact.facebook, active: Boolean(contact.facebookActive), icon: FacebookIcon },
-    { id: 'tw', platform: 'Twitter / X', url: contact.twitter, active: Boolean(contact.twitterActive), icon: TwitterIcon },
-    { id: 'wa', platform: 'WhatsApp', url: contact.whatsapp, active: Boolean(contact.whatsappActive), icon: WhatsappIcon },
-    { id: 'yt', platform: 'YouTube', url: contact.youtube, active: Boolean(contact.youtubeActive), icon: YoutubeIcon },
-    { id: 'gh', platform: 'GitHub', url: contact.github || 'https://github.com/krapterdev', active: contact.githubActive !== undefined ? Boolean(contact.githubActive) : true, icon: GithubIcon },
-    { id: 'pin', platform: 'Pinterest', url: contact.pinterest, active: Boolean(contact.pinterestActive), icon: PinterestIcon },
-    { id: 'tg', platform: 'Telegram', url: contact.telegram, active: Boolean(contact.telegramActive), icon: TelegramIcon },
+  const socialConfig = [
+    { id: 'insta', platform: 'Instagram', urlKey: 'instagram', activeKey: 'instagramActive', icon: InstagramIcon },
+    { id: 'linkedin', platform: 'LinkedIn', urlKey: 'linkedin', activeKey: 'linkedinActive', icon: LinkedinIcon },
+    { id: 'fb', platform: 'Facebook', urlKey: 'facebook', activeKey: 'facebookActive', icon: FacebookIcon },
+    { id: 'tw', platform: 'Twitter / X', urlKey: 'twitter', activeKey: 'twitterActive', icon: TwitterIcon },
+    { id: 'wa', platform: 'WhatsApp', urlKey: 'whatsapp', activeKey: 'whatsappActive', icon: WhatsappIcon },
+    { id: 'yt', platform: 'YouTube', urlKey: 'youtube', activeKey: 'youtubeActive', icon: YoutubeIcon },
+    { id: 'gh', platform: 'GitHub', urlKey: 'github', activeKey: 'githubActive', icon: GithubIcon },
+    { id: 'pin', platform: 'Pinterest', urlKey: 'pinterest', activeKey: 'pinterestActive', icon: PinterestIcon },
+    { id: 'tg', platform: 'Telegram', urlKey: 'telegram', activeKey: 'telegramActive', icon: TelegramIcon },
   ];
 
-  const socialLinks = defaultSocials.filter(s => s.active === true && Boolean(s.url) && s.url.trim() !== '');
+  const socialLinks = socialConfig
+    .map(soc => ({
+      ...soc,
+      url: contact[soc.urlKey] ? String(contact[soc.urlKey]).trim() : '',
+      active: contact[soc.activeKey] === true
+    }))
+    .filter(soc => soc.active && soc.url !== '');
 
   return (
     <footer className="relative z-10 mt-[100px] px-6 py-[70px] select-none text-center border-t border-slate-200 dark:border-white/10 bg-white dark:bg-zinc-950/95 text-slate-900 dark:text-white overflow-hidden transition-colors duration-300">

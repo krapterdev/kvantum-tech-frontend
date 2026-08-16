@@ -17,17 +17,25 @@ export default function NavbarNext({ theme, toggleTheme, settings }: any) {
 
   const contact = settings?.contact || {};
 
-  const navbarSocials = [
-    { id: 'instagram', label: 'Instagram', url: contact.instagram || 'https://www.instagram.com/kvantumtechsolutions/', active: contact.instagramActive !== undefined ? Boolean(contact.instagramActive) : true, Icon: InstagramIcon, hoverColor: 'text-slate-500 hover:text-pink-500' },
-    { id: 'linkedin', label: 'LinkedIn', url: contact.linkedin, active: Boolean(contact.linkedinActive), Icon: LinkedinIcon, hoverColor: 'text-slate-500 hover:text-cyan-500' },
-    { id: 'facebook', label: 'Facebook', url: contact.facebook, active: Boolean(contact.facebookActive), Icon: FacebookIcon, hoverColor: 'text-slate-500 hover:text-blue-500' },
-    { id: 'twitter', label: 'Twitter / X', url: contact.twitter, active: Boolean(contact.twitterActive), Icon: TwitterIcon, hoverColor: 'text-slate-500 hover:text-sky-400' },
-    { id: 'whatsapp', label: 'WhatsApp', url: contact.whatsapp, active: Boolean(contact.whatsappActive), Icon: WhatsappIcon, hoverColor: 'text-slate-500 hover:text-emerald-500' },
-    { id: 'youtube', label: 'YouTube', url: contact.youtube, active: Boolean(contact.youtubeActive), Icon: YoutubeIcon, hoverColor: 'text-slate-500 hover:text-red-500' },
-    { id: 'github', label: 'GitHub', url: contact.github || 'https://github.com/krapterdev', active: contact.githubActive !== undefined ? Boolean(contact.githubActive) : true, Icon: GithubIcon, hoverColor: 'text-slate-500 hover:text-purple-400' },
-    { id: 'pinterest', label: 'Pinterest', url: contact.pinterest, active: Boolean(contact.pinterestActive), Icon: PinterestIcon, hoverColor: 'text-slate-500 hover:text-red-400' },
-    { id: 'telegram', label: 'Telegram', url: contact.telegram, active: Boolean(contact.telegramActive), Icon: TelegramIcon, hoverColor: 'text-slate-500 hover:text-sky-500' },
-  ].filter(s => s.active === true && Boolean(s.url) && s.url.trim() !== '');
+  const socialConfig = [
+    { id: 'instagram', label: 'Instagram', urlKey: 'instagram', activeKey: 'instagramActive', Icon: InstagramIcon, hoverColor: 'text-slate-500 hover:text-pink-500' },
+    { id: 'linkedin', label: 'LinkedIn', urlKey: 'linkedin', activeKey: 'linkedinActive', Icon: LinkedinIcon, hoverColor: 'text-slate-500 hover:text-cyan-500' },
+    { id: 'facebook', label: 'Facebook', urlKey: 'facebook', activeKey: 'facebookActive', Icon: FacebookIcon, hoverColor: 'text-slate-500 hover:text-blue-500' },
+    { id: 'twitter', label: 'Twitter / X', urlKey: 'twitter', activeKey: 'twitterActive', Icon: TwitterIcon, hoverColor: 'text-slate-500 hover:text-sky-400' },
+    { id: 'whatsapp', label: 'WhatsApp', urlKey: 'whatsapp', activeKey: 'whatsappActive', Icon: WhatsappIcon, hoverColor: 'text-slate-500 hover:text-emerald-500' },
+    { id: 'youtube', label: 'YouTube', urlKey: 'youtube', activeKey: 'youtubeActive', Icon: YoutubeIcon, hoverColor: 'text-slate-500 hover:text-red-500' },
+    { id: 'github', label: 'GitHub', urlKey: 'github', activeKey: 'githubActive', Icon: GithubIcon, hoverColor: 'text-slate-500 hover:text-purple-400' },
+    { id: 'pinterest', label: 'Pinterest', urlKey: 'pinterest', activeKey: 'pinterestActive', Icon: PinterestIcon, hoverColor: 'text-slate-500 hover:text-red-400' },
+    { id: 'telegram', label: 'Telegram', urlKey: 'telegram', activeKey: 'telegramActive', Icon: TelegramIcon, hoverColor: 'text-slate-500 hover:text-sky-500' },
+  ];
+
+  const navbarSocials = socialConfig
+    .map(soc => ({
+      ...soc,
+      url: contact[soc.urlKey] ? String(contact[soc.urlKey]).trim() : '',
+      isActive: contact[soc.activeKey] === true
+    }))
+    .filter(soc => soc.isActive && soc.url !== '');
 
   const isActive = (path: string) => {
     if (!pathname) return false;
