@@ -26,9 +26,11 @@ export default function ClientLayoutWrapper({ children }: { children: React.Reac
   useEffect(() => {
     const root = document.documentElement;
     if (theme === 'light') {
+      root.classList.add('light');
       root.classList.add('light-mode');
       root.classList.remove('dark');
     } else {
+      root.classList.remove('light');
       root.classList.remove('light-mode');
       root.classList.add('dark');
     }

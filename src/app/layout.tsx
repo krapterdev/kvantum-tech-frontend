@@ -102,7 +102,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/apple-icon.svg" />
         <meta name="theme-color" content="#0f172a" />
       </head>
-      <body className="bg-slate-950 text-slate-100 antialiased selection:bg-cyan-500 selection:text-white min-h-screen flex flex-col">
+      <body className="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased selection:bg-cyan-500 selection:text-white min-h-screen flex flex-col transition-colors duration-300">
         <ClientLayoutWrapper>
           {children}
         </ClientLayoutWrapper>
