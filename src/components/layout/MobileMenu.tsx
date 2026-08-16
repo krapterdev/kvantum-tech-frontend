@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { X, ChevronDown, ChevronUp, ArrowRight } from 'lucide-react';
 import { fallbackServices } from '@/data/services';
-import { InstagramIcon, LinkedinIcon, FacebookIcon } from '@/components/ui/SocialIcons';
+import { InstagramIcon, LinkedinIcon, FacebookIcon, GithubIcon } from '@/components/ui/SocialIcons';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -141,33 +141,38 @@ export default function MobileMenu({ isOpen, onClose, theme, settings }: MobileM
         <div className="px-4 pb-6 pt-3 border-t border-white/5 space-y-3">
           {/* Social Icons */}
           <div className="flex items-center gap-2">
-            {contact.instagramActive !== false && (
-              <a
-                href={contact.instagram || 'https://www.instagram.com/kvantumtechsolutions/'}
-                target="_blank" rel="noopener noreferrer"
-                className="p-2.5 rounded-xl bg-white/5 hover:bg-pink-500/20 text-slate-400 hover:text-pink-400 transition-all"
-              >
-                <InstagramIcon className="w-4 h-4" />
-              </a>
-            )}
-            {contact.linkedinActive !== false && (
-              <a
-                href={contact.linkedin || 'https://www.linkedin.com/in/kvantum-tech-solutions-75916a41b'}
-                target="_blank" rel="noopener noreferrer"
-                className="p-2.5 rounded-xl bg-white/5 hover:bg-cyan-500/20 text-slate-400 hover:text-cyan-400 transition-all"
-              >
-                <LinkedinIcon className="w-4 h-4" />
-              </a>
-            )}
-            {contact.facebookActive !== false && (
-              <a
-                href={contact.facebook || 'https://facebook.com/kvantumtechsolutions'}
-                target="_blank" rel="noopener noreferrer"
-                className="p-2.5 rounded-xl bg-white/5 hover:bg-blue-500/20 text-slate-400 hover:text-blue-400 transition-all"
-              >
-                <FacebookIcon className="w-4 h-4" />
-              </a>
-            )}
+            <a
+              href="https://www.instagram.com/kvantumtechsolutions/"
+              target="_blank" rel="noopener noreferrer"
+              aria-label="Instagram"
+              className="p-2.5 rounded-xl bg-white/5 hover:bg-pink-500/20 text-slate-400 hover:text-pink-400 transition-all"
+            >
+              <InstagramIcon className="w-4 h-4" />
+            </a>
+            <a
+              href="https://www.linkedin.com/in/kvantum-tech-solutions-75916a41b/"
+              target="_blank" rel="noopener noreferrer"
+              aria-label="LinkedIn"
+              className="p-2.5 rounded-xl bg-white/5 hover:bg-cyan-500/20 text-slate-400 hover:text-cyan-400 transition-all"
+            >
+              <LinkedinIcon className="w-4 h-4" />
+            </a>
+            <a
+              href="https://www.facebook.com/profile.php?id=61591468234442"
+              target="_blank" rel="noopener noreferrer"
+              aria-label="Facebook"
+              className="p-2.5 rounded-xl bg-white/5 hover:bg-blue-500/20 text-slate-400 hover:text-blue-400 transition-all"
+            >
+              <FacebookIcon className="w-4 h-4" />
+            </a>
+            <a
+              href="https://github.com/krapterdev"
+              target="_blank" rel="noopener noreferrer"
+              aria-label="GitHub"
+              className="p-2.5 rounded-xl bg-white/5 hover:bg-purple-500/20 text-slate-400 hover:text-purple-400 transition-all"
+            >
+              <GithubIcon className="w-4 h-4" />
+            </a>
             <a
               href={`https://wa.me/919811661828?text=Hi%20Kvantum%20Tech%20Team`}
               target="_blank" rel="noopener noreferrer"

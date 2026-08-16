@@ -4,6 +4,7 @@ import { Mail, Phone, MapPin, Send, Clock, ShieldCheck, Sparkles, AlertCircle } 
 import Badge from '@/components/ui/Badge';
 import FAQ, { contactFaqs } from '@/components/sections/FAQ';
 import { submitContact } from '@/services/contactService';
+import { InstagramIcon, LinkedinIcon, FacebookIcon, GithubIcon } from '@/components/ui/SocialIcons';
 
 export default function ContactPage({ settings }) {
   const navigate = useNavigate();
@@ -149,6 +150,41 @@ export default function ContactPage({ settings }) {
                     Kvantum Tech Solutions, A33, 64, Tahirpur Rd, Priyadarshini Vihar, Taharpur Village, Dilshad Garden, Delhi, 110095
                   </p>
                 </div>
+              </div>
+            </div>
+
+            {/* Official Social Profiles */}
+            <div className="pt-6 border-t border-slate-200 dark:border-zinc-800">
+              <span className="text-xs font-mono text-slate-400 block uppercase mb-3">Official Social Profiles</span>
+              <div className="flex items-center gap-3">
+                <a
+                  href="https://www.instagram.com/kvantumtechsolutions/"
+                  target="_blank" rel="noopener noreferrer"
+                  className="p-3 rounded-2xl bg-pink-500/10 hover:bg-pink-500/20 text-pink-500 border border-pink-500/20 transition-all font-mono text-xs font-bold flex items-center gap-2"
+                >
+                  <InstagramIcon className="w-4 h-4" /> Instagram
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/kvantum-tech-solutions-75916a41b/"
+                  target="_blank" rel="noopener noreferrer"
+                  className="p-3 rounded-2xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-500 border border-cyan-500/20 transition-all font-mono text-xs font-bold flex items-center gap-2"
+                >
+                  <LinkedinIcon className="w-4 h-4" /> LinkedIn
+                </a>
+                <a
+                  href="https://www.facebook.com/profile.php?id=61591468234442"
+                  target="_blank" rel="noopener noreferrer"
+                  className="p-3 rounded-2xl bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 border border-blue-500/20 transition-all font-mono text-xs font-bold flex items-center gap-2"
+                >
+                  <FacebookIcon className="w-4 h-4" /> Facebook
+                </a>
+                <a
+                  href="https://github.com/krapterdev"
+                  target="_blank" rel="noopener noreferrer"
+                  className="p-3 rounded-2xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-500 border border-purple-500/20 transition-all font-mono text-xs font-bold flex items-center gap-2"
+                >
+                  <GithubIcon className="w-4 h-4" /> GitHub
+                </a>
               </div>
             </div>
           </div>

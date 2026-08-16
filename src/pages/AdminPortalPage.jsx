@@ -2474,20 +2474,7 @@ ${allEntries.map(entry => `    <url>
                   </button>
                 )}
 
-                {/* Social Media CMS tab */}
-                {(currentUser.role === 'admin' || currentUser.role === 'seo') && (
-                  <button
-                    onClick={() => handleTabChange('social_matrix')}
-                    className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-all duration-200 cursor-pointer ${
-                      activeTab === 'social_matrix' 
-                        ? 'bg-pinkCustom/15 text-pinkCustom border-l-2 border-pinkCustom shadow-[0_0_10px_rgba(236,72,153,0.1)]' 
-                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/30'
-                    }`}
-                  >
-                    <Share2 size={16} />
-                    Social Media CMS
-                  </button>
-                )}
+
 
                 {/* Site Settings CMS tab */}
                 {(currentUser.role === 'admin' || currentUser.role === 'seo') && (
@@ -4040,125 +4027,7 @@ ${allEntries.map(entry => `    <url>
         </div>
       )}
 
-      {/* ================================== TAB: DEDICATED SOCIAL MEDIA CMS ================================== */}
-      {activeTab === 'social_matrix' && (
-        <div className="fade-in-up flex flex-col gap-8 text-left">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-zinc-900/60 p-6 rounded-2xl border border-white/8">
-            <div>
-              <h2 className="text-xl font-black font-headline text-zinc-100 uppercase tracking-tight flex items-center gap-2">
-                <Share2 className="text-pinkCustom" size={22} /> Social Media Networks CMS Matrix
-              </h2>
-              <p className="text-xs text-zinc-400 font-mono mt-1">
-                Manage social network profile links and toggle icon visibility (Active/Inactive) across the website (Navbar & Footer).
-              </p>
-            </div>
-          </div>
 
-          <Card className="p-6 border flex flex-col gap-6">
-            <form onSubmit={async (e) => {
-              e.preventDefault();
-              try {
-                const socialNetworksList = [
-                  { key: 'instagram', activeKey: 'instagramActive', defaultActive: true, defaultUrl: 'https://www.instagram.com/kvantumtechsolutions/' },
-                  { key: 'linkedin', activeKey: 'linkedinActive', defaultActive: false, defaultUrl: '' },
-                  { key: 'facebook', activeKey: 'facebookActive', defaultActive: false, defaultUrl: '' },
-                  { key: 'twitter', activeKey: 'twitterActive', defaultActive: false, defaultUrl: '' },
-                  { key: 'whatsapp', activeKey: 'whatsappActive', defaultActive: false, defaultUrl: '' },
-                  { key: 'youtube', activeKey: 'youtubeActive', defaultActive: false, defaultUrl: '' },
-                  { key: 'github', activeKey: 'githubActive', defaultActive: true, defaultUrl: 'https://github.com/krapterdev' },
-                  { key: 'pinterest', activeKey: 'pinterestActive', defaultActive: false, defaultUrl: '' },
-                  { key: 'telegram', activeKey: 'telegramActive', defaultActive: false, defaultUrl: '' },
-                  { key: 'reddit', activeKey: 'redditActive', defaultActive: false, defaultUrl: '' },
-                  { key: 'tiktok', activeKey: 'tiktokActive', defaultActive: false, defaultUrl: '' },
-                ];
-
-                const updatedContact = { ...settings?.contact };
-                
-                socialNetworksList.forEach(soc => {
-                  const isAct = socialState[soc.activeKey] !== undefined 
-                    ? Boolean(socialState[soc.activeKey]) 
-                    : soc.defaultActive;
-                  const val = socialState[soc.key] !== undefined 
-                    ? String(socialState[soc.key]) 
-                    : soc.defaultUrl;
-
-                  updatedContact[soc.activeKey] = isAct;
-                  updatedContact[soc.key] = val;
-                });
-
-                try {
-                  await settingService.updateSetting('contact', updatedContact);
-                  localStorage.setItem('kts_saved_contact_settings', JSON.stringify(updatedContact));
-                  if (typeof window !== 'undefined') window.dispatchEvent(new Event('kts_settings_updated'));
-                  alert('✅ [SUCCESS] Social Media Links & Network Visibility updated successfully!');
-                } catch (e) {
-                  console.warn('[OFFLINE SAVE] Social media updated locally:', e.message);
-                  localStorage.setItem('kts_saved_contact_settings', JSON.stringify(updatedContact));
-                  if (typeof window !== 'undefined') window.dispatchEvent(new Event('kts_settings_updated'));
-                  alert('✅ [SUCCESS] Social Media Links updated locally.');
-                }
-                setSettings(prev => ({ ...prev, contact: updatedContact }));
-              } catch (err) {
-                alert('✅ [SUCCESS] Social Media Matrix updated.');
-              }
-            }} className="flex flex-col gap-5">
-
-              <div className="flex flex-col gap-4 font-mono text-xs">
-                {[
-                  { key: 'instagram', label: 'Instagram', defaultUrl: 'https://www.instagram.com/kvantumtechsolutions/', activeKey: 'instagramActive', defaultActive: true },
-                  { key: 'linkedin', label: 'LinkedIn', defaultUrl: '', activeKey: 'linkedinActive', defaultActive: false },
-                  { key: 'facebook', label: 'Facebook', defaultUrl: '', activeKey: 'facebookActive', defaultActive: false },
-                  { key: 'twitter', label: 'Twitter / X', defaultUrl: '', activeKey: 'twitterActive', defaultActive: false },
-                  { key: 'whatsapp', label: 'WhatsApp', defaultUrl: '', activeKey: 'whatsappActive', defaultActive: false },
-                  { key: 'youtube', label: 'YouTube', defaultUrl: '', activeKey: 'youtubeActive', defaultActive: false },
-                  { key: 'github', label: 'GitHub', defaultUrl: 'https://github.com/krapterdev', activeKey: 'githubActive', defaultActive: true },
-                  { key: 'pinterest', label: 'Pinterest', defaultUrl: '', activeKey: 'pinterestActive', defaultActive: false },
-                  { key: 'telegram', label: 'Telegram', defaultUrl: '', activeKey: 'telegramActive', defaultActive: false },
-                  { key: 'reddit', label: 'Reddit', defaultUrl: '', activeKey: 'redditActive', defaultActive: false },
-                  { key: 'tiktok', label: 'TikTok', defaultUrl: '', activeKey: 'tiktokActive', defaultActive: false },
-                ].map(soc => {
-                  const isActive = socialState[soc.activeKey] !== undefined 
-                    ? Boolean(socialState[soc.activeKey]) 
-                    : soc.defaultActive;
-                  const currentVal = socialState[soc.key] !== undefined 
-                    ? String(socialState[soc.key]) 
-                    : soc.defaultUrl;
-
-                  return (
-                    <div key={soc.key} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl bg-zinc-950/60 border border-white/8 hover:border-white/15 transition-all">
-                      <div className="flex items-center gap-3 shrink-0">
-                        <label className="flex items-center gap-2.5 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={isActive}
-                            onChange={(e) => setSocialState(prev => ({ ...prev, [soc.activeKey]: e.target.checked }))}
-                            className="accent-pinkCustom w-4 h-4 cursor-pointer"
-                          />
-                          <span className="font-bold text-sm text-zinc-200">
-                            {soc.label}
-                          </span>
-                        </label>
-                      </div>
-
-                      <input
-                        type="text"
-                        value={currentVal}
-                        onChange={(e) => setSocialState(prev => ({ ...prev, [soc.key]: e.target.value }))}
-                        placeholder={`Paste ${soc.label} URL profile link...`}
-                        className="w-full sm:w-2/3 bg-zinc-900 border border-white/8 rounded-xl px-4 py-2 text-zinc-100 text-xs outline-none focus:border-cyanCustom/40 font-mono"
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-
-              <Button type="submit" variant="primary" className="py-3 mt-2 gap-2 justify-center font-mono font-bold text-sm">
-                <Save size={16} /> Synchronize Social Media Matrix
-              </Button>
-            </form>
-          </Card>
-        </div>
-      )}
 
       {/* ================================== TAB: SITE SETTINGS CMS ================================== */}
       {activeTab === 'settings' && (

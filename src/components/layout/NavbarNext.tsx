@@ -15,27 +15,12 @@ export default function NavbarNext({ theme, toggleTheme, settings }: any) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
 
-  const contact = settings?.contact || {};
-
-  const socialConfig = [
-    { id: 'instagram', label: 'Instagram', urlKey: 'instagram', activeKey: 'instagramActive', defaultUrl: 'https://www.instagram.com/kvantumtechsolutions/', defaultActive: true, Icon: InstagramIcon, hoverColor: 'text-slate-500 hover:text-pink-500' },
-    { id: 'linkedin', label: 'LinkedIn', urlKey: 'linkedin', activeKey: 'linkedinActive', defaultUrl: '', defaultActive: false, Icon: LinkedinIcon, hoverColor: 'text-slate-500 hover:text-cyan-500' },
-    { id: 'facebook', label: 'Facebook', urlKey: 'facebook', activeKey: 'facebookActive', defaultUrl: '', defaultActive: false, Icon: FacebookIcon, hoverColor: 'text-slate-500 hover:text-blue-500' },
-    { id: 'twitter', label: 'Twitter / X', urlKey: 'twitter', activeKey: 'twitterActive', defaultUrl: '', defaultActive: false, Icon: TwitterIcon, hoverColor: 'text-slate-500 hover:text-sky-400' },
-    { id: 'whatsapp', label: 'WhatsApp', urlKey: 'whatsapp', activeKey: 'whatsappActive', defaultUrl: '', defaultActive: false, Icon: WhatsappIcon, hoverColor: 'text-slate-500 hover:text-emerald-500' },
-    { id: 'youtube', label: 'YouTube', urlKey: 'youtube', activeKey: 'youtubeActive', defaultUrl: '', defaultActive: false, Icon: YoutubeIcon, hoverColor: 'text-slate-500 hover:text-red-500' },
-    { id: 'github', label: 'GitHub', urlKey: 'github', activeKey: 'githubActive', defaultUrl: 'https://github.com/krapterdev', defaultActive: true, Icon: GithubIcon, hoverColor: 'text-slate-500 hover:text-purple-400' },
-    { id: 'pinterest', label: 'Pinterest', urlKey: 'pinterest', activeKey: 'pinterestActive', defaultUrl: '', defaultActive: false, Icon: PinterestIcon, hoverColor: 'text-slate-500 hover:text-red-400' },
-    { id: 'telegram', label: 'Telegram', urlKey: 'telegram', activeKey: 'telegramActive', defaultUrl: '', defaultActive: false, Icon: TelegramIcon, hoverColor: 'text-slate-500 hover:text-sky-500' },
+  const navbarSocials = [
+    { id: 'instagram', label: 'Instagram', url: 'https://www.instagram.com/kvantumtechsolutions/', Icon: InstagramIcon, hoverColor: 'text-slate-500 hover:text-pink-500' },
+    { id: 'linkedin', label: 'LinkedIn', url: 'https://www.linkedin.com/in/kvantum-tech-solutions-75916a41b/', Icon: LinkedinIcon, hoverColor: 'text-slate-500 hover:text-cyan-500' },
+    { id: 'facebook', label: 'Facebook', url: 'https://www.facebook.com/profile.php?id=61591468234442', Icon: FacebookIcon, hoverColor: 'text-slate-500 hover:text-blue-500' },
+    { id: 'github', label: 'GitHub', url: 'https://github.com/krapterdev', Icon: GithubIcon, hoverColor: 'text-slate-500 hover:text-purple-400' },
   ];
-
-  const navbarSocials = socialConfig
-    .map(soc => {
-      const urlVal = contact[soc.urlKey] !== undefined ? String(contact[soc.urlKey]).trim() : soc.defaultUrl;
-      const isChecked = contact[soc.activeKey] !== undefined ? Boolean(contact[soc.activeKey]) : soc.defaultActive;
-      return { ...soc, url: urlVal, isChecked };
-    })
-    .filter(soc => soc.isChecked && soc.url !== '');
 
   const isActive = (path: string) => {
     if (!pathname) return false;

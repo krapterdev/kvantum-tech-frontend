@@ -14,26 +14,12 @@ export default function Footer({ seoPages = [], theme, settings, services = [], 
   const currentYear = new Date().getFullYear();
   const contact = settings?.contact || {};
   
-  // Dynamic Social Media Links with Active / Inactive Filter
-  const socialConfig = [
-    { id: 'insta', platform: 'Instagram', urlKey: 'instagram', activeKey: 'instagramActive', defaultUrl: 'https://www.instagram.com/kvantumtechsolutions/', defaultActive: true, icon: InstagramIcon },
-    { id: 'linkedin', platform: 'LinkedIn', urlKey: 'linkedin', activeKey: 'linkedinActive', defaultUrl: '', defaultActive: false, icon: LinkedinIcon },
-    { id: 'fb', platform: 'Facebook', urlKey: 'facebook', activeKey: 'facebookActive', defaultUrl: '', defaultActive: false, icon: FacebookIcon },
-    { id: 'tw', platform: 'Twitter / X', urlKey: 'twitter', activeKey: 'twitterActive', defaultUrl: '', defaultActive: false, icon: TwitterIcon },
-    { id: 'wa', platform: 'WhatsApp', urlKey: 'whatsapp', activeKey: 'whatsappActive', defaultUrl: '', defaultActive: false, icon: WhatsappIcon },
-    { id: 'yt', platform: 'YouTube', urlKey: 'youtube', activeKey: 'youtubeActive', defaultUrl: '', defaultActive: false, icon: YoutubeIcon },
-    { id: 'gh', platform: 'GitHub', urlKey: 'github', activeKey: 'githubActive', defaultUrl: 'https://github.com/krapterdev', defaultActive: true, icon: GithubIcon },
-    { id: 'pin', platform: 'Pinterest', urlKey: 'pinterest', activeKey: 'pinterestActive', defaultUrl: '', defaultActive: false, icon: PinterestIcon },
-    { id: 'tg', platform: 'Telegram', urlKey: 'telegram', activeKey: 'telegramActive', defaultUrl: '', defaultActive: false, icon: TelegramIcon },
+  const socialLinks = [
+    { id: 'insta', platform: 'Instagram', url: 'https://www.instagram.com/kvantumtechsolutions/', icon: InstagramIcon },
+    { id: 'linkedin', platform: 'LinkedIn', url: 'https://www.linkedin.com/in/kvantum-tech-solutions-75916a41b/', icon: LinkedinIcon },
+    { id: 'fb', platform: 'Facebook', url: 'https://www.facebook.com/profile.php?id=61591468234442', icon: FacebookIcon },
+    { id: 'gh', platform: 'GitHub', url: 'https://github.com/krapterdev', icon: GithubIcon },
   ];
-
-  const socialLinks = socialConfig
-    .map(soc => {
-      const urlVal = contact[soc.urlKey] !== undefined ? String(contact[soc.urlKey]).trim() : soc.defaultUrl;
-      const isChecked = contact[soc.activeKey] !== undefined ? Boolean(contact[soc.activeKey]) : soc.defaultActive;
-      return { ...soc, url: urlVal, active: isChecked };
-    })
-    .filter(soc => soc.active && soc.url !== '');
 
   return (
     <footer className="relative z-10 mt-[100px] px-6 py-[70px] select-none text-center border-t border-slate-200 dark:border-white/10 bg-white dark:bg-zinc-950/95 text-slate-900 dark:text-white overflow-hidden transition-colors duration-300">
