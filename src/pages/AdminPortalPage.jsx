@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useSafeNavigate as useNavigate } from '@/utils/navigation';
-const useLocation = () => ({ pathname: typeof window !== 'undefined' ? window.location.pathname : '/admin' });
+const useLocation = () => {
+  const [pathname, setPathname] = useState(() => (typeof window !== 'undefined' ? window.location.pathname : '/admin'));
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handlePopState = () => setPathname(window.location.pathname);
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+  return { pathname };
+};
 import { 
   Plus, Edit2, Trash2, Save, X, Globe, Layers, BookOpen, Key, Link2, Eye, 
   UserCheck, Image, Image as ImageIcon, Copy, Check, UploadCloud, LogOut, Lock, Mail, FileText, CheckCircle2, AlertTriangle, Settings, Menu, Activity, Share2,
@@ -12,6 +21,7 @@ import GradientText from '@/components/ui/GradientText';
 import Button from '@/components/ui/Button';
 import RichTextEditor from '@/components/ui/RichTextEditor';
 import KvantumLogo from '@/components/ui/KvantumLogo';
+import { fallbackSettings } from '@/data/settings';
 
 // Import service layers
 import * as userService from '@/services/userService';
@@ -192,25 +202,7 @@ Sitemap: https://kvantumtechsolutions.com/sitemap.xml`;
   const [hideScrollerFrames, setHideScrollerFrames] = useState(false);
   const [assetZoomModal, setAssetZoomModal] = useState(null);
 
-  const [socialState, setSocialState] = useState(() => {
-    let base = { ...fallbackSettings.contact };
-    if (typeof window !== 'undefined') {
-      const local = localStorage.getItem('kts_saved_contact_settings');
-      if (local) {
-        try {
-          const parsed = JSON.parse(local);
-          base = { ...base, ...parsed };
-        } catch(e) {}
-      }
-    }
-    return base;
-  });
 
-  useEffect(() => {
-    if (settings?.contact) {
-      setSocialState(prev => ({ ...fallbackSettings.contact, ...settings.contact, ...prev }));
-    }
-  }, [settings?.contact]);
 
   const formatIsoDate = (dateVal, fallbackDate = '2026-08-04') => {
     if (!dateVal) return fallbackDate;
