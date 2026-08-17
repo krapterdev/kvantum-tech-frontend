@@ -35,11 +35,16 @@ export const getCurrentUser = () => {
     const user = localStorage.getItem('kts_admin_user');
     if (!user || user === 'undefined' || user === 'null') return null;
     const parsed = JSON.parse(user);
-    if (parsed && typeof parsed === 'object') return parsed;
+    if (parsed && typeof parsed === 'object' && parsed.role && parsed.email) {
+      return parsed;
+    }
+    localStorage.removeItem('kts_admin_user');
+    localStorage.removeItem('kts_admin_token');
     return null;
   } catch (e) {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('kts_admin_user');
+      localStorage.removeItem('kts_admin_token');
     }
     return null;
   }

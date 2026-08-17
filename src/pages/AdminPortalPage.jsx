@@ -410,10 +410,11 @@ ${allEntries.map(entry => `    <url>
 
   // Always fetch collections upon mount and active tab switches
   useEffect(() => {
+    if (!currentUser || !currentUser.role) return;
     fetchLeadsList();
     fetchAssetsList();
     fetchSeoSettingsList();
-    if (currentUser && currentUser.role === 'admin') {
+    if (currentUser.role === 'admin') {
       fetchUsersList();
     }
   }, [activeTab, currentUser]);
@@ -2209,7 +2210,7 @@ ${allEntries.map(entry => `    <url>
   };
 
   // If user is not logged in, render the login panel with instant auto-login helper
-  if (!currentUser) {
+  if (!currentUser || !currentUser.role) {
     return (
       <div className="min-h-screen w-full bg-[#050811] flex items-center justify-center p-6 text-left relative z-50">
         <Card className="w-full max-w-[440px] p-10 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.8)] bg-[#090d1a]">
