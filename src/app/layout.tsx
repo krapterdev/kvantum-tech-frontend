@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   },
   title: {
     default: 'IT Solutions Company in Delhi NCR | Kvantum Tech Solutions',
-    template: '%s | Kvantum Tech Solutions',
+    template: '%s',
   },
   description: 'Kvantum Tech Solutions offers reliable IT services, software development, cloud solutions, web development, and digital transformation services across Delhi NCR.',
   keywords: [
