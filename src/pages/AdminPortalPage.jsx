@@ -13,7 +13,7 @@ const useLocation = () => {
 import { 
   Plus, Edit2, Trash2, Save, X, Globe, Layers, BookOpen, Key, Link2, Eye, 
   UserCheck, Image, Image as ImageIcon, Copy, Check, UploadCloud, LogOut, Lock, Mail, FileText, CheckCircle2, AlertTriangle, Settings, Menu, Activity, Share2,
-  ChevronUp, ChevronDown, Folder, Database, Download, RotateCcw
+  ChevronUp, ChevronDown, Folder, Database, Download, RotateCcw, Loader2, Code
 } from 'lucide-react';
 import Card from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
@@ -90,6 +90,15 @@ export default function AdminPortalPage({
   const [uploadingAsset, setUploadingAsset] = useState(false);
   const [copiedIndex, setCopiedIndex] = useState(null);
   const [currentFolder, setCurrentFolder] = useState('');
+  const [createdFolders, setCreatedFolders] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('kts_created_folders');
+        return saved ? JSON.parse(saved) : ['blogs', 'services', 'projects', 'scroller-images'];
+      } catch(e) {}
+    }
+    return ['blogs', 'services', 'projects', 'scroller-images'];
+  });
 
   // CRUD states
   const [isEditing, setIsEditing] = useState(false);
@@ -3984,13 +3993,36 @@ ${allEntries.map(entry => `    <url>
               {/* Create New Folder Button */}
               <button
                 type="button"
-                onClick={() => {
+                onClick={async () => {
                   const folderName = window.prompt('Enter new folder name (e.g. banners, products, logos):');
                   if (folderName && folderName.trim()) {
                     const cleanFolder = folderName.trim().replace(/[^a-zA-Z0-9_-]/g, '_');
                     const target = currentFolder ? `${currentFolder}/${cleanFolder}` : cleanFolder;
+                    
+                    setCreatedFolders(prev => {
+                      const updated = Array.from(new Set([...(Array.isArray(prev) ? prev : []), target, cleanFolder]));
+                      if (typeof window !== 'undefined') {
+                        try { localStorage.setItem('kts_created_folders', JSON.stringify(updated)); } catch(e) {}
+                      }
+                      return updated;
+                    });
+
+                    try {
+                      const existingInSettings = settings?.custom_folders || [];
+                      const updatedInSettings = Array.from(new Set([...existingInSettings, target, cleanFolder]));
+                      await settingService.updateSetting('custom_folders', updatedInSettings);
+                      setSettings(prev => ({ ...prev, custom_folders: updatedInSettings }));
+                    } catch(e) {}
+
+                    try {
+                      const keepFile = new File(['kts_folder_keep'], '.keep', { type: 'text/plain' });
+                      assetService.uploadAsset(keepFile, target).then(() => {
+                        fetchAssetsList();
+                      }).catch(() => {});
+                    } catch(e) {}
+
                     setCurrentFolder(target);
-                    alert(`📁 Created & Switched to folder: /${target}`);
+                    alert(`📁 Created & saved directory permanently: /${target}`);
                   }
                 }}
                 className="px-4 py-2.5 bg-zinc-950/80 border border-white/10 hover:border-cyanCustom/40 rounded-xl text-xs font-mono text-zinc-200 flex items-center gap-2 cursor-pointer transition-all"
@@ -4129,8 +4161,13 @@ ${allEntries.map(entry => `    <url>
             });
 
             if (!currentFolder) {
-              ['blogs', 'services', 'projects'].forEach(defFolder => {
-                if (!subFolderMap.has(defFolder)) {
+              const allKnownFolders = Array.from(new Set([
+                'blogs', 'services', 'projects', 'scroller-images',
+                ...(createdFolders || []),
+                ...(settings?.custom_folders || [])
+              ]));
+              allKnownFolders.forEach(defFolder => {
+                if (defFolder && typeof defFolder === 'string' && !subFolderMap.has(defFolder)) {
                   subFolderMap.set(defFolder, { name: defFolder, path: defFolder, count: 0 });
                 }
               });
