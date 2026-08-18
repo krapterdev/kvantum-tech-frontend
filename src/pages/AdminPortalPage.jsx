@@ -625,6 +625,12 @@ ${allEntries.map(entry => `    <url>
       const fullAssetKey = `${folderPrefix}${cleanFileName}`;
       const supabaseUrl = `https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/${fullAssetKey}`;
 
+      // Instant local preview blob URL so user's uploaded image ALWAYS renders perfectly
+      let localBlobUrl = '';
+      try {
+        localBlobUrl = URL.createObjectURL(file);
+      } catch (e) {}
+
       try {
         const res = await assetService.uploadAsset(file, currentFolder);
         const uploadedUrl = res?.publicUrl || res?.url || supabaseUrl;
@@ -632,6 +638,7 @@ ${allEntries.map(entry => `    <url>
           name: res?.name || fullAssetKey,
           url: uploadedUrl,
           publicUrl: uploadedUrl,
+          localPreviewUrl: localBlobUrl || uploadedUrl,
           contentType: file.type || (file.name.endsWith('.png') ? 'image/png' : 'image/jpeg'),
           size: file.size,
           created_at: new Date().toISOString()
@@ -641,7 +648,7 @@ ${allEntries.map(entry => `    <url>
           const list = Array.isArray(prev) ? prev : [];
           const updated = [finalAsset, ...list.filter(a => a.name !== finalAsset.name)];
           try {
-            const customToSave = updated.filter(a => !(a.name || '').includes('scroller-images') && !(a.name || '').includes('ezgif-frame')).slice(0, 100);
+            const customToSave = updated.filter(a => a.url && !a.url.startsWith('data:') && !(a.name || '').includes('scroller-images') && !(a.name || '').includes('ezgif-frame')).slice(0, 100);
             localStorage.setItem('kts_saved_media_assets', JSON.stringify(customToSave));
           } catch(err) {}
           return updated;
@@ -653,6 +660,7 @@ ${allEntries.map(entry => `    <url>
           name: fullAssetKey,
           url: supabaseUrl,
           publicUrl: supabaseUrl,
+          localPreviewUrl: localBlobUrl || supabaseUrl,
           contentType: file.type || (file.name.endsWith('.png') ? 'image/png' : 'image/jpeg'),
           size: file.size,
           created_at: new Date().toISOString()
@@ -661,7 +669,7 @@ ${allEntries.map(entry => `    <url>
           const list = Array.isArray(prev) ? prev : [];
           const updated = [fallbackAsset, ...list.filter(a => a.name !== fallbackAsset.name)];
           try {
-            const customToSave = updated.filter(a => !(a.name || '').includes('scroller-images') && !(a.name || '').includes('ezgif-frame')).slice(0, 100);
+            const customToSave = updated.filter(a => a.url && !a.url.startsWith('data:') && !(a.name || '').includes('scroller-images') && !(a.name || '').includes('ezgif-frame')).slice(0, 100);
             localStorage.setItem('kts_saved_media_assets', JSON.stringify(customToSave));
           } catch(e) {}
           return updated;
@@ -3758,11 +3766,15 @@ ${allEntries.map(entry => `    <url>
                             >
                               {isImg ? (
                                 <img 
-                                  src={asset.url || asset.publicUrl} 
+                                  src={asset.localPreviewUrl || asset.url || asset.publicUrl} 
                                   alt={asset.name}
                                   onError={(e) => {
-                                    e.target.onerror = null;
-                                    e.target.src = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg';
+                                    if (asset.localPreviewUrl && e.target.src !== asset.localPreviewUrl) {
+                                      e.target.src = asset.localPreviewUrl;
+                                    } else {
+                                      e.target.onerror = null;
+                                      e.target.src = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg';
+                                    }
                                   }} 
                                   className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform" 
                                 />
@@ -3856,15 +3868,19 @@ ${allEntries.map(entry => `    <url>
                   🖼️ Supabase S3 Object Inspector: {assetZoomModal.name}
                 </h3>
 
-                <div className="w-full h-72 bg-zinc-950 rounded-xl overflow-hidden flex items-center justify-center border border-white/10 p-2">
-                  <img
-                    src={assetZoomModal.url || assetZoomModal.publicUrl}
+                <div className="w-full bg-zinc-950 rounded-xl overflow-hidden flex items-center justify-center border border-white/10 p-2">
+                  <img 
+                    src={assetZoomModal.localPreviewUrl || assetZoomModal.url || assetZoomModal.publicUrl} 
                     alt={assetZoomModal.name}
                     onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg';
+                      if (assetZoomModal.localPreviewUrl && e.target.src !== assetZoomModal.localPreviewUrl) {
+                        e.target.src = assetZoomModal.localPreviewUrl;
+                      } else {
+                        e.target.onerror = null;
+                        e.target.src = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg';
+                      }
                     }}
-                    className="w-full h-full object-contain"
+                    className="max-h-[70vh] object-contain rounded-xl shadow-2xl border border-white/10"
                   />
                 </div>
 
