@@ -54,7 +54,7 @@ export default function AdminPortalPage({
   const location = useLocation();
   const navigate = useNavigate();
 
-  const validTabs = ['leads', 'analytics', 'services', 'portfolio', 'blogs', 'seo', 'robots_sitemap', 'assets', 'users', 'settings'];
+  const validTabs = ['leads', 'analytics', 'services', 'portfolio', 'blogs', 'seo', 'programmatic_seo', 'robots_sitemap', 'assets', 'users', 'settings'];
 
   const getTabFromPath = () => {
     if (typeof window === 'undefined') return 'leads';
@@ -316,6 +316,8 @@ ${allEntries.map(entry => `    <url>
   // SEO Settings states
   const [isEditingSeoSetting, setIsEditingSeoSetting] = useState(false);
   const [editingSeoSettingItem, setEditingSeoSettingItem] = useState(null);
+  const [seoModalTab, setSeoModalTab] = useState('basic');
+  const [savingSeoSetting, setSavingSeoSetting] = useState(false);
 
   // Blog touched state for real-time auto-fill
   const [blogTouched, setBlogTouched] = useState({
@@ -1739,7 +1741,7 @@ ${allEntries.map(entry => `    <url>
           <label className="block text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-1.5 font-bold font-mono font-headline">Page HTML Content Body</label>
           <textarea 
             required 
-            rows={8}
+            rows={6}
             placeholder="<h2>Custom Web solutions</h2><p>Provide full paragraphs...</p>"
             value={editItem.content || ''}
             onChange={(e) => setEditItem(prev => ({ ...prev, content: e.target.value }))}
@@ -1747,8 +1749,195 @@ ${allEntries.map(entry => `    <url>
           />
         </div>
 
-        <Button type="submit" variant="primary" className="py-3 mt-4 self-start px-8 gap-2">
-          <Save size={16} /> Synchronize Page Node
+        {/* Extended SEO, OG, Twitter, FAQs & Schema Fields for Programmatic Page */}
+        <div className="border-t border-white/8 pt-6 flex flex-col gap-6">
+          <h3 className="text-sm font-bold font-headline text-cyanCustom uppercase tracking-wider flex items-center gap-2">
+            <Globe size={16} /> Advanced Open Graph (OG), FAQs & Schema Settings
+          </h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">Canonical URL (`canonical`)</label>
+              <input 
+                type="text" 
+                placeholder={`https://kvantumtechsolutions.com/keyword/${editItem.slug || ''}`}
+                value={editItem.canonical || ''}
+                onChange={(e) => setEditItem(prev => ({ ...prev, canonical: e.target.value }))}
+                className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm font-mono outline-none focus:border-cyanCustom/40"
+              />
+            </div>
+            <div>
+              <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">Open Graph Title (`ogTitle`)</label>
+              <input 
+                type="text" 
+                placeholder={editItem.metaTitle || editItem.title || "Custom OG Title..."}
+                value={editItem.ogTitle || ''}
+                onChange={(e) => setEditItem(prev => ({ ...prev, ogTitle: e.target.value }))}
+                className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">Open Graph Description (`ogDesc`)</label>
+              <textarea 
+                rows={2}
+                placeholder={editItem.metaDesc || "Custom OG description for social cards..."}
+                value={editItem.ogDesc || ''}
+                onChange={(e) => setEditItem(prev => ({ ...prev, ogDesc: e.target.value }))}
+                className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm resize-none outline-none focus:border-cyanCustom/40"
+              />
+            </div>
+            <div>
+              <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">Open Graph Image URL (`ogImage`)</label>
+              <input 
+                type="text" 
+                placeholder="https://.../og-banner.jpg"
+                value={editItem.ogImage || ''}
+                onChange={(e) => setEditItem(prev => ({ ...prev, ogImage: e.target.value }))}
+                className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm font-mono outline-none focus:border-cyanCustom/40"
+              />
+              {editItem.ogImage && (
+                <img 
+                  src={editItem.ogImage} 
+                  alt="OG Preview" 
+                  className="w-24 h-14 object-cover rounded-lg border border-white/10 mt-2" 
+                  onError={(e) => { e.target.style.display = 'none'; }}
+                />
+              )}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">Open Graph Type (`ogType`)</label>
+              <select 
+                value={editItem.ogType || 'website'}
+                onChange={(e) => setEditItem(prev => ({ ...prev, ogType: e.target.value }))}
+                className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm font-mono outline-none focus:border-cyanCustom/40"
+              >
+                <option value="website">website</option>
+                <option value="article">article</option>
+                <option value="business.business">business.business</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">Twitter Title (`twitterTitle`)</label>
+              <input 
+                type="text" 
+                placeholder={editItem.ogTitle || editItem.metaTitle || "Twitter title..."}
+                value={editItem.twitterTitle || ''}
+                onChange={(e) => setEditItem(prev => ({ ...prev, twitterTitle: e.target.value }))}
+                className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
+              />
+            </div>
+            <div>
+              <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">Twitter Card (`twitterCard`)</label>
+              <select 
+                value={editItem.twitterCard || 'summary_large_image'}
+                onChange={(e) => setEditItem(prev => ({ ...prev, twitterCard: e.target.value }))}
+                className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm font-mono outline-none focus:border-cyanCustom/40"
+              >
+                <option value="summary_large_image">summary_large_image</option>
+                <option value="summary">summary</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Programmatic FAQ Builder */}
+          <div className="p-4 bg-zinc-950/40 border border-white/8 rounded-2xl flex flex-col gap-4">
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-bold font-mono text-zinc-200 uppercase">Page FAQ Items</span>
+              <Button 
+                type="button"
+                onClick={() => {
+                  setEditItem(prev => ({
+                    ...prev,
+                    faqs: [...(Array.isArray(prev.faqs) ? prev.faqs : []), { question: '', answer: '' }]
+                  }));
+                }}
+                variant="secondary"
+                className="px-3 py-1 text-xs font-mono gap-1"
+              >
+                <Plus size={12} /> Add FAQ
+              </Button>
+            </div>
+            {(Array.isArray(editItem.faqs) ? editItem.faqs : []).map((faq, idx) => (
+              <div key={idx} className="p-3 bg-zinc-900/60 border border-white/8 rounded-xl flex flex-col gap-2 relative text-left">
+                <div className="flex justify-between items-center">
+                  <span className="text-[10px] font-mono text-cyanCustom uppercase font-bold">FAQ Item #{idx + 1}</span>
+                  <button 
+                    type="button"
+                    onClick={() => {
+                      setEditItem(prev => ({
+                        ...prev,
+                        faqs: (Array.isArray(prev.faqs) ? prev.faqs : []).filter((_, i) => i !== idx)
+                      }));
+                    }}
+                    className="text-zinc-500 hover:text-red-400 p-1"
+                  >
+                    <Trash2 size={12} />
+                  </button>
+                </div>
+                <input 
+                  type="text" 
+                  placeholder="Question..." 
+                  value={faq.question || ''}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setEditItem(prev => {
+                      const faqs = [...(Array.isArray(prev.faqs) ? prev.faqs : [])];
+                      faqs[idx] = { ...faqs[idx], question: val };
+                      return { ...prev, faqs };
+                    });
+                  }}
+                  className="w-full bg-zinc-950/40 border border-white/8 rounded-lg px-3 py-1.5 text-zinc-100 text-xs outline-none focus:border-cyanCustom/40"
+                />
+                <textarea 
+                  rows={2} 
+                  placeholder="Answer..." 
+                  value={faq.answer || ''}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setEditItem(prev => {
+                      const faqs = [...(Array.isArray(prev.faqs) ? prev.faqs : [])];
+                      faqs[idx] = { ...faqs[idx], answer: val };
+                      return { ...prev, faqs };
+                    });
+                  }}
+                  className="w-full bg-zinc-950/40 border border-white/8 rounded-lg px-3 py-1.5 text-zinc-100 text-xs resize-none outline-none focus:border-cyanCustom/40"
+                />
+              </div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">JSON-LD Schema Markup (`schemaMarkup`)</label>
+              <textarea 
+                rows={4}
+                placeholder='{"@context": "https://schema.org", ...}'
+                value={editItem.schemaMarkup || ''}
+                onChange={(e) => setEditItem(prev => ({ ...prev, schemaMarkup: e.target.value }))}
+                className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-xs font-mono resize-none outline-none focus:border-cyanCustom/40"
+              />
+            </div>
+            <div>
+              <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">Other Custom Scripts / Meta Tags (`otherSeoTags`)</label>
+              <textarea 
+                rows={4}
+                placeholder="<!-- Custom meta or script tags -->"
+                value={editItem.otherSeoTags || ''}
+                onChange={(e) => setEditItem(prev => ({ ...prev, otherSeoTags: e.target.value }))}
+                className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-xs font-mono resize-none outline-none focus:border-cyanCustom/40"
+              />
+            </div>
+          </div>
+        </div>
+
+        <Button type="submit" variant="primary" className="py-3 mt-4 self-start px-8 gap-2 cursor-pointer font-bold font-mono uppercase tracking-wider">
+          <Save size={16} /> Save Programmatic SEO Page Node
         </Button>
       </form>
     </div>
@@ -2218,14 +2407,26 @@ ${allEntries.map(entry => `    <url>
   // Save SEO site-wide setting
   const handleSaveSeoSetting = async (e) => {
     e.preventDefault();
+    if (!editingSeoSettingItem || !editingSeoSettingItem.key) return;
+    setSavingSeoSetting(true);
     try {
-      await seoService.updateSeoSetting(editingSeoSettingItem.key, editingSeoSettingItem);
-      alert('[SUCCESS] SEO setting updated.');
+      const updated = await seoService.updateSeoSetting(editingSeoSettingItem.key, editingSeoSettingItem);
+      setSeoSettings(prev => {
+        const list = Array.isArray(prev) ? prev : [];
+        const exists = list.some(s => s.key === editingSeoSettingItem.key);
+        if (exists) {
+          return list.map(s => s.key === editingSeoSettingItem.key ? { ...s, ...editingSeoSettingItem } : s);
+        }
+        return [...list, editingSeoSettingItem];
+      });
+      alert(`[SUCCESS] SEO, OG, Twitter & FAQ tags updated successfully for page node: "${editingSeoSettingItem.key.toUpperCase()}".`);
       setIsEditingSeoSetting(false);
       setEditingSeoSettingItem(null);
       fetchSeoSettingsList();
     } catch (err) {
       alert('[ERROR] SEO Setting update failed: ' + (err.response?.data?.error || err.message));
+    } finally {
+      setSavingSeoSetting(false);
     }
   };
 
@@ -2475,12 +2676,27 @@ ${allEntries.map(entry => `    <url>
                   </button>
                 )}
 
-                {/* Programmatic SEO tab */}
+                {/* Page Meta Configurations tab */}
                 {(currentUser.role === 'admin' || currentUser.role === 'seo') && (
                   <button
                     onClick={() => handleTabChange('seo')}
                     className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-all duration-200 cursor-pointer ${
                       activeTab === 'seo' 
+                        ? 'bg-purpleCustom/15 text-purpleCustom border-l-2 border-purpleCustom shadow-[0_0_10px_rgba(138,43,226,0.1)]' 
+                        : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/30'
+                    }`}
+                  >
+                    <Key size={16} />
+                    Page Meta Configurations
+                  </button>
+                )}
+
+                {/* Programmatic SEO tab */}
+                {(currentUser.role === 'admin' || currentUser.role === 'seo') && (
+                  <button
+                    onClick={() => handleTabChange('programmatic_seo')}
+                    className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium tracking-wide transition-all duration-200 cursor-pointer ${
+                      activeTab === 'programmatic_seo' 
                         ? 'bg-cyanCustom/10 text-cyanCustom border-l-2 border-cyanCustom shadow-[0_0_10px_rgba(0,210,255,0.05)]' 
                         : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/30'
                     }`}
@@ -3166,8 +3382,8 @@ ${allEntries.map(entry => `    <url>
         )
       )}
 
-      {/* ================================== TAB: PROGRAMMATIC SEO ================================== */}
-      {activeTab === 'seo' && (currentUser.role === 'admin' || currentUser.role === 'seo') && (
+      {/* ================================== TAB: PROGRAMMATIC SEO PAGES ================================== */}
+      {activeTab === 'programmatic_seo' && (currentUser.role === 'admin' || currentUser.role === 'seo') && (
         isEditing && editType === 'seo' ? (
           renderSeoPageForm()
         ) : (
@@ -3222,93 +3438,200 @@ ${allEntries.map(entry => `    <url>
                       </td>
                     </tr>
                   ))}
+                  {seoPages.length === 0 && (
+                    <tr>
+                      <td colSpan={4} className="px-5 py-12 text-center text-zinc-500 font-mono">
+                        NO_PROGRAMMATIC_SEO_NODES_FOUND
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
+          </div>
+        )
+      )}
 
-            {/* Section 2: Page Meta & Custom Code Snippets */}
-            <div className="flex flex-col gap-6 mt-12 border-t border-white/8 pt-8">
-              <h2 className="text-xl font-bold font-headline text-zinc-200 flex items-center gap-2">
-                <Key size={18} className="text-purpleCustom" /> Page Meta Configurations
-              </h2>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {(() => {
-                  const DEFAULT_PAGE_SEO_ITEMS = [
-                    {
-                      key: 'home',
-                      title: 'Custom Software Development Company | Kvantum Tech Solutions',
-                      description: 'Kvantum Tech Solutions is a custom software development company building scalable business software, CRM, HRMS, ERP, web and mobile apps, and automation solutions.',
-                      keywords: 'custom software development company, software development company, custom software development services, business software development company'
-                    },
-                    {
-                      key: 'about',
-                      title: 'About Kvantum Tech Solutions | Enterprise Software & IT Services',
-                      description: 'Learn about Kvantum Tech Solutions, a trusted custom software development company specializing in CRM, HRMS, web apps, and business automation in Delhi NCR.',
-                      keywords: 'about kvantum tech solutions, software engineering team, custom software company'
-                    },
-                    {
-                      key: 'services',
-                      title: 'Enterprise IT & Custom Software Services | Kvantum Tech Solutions',
-                      description: 'Explore custom software development, SaaS products, WhatsApp API integration, CRM/HRMS development, and web and mobile app development services.',
-                      keywords: 'custom software services, CRM software development, HRMS development, web application development'
-                    },
-                    {
-                      key: 'blog',
-                      title: 'Engineering & Tech Insights | Kvantum Tech Solutions Blog',
-                      description: 'Latest articles on custom software development, business automation, CRM tools, SaaS engineering, and enterprise digital transformation.',
-                      keywords: 'software engineering blog, tech insights, custom software development guides'
-                    },
-                    {
-                      key: 'contact',
-                      title: 'Contact Kvantum Tech Solutions | Direct Technical Contact',
-                      description: 'Get in touch with Kvantum Tech Solutions for custom software, CRM, HRMS, ERP, web apps, and business automation. Book a live demo or request project quotes.',
-                      keywords: 'contact software company, request software proposal, custom software quote'
-                    }
-                  ];
+      {/* ================================== TAB: PAGE META CONFIGURATIONS ================================== */}
+      {activeTab === 'seo' && (currentUser.role === 'admin' || currentUser.role === 'seo') && (
+        <div className="fade-in-up flex flex-col gap-6">
+          <div className="flex flex-col gap-2 border-b border-white/8 pb-4">
+            <h2 className="text-xl font-bold font-headline text-zinc-200 flex items-center gap-2">
+              <Key size={18} className="text-purpleCustom" /> Page Meta Configurations
+            </h2>
+            <p className="text-zinc-400 text-xs">Manage Page Meta Titles, Meta Descriptions, Canonical URLs, Open Graph (OG) Social Cards, Twitter Cards, FAQs, JSON-LD Schemas, and Custom Code Snippets.</p>
+          </div>
 
-                  const fetchedList = Array.isArray(seoSettings) 
-                    ? seoSettings 
-                    : (seoSettings && typeof seoSettings === 'object' ? Object.values(seoSettings) : []);
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {(() => {
+              const DEFAULT_PAGE_SEO_ITEMS = [
+                {
+                  key: 'home',
+                  title: 'Custom Software Development Company | Kvantum Tech Solutions',
+                  description: 'Kvantum Tech Solutions is a custom software development company building scalable business software, CRM, HRMS, ERP, web and mobile apps, and automation solutions across Delhi NCR.',
+                  keywords: 'custom software development company, software development company, custom software development services, business software development company',
+                  canonical: 'https://kvantumtechsolutions.com/',
+                  ogTitle: 'Custom Software Development Company | Kvantum Tech Solutions',
+                  ogDesc: 'Kvantum Tech Solutions is a custom software development company building scalable business software, CRM, HRMS, ERP, web and mobile apps, and automation solutions across Delhi NCR.',
+                  ogImage: 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg',
+                  ogType: 'website',
+                  twitterTitle: 'Custom Software Development Company | Kvantum Tech Solutions',
+                  twitterDesc: 'Kvantum Tech Solutions is a custom software development company building scalable business software, CRM, HRMS, ERP, web and mobile apps, and automation solutions across Delhi NCR.',
+                  twitterImage: 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg',
+                  twitterCard: 'summary_large_image',
+                  faqs: [
+                    { question: 'What services does Kvantum Tech Solutions offer?', answer: 'We specialize in custom software development, CRM/HRMS software, business automation, web and mobile application development, and enterprise digital solutions.' }
+                  ],
+                  schema: `{"@context": "https://schema.org", "@type": "ITPrivateTeam", "name": "Kvantum Tech Solutions", "url": "https://kvantumtechsolutions.com/"}`,
+                  other: '<meta property="og:site_name" content="Kvantum Tech Solutions" />'
+                },
+                {
+                  key: 'about',
+                  title: 'About Kvantum Tech Solutions | Enterprise Software & IT Services',
+                  description: 'Learn about Kvantum Tech Solutions, a trusted custom software development company specializing in CRM, HRMS, web apps, and business automation in Delhi NCR.',
+                  keywords: 'about kvantum tech solutions, software engineering team, custom software company',
+                  canonical: 'https://kvantumtechsolutions.com/about',
+                  ogTitle: 'About Kvantum Tech Solutions | Enterprise Software & IT Services',
+                  ogDesc: 'Learn about Kvantum Tech Solutions, a trusted custom software development company specializing in CRM, HRMS, web apps, and business automation in Delhi NCR.',
+                  ogImage: 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg',
+                  ogType: 'website',
+                  twitterTitle: 'About Kvantum Tech Solutions | Enterprise Software & IT Services',
+                  twitterDesc: 'Learn about Kvantum Tech Solutions, a trusted custom software development company specializing in CRM, HRMS, web apps, and business automation in Delhi NCR.',
+                  twitterImage: 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg',
+                  twitterCard: 'summary_large_image',
+                  faqs: [],
+                  schema: '',
+                  other: '<meta property="og:site_name" content="Kvantum Tech Solutions" />'
+                },
+                {
+                  key: 'services',
+                  title: 'Enterprise IT & Custom Software Services | Kvantum Tech Solutions',
+                  description: 'Explore custom software development, SaaS products, WhatsApp API integration, CRM/HRMS development, and web and mobile app development services.',
+                  keywords: 'custom software services, CRM software development, HRMS development, web application development',
+                  canonical: 'https://kvantumtechsolutions.com/services',
+                  ogTitle: 'Enterprise IT & Custom Software Services | Kvantum Tech Solutions',
+                  ogDesc: 'Explore custom software development, SaaS products, WhatsApp API integration, CRM/HRMS development, and web and mobile app development services.',
+                  ogImage: 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg',
+                  ogType: 'website',
+                  twitterTitle: 'Enterprise IT & Custom Software Services | Kvantum Tech Solutions',
+                  twitterDesc: 'Explore custom software development, SaaS products, WhatsApp API integration, CRM/HRMS development, and web and mobile app development services.',
+                  twitterImage: 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg',
+                  twitterCard: 'summary_large_image',
+                  faqs: [],
+                  schema: '',
+                  other: '<meta property="og:site_name" content="Kvantum Tech Solutions" />'
+                },
+                {
+                  key: 'projects',
+                  title: 'Featured Projects | Studio Kvantum Tech Solutions',
+                  description: 'Explore web products, apps, and custom platforms built for our clients by Kvantum Tech Solutions.',
+                  keywords: 'featured software projects, portfolio, enterprise software development',
+                  canonical: 'https://kvantumtechsolutions.com/projects',
+                  ogTitle: 'Featured Projects | Studio Kvantum Tech Solutions',
+                  ogDesc: 'Explore web products, apps, and custom platforms built for our clients by Kvantum Tech Solutions.',
+                  ogImage: 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg',
+                  ogType: 'website',
+                  twitterTitle: 'Featured Projects | Studio Kvantum Tech Solutions',
+                  twitterDesc: 'Explore web products, apps, and custom platforms built for our clients by Kvantum Tech Solutions.',
+                  twitterImage: 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg',
+                  twitterCard: 'summary_large_image',
+                  faqs: [],
+                  schema: '',
+                  other: '<meta property="og:site_name" content="Kvantum Tech Solutions" />'
+                },
+                {
+                  key: 'blog',
+                  title: 'Engineering & Tech Insights | Kvantum Tech Solutions Blog',
+                  description: 'Latest articles on custom software development, business automation, CRM tools, SaaS engineering, and enterprise digital transformation.',
+                  keywords: 'software engineering blog, tech insights, custom software development guides',
+                  canonical: 'https://kvantumtechsolutions.com/blog',
+                  ogTitle: 'Engineering & Tech Insights | Kvantum Tech Solutions Blog',
+                  ogDesc: 'Latest articles on custom software development, business automation, CRM tools, SaaS engineering, and enterprise digital transformation.',
+                  ogImage: 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg',
+                  ogType: 'website',
+                  twitterTitle: 'Engineering & Tech Insights | Kvantum Tech Solutions Blog',
+                  twitterDesc: 'Latest articles on custom software development, business automation, CRM tools, SaaS engineering, and enterprise digital transformation.',
+                  twitterImage: 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg',
+                  twitterCard: 'summary_large_image',
+                  faqs: [],
+                  schema: '',
+                  other: '<meta property="og:site_name" content="Kvantum Tech Solutions" />'
+                },
+                {
+                  key: 'contact',
+                  title: 'Contact Kvantum Tech Solutions | Direct Technical Contact',
+                  description: 'Get in touch with Kvantum Tech Solutions for custom software, CRM, HRMS, ERP, web apps, and business automation. Book a live demo or request project quotes.',
+                  keywords: 'contact software company, request software proposal, custom software quote',
+                  canonical: 'https://kvantumtechsolutions.com/contact',
+                  ogTitle: 'Contact Kvantum Tech Solutions | Direct Technical Contact',
+                  ogDesc: 'Get in touch with Kvantum Tech Solutions for custom software, CRM, HRMS, ERP, web apps, and business automation. Book a live demo or request project quotes.',
+                  ogImage: 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg',
+                  ogType: 'website',
+                  twitterTitle: 'Contact Kvantum Tech Solutions | Direct Technical Contact',
+                  twitterDesc: 'Get in touch with Kvantum Tech Solutions for custom software, CRM, HRMS, ERP, web apps, and business automation. Book a live demo or request project quotes.',
+                  twitterImage: 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg',
+                  twitterCard: 'summary_large_image',
+                  faqs: [],
+                  schema: '',
+                  other: '<meta property="og:site_name" content="Kvantum Tech Solutions" />'
+                }
+              ];
 
-                  const mergedList = DEFAULT_PAGE_SEO_ITEMS.map(defItem => {
-                    const found = fetchedList.find(s => s.key === defItem.key);
-                    return found ? { ...defItem, ...found } : defItem;
-                  });
+              const fetchedList = Array.isArray(seoSettings) 
+                ? seoSettings 
+                : (seoSettings && typeof seoSettings === 'object' ? Object.values(seoSettings) : []);
 
-                  return mergedList.map(setting => (
-                    <Card key={setting.key} className="p-6 border flex flex-col justify-between items-start gap-4 h-full">
-                      <div className="text-left w-full flex flex-col justify-between flex-1">
-                        <div>
-                          <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-zinc-800 text-zinc-300 font-bold uppercase block w-fit mb-3">
-                            {setting.key}
-                          </span>
-                          <div className="flex flex-col gap-1.5 min-h-[5.5rem] justify-center">
-                            <h4 className="text-zinc-200 text-sm font-semibold line-clamp-1" title={setting.title || 'Untitled Page'}>
-                              {setting.title || 'Untitled Page'}
-                            </h4>
-                            <p className="text-zinc-400 text-xs line-clamp-3 leading-relaxed" title={setting.description || 'No description'}>
-                              {setting.description || 'No description'}
-                            </p>
-                          </div>
-                        </div>
+              const mergedList = DEFAULT_PAGE_SEO_ITEMS.map(defItem => {
+                const found = fetchedList.find(s => s.key === defItem.key);
+                return found ? { ...defItem, ...found } : defItem;
+              });
+
+              return mergedList.map(setting => (
+                <Card key={setting.key} className="p-6 border flex flex-col justify-between items-start gap-4 h-full hover:border-purpleCustom/40 transition-colors">
+                  <div className="text-left w-full flex flex-col justify-between flex-1">
+                    <div>
+                      <div className="flex justify-between items-center mb-3">
+                        <span className="px-2.5 py-1 rounded-md text-[10px] font-mono bg-purpleCustom/15 text-purpleCustom border border-purpleCustom/30 font-bold uppercase block w-fit">
+                          {setting.key} PAGE
+                        </span>
+                        <span className="text-[10px] font-mono text-zinc-500">
+                          {setting.ogImage ? '🖼️ OG Image Set' : 'Default OG'}
+                        </span>
                       </div>
-                      
-                      <Button 
-                        onClick={() => {
-                          setEditingSeoSettingItem({ ...setting });
-                          setIsEditingSeoSetting(true);
-                        }}
-                        variant="secondary"
-                        className="w-full py-2 text-xs rounded-lg mt-4 cursor-pointer"
-                      >
-                        Configure Meta Node
-                      </Button>
-                    </Card>
-                  ));
-                })()}
-              </div>
-            </div>
+                      <div className="flex flex-col gap-1.5 min-h-[5.5rem] justify-center">
+                        <h4 className="text-zinc-100 text-sm font-semibold line-clamp-1 font-headline" title={setting.title || 'Untitled Page'}>
+                          {setting.title || 'Untitled Page'}
+                        </h4>
+                        <p className="text-zinc-400 text-xs line-clamp-3 leading-relaxed" title={setting.description || 'No description'}>
+                          {setting.description || 'No description'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    onClick={() => {
+                      let parsedFaqs = [];
+                      if (Array.isArray(setting.faqs)) parsedFaqs = setting.faqs;
+                      else if (typeof setting.faqs === 'string') {
+                        try { parsedFaqs = JSON.parse(setting.faqs); } catch(e) { parsedFaqs = []; }
+                      }
+                      setEditingSeoSettingItem({ 
+                        ...setting,
+                        faqs: parsedFaqs
+                      });
+                      setSeoModalTab('basic');
+                      setIsEditingSeoSetting(true);
+                    }}
+                    variant="secondary"
+                    className="w-full py-2.5 text-xs rounded-xl mt-4 cursor-pointer gap-2 justify-center border-white/10 hover:border-purpleCustom/40 hover:text-purpleCustom"
+                  >
+                    <Edit2 size={13} /> Configure Meta & OG Node
+                  </Button>
+                </Card>
+              ));
+            })()}
+          </div>
 
             {/* Section 3: Head & Body Custom Snippets Injector */}
             <div className="flex flex-col gap-6 border-t border-white/8 pt-8 mt-12">
@@ -3408,10 +3731,8 @@ ${allEntries.map(entry => `    <url>
                   </div>
                 </div>
               </div>
-            </div>
-
           </div>
-        )
+        </div>
       )}
 
       {/* ================================== TAB: ROBOTS & SITEMAP CMS ================================== */}
@@ -4546,22 +4867,30 @@ ${allEntries.map(entry => `    <url>
       {/* ================================== MODAL: SITE-WIDE SEO SETTINGS EDITOR ================================== */}
       {isEditingSeoSetting && editingSeoSettingItem && (
         <div className="dialog-overlay" onClick={() => setIsEditingSeoSetting(false)}>
-          <div className="dialog-content" onClick={(e) => e.stopPropagation()}>
+          <div className="dialog-content max-w-4xl w-full" onClick={(e) => e.stopPropagation()}>
             <button 
+              type="button"
               onClick={() => setIsEditingSeoSetting(false)}
-              className="absolute top-5 right-5 bg-white/[0.02] border border-white/8 text-zinc-100 p-2 rounded-full hover:bg-white/[0.08]"
+              className="absolute top-5 right-5 bg-white/[0.02] border border-white/8 text-zinc-100 p-2 rounded-full hover:bg-white/[0.08] z-20 cursor-pointer"
             >
               <X size={20} />
             </button>
 
-            <form onSubmit={handleSaveSeoSetting} className="p-8 sm:p-12 text-left flex flex-col gap-5 max-h-[85vh] overflow-y-auto w-full max-w-[600px]">
-              <h2 className="text-xl font-bold font-headline text-zinc-200 border-b border-white/8 pb-3">
-                Configure SEO Node: <span className="text-cyanCustom uppercase">{editingSeoSettingItem.key}</span>
-              </h2>
+            <form onSubmit={handleSaveSeoSetting} className="p-6 sm:p-10 text-left flex flex-col gap-6 max-h-[90vh] overflow-y-auto w-full">
+              
+              {/* Header */}
+              <div className="border-b border-white/8 pb-4">
+                <span className="px-2.5 py-1 rounded text-[10px] font-mono bg-purpleCustom/20 text-purpleCustom border border-purpleCustom/30 uppercase font-bold inline-block mb-2">
+                  PAGE META NODE EDITOR
+                </span>
+                <h2 className="text-2xl font-bold font-headline text-zinc-100 flex items-center gap-2">
+                  Configure Page Node: <span className="text-cyanCustom uppercase">{editingSeoSettingItem.key}</span>
+                </h2>
+              </div>
 
               {editingSeoSettingItem.key === 'robots' || editingSeoSettingItem.key === 'sitemap' ? (
                 <div>
-                  <label className="block text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-1.5">
+                  <label className="block text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-1.5 font-bold">
                     {editingSeoSettingItem.key.toUpperCase()} Payload Content
                   </label>
                   <textarea 
@@ -4570,69 +4899,373 @@ ${allEntries.map(entry => `    <url>
                     placeholder={`Provide raw ${editingSeoSettingItem.key === 'robots' ? 'robots.txt' : 'sitemap.xml'} content...`}
                     value={editingSeoSettingItem.content || ''}
                     onChange={(e) => setEditingSeoSettingItem(prev => ({ ...prev, content: e.target.value }))}
-                    className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm font-mono resize-none"
+                    className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm font-mono resize-none outline-none focus:border-cyanCustom/40"
                   />
                 </div>
               ) : (
-                <div className="flex flex-col gap-4">
-                  <div>
-                    <label className="block text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-1.5">Page Title Tag</label>
-                    <input 
-                      type="text" 
-                      required 
-                      placeholder="e.g. IT Solutions Company in Delhi NCR | Kvantum Tech Solutions"
-                      value={editingSeoSettingItem.title || ''}
-                      onChange={(e) => setEditingSeoSettingItem(prev => ({ ...prev, title: e.target.value }))}
-                      className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm"
-                    />
+                <div className="flex flex-col gap-6">
+                  
+                  {/* Modal Sub-navigation Tabs */}
+                  <div className="flex gap-2 border-b border-white/8 pb-2 overflow-x-auto">
+                    {[
+                      { id: 'basic', label: '📌 Basic Meta Tags' },
+                      { id: 'og', label: '🌐 Open Graph (OG)' },
+                      { id: 'twitter', label: '🐦 Twitter Cards' },
+                      { id: 'faqs', label: '❓ FAQ Tags' },
+                      { id: 'schema_other', label: '⚙️ Schema & Custom HTML' }
+                    ].map(tab => (
+                      <button
+                        type="button"
+                        key={tab.id}
+                        onClick={() => setSeoModalTab(tab.id)}
+                        className={`px-4 py-2 rounded-xl text-xs font-medium font-mono whitespace-nowrap transition-all cursor-pointer ${
+                          seoModalTab === tab.id
+                            ? 'bg-cyanCustom/15 text-cyanCustom border border-cyanCustom/30 font-bold'
+                            : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.02]'
+                        }`}
+                      >
+                        {tab.label}
+                      </button>
+                    ))}
                   </div>
 
-                  <div>
-                    <label className="block text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-1.5">Meta Description</label>
-                    <textarea 
-                      required 
-                      rows={3}
-                      placeholder="Brief page meta description..."
-                      value={editingSeoSettingItem.description || ''}
-                      onChange={(e) => setEditingSeoSettingItem(prev => ({ ...prev, description: e.target.value }))}
-                      className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm resize-none"
-                    />
-                  </div>
+                  {/* TAB 1: BASIC META */}
+                  {seoModalTab === 'basic' && (
+                    <div className="flex flex-col gap-4 fade-in-up">
+                      <div>
+                        <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">
+                          Page Title Tag (`title`)
+                        </label>
+                        <input 
+                          type="text" 
+                          required 
+                          placeholder="e.g. Custom Software Development Company | Kvantum Tech Solutions"
+                          value={editingSeoSettingItem.title || ''}
+                          onChange={(e) => setEditingSeoSettingItem(prev => ({ ...prev, title: e.target.value }))}
+                          className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
+                        />
+                      </div>
 
-                  <div>
-                    <label className="block text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-1.5">Meta Keywords</label>
-                    <input 
-                      type="text" 
-                      placeholder="Comma separated: seo, dev, brand"
-                      value={editingSeoSettingItem.keywords || ''}
-                      onChange={(e) => setEditingSeoSettingItem(prev => ({ ...prev, keywords: e.target.value }))}
-                      className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm"
-                    />
-                  </div>
+                      <div>
+                        <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">
+                          Meta Description (`description`)
+                        </label>
+                        <textarea 
+                          required 
+                          rows={3}
+                          placeholder="Brief page meta description snippet for Google SERP results..."
+                          value={editingSeoSettingItem.description || ''}
+                          onChange={(e) => setEditingSeoSettingItem(prev => ({ ...prev, description: e.target.value }))}
+                          className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm resize-none outline-none focus:border-cyanCustom/40"
+                        />
+                      </div>
 
-                  <div>
-                    <label className="block text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-1.5">JSON-LD Schema Markup (RAW JSON)</label>
-                    <textarea 
-                      rows={4}
-                      placeholder='{"@context": "https://schema.org", ...}'
-                      value={editingSeoSettingItem.schema || ''}
-                      onChange={(e) => setEditingSeoSettingItem(prev => ({ ...prev, schema: e.target.value }))}
-                      className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm font-mono resize-none"
-                    />
-                  </div>
+                      <div>
+                        <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">
+                          Meta Keywords (`keywords`)
+                        </label>
+                        <input 
+                          type="text" 
+                          placeholder="Comma separated: custom software, CRM development, web app agency"
+                          value={editingSeoSettingItem.keywords || ''}
+                          onChange={(e) => setEditingSeoSettingItem(prev => ({ ...prev, keywords: e.target.value }))}
+                          className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
+                        />
+                      </div>
 
-                  <div>
-                    <label className="block text-[11px] font-mono text-zinc-500 uppercase tracking-widest mb-1.5">Other Custom Scripts/Meta (other)</label>
-                    <textarea 
-                      rows={4}
-                      placeholder="<!-- Paste pixels, verification scripts, custom trackers here -->"
-                      value={editingSeoSettingItem.other || ''}
-                      onChange={(e) => setEditingSeoSettingItem(prev => ({ ...prev, other: e.target.value }))}
-                      className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm font-mono resize-none"
-                    />
-                  </div>
+                      <div>
+                        <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">
+                          Canonical URL / Path (`canonical`)
+                        </label>
+                        <input 
+                          type="text" 
+                          placeholder="e.g. https://kvantumtechsolutions.com/ or /about"
+                          value={editingSeoSettingItem.canonical || ''}
+                          onChange={(e) => setEditingSeoSettingItem(prev => ({ ...prev, canonical: e.target.value }))}
+                          className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm font-mono outline-none focus:border-cyanCustom/40"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* TAB 2: OPEN GRAPH */}
+                  {seoModalTab === 'og' && (
+                    <div className="flex flex-col gap-4 fade-in-up">
+                      <div>
+                        <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">
+                          Open Graph Title (`og:title`)
+                        </label>
+                        <input 
+                          type="text" 
+                          placeholder={editingSeoSettingItem.title || "Custom OG Title for WhatsApp, LinkedIn, Facebook shares..."}
+                          value={editingSeoSettingItem.ogTitle || ''}
+                          onChange={(e) => setEditingSeoSettingItem(prev => ({ ...prev, ogTitle: e.target.value }))}
+                          className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
+                        />
+                        <span className="text-[10px] text-zinc-500 font-mono mt-1 block">Leave empty to default to Page Title Tag.</span>
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">
+                          Open Graph Description (`og:description`)
+                        </label>
+                        <textarea 
+                          rows={3}
+                          placeholder={editingSeoSettingItem.description || "Custom OG description for social card previews..."}
+                          value={editingSeoSettingItem.ogDesc || ''}
+                          onChange={(e) => setEditingSeoSettingItem(prev => ({ ...prev, ogDesc: e.target.value }))}
+                          className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm resize-none outline-none focus:border-cyanCustom/40"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">
+                          Open Graph Image URL (`og:image`)
+                        </label>
+                        <div className="flex gap-3 items-center">
+                          <input 
+                            type="text" 
+                            placeholder="https://.../og-banner.jpg"
+                            value={editingSeoSettingItem.ogImage || ''}
+                            onChange={(e) => setEditingSeoSettingItem(prev => ({ ...prev, ogImage: e.target.value }))}
+                            className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm font-mono outline-none focus:border-cyanCustom/40"
+                          />
+                        </div>
+                        {editingSeoSettingItem.ogImage && (
+                          <div className="mt-3 p-3 bg-zinc-950/60 border border-white/10 rounded-xl flex items-center gap-4">
+                            <img 
+                              src={editingSeoSettingItem.ogImage} 
+                              alt="OG Preview" 
+                              className="w-20 h-14 object-cover rounded-lg border border-white/10 shrink-0" 
+                              onError={(e) => { e.target.style.display = 'none'; }}
+                            />
+                            <div className="text-xs font-mono text-zinc-400 overflow-hidden">
+                              <span className="text-emerald-400 block font-bold">🖼️ Live OG Social Card Preview</span>
+                              <span className="truncate block text-[11px] text-zinc-500">{editingSeoSettingItem.ogImage}</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">
+                          Open Graph Type (`og:type`)
+                        </label>
+                        <select 
+                          value={editingSeoSettingItem.ogType || 'website'}
+                          onChange={(e) => setEditingSeoSettingItem(prev => ({ ...prev, ogType: e.target.value }))}
+                          className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm font-mono outline-none focus:border-cyanCustom/40"
+                        >
+                          <option value="website">website</option>
+                          <option value="article">article</option>
+                          <option value="business.business">business.business</option>
+                          <option value="profile">profile</option>
+                        </select>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* TAB 3: TWITTER CARDS */}
+                  {seoModalTab === 'twitter' && (
+                    <div className="flex flex-col gap-4 fade-in-up">
+                      <div>
+                        <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">
+                          Twitter Card Title (`twitter:title`)
+                        </label>
+                        <input 
+                          type="text" 
+                          placeholder={editingSeoSettingItem.ogTitle || editingSeoSettingItem.title || "Twitter card title..."}
+                          value={editingSeoSettingItem.twitterTitle || ''}
+                          onChange={(e) => setEditingSeoSettingItem(prev => ({ ...prev, twitterTitle: e.target.value }))}
+                          className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">
+                          Twitter Card Description (`twitter:description`)
+                        </label>
+                        <textarea 
+                          rows={3}
+                          placeholder={editingSeoSettingItem.ogDesc || editingSeoSettingItem.description || "Twitter card description..."}
+                          value={editingSeoSettingItem.twitterDesc || ''}
+                          onChange={(e) => setEditingSeoSettingItem(prev => ({ ...prev, twitterDesc: e.target.value }))}
+                          className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm resize-none outline-none focus:border-cyanCustom/40"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">
+                          Twitter Card Image URL (`twitter:image`)
+                        </label>
+                        <input 
+                          type="text" 
+                          placeholder={editingSeoSettingItem.ogImage || "https://.../twitter-card-image.jpg"}
+                          value={editingSeoSettingItem.twitterImage || ''}
+                          onChange={(e) => setEditingSeoSettingItem(prev => ({ ...prev, twitterImage: e.target.value }))}
+                          className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm font-mono outline-none focus:border-cyanCustom/40"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">
+                          Twitter Card Format (`twitter:card`)
+                        </label>
+                        <select 
+                          value={editingSeoSettingItem.twitterCard || 'summary_large_image'}
+                          onChange={(e) => setEditingSeoSettingItem(prev => ({ ...prev, twitterCard: e.target.value }))}
+                          className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm font-mono outline-none focus:border-cyanCustom/40"
+                        >
+                          <option value="summary_large_image">summary_large_image (Large Banner Card)</option>
+                          <option value="summary">summary (Standard Square Card)</option>
+                        </select>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* TAB 4: FAQ TAGS */}
+                  {seoModalTab === 'faqs' && (
+                    <div className="flex flex-col gap-4 fade-in-up">
+                      <div className="flex justify-between items-center border-b border-white/5 pb-3">
+                        <div>
+                          <h4 className="text-sm font-bold text-zinc-200 font-headline">Page FAQ Items Manager</h4>
+                          <p className="text-xs text-zinc-500">FAQ items will automatically build valid Google FAQPage Schema JSON-LD metadata for Google search results.</p>
+                        </div>
+                        <Button 
+                          type="button"
+                          onClick={() => {
+                            setEditingSeoSettingItem(prev => ({
+                              ...prev,
+                              faqs: [...(Array.isArray(prev.faqs) ? prev.faqs : []), { question: '', answer: '' }]
+                            }));
+                          }}
+                          variant="secondary"
+                          className="px-3 py-1.5 text-xs font-mono gap-1"
+                        >
+                          <Plus size={13} /> Add FAQ Item
+                        </Button>
+                      </div>
+
+                      <div className="flex flex-col gap-4 max-h-[350px] overflow-y-auto pr-1">
+                        {(Array.isArray(editingSeoSettingItem.faqs) ? editingSeoSettingItem.faqs : []).map((faq, idx) => (
+                          <div key={idx} className="p-4 bg-zinc-950/40 border border-white/8 rounded-xl flex flex-col gap-3 text-left relative">
+                            <div className="flex justify-between items-center">
+                              <span className="text-[11px] font-mono font-bold text-cyanCustom uppercase">FAQ #{idx + 1}</span>
+                              <button 
+                                type="button"
+                                onClick={() => {
+                                  setEditingSeoSettingItem(prev => ({
+                                    ...prev,
+                                    faqs: (Array.isArray(prev.faqs) ? prev.faqs : []).filter((_, i) => i !== idx)
+                                  }));
+                                }}
+                                className="text-zinc-500 hover:text-red-400 p-1 rounded transition-colors"
+                              >
+                                <Trash2 size={13} />
+                              </button>
+                            </div>
+
+                            <div>
+                              <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-wider mb-1 font-bold">Question</label>
+                              <input 
+                                type="text"
+                                placeholder="e.g. What technology stack does Kvantum use?"
+                                value={faq.question || ''}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setEditingSeoSettingItem(prev => {
+                                    const faqs = [...(Array.isArray(prev.faqs) ? prev.faqs : [])];
+                                    faqs[idx] = { ...faqs[idx], question: val };
+                                    return { ...prev, faqs };
+                                  });
+                                }}
+                                className="w-full bg-zinc-900/60 border border-white/8 rounded-lg px-3 py-2 text-zinc-100 text-xs outline-none focus:border-cyanCustom/40"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-wider mb-1 font-bold">Answer</label>
+                              <textarea 
+                                rows={2}
+                                placeholder="Detailed answer text..."
+                                value={faq.answer || ''}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setEditingSeoSettingItem(prev => {
+                                    const faqs = [...(Array.isArray(prev.faqs) ? prev.faqs : [])];
+                                    faqs[idx] = { ...faqs[idx], answer: val };
+                                    return { ...prev, faqs };
+                                  });
+                                }}
+                                className="w-full bg-zinc-900/60 border border-white/8 rounded-lg px-3 py-2 text-zinc-100 text-xs resize-none outline-none focus:border-cyanCustom/40"
+                              />
+                            </div>
+                          </div>
+                        ))}
+
+                        {(!editingSeoSettingItem.faqs || editingSeoSettingItem.faqs.length === 0) && (
+                          <div className="py-8 text-center border border-dashed border-white/10 rounded-xl font-mono text-xs text-zinc-500">
+                            No FAQ items configured yet for this page. Click "Add FAQ Item" above to add questions.
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* TAB 5: SCHEMA & OTHER */}
+                  {seoModalTab === 'schema_other' && (
+                    <div className="flex flex-col gap-4 fade-in-up">
+                      <div>
+                        <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">
+                          JSON-LD Schema Markup (RAW JSON)
+                        </label>
+                        <textarea 
+                          rows={6}
+                          placeholder='{"@context": "https://schema.org", "@type": "Organization", "name": "Kvantum Tech Solutions"}'
+                          value={editingSeoSettingItem.schema || ''}
+                          onChange={(e) => setEditingSeoSettingItem(prev => ({ ...prev, schema: e.target.value }))}
+                          className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-xs font-mono resize-none outline-none focus:border-cyanCustom/40"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">
+                          Other Custom Scripts / Head HTML (`other`)
+                        </label>
+                        <textarea 
+                          rows={5}
+                          placeholder="<!-- Paste custom tracking pixels, verification script nodes, or extra meta tags here -->"
+                          value={editingSeoSettingItem.other || ''}
+                          onChange={(e) => setEditingSeoSettingItem(prev => ({ ...prev, other: e.target.value }))}
+                          className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-xs font-mono resize-none outline-none focus:border-cyanCustom/40"
+                        />
+                      </div>
+                    </div>
+                  )}
+
                 </div>
               )}
+
+              {/* STICKY BOTTOM ACTION BAR */}
+              <div className="flex justify-end gap-3 pt-5 border-t border-white/8 sticky bottom-0 bg-[#0b0f19] py-3 z-30">
+                <Button 
+                  type="button"
+                  onClick={() => setIsEditingSeoSetting(false)}
+                  variant="secondary"
+                  className="px-5 py-2.5 text-xs font-medium cursor-pointer"
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  type="submit"
+                  variant="primary"
+                  disabled={savingSeoSetting}
+                  className="px-6 py-2.5 text-xs font-bold font-mono uppercase tracking-wider gap-2 cursor-pointer"
+                >
+                  {savingSeoSetting ? <Loader2 className="animate-spin" size={14} /> : <Check size={14} />}
+                  {savingSeoSetting ? 'Saving Settings...' : 'Save Meta Node'}
+                </Button>
+              </div>
 
             </form>
           </div>
