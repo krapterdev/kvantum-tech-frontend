@@ -1,8 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Plus, Minus, HelpCircle } from 'lucide-react';
-import Badge from '../ui/Badge';
+import { ChevronDown } from 'lucide-react';
 
 export const homeFaqs = [
   {
@@ -132,7 +131,14 @@ export const blogFaqs = [
   },
 ];
 
-export default function FAQ({ items = homeFaqs, title = "Everything You Need to Know", subtitle = "About Our Software & Process" }) {
+export default function FAQ({
+  items = homeFaqs,
+  tag = "08 / QUESTIONS, ANSWERED",
+  title = "Before we",
+  highlightTitle = "begin.",
+  subtitle = ""
+} = {}) {
+  const displayHighlight = subtitle || highlightTitle;
   const [openIndex, setOpenIndex] = useState(0);
 
   const toggleFAQ = (index) => {
@@ -140,65 +146,70 @@ export default function FAQ({ items = homeFaqs, title = "Everything You Need to 
   };
 
   return (
-    <section id="faq" className="container mx-auto max-w-[960px] px-6 py-24 select-none text-left relative z-10">
-      
-      {/* Header */}
-      <div className="text-center mb-16 max-w-3xl mx-auto">
-        <Badge className="mb-4 mx-auto inline-flex items-center gap-1.5 bg-pink-500/10 border-pink-500/20 text-pink-600 dark:text-pink-400 font-mono text-xs">
-          <HelpCircle size={14} /> Frequently Asked Questions
-        </Badge>
-        <h2 className="text-3xl sm:text-4xl font-headline font-bold text-slate-900 dark:text-white leading-tight mb-4">
-          {title} <br />
-          <span className="gradient-text">{subtitle}</span>
-        </h2>
+    <section id="faq" className="w-full bg-slate-50 dark:bg-slate-950/80 py-20 sm:py-28 border-t border-slate-200/60 dark:border-zinc-900 transition-colors duration-300">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+          
+          {/* Left Column: Heading & Tag */}
+          <div className="lg:col-span-5 flex flex-col text-left">
+            <span className="text-xs sm:text-sm font-mono font-semibold tracking-wider text-cyan-600 dark:text-cyan-400 uppercase mb-4 block">
+              {tag}
+            </span>
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-headline font-bold text-slate-900 dark:text-white leading-[1.1] tracking-tight">
+              {title} <br />
+              <span className="text-cyan-500 dark:text-cyan-400">{displayHighlight}</span>
+            </h2>
+          </div>
+
+          {/* Right Column: Accordion List */}
+          <div className="lg:col-span-7 flex flex-col border-t border-slate-200 dark:border-zinc-800">
+            {items.map((item, idx) => {
+              const isOpen = openIndex === idx;
+              const formattedNum = item.num || (idx < 9 ? `0${idx + 1}` : `${idx + 1}`);
+
+              return (
+                <div
+                  key={idx}
+                  className="border-b border-slate-200 dark:border-zinc-800 py-6 sm:py-7 transition-colors"
+                >
+                  <button
+                    type="button"
+                    onClick={() => toggleFAQ(idx)}
+                    className="w-full text-left flex items-start justify-between gap-4 cursor-pointer group"
+                    aria-expanded={isOpen}
+                  >
+                    <div className="flex items-start gap-4 sm:gap-6 flex-1">
+                      <span className="text-cyan-600 dark:text-cyan-400 font-mono text-sm sm:text-base font-semibold shrink-0 pt-0.5 w-7 sm:w-8">
+                        {formattedNum}
+                      </span>
+                      <h3 className="text-base sm:text-lg lg:text-xl font-headline font-medium text-slate-900 dark:text-zinc-100 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors pr-2">
+                        {item.question}
+                      </h3>
+                    </div>
+
+                    <div className="shrink-0 pt-1 text-cyan-500 dark:text-cyan-400">
+                      <ChevronDown
+                        size={20}
+                        className={`transform transition-transform duration-300 ${
+                          isOpen ? 'rotate-180' : 'rotate-0 text-slate-400 dark:text-zinc-500 group-hover:text-cyan-500'
+                        }`}
+                      />
+                    </div>
+                  </button>
+
+                  {isOpen && (
+                    <div className="pl-11 sm:pl-14 pt-3 pb-1 text-slate-600 dark:text-zinc-400 text-sm sm:text-base leading-relaxed font-sans">
+                      {item.answer}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+        </div>
       </div>
-
-      {/* Accordion List */}
-      <div className="space-y-4">
-        {items.map((item, idx) => {
-          const isOpen = openIndex === idx;
-          return (
-            <div
-              key={idx}
-              className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
-                isOpen
-                  ? 'bg-white dark:bg-zinc-900 border-cyan-500 shadow-md'
-                  : 'bg-slate-50 dark:bg-zinc-950/70 border-slate-200 dark:border-zinc-800 hover:border-slate-300 dark:hover:border-zinc-700'
-              }`}
-            >
-              <button
-                onClick={() => toggleFAQ(idx)}
-                className="w-full p-6 text-left flex items-center justify-between gap-4 cursor-pointer"
-              >
-                <div className="flex items-center gap-4">
-                  <span className={`text-xs font-mono font-bold px-2.5 py-1 rounded-lg border shrink-0 ${
-                    isOpen ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-600 dark:text-cyan-400' : 'bg-slate-200 dark:bg-zinc-800 border-slate-300 dark:border-zinc-700 text-slate-600 dark:text-zinc-400'
-                  }`}>
-                    {item.num || `0${idx + 1}`}
-                  </span>
-                  <h3 className="text-base sm:text-lg font-headline font-bold text-slate-900 dark:text-white">
-                    {item.question}
-                  </h3>
-                </div>
-                <div className={`p-2 rounded-xl border transition-transform duration-300 shrink-0 ${
-                  isOpen ? 'bg-cyan-500 text-slate-950 border-cyan-500 rotate-180' : 'bg-slate-100 dark:bg-zinc-800 border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-400'
-                }`}>
-                  {isOpen ? <Minus size={16} /> : <Plus size={16} />}
-                </div>
-              </button>
-
-              {isOpen && (
-                <div className="px-6 pb-6 pt-2 border-t border-slate-100 dark:border-zinc-800">
-                  <p className="text-slate-600 dark:text-zinc-300 text-xs sm:text-sm leading-relaxed font-sans font-normal">
-                    {item.answer}
-                  </p>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-
     </section>
   );
 }
+
