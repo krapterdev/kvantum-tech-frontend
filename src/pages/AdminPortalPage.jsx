@@ -89,6 +89,7 @@ export default function AdminPortalPage({
   const [assets, setAssets] = useState([]);
   const [uploadingAsset, setUploadingAsset] = useState(false);
   const [copiedIndex, setCopiedIndex] = useState(null);
+  const [currentFolder, setCurrentFolder] = useState('');
 
   // CRUD states
   const [isEditing, setIsEditing] = useState(false);
@@ -455,8 +456,11 @@ ${allEntries.map(entry => `    <url>
   const fetchAssetsList = async () => {
     let localSaved = [];
     try {
-      localSaved = JSON.parse(localStorage.getItem('kts_saved_media_assets') || '[]');
-    } catch(e) {}
+      const parsed = JSON.parse(localStorage.getItem('kts_saved_media_assets') || '[]');
+      localSaved = Array.isArray(parsed) ? parsed : [];
+    } catch(e) {
+      localSaved = [];
+    }
 
     const getTime = (val) => {
       if (!val) return 0;
@@ -507,7 +511,7 @@ ${allEntries.map(entry => `    <url>
       } catch(e) {}
     } catch (err) {
       console.warn('[ADMIN PORTAL] Assets fetch warning, using local assets.');
-      if (localSaved.length > 0) setAssets(localSaved);
+      setAssets(localSaved);
     }
   };
 
