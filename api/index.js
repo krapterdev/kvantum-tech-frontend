@@ -353,9 +353,8 @@ app.get('/img/:name', function(req, res) {
 app.post('/api/assets/upload', upload.single('file'), async function(req, res) {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
   
-  var folder = (req.body.folder || '').trim().replace(/^\/+|\/+$/g, '');
   var cleanName = req.file.originalname.replace(/[^a-zA-Z0-9_.-]/g, '_');
-  var fileName = folder ? (folder + '/' + cleanName) : cleanName;
+  var fileName = Date.now() + '_' + cleanName;
   var publicUrl = SUPABASE_PUBLIC_URL + '/' + S3_BUCKET + '/' + fileName;
   
   try {

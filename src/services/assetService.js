@@ -12,20 +12,14 @@ export const listAssets = async () => {
   return [];
 };
 
-// Upload file to Supabase S3 bucket (admin/seo only, with optional folder sub-directory)
+// Upload file to Supabase S3 bucket (admin/seo only)
 export const uploadAsset = async (fileObject, folderPath = '') => {
   const cleanFileName = fileObject.name.replace(/[^a-zA-Z0-9_.-]/g, '_');
-  const folderPrefix = folderPath ? (folderPath.replace(/^\/+|\/+$/g, '') + '/') : '';
-  const fullAssetKey = `${folderPrefix}${Date.now()}_${cleanFileName}`;
+  const rootAssetKey = `${Date.now()}_${cleanFileName}`;
 
-  const publicUrl = `${SUPABASE_PROJECT_URL}/storage/v1/object/public/${BUCKET_NAME}/${fullAssetKey}`;
+  const defaultPublicUrl = `${SUPABASE_PROJECT_URL}/storage/v1/object/public/${BUCKET_NAME}/${rootAssetKey}`;
 
-  let token = '';
-  if (typeof window !== 'undefined') {
-    token = localStorage.getItem('kts_admin_token') || '';
-  }
-
-  // 1. Primary: Upload via Backend API with multipart/form-data headers
+  // 1. Primary: Upload via Next.js App Router & Express API with multipart/form-data
   try {
     const formData = new FormData();
     formData.append('file', fileObject);
@@ -40,49 +34,22 @@ export const uploadAsset = async (fileObject, folderPath = '') => {
     });
 
     if (response.data && (response.data.url || response.data.publicUrl)) {
+      const finalUrl = response.data.publicUrl || response.data.url || defaultPublicUrl;
       return {
-        name: response.data.name || fullAssetKey,
-        url: response.data.publicUrl || response.data.url || publicUrl,
-        publicUrl: response.data.publicUrl || response.data.url || publicUrl,
+        name: response.data.name || rootAssetKey,
+        url: finalUrl,
+        publicUrl: finalUrl,
       };
     }
   } catch (err) {
-    console.warn('[BACKEND MULTIPART UPLOAD WARN]', err?.response?.data || err.message);
+    console.warn('[ASSET UPLOAD WARN]', err?.response?.data || err.message);
   }
 
-  // 2. Direct Supabase Storage REST API Upload with Authorization header
-  try {
-    const uploadUrl = `${SUPABASE_PROJECT_URL}/storage/v1/object/${BUCKET_NAME}/${fullAssetKey}`;
-    const headers = {
-      'x-upsert': 'true',
-      'Content-Type': fileObject.type || 'application/octet-stream',
-    };
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    const res = await fetch(uploadUrl, {
-      method: 'POST',
-      headers: headers,
-      body: fileObject,
-    });
-
-    if (res.ok || res.status === 200 || res.status === 201) {
-      return {
-        name: fullAssetKey,
-        url: publicUrl,
-        publicUrl: publicUrl,
-      };
-    }
-  } catch (err) {
-    console.warn('[SUPABASE DIRECT UPLOAD WARN]', err);
-  }
-
-  // 3. Guaranteed public URL return
+  // 2. Fallback: Guaranteed clean public URL return
   return {
-    name: fullAssetKey,
-    url: publicUrl,
-    publicUrl: publicUrl,
+    name: rootAssetKey,
+    url: defaultPublicUrl,
+    publicUrl: defaultPublicUrl,
   };
 };
 

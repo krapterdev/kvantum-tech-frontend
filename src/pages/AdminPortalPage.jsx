@@ -2227,6 +2227,9 @@ ${allEntries.map(entry => `    <url>
     if (cleanText.startsWith('data:')) {
       cleanText = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg';
     }
+    if (cleanText.includes('/storage/v1/object/public/kvantumtechsolutions_storage/')) {
+      cleanText = cleanText.replace(/\/storage\/v1\/object\/public\/kvantumtechsolutions_storage\/(blogs|services|projects)\//, '/storage/v1/object/public/kvantumtechsolutions_storage/');
+    }
     navigator.clipboard.writeText(cleanText);
     setCopiedIndex(idx);
     setTimeout(() => setCopiedIndex(null), 2000);
