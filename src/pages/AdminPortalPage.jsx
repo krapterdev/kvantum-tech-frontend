@@ -319,6 +319,12 @@ ${allEntries.map(entry => `    <url>
   const [seoModalTab, setSeoModalTab] = useState('basic');
   const [savingSeoSetting, setSavingSeoSetting] = useState(false);
 
+  // Programmatic SEO Page Modal states
+  const [isEditingSeoPage, setIsEditingSeoPage] = useState(false);
+  const [editingSeoPageItem, setEditingSeoPageItem] = useState(null);
+  const [seoPageModalTab, setSeoPageModalTab] = useState('basic');
+  const [savingSeoPage, setSavingSeoPage] = useState(false);
+
   // Blog touched state for real-time auto-fill
   const [blogTouched, setBlogTouched] = useState({
     slug: false,
@@ -2222,6 +2228,34 @@ ${allEntries.map(entry => `    <url>
     }
   };
 
+  // Save Programmatic SEO page item via Modal Popup
+  const handleSaveSeoPageModal = async (e) => {
+    e.preventDefault();
+    if (!editingSeoPageItem || !editingSeoPageItem.slug) {
+      alert('[ERROR] URL Target Slug is required.');
+      return;
+    }
+    setSavingSeoPage(true);
+    try {
+      const isExisting = (seoPages || []).some(p => p.slug === editingSeoPageItem.slug || p._id === editingSeoPageItem.slug || p.id === editingSeoPageItem.slug);
+      if (isExisting) {
+        try { await seoService.updateSeoPage(editingSeoPageItem.slug, editingSeoPageItem); } catch (apiErr) { console.warn('Offline update:', apiErr); }
+        setSeoPages(prev => (Array.isArray(prev) ? prev : []).map(p => (p.slug === editingSeoPageItem.slug || p._id === editingSeoPageItem.slug) ? { ...editingSeoPageItem } : p));
+      } else {
+        let created = editingSeoPageItem;
+        try { created = await seoService.createSeoPage(editingSeoPageItem); } catch (apiErr) { console.warn('Offline create:', apiErr); }
+        setSeoPages(prev => [...(Array.isArray(prev) ? prev : []), created || editingSeoPageItem]);
+      }
+      alert(`[SUCCESS] Programmatic SEO Page Node "/keyword/${editingSeoPageItem.slug}" updated & saved successfully!`);
+      setIsEditingSeoPage(false);
+      setEditingSeoPageItem(null);
+    } catch (err) {
+      alert('[ERROR] SEO Page save failed: ' + (err.response?.data?.error || err.message));
+    } finally {
+      setSavingSeoPage(false);
+    }
+  };
+
   // Delete records
   const handleDeleteService = async (id) => {
     if (window.confirm('Delete this service capability node?')) {
@@ -3384,72 +3418,111 @@ ${allEntries.map(entry => `    <url>
 
       {/* ================================== TAB: PROGRAMMATIC SEO PAGES ================================== */}
       {activeTab === 'programmatic_seo' && (currentUser.role === 'admin' || currentUser.role === 'seo') && (
-        isEditing && editType === 'seo' ? (
-          renderSeoPageForm()
-        ) : (
-          <div className="fade-in-up flex flex-col gap-6">
-            <div className="flex justify-between items-center">
+        <div className="fade-in-up flex flex-col gap-6">
+          <div className="flex justify-between items-center">
+            <div>
               <h2 className="text-xl font-bold font-headline text-zinc-200 flex items-center gap-2">
                 <Globe size={18} className="text-cyanCustom" /> Programmatic SEO Pages
               </h2>
-              <div className="flex gap-2">
-                <Button onClick={() => setIsBulkSeoOpen(true)} variant="secondary" className="px-4 py-2 text-xs">
-                  Bulk Upload Nodes
-                </Button>
-                <Button onClick={() => openEditor('seo')} variant="primary" className="px-4 py-2 text-xs gap-1.5">
-                  <Plus size={14} /> Create SEO Node
-                </Button>
-              </div>
+              <p className="text-zinc-400 text-xs mt-1">Manage programmatic keyword landing page nodes, meta tags, Open Graph cards, FAQs, and schemas via popup editor.</p>
             </div>
-
-            <div className="overflow-x-auto rounded-2xl border border-white/8">
-              <table className="w-full border-collapse min-w-[700px] text-sm text-left">
-                <thead>
-                  <tr className="bg-zinc-950 border-b border-white/8 font-mono text-zinc-300 text-xs">
-                    <th className="px-5 py-4 font-semibold uppercase">Page Title</th>
-                    <th className="px-5 py-4 font-semibold uppercase">Canonical path</th>
-                    <th className="px-5 py-4 font-semibold uppercase">Meta Title Tag</th>
-                    <th className="px-5 py-4 font-semibold uppercase text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/8 text-zinc-400 bg-zinc-900/10">
-                  {seoPages.map(page => (
-                    <tr key={page.slug} className="hover:bg-white/[0.01]">
-                      <td className="px-5 py-4 font-bold text-zinc-200 truncate max-w-[200px]" title={page.title}>
-                        {page.title}
-                      </td>
-                      <td className="px-5 py-4 font-mono text-xs text-cyanCustom">/keyword/{page.slug}</td>
-                      <td className="px-5 py-4 text-xs truncate max-w-[250px]" title={page.metaTitle}>
-                        {page.metaTitle}
-                      </td>
-                      <td className="px-5 py-4 text-right flex justify-end gap-2">
-                        <button 
-                          onClick={() => openEditor('seo', page)}
-                          className="p-2 bg-white/[0.02] border border-white/8 rounded-lg hover:border-cyanCustom/30 hover:text-cyanCustom transition-colors"
-                        >
-                          <Edit2 size={14} />
-                        </button>
-                        <button 
-                          onClick={() => handleDeleteSeoPage(page.slug)}
-                          className="p-2 bg-white/[0.02] border border-white/8 rounded-lg hover:border-red-500/30 hover:text-red-400 transition-colors"
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                  {seoPages.length === 0 && (
-                    <tr>
-                      <td colSpan={4} className="px-5 py-12 text-center text-zinc-500 font-mono">
-                        NO_PROGRAMMATIC_SEO_NODES_FOUND
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+            <div className="flex gap-2">
+              <Button onClick={() => setIsBulkSeoOpen(true)} variant="secondary" className="px-4 py-2 text-xs">
+                Bulk Upload Nodes
+              </Button>
+              <Button 
+                onClick={() => {
+                  setEditingSeoPageItem({
+                    slug: '',
+                    title: '',
+                    metaTitle: '',
+                    metaDesc: '',
+                    metaKeywords: '',
+                    content: '',
+                    canonical: '',
+                    ogTitle: '',
+                    ogDesc: '',
+                    ogImage: '',
+                    ogType: 'website',
+                    twitterTitle: '',
+                    twitterDesc: '',
+                    twitterImage: '',
+                    twitterCard: 'summary_large_image',
+                    faqs: [],
+                    schemaMarkup: '',
+                    otherSeoTags: ''
+                  });
+                  setSeoPageModalTab('basic');
+                  setIsEditingSeoPage(true);
+                }} 
+                variant="primary" 
+                className="px-4 py-2 text-xs gap-1.5 cursor-pointer font-mono font-bold"
+              >
+                <Plus size={14} /> Create Programmatic Node
+              </Button>
             </div>
           </div>
-        )
+
+          <div className="overflow-x-auto rounded-2xl border border-white/8">
+            <table className="w-full border-collapse min-w-[700px] text-sm text-left">
+              <thead>
+                <tr className="bg-zinc-950 border-b border-white/8 font-mono text-zinc-300 text-xs">
+                  <th className="px-5 py-4 font-semibold uppercase">Page Title</th>
+                  <th className="px-5 py-4 font-semibold uppercase">Canonical path</th>
+                  <th className="px-5 py-4 font-semibold uppercase">Meta Title Tag</th>
+                  <th className="px-5 py-4 font-semibold uppercase text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/8 text-zinc-400 bg-zinc-900/10">
+                {seoPages.map(page => (
+                  <tr key={page.slug} className="hover:bg-white/[0.01]">
+                    <td className="px-5 py-4 font-bold text-zinc-200 truncate max-w-[200px]" title={page.title}>
+                      {page.title}
+                    </td>
+                    <td className="px-5 py-4 font-mono text-xs text-cyanCustom">/keyword/{page.slug}</td>
+                    <td className="px-5 py-4 text-xs truncate max-w-[250px]" title={page.metaTitle}>
+                      {page.metaTitle}
+                    </td>
+                    <td className="px-5 py-4 text-right flex justify-end gap-2">
+                      <button 
+                        onClick={() => {
+                          let parsedFaqs = [];
+                          if (Array.isArray(page.faqs)) parsedFaqs = page.faqs;
+                          else if (typeof page.faqs === 'string') {
+                            try { parsedFaqs = JSON.parse(page.faqs); } catch(e) { parsedFaqs = []; }
+                          }
+                          setEditingSeoPageItem({
+                            ...page,
+                            faqs: parsedFaqs
+                          });
+                          setSeoPageModalTab('basic');
+                          setIsEditingSeoPage(true);
+                        }}
+                        className="p-2 bg-white/[0.02] border border-white/8 rounded-lg hover:border-cyanCustom/30 hover:text-cyanCustom transition-colors cursor-pointer"
+                        title="Configure Programmatic Node Popup Modal"
+                      >
+                        <Edit2 size={14} />
+                      </button>
+                      <button 
+                        onClick={() => handleDeleteSeoPage(page.slug)}
+                        className="p-2 bg-white/[0.02] border border-white/8 rounded-lg hover:border-red-500/30 hover:text-red-400 transition-colors cursor-pointer"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {seoPages.length === 0 && (
+                  <tr>
+                    <td colSpan={4} className="px-5 py-12 text-center text-zinc-500 font-mono">
+                      NO_PROGRAMMATIC_SEO_NODES_FOUND
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
       )}
 
       {/* ================================== TAB: PAGE META CONFIGURATIONS ================================== */}
@@ -3632,105 +3705,108 @@ ${allEntries.map(entry => `    <url>
               ));
             })()}
           </div>
+        </div>
+      )}
 
-            {/* Section 3: Head & Body Custom Snippets Injector */}
-            <div className="flex flex-col gap-6 border-t border-white/8 pt-8 mt-12">
-              <div className="flex justify-between items-center flex-wrap gap-4">
+      {/* ================================== TAB: CUSTOM CODE SNIPPETS & GTM ================================== */}
+      {activeTab === 'custom_scripts' && (currentUser.role === 'admin' || currentUser.role === 'seo') && (
+        <div className="fade-in-up flex flex-col gap-6 text-left">
+          <div className="flex flex-col gap-2 border-b border-white/8 pb-4">
+            <h2 className="text-xl font-bold font-headline text-zinc-200 flex items-center gap-2">
+              <Code size={20} className="text-cyanCustom" /> Custom Code Snippets & GTM Injection Desk
+            </h2>
+            <p className="text-zinc-400 text-xs">Inject raw tracking pixels, Google Tag Manager scripts, meta verification tags, or analytics triggers dynamically.</p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Add Custom Script Form */}
+            <div className="lg:col-span-1 bg-zinc-900/20 border border-white/5 p-6 rounded-2xl flex flex-col gap-4 text-left">
+              <h4 className="text-xs font-bold font-headline text-zinc-200">Inject Custom Script Node</h4>
+              <form onSubmit={async (e) => {
+                e.preventDefault();
+                try {
+                  const newScript = {
+                    name: e.target.scriptName.value,
+                    code: e.target.scriptCode.value,
+                    target: e.target.scriptTarget.value
+                  };
+                  const updatedScripts = [...(settings?.custom_scripts || []), newScript];
+                  await settingService.updateSetting('custom_scripts', updatedScripts);
+                  setSettings(prev => ({ ...prev, custom_scripts: updatedScripts }));
+                  e.target.reset();
+                  alert('[SUCCESS] Custom script code snippet injected successfully.');
+                } catch (err) {
+                  alert('[ERROR] Update failed: ' + err.message);
+                }
+              }} className="flex flex-col gap-4">
                 <div>
-                  <h2 className="text-xl font-bold font-headline text-zinc-200 flex items-center gap-2">
-                    <Key size={18} className="text-cyanCustom" /> Custom Code Snippets (GTM, Analytics, Head Scripts)
-                  </h2>
-                  <p className="text-zinc-550 text-xs mt-1">Inject custom script tags, GTM configurations, or social pixel triggers dynamically on target pages.</p>
+                  <label className="block text-[10px] font-mono text-zinc-400 uppercase tracking-wider mb-1.5 font-bold">Snippet Name Identifier</label>
+                  <input type="text" name="scriptName" required placeholder="e.g. Google Analytics G4" className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-sans" />
                 </div>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Add Custom Script Form */}
-                <div className="lg:col-span-1 bg-zinc-900/20 border border-white/5 p-6 rounded-2xl flex flex-col gap-4 text-left">
-                  <h4 className="text-xs font-bold font-headline text-zinc-200">Inject Custom Script Node</h4>
-                  <form onSubmit={async (e) => {
-                    e.preventDefault();
-                    try {
-                      const newScript = {
-                        name: e.target.scriptName.value,
-                        code: e.target.scriptCode.value,
-                        target: e.target.scriptTarget.value
-                      };
-                      const updatedScripts = [...(settings?.custom_scripts || []), newScript];
-                      await settingService.updateSetting('custom_scripts', updatedScripts);
-                      setSettings(prev => ({ ...prev, custom_scripts: updatedScripts }));
-                      e.target.reset();
-                      alert('[SUCCESS] Custom script code snippet injected.');
-                    } catch (err) {
-                      alert('[ERROR] Update failed: ' + err.message);
-                    }
-                  }} className="flex flex-col gap-4">
-                    <div>
-                      <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-wider mb-1 font-bold">Snippet Name Identifier</label>
-                      <input type="text" name="scriptName" required placeholder="e.g. Google Analytics G4" className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40" />
-                    </div>
-                    <div>
-                      <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-wider mb-1 font-bold">Target Scope Selection</label>
-                      <select name="scriptTarget" className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono">
-                        <option value="global font-mono">Global (Injected on all pages)</option>
-                        <option value="home font-mono">Home Page Only</option>
-                        <option value="seo font-mono">Dynamic SEO Pages Only</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-wider mb-1 font-bold">Script / Tag Code Content</label>
-                      <textarea name="scriptCode" required rows={6} placeholder="Paste raw <script>...</script> or other meta tags here..." className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2 text-zinc-100 text-sm font-mono outline-none focus:border-cyanCustom/40 resize-none" />
-                    </div>
-                    <Button type="submit" variant="primary" className="py-2.5 w-full gap-2 justify-center">
-                      <Plus size={14} /> Inject Script Node
-                    </Button>
-                  </form>
+                <div>
+                  <label className="block text-[10px] font-mono text-zinc-400 uppercase tracking-wider mb-1.5 font-bold">Target Scope Selection</label>
+                  <select name="scriptTarget" className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40 font-mono">
+                    <option value="Global (Injected on all pages)">Global (Injected on all pages)</option>
+                    <option value="Home Page Only">Home Page Only</option>
+                    <option value="Dynamic SEO Pages Only">Dynamic SEO Pages Only</option>
+                    <option value="Head Target Injection">Head Target Injection</option>
+                    <option value="Body End Trigger">Body End Trigger</option>
+                  </select>
                 </div>
+                <div>
+                  <label className="block text-[10px] font-mono text-zinc-400 uppercase tracking-wider mb-1.5 font-bold">Script / Tag Code Content</label>
+                  <textarea name="scriptCode" required rows={6} placeholder="Paste raw <script>...</script> or other meta tags here..." className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-xs font-mono outline-none focus:border-cyanCustom/40 resize-none" />
+                </div>
+                <Button type="submit" variant="primary" className="py-2.5 w-full gap-2 justify-center font-mono text-xs uppercase font-bold tracking-wider cursor-pointer">
+                  <Plus size={14} /> Inject Script Node
+                </Button>
+              </form>
+            </div>
 
-                {/* Custom Scripts Stream List */}
-                <div className="lg:col-span-2 flex flex-col gap-4">
-                  <h4 className="text-xs font-bold font-headline text-zinc-200">Active Custom Scripts Registry</h4>
-                  <div className="flex flex-col gap-3 max-h-[480px] overflow-y-auto pr-2">
-                    {(settings?.custom_scripts || []).map((script, index) => (
-                      <div key={index} className="bg-zinc-950/40 border border-white/5 p-4 rounded-xl flex justify-between items-center gap-4 text-left">
-                        <div className="flex flex-col gap-1 w-[80%]">
-                          <span className="text-xs font-bold text-zinc-200 flex items-center gap-2">
-                            {script.name} 
-                            <span className="px-2 py-0.5 rounded text-[9px] font-mono bg-cyanCustom/10 text-cyanCustom border border-cyanCustom/20 uppercase font-bold">
-                              {script.target}
-                            </span>
-                          </span>
-                          <pre className="text-[10px] font-mono text-zinc-500 bg-black/40 border border-white/5 p-2 rounded-lg truncate max-w-full">
-                            {script.code}
-                          </pre>
-                        </div>
-                        <button 
-                          onClick={async () => {
-                            if (window.confirm('Delete this custom script snippet?')) {
-                              try {
-                                const updatedScripts = (settings?.custom_scripts || []).filter((_, i) => i !== index);
-                                await settingService.updateSetting('custom_scripts', updatedScripts);
-                                setSettings(prev => ({ ...prev, custom_scripts: updatedScripts }));
-                                alert('[SUCCESS] Script snippet deleted.');
-                              } catch (err) {
-                                alert('[ERROR] Deletion failed: ' + err.message);
-                              }
-                            }
-                          }}
-                          className="p-2.5 bg-white/[0.01] border border-white/5 rounded-xl hover:border-red-500/20 hover:text-red-400 transition-colors cursor-pointer shrink-0"
-                        >
-                          <Trash2 size={13} />
-                        </button>
-                      </div>
-                    ))}
-                    {(settings?.custom_scripts || []).length === 0 && (
-                      <span className="text-zinc-650 font-mono text-xs text-center py-12 bg-zinc-950/20 rounded-2xl border border-white/5">
-                        NO_CUSTOM_SCRIPTS_REGISTERED_IN_CLUSTER
+            {/* Custom Scripts Stream List */}
+            <div className="lg:col-span-2 flex flex-col gap-4">
+              <h4 className="text-xs font-bold font-headline text-zinc-200">Active Custom Scripts Registry</h4>
+              <div className="flex flex-col gap-3 max-h-[520px] overflow-y-auto pr-2">
+                {(settings?.custom_scripts || []).map((script, index) => (
+                  <div key={index} className="bg-zinc-950/40 border border-white/8 p-4 rounded-xl flex justify-between items-center gap-4 text-left hover:border-cyanCustom/30 transition-colors">
+                    <div className="flex flex-col gap-2 w-[80%]">
+                      <span className="text-xs font-bold text-zinc-200 flex items-center gap-2 font-headline">
+                        {script.name} 
+                        <span className="px-2 py-0.5 rounded text-[9px] font-mono bg-cyanCustom/10 text-cyanCustom border border-cyanCustom/20 uppercase font-bold">
+                          {script.target}
+                        </span>
                       </span>
-                    )}
+                      <pre className="text-[10px] font-mono text-zinc-400 bg-black/60 border border-white/8 p-3 rounded-lg truncate max-w-full overflow-x-auto whitespace-pre">
+                        {script.code}
+                      </pre>
+                    </div>
+                    <button 
+                      onClick={async () => {
+                        if (window.confirm(`Delete custom script snippet "${script.name}"?`)) {
+                          try {
+                            const updatedScripts = (settings?.custom_scripts || []).filter((_, i) => i !== index);
+                            await settingService.updateSetting('custom_scripts', updatedScripts);
+                            setSettings(prev => ({ ...prev, custom_scripts: updatedScripts }));
+                            alert('[SUCCESS] Script snippet deleted.');
+                          } catch (err) {
+                            alert('[ERROR] Deletion failed: ' + err.message);
+                          }
+                        }
+                      }}
+                      className="p-2.5 bg-white/[0.02] border border-white/8 rounded-xl hover:border-red-500/30 hover:text-red-400 transition-colors cursor-pointer shrink-0"
+                      title="Delete script node"
+                    >
+                      <Trash2 size={14} />
+                    </button>
                   </div>
-                </div>
+                ))}
+                {(settings?.custom_scripts || []).length === 0 && (
+                  <div className="text-zinc-500 font-mono text-xs text-center py-16 bg-zinc-950/20 rounded-2xl border border-white/8">
+                    NO_CUSTOM_SCRIPTS_REGISTERED_IN_CLUSTER
+                  </div>
+                )}
               </div>
+            </div>
           </div>
         </div>
       )}
@@ -5264,6 +5340,449 @@ ${allEntries.map(entry => `    <url>
                 >
                   {savingSeoSetting ? <Loader2 className="animate-spin" size={14} /> : <Check size={14} />}
                   {savingSeoSetting ? 'Saving Settings...' : 'Save Meta Node'}
+                </Button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ================================== MODAL: PROGRAMMATIC SEO PAGE EDITOR ================================== */}
+      {isEditingSeoPage && editingSeoPageItem && (
+        <div className="dialog-overlay" onClick={() => setIsEditingSeoPage(false)}>
+          <div className="dialog-content max-w-4xl w-full" onClick={(e) => e.stopPropagation()}>
+            <button 
+              type="button"
+              onClick={() => setIsEditingSeoPage(false)}
+              className="absolute top-5 right-5 bg-white/[0.02] border border-white/8 text-zinc-100 p-2 rounded-full hover:bg-white/[0.08] z-20 cursor-pointer"
+            >
+              <X size={20} />
+            </button>
+
+            <form onSubmit={handleSaveSeoPageModal} className="p-6 sm:p-10 text-left flex flex-col gap-6 max-h-[90vh] overflow-y-auto w-full">
+              
+              {/* Header */}
+              <div className="border-b border-white/8 pb-4">
+                <span className="px-2.5 py-1 rounded text-[10px] font-mono bg-cyanCustom/20 text-cyanCustom border border-cyanCustom/30 uppercase font-bold inline-block mb-2">
+                  PROGRAMMATIC SEO NODE EDITOR
+                </span>
+                <h2 className="text-2xl font-bold font-headline text-zinc-100 flex items-center gap-2">
+                  {editingSeoPageItem.slug ? (
+                    <>Configure Node: <span className="text-cyanCustom font-mono">/keyword/{editingSeoPageItem.slug}</span></>
+                  ) : (
+                    'Create New Programmatic Keyword Page'
+                  )}
+                </h2>
+              </div>
+
+              <div className="flex flex-col gap-6">
+                
+                {/* Modal Sub-navigation Tabs */}
+                <div className="flex gap-2 border-b border-white/8 pb-2 overflow-x-auto">
+                  {[
+                    { id: 'basic', label: '📌 Basic & SERP Meta' },
+                    { id: 'content', label: '📝 HTML Page Content' },
+                    { id: 'og', label: '🌐 Open Graph (OG)' },
+                    { id: 'twitter', label: '🐦 Twitter Cards' },
+                    { id: 'faqs', label: '❓ FAQ Tags' },
+                    { id: 'schema', label: '⚙️ Schema & Custom Tags' }
+                  ].map(tab => (
+                    <button
+                      type="button"
+                      key={tab.id}
+                      onClick={() => setSeoPageModalTab(tab.id)}
+                      className={`px-4 py-2 rounded-xl text-xs font-medium font-mono whitespace-nowrap transition-all cursor-pointer ${
+                        seoPageModalTab === tab.id
+                          ? 'bg-cyanCustom/15 text-cyanCustom border border-cyanCustom/30 font-bold'
+                          : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.02]'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* TAB 1: BASIC & SERP META */}
+                {seoPageModalTab === 'basic' && (
+                  <div className="flex flex-col gap-4 fade-in-up">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">
+                          URL Target Slug Key (`slug`) *
+                        </label>
+                        <input 
+                          type="text" 
+                          required 
+                          disabled={!!(seoPages || []).some(p => p.slug === editingSeoPageItem.slug && editingSeoPageItem._id)}
+                          placeholder="e.g. custom-software-development-noida"
+                          value={editingSeoPageItem.slug || ''}
+                          onChange={(e) => setEditingSeoPageItem(prev => ({ ...prev, slug: slugify(e.target.value) }))}
+                          className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm font-mono outline-none focus:border-cyanCustom/40 disabled:opacity-50"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">
+                          Canonical URL (`canonical`)
+                        </label>
+                        <input 
+                          type="text" 
+                          placeholder={`https://kvantumtechsolutions.com/keyword/${editingSeoPageItem.slug || ''}`}
+                          value={editingSeoPageItem.canonical || ''}
+                          onChange={(e) => setEditingSeoPageItem(prev => ({ ...prev, canonical: e.target.value }))}
+                          className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm font-mono outline-none focus:border-cyanCustom/40"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">
+                        Google SERP Meta Title (`metaTitle`) *
+                      </label>
+                      <input 
+                        type="text" 
+                        required 
+                        placeholder="e.g. Best Custom Software Development in Noida | Kvantum"
+                        value={editingSeoPageItem.metaTitle || ''}
+                        onChange={(e) => setEditingSeoPageItem(prev => ({ ...prev, metaTitle: e.target.value }))}
+                        className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">
+                        Google SERP Meta Description (`metaDesc`) *
+                      </label>
+                      <textarea 
+                        required 
+                        rows={3}
+                        placeholder="SERP search result snippet description..."
+                        value={editingSeoPageItem.metaDesc || ''}
+                        onChange={(e) => setEditingSeoPageItem(prev => ({ ...prev, metaDesc: e.target.value }))}
+                        className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm resize-none outline-none focus:border-cyanCustom/40"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">
+                        Meta Keywords (`metaKeywords`)
+                      </label>
+                      <input 
+                        type="text" 
+                        placeholder="Comma separated keywords: software agency, Noida dev, CRM app"
+                        value={editingSeoPageItem.metaKeywords || ''}
+                        onChange={(e) => setEditingSeoPageItem(prev => ({ ...prev, metaKeywords: e.target.value }))}
+                        className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* TAB 2: HTML PAGE CONTENT */}
+                {seoPageModalTab === 'content' && (
+                  <div className="flex flex-col gap-4 fade-in-up">
+                    <div>
+                      <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">
+                        Page Header Title / H1 (`title`) *
+                      </label>
+                      <input 
+                        type="text" 
+                        required 
+                        placeholder="Heading title displayed at the top of the landing page..."
+                        value={editingSeoPageItem.title || ''}
+                        onChange={(e) => setEditingSeoPageItem(prev => ({ ...prev, title: e.target.value }))}
+                        className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">
+                        Page Body HTML Content (`content`) *
+                      </label>
+                      <textarea 
+                        required 
+                        rows={8}
+                        placeholder="<h2>Software Engineering Services</h2><p>Write detailed landing page paragraphs here...</p>"
+                        value={editingSeoPageItem.content || ''}
+                        onChange={(e) => setEditingSeoPageItem(prev => ({ ...prev, content: e.target.value }))}
+                        className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-3 text-zinc-100 text-xs font-mono resize-none outline-none focus:border-cyanCustom/40"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* TAB 3: OPEN GRAPH */}
+                {seoPageModalTab === 'og' && (
+                  <div className="flex flex-col gap-4 fade-in-up">
+                    <div>
+                      <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">
+                        Open Graph Title (`ogTitle`)
+                      </label>
+                      <input 
+                        type="text" 
+                        placeholder={editingSeoPageItem.metaTitle || editingSeoPageItem.title || "Custom OG Title for social shares..."}
+                        value={editingSeoPageItem.ogTitle || ''}
+                        onChange={(e) => setEditingSeoPageItem(prev => ({ ...prev, ogTitle: e.target.value }))}
+                        className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">
+                        Open Graph Description (`ogDesc`)
+                      </label>
+                      <textarea 
+                        rows={3}
+                        placeholder={editingSeoPageItem.metaDesc || "Custom OG description..."}
+                        value={editingSeoPageItem.ogDesc || ''}
+                        onChange={(e) => setEditingSeoPageItem(prev => ({ ...prev, ogDesc: e.target.value }))}
+                        className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm resize-none outline-none focus:border-cyanCustom/40"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">
+                        Open Graph Image URL (`ogImage`)
+                      </label>
+                      <input 
+                        type="text" 
+                        placeholder="https://.../og-banner.jpg"
+                        value={editingSeoPageItem.ogImage || ''}
+                        onChange={(e) => setEditingSeoPageItem(prev => ({ ...prev, ogImage: e.target.value }))}
+                        className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm font-mono outline-none focus:border-cyanCustom/40"
+                      />
+                      {editingSeoPageItem.ogImage && (
+                        <div className="mt-3 p-3 bg-zinc-950/60 border border-white/10 rounded-xl flex items-center gap-4">
+                          <img 
+                            src={editingSeoPageItem.ogImage} 
+                            alt="OG Preview" 
+                            className="w-20 h-14 object-cover rounded-lg border border-white/10 shrink-0" 
+                            onError={(e) => { e.target.style.display = 'none'; }}
+                          />
+                          <div className="text-xs font-mono text-zinc-400 overflow-hidden">
+                            <span className="text-cyanCustom block font-bold">🖼️ Live Social Banner Preview</span>
+                            <span className="truncate block text-[11px] text-zinc-500">{editingSeoPageItem.ogImage}</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">
+                        Open Graph Type (`ogType`)
+                      </label>
+                      <select 
+                        value={editingSeoPageItem.ogType || 'website'}
+                        onChange={(e) => setEditingSeoPageItem(prev => ({ ...prev, ogType: e.target.value }))}
+                        className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm font-mono outline-none focus:border-cyanCustom/40"
+                      >
+                        <option value="website">website</option>
+                        <option value="article">article</option>
+                        <option value="business.business">business.business</option>
+                      </select>
+                    </div>
+                  </div>
+                )}
+
+                {/* TAB 4: TWITTER CARDS */}
+                {seoPageModalTab === 'twitter' && (
+                  <div className="flex flex-col gap-4 fade-in-up">
+                    <div>
+                      <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">
+                        Twitter Card Title (`twitterTitle`)
+                      </label>
+                      <input 
+                        type="text" 
+                        placeholder={editingSeoPageItem.ogTitle || editingSeoPageItem.metaTitle || "Twitter card title..."}
+                        value={editingSeoPageItem.twitterTitle || ''}
+                        onChange={(e) => setEditingSeoPageItem(prev => ({ ...prev, twitterTitle: e.target.value }))}
+                        className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm outline-none focus:border-cyanCustom/40"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">
+                        Twitter Card Description (`twitterDesc`)
+                      </label>
+                      <textarea 
+                        rows={3}
+                        placeholder={editingSeoPageItem.ogDesc || editingSeoPageItem.metaDesc || "Twitter description..."}
+                        value={editingSeoPageItem.twitterDesc || ''}
+                        onChange={(e) => setEditingSeoPageItem(prev => ({ ...prev, twitterDesc: e.target.value }))}
+                        className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm resize-none outline-none focus:border-cyanCustom/40"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">
+                        Twitter Image URL (`twitterImage`)
+                      </label>
+                      <input 
+                        type="text" 
+                        placeholder={editingSeoPageItem.ogImage || "https://.../twitter-image.jpg"}
+                        value={editingSeoPageItem.twitterImage || ''}
+                        onChange={(e) => setEditingSeoPageItem(prev => ({ ...prev, twitterImage: e.target.value }))}
+                        className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm font-mono outline-none focus:border-cyanCustom/40"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">
+                        Twitter Card Format (`twitterCard`)
+                      </label>
+                      <select 
+                        value={editingSeoPageItem.twitterCard || 'summary_large_image'}
+                        onChange={(e) => setEditingSeoPageItem(prev => ({ ...prev, twitterCard: e.target.value }))}
+                        className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-sm font-mono outline-none focus:border-cyanCustom/40"
+                      >
+                        <option value="summary_large_image">summary_large_image (Large Banner Card)</option>
+                        <option value="summary">summary (Standard Square Card)</option>
+                      </select>
+                    </div>
+                  </div>
+                )}
+
+                {/* TAB 5: FAQ TAGS */}
+                {seoPageModalTab === 'faqs' && (
+                  <div className="flex flex-col gap-4 fade-in-up">
+                    <div className="flex justify-between items-center border-b border-white/5 pb-3">
+                      <div>
+                        <h4 className="text-sm font-bold text-zinc-200 font-headline">Programmatic Page FAQ Builder</h4>
+                        <p className="text-xs text-zinc-500">FAQ items generate Google FAQPage Schema JSON-LD metadata for search engine indexing.</p>
+                      </div>
+                      <Button 
+                        type="button"
+                        onClick={() => {
+                          setEditingSeoPageItem(prev => ({
+                            ...prev,
+                            faqs: [...(Array.isArray(prev.faqs) ? prev.faqs : []), { question: '', answer: '' }]
+                          }));
+                        }}
+                        variant="secondary"
+                        className="px-3 py-1.5 text-xs font-mono gap-1"
+                      >
+                        <Plus size={13} /> Add FAQ Item
+                      </Button>
+                    </div>
+
+                    <div className="flex flex-col gap-4 max-h-[350px] overflow-y-auto pr-1">
+                      {(Array.isArray(editingSeoPageItem.faqs) ? editingSeoPageItem.faqs : []).map((faq, idx) => (
+                        <div key={idx} className="p-4 bg-zinc-950/40 border border-white/8 rounded-xl flex flex-col gap-3 text-left relative">
+                          <div className="flex justify-between items-center">
+                            <span className="text-[11px] font-mono font-bold text-cyanCustom uppercase">FAQ #{idx + 1}</span>
+                            <button 
+                              type="button"
+                              onClick={() => {
+                                setEditingSeoPageItem(prev => ({
+                                  ...prev,
+                                  faqs: (Array.isArray(prev.faqs) ? prev.faqs : []).filter((_, i) => i !== idx)
+                                }));
+                              }}
+                              className="text-zinc-500 hover:text-red-400 p-1 rounded transition-colors"
+                            >
+                              <Trash2 size={13} />
+                            </button>
+                          </div>
+
+                          <div>
+                            <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-wider mb-1 font-bold">Question</label>
+                            <input 
+                              type="text"
+                              placeholder="e.g. What services are included in Noida software engineering?"
+                              value={faq.question || ''}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setEditingSeoPageItem(prev => {
+                                  const faqs = [...(Array.isArray(prev.faqs) ? prev.faqs : [])];
+                                  faqs[idx] = { ...faqs[idx], question: val };
+                                  return { ...prev, faqs };
+                                });
+                              }}
+                              className="w-full bg-zinc-900/60 border border-white/8 rounded-lg px-3 py-2 text-zinc-100 text-xs outline-none focus:border-cyanCustom/40"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-[10px] font-mono text-zinc-500 uppercase tracking-wider mb-1 font-bold">Answer</label>
+                            <textarea 
+                              rows={2}
+                              placeholder="Detailed answer content..."
+                              value={faq.answer || ''}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setEditingSeoPageItem(prev => {
+                                  const faqs = [...(Array.isArray(prev.faqs) ? prev.faqs : [])];
+                                  faqs[idx] = { ...faqs[idx], answer: val };
+                                  return { ...prev, faqs };
+                                });
+                              }}
+                              className="w-full bg-zinc-900/60 border border-white/8 rounded-lg px-3 py-2 text-zinc-100 text-xs resize-none outline-none focus:border-cyanCustom/40"
+                            />
+                          </div>
+                        </div>
+                      ))}
+
+                      {(!editingSeoPageItem.faqs || editingSeoPageItem.faqs.length === 0) && (
+                        <div className="py-8 text-center border border-dashed border-white/10 rounded-xl font-mono text-xs text-zinc-500">
+                          No FAQ items configured yet. Click "Add FAQ Item" above.
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* TAB 6: SCHEMA & CUSTOM TAGS */}
+                {seoPageModalTab === 'schema' && (
+                  <div className="flex flex-col gap-4 fade-in-up">
+                    <div>
+                      <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">
+                        JSON-LD Schema Markup (`schemaMarkup`)
+                      </label>
+                      <textarea 
+                        rows={6}
+                        placeholder='{"@context": "https://schema.org", "@type": "Service", "name": "Software Engineering"}'
+                        value={editingSeoPageItem.schemaMarkup || ''}
+                        onChange={(e) => setEditingSeoPageItem(prev => ({ ...prev, schemaMarkup: e.target.value }))}
+                        className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-xs font-mono resize-none outline-none focus:border-cyanCustom/40"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-mono text-zinc-400 uppercase tracking-widest mb-1.5 font-bold">
+                        Other Custom Meta / Script Tags (`otherSeoTags`)
+                      </label>
+                      <textarea 
+                        rows={5}
+                        placeholder="<!-- Paste custom tracker scripts or extra meta tags here -->"
+                        value={editingSeoPageItem.otherSeoTags || ''}
+                        onChange={(e) => setEditingSeoPageItem(prev => ({ ...prev, otherSeoTags: e.target.value }))}
+                        className="w-full bg-zinc-950/40 border border-white/8 rounded-xl px-4 py-2.5 text-zinc-100 text-xs font-mono resize-none outline-none focus:border-cyanCustom/40"
+                      />
+                    </div>
+                  </div>
+                )}
+
+              </div>
+
+              {/* STICKY BOTTOM ACTION BAR */}
+              <div className="flex justify-end gap-3 pt-5 border-t border-white/8 sticky bottom-0 bg-[#0b0f19] py-3 z-30">
+                <Button 
+                  type="button"
+                  onClick={() => setIsEditingSeoPage(false)}
+                  variant="secondary"
+                  className="px-5 py-2.5 text-xs font-medium cursor-pointer"
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  type="submit"
+                  variant="primary"
+                  disabled={savingSeoPage}
+                  className="px-6 py-2.5 text-xs font-bold font-mono uppercase tracking-wider gap-2 cursor-pointer"
+                >
+                  {savingSeoPage ? <Loader2 className="animate-spin" size={14} /> : <Check size={14} />}
+                  {savingSeoPage ? 'Saving Node...' : 'Save Programmatic Node'}
                 </Button>
               </div>
 
