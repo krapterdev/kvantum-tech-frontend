@@ -26,17 +26,44 @@ export default function BlogDetailClient({ slug }: { slug: string }) {
     const findPost = (list: any[]) => list.find((b: any) => b.slug === slug || b.id === slug || b._id === slug);
 
     const fetchBlogs = async () => {
+      let localSaved: any[] = [];
+      if (typeof window !== 'undefined') {
+        try { localSaved = JSON.parse(localStorage.getItem('kts_saved_blogs') || '[]'); } catch(e) {}
+      }
+
       try {
         const data = await (blogService as any).getAllBlogs();
-        if (Array.isArray(data) && data.length > 0) {
-          setAllBlogs(data);
-          const found = findPost(data);
-          if (found) { setPost(found); setLoading(false); return; }
-        }
+        const map = new Map();
+        (fallbackBlogs as any[]).forEach((b: any) => map.set(b.id || b.slug || b._id, b));
+        (Array.isArray(data) ? data : []).forEach((b: any) => {
+          const key = b.id || b.slug || b._id;
+          const img = b.image || b.coverImage || b.ogImage;
+          map.set(key, { ...b, image: img, coverImage: img });
+        });
+        localSaved.forEach((b: any) => {
+          const key = b.id || b.slug || b._id;
+          const img = b.image || b.coverImage || b.ogImage;
+          map.set(key, { ...b, image: img, coverImage: img });
+        });
+
+        const merged = Array.from(map.values());
+        setAllBlogs(merged);
+        const found = findPost(merged);
+        if (found) { setPost(found); setLoading(false); return; }
       } catch (e) {}
 
-      const found = findPost(fallbackBlogs as any[]);
-      setPost(found || (fallbackBlogs as any[])[0]);
+      const map = new Map();
+      (fallbackBlogs as any[]).forEach((b: any) => map.set(b.id || b.slug || b._id, b));
+      localSaved.forEach((b: any) => {
+        const key = b.id || b.slug || b._id;
+        const img = b.image || b.coverImage || b.ogImage;
+        map.set(key, { ...b, image: img, coverImage: img });
+      });
+
+      const merged = Array.from(map.values());
+      setAllBlogs(merged);
+      const found = findPost(merged);
+      setPost(found || merged[0]);
       setLoading(false);
     };
 

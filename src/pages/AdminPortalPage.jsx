@@ -1328,11 +1328,11 @@ ${allEntries.map(entry => `    <url>
             <input 
               type="url"
               placeholder="https://images.unsplash.com/... or CDN URL"
-              value={editItem.image || ''}
+              value={editItem.image || editItem.coverImage || ''}
               onChange={(e) => {
                 const newImg = e.target.value;
                 setEditItem(prev => {
-                  const updated = { ...prev, image: newImg };
+                  const updated = { ...prev, image: newImg, coverImage: newImg };
                   if (!blogTouched.ogImage) updated.ogImage = newImg;
                   return updated;
                 });
@@ -1844,7 +1844,14 @@ ${allEntries.map(entry => `    <url>
     setEditType(type);
     setIsEditing(true);
     if (item) {
-      setEditItem({ showInHome: item.showInHome !== false, ...item });
+      const imgUrl = item.image || item.coverImage || item.ogImage || '';
+      setEditItem({
+        showInHome: item.showInHome !== false,
+        ...item,
+        image: imgUrl,
+        coverImage: imgUrl,
+        ogImage: item.ogImage || imgUrl
+      });
       setOriginalId(item.id || item._id || item.slug || null);
       if (type === 'blog') {
         setBlogTouched({
@@ -1951,40 +1958,51 @@ ${allEntries.map(entry => `    <url>
           });
         }
       } else if (editType === 'blog') {
-        const payloadId = editItem.id || slugify(editItem.title);
+        const payloadId = editItem.id || editItem._id || editItem.slug || slugify(editItem.title);
+        const imgUrl = editItem.image || editItem.coverImage || editItem.ogImage || '';
         const completeItem = {
           ...editItem,
           id: payloadId,
           _id: payloadId,
+          slug: payloadId,
+          image: imgUrl,
+          coverImage: imgUrl,
           metaTitle: editItem.metaTitle || editItem.title,
           metaDesc: editItem.metaDesc || editItem.summary,
           ogTitle: editItem.ogTitle || editItem.metaTitle || editItem.title,
           ogDesc: editItem.ogDesc || editItem.metaDesc || editItem.summary,
-          ogImage: editItem.ogImage || editItem.image,
+          ogImage: editItem.ogImage || imgUrl,
           twitterTitle: editItem.twitterTitle || editItem.ogTitle || editItem.metaTitle || editItem.title,
           twitterDesc: editItem.twitterDesc || editItem.ogDesc || editItem.metaDesc || editItem.summary,
           twitterCard: editItem.twitterCard || 'summary_large_image',
           canonical: editItem.canonical || `https://kvantumtechsolutions.com/blog/${payloadId}`
         };
         
+        const targetId = originalId || payloadId;
         if (originalId) {
           try { await blogService.updateBlog(originalId, completeItem); } catch (apiErr) { console.warn('Offline blog update:', apiErr); }
-          setBlogs(prev => {
-            const list = Array.isArray(prev) ? prev : [];
-            const updated = list.map(b => (b.id === originalId || b._id === originalId || b.slug === originalId) ? completeItem : b);
-            localStorage.setItem('kts_saved_blogs', JSON.stringify(updated));
-            return updated;
-          });
         } else {
-          let created = completeItem;
-          try { created = await blogService.createBlog(completeItem); } catch (apiErr) { console.warn('Offline blog create:', apiErr); }
-          setBlogs(prev => {
-            const list = Array.isArray(prev) ? prev : [];
-            const updated = [created || completeItem, ...list];
-            localStorage.setItem('kts_saved_blogs', JSON.stringify(updated));
-            return updated;
-          });
+          try { await blogService.createBlog(completeItem); } catch (apiErr) { console.warn('Offline blog create:', apiErr); }
         }
+
+        setBlogs(prev => {
+          const list = Array.isArray(prev) ? prev : [];
+          const exists = list.some(b => b.id === targetId || b._id === targetId || b.slug === targetId);
+          let updated = [];
+          if (exists) {
+            updated = list.map(b => (b.id === targetId || b._id === targetId || b.slug === targetId) ? { ...completeItem } : b);
+          } else {
+            updated = [{ ...completeItem }, ...list];
+          }
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('kts_saved_blogs', JSON.stringify(updated));
+          }
+          return updated;
+        });
+
+        alert('[SUCCESS] Blog updated successfully!');
+        setIsEditing(false);
+        setEditItem(null);
       } else if (editType === 'seo') {
         if (originalId) {
           try { await seoService.updateSeoPage(originalId, editItem); } catch (apiErr) { console.warn('Offline seo update:', apiErr); }

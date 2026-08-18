@@ -496,28 +496,41 @@ app.delete('/api/services/:id', async function(req, res) {
 
 // ── BLOGS ─────────────────────────────────────────────────────
 app.get('/api/blogs', async function(req, res) {
-  try { var r = await db.query('SELECT * FROM blogs ORDER BY "created_at" DESC'); res.json(r.rows); }
-  catch(err) { res.json([]); }
+  try {
+    var r = await db.query('SELECT * FROM blogs ORDER BY "created_at" DESC');
+    var rows = (r.rows || []).map(function(row) {
+      var img = row.image || row.coverImage || row.cover_image || '';
+      return Object.assign({}, row, { image: img, coverImage: img });
+    });
+    res.json(rows);
+  } catch(err) { res.json([]); }
 });
 
 app.get('/api/blogs/:slug', async function(req, res) {
-  try { var r = await db.query('SELECT * FROM blogs WHERE "slug"=$1 OR "_id"=$1', [req.params.slug]); if (!r.rows[0]) return res.status(404).json({ error: 'Not found' }); res.json(r.rows[0]); }
-  catch(err) { res.status(500).json({ error: err.message }); }
+  try {
+    var r = await db.query('SELECT * FROM blogs WHERE "slug"=$1 OR "_id"=$1', [req.params.slug]);
+    if (!r.rows[0]) return res.status(404).json({ error: 'Not found' });
+    var row = r.rows[0];
+    var img = row.image || row.coverImage || row.cover_image || '';
+    res.json(Object.assign({}, row, { image: img, coverImage: img }));
+  } catch(err) { res.status(500).json({ error: err.message }); }
 });
 
 app.post('/api/blogs', async function(req, res) {
   try {
     var b = req.body, id = b.slug || b._id || b.id || (b.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
-    await db.query('INSERT INTO blogs ("_id","title","slug","excerpt","content","metaTitle","metaDesc","coverImage","tags","author","status") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) ON CONFLICT ("_id") DO UPDATE SET "title"=EXCLUDED."title","excerpt"=EXCLUDED."excerpt","content"=EXCLUDED."content","metaTitle"=EXCLUDED."metaTitle","metaDesc"=EXCLUDED."metaDesc","coverImage"=EXCLUDED."coverImage","tags"=EXCLUDED."tags","author"=EXCLUDED."author","status"=EXCLUDED."status","updated_at"=NOW()', [id, b.title, id, b.excerpt||b.summary||'', b.content||'', b.metaTitle||b.title, b.metaDesc||b.excerpt||b.summary||'', b.coverImage||b.image||'', b.tags||'', b.author||'Admin', b.status||'published']);
-    res.status(201).json(Object.assign({ id: id, _id: id }, b));
+    var img = b.image || b.coverImage || b.ogImage || '';
+    await db.query('INSERT INTO blogs ("_id","title","slug","excerpt","content","metaTitle","metaDesc","coverImage","tags","author","status") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) ON CONFLICT ("_id") DO UPDATE SET "title"=EXCLUDED."title","excerpt"=EXCLUDED."excerpt","content"=EXCLUDED."content","metaTitle"=EXCLUDED."metaTitle","metaDesc"=EXCLUDED."metaDesc","coverImage"=EXCLUDED."coverImage","tags"=EXCLUDED."tags","author"=EXCLUDED."author","status"=EXCLUDED."status","updated_at"=NOW()', [id, b.title, id, b.excerpt||b.summary||'', b.content||'', b.metaTitle||b.title, b.metaDesc||b.excerpt||b.summary||'', img, b.tags||'', b.author||'Admin', b.status||'published']);
+    res.status(201).json(Object.assign({ id: id, _id: id, image: img, coverImage: img }, b));
   } catch(err) { res.status(500).json({ error: err.message }); }
 });
 
 app.put('/api/blogs/:id', async function(req, res) {
   try {
     var b = req.body;
-    await db.query('UPDATE blogs SET "title"=COALESCE($1,"title"),"excerpt"=COALESCE($2,"excerpt"),"content"=COALESCE($3,"content"),"metaTitle"=COALESCE($4,"metaTitle"),"metaDesc"=COALESCE($5,"metaDesc"),"coverImage"=COALESCE($6,"coverImage"),"tags"=COALESCE($7,"tags"),"author"=COALESCE($8,"author"),"status"=COALESCE($9,"status"),"updated_at"=NOW() WHERE "_id"=$10', [b.title, b.excerpt||b.summary, b.content, b.metaTitle, b.metaDesc, b.coverImage||b.image, b.tags, b.author, b.status, req.params.id]);
-    res.json(Object.assign({ id: req.params.id, _id: req.params.id }, b));
+    var img = b.image || b.coverImage || b.ogImage || '';
+    await db.query('UPDATE blogs SET "title"=COALESCE($1,"title"),"excerpt"=COALESCE($2,"excerpt"),"content"=COALESCE($3,"content"),"metaTitle"=COALESCE($4,"metaTitle"),"metaDesc"=COALESCE($5,"metaDesc"),"coverImage"=COALESCE($6,"coverImage"),"tags"=COALESCE($7,"tags"),"author"=COALESCE($8,"author"),"status"=COALESCE($9,"status"),"updated_at"=NOW() WHERE "_id"=$10', [b.title, b.excerpt||b.summary, b.content, b.metaTitle, b.metaDesc, img, b.tags, b.author, b.status, req.params.id]);
+    res.json(Object.assign({ id: req.params.id, _id: req.params.id, image: img, coverImage: img }, b));
   } catch(err) { res.status(500).json({ error: err.message }); }
 });
 
