@@ -90,6 +90,10 @@ export default function BlogDetailClient({ slug }: { slug: string }) {
                 src={post.image || post.ogImage || post.coverImage}
                 alt={post.imageAlt || post.title}
                 title={post.imageTitle || post.title}
+                onError={(e: any) => {
+                  e.target.onerror = null;
+                  e.target.src = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg';
+                }}
                 className="w-full h-full object-cover"
               />
             </div>

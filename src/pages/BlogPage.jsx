@@ -506,6 +506,10 @@ function BlogDetail({ post, allBlogs = [] }) {
               alt={post.imageAlt || post.keywords || post.title} 
               title={post.imageTitle || post.title}
               loading="lazy"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg';
+              }}
               className="w-full h-full object-cover" 
             />
           </div>
@@ -627,6 +631,10 @@ function BlogDetail({ post, allBlogs = [] }) {
                         <img
                           src={article.image || article.ogImage || article.coverImage || FALLBACK_IMG}
                           alt={article.title}
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg';
+                          }}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                       </div>
@@ -815,6 +823,10 @@ export default function BlogPage({ blogs = [], loading = false }) {
                     alt={post.imageAlt || post.keywords || post.title}
                     title={post.imageTitle || post.title}
                     loading="lazy"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg';
+                    }}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                 </div>

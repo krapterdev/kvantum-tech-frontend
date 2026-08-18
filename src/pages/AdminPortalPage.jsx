@@ -879,7 +879,16 @@ ${allEntries.map(entry => `    <url>
             </div>
             {editItem.coverImage && (
               <div className="mt-3 relative w-full max-w-xs h-32 rounded-xl overflow-hidden border border-white/10 bg-zinc-950">
-                <img src={editItem.coverImage} alt={editItem.imageAlt || 'Service Preview'} title={editItem.imageTitle || editItem.title} className="w-full h-full object-cover" />
+                <img 
+                  src={editItem.coverImage} 
+                  alt={editItem.imageAlt || 'Service Preview'} 
+                  title={editItem.imageTitle || editItem.title} 
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg';
+                  }}
+                  className="w-full h-full object-cover" 
+                />
               </div>
             )}
           </div>
@@ -1355,6 +1364,10 @@ ${allEntries.map(entry => `    <url>
               src={editItem.image} 
               alt={editItem.imageAlt || editItem.title || "Blog Cover Preview"} 
               title={editItem.imageTitle || editItem.title || "Blog Cover Preview"} 
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg';
+              }}
               className="w-full h-full object-cover" 
             />
           </div>
@@ -4687,7 +4700,15 @@ ${allEntries.map(entry => `    <url>
                 assets.map((ast, i) => (
                   <div key={i} className="group relative rounded-xl border border-white/10 bg-zinc-950 overflow-hidden flex flex-col justify-between">
                     <div className="aspect-video w-full overflow-hidden bg-black">
-                      <img src={ast.url} alt={ast.name} className="w-full h-full object-cover" />
+                      <img 
+                        src={ast.url} 
+                        alt={ast.name} 
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg';
+                        }}
+                        className="w-full h-full object-cover" 
+                      />
                     </div>
                     <div className="p-2 flex flex-col gap-1">
                       <span className="text-[10px] font-mono text-zinc-400 truncate">{ast.name}</span>
