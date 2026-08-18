@@ -455,11 +455,17 @@ ${allEntries.map(entry => `    <url>
 
   const fetchAssetsList = async () => {
     let localSaved = [];
+    let deletedKeys = new Set();
+    try {
+      const parsedDel = JSON.parse(localStorage.getItem('kts_deleted_media_assets') || '[]');
+      if (Array.isArray(parsedDel)) deletedKeys = new Set(parsedDel);
+    } catch(e) {}
+
     try {
       const parsed = JSON.parse(localStorage.getItem('kts_saved_media_assets') || '[]');
       const rawList = Array.isArray(parsed) ? parsed : [];
-      // Filter out raw base64 data URIs from stored local assets
-      localSaved = rawList.filter(a => a && (a.url || a.name) && !(a.url || '').startsWith('data:') && !(a.name || '').startsWith('data:'));
+      // Filter out raw base64 data URIs and deleted items
+      localSaved = rawList.filter(a => a && (a.url || a.name) && !deletedKeys.has(a.name) && !deletedKeys.has(a.url) && !(a.url || '').startsWith('data:') && !(a.name || '').startsWith('data:'));
     } catch(e) {
       localSaved = [];
     }
@@ -473,18 +479,18 @@ ${allEntries.map(entry => `    <url>
     try {
       const data = await assetService.listAssets();
       const rawServerList = Array.isArray(data) ? data : [];
-      const serverList = rawServerList.filter(a => a && (a.url || a.name) && !(a.url || '').startsWith('data:') && !(a.name || '').startsWith('data:'));
+      const serverList = rawServerList.filter(a => a && (a.url || a.name) && !deletedKeys.has(a.name) && !deletedKeys.has(a.url) && !(a.url || '').startsWith('data:') && !(a.name || '').startsWith('data:'));
       
       const combinedMap = new Map();
       // Put localSaved items FIRST so user uploads are NEVER lost or overwritten
       localSaved.forEach(a => {
-        if (a && (a.name || a.url) && !(a.url || '').startsWith('data:') && !(a.name || '').startsWith('data:')) {
+        if (a && (a.name || a.url) && !deletedKeys.has(a.name) && !deletedKeys.has(a.url) && !(a.url || '').startsWith('data:') && !(a.name || '').startsWith('data:')) {
           combinedMap.set(a.name || a.url, a);
         }
       });
       // Merge server items
       serverList.forEach(a => {
-        if (a && (a.name || a.url) && !(a.url || '').startsWith('data:') && !(a.name || '').startsWith('data:')) {
+        if (a && (a.name || a.url) && !deletedKeys.has(a.name) && !deletedKeys.has(a.url) && !(a.url || '').startsWith('data:') && !(a.name || '').startsWith('data:')) {
           const key = a.name || a.url;
           if (!combinedMap.has(key)) {
             combinedMap.set(key, a);
@@ -641,13 +647,13 @@ ${allEntries.map(entry => `    <url>
       try {
         const res = await assetService.uploadAsset(file, currentFolder);
         const uploadedUrl = res?.publicUrl || res?.url;
-        const assetName = res?.name || `${currentFolder ? currentFolder + '/' : ''}${file.name}`;
+        const assetName = res?.name || `${currentFolder ? currentFolder + '_' : ''}${file.name}`;
         
         const finalAsset = {
           name: assetName,
           url: uploadedUrl,
           publicUrl: uploadedUrl,
-          folder: currentFolder || '',
+          folder: res?.folder || currentFolder || '',
           localDataUrl: persistentDataUrl || localBlobUrl || uploadedUrl,
           localPreviewUrl: localBlobUrl || persistentDataUrl || uploadedUrl,
           contentType: file.type || (file.name.endsWith('.png') ? 'image/png' : 'image/jpeg'),
@@ -676,24 +682,34 @@ ${allEntries.map(entry => `    <url>
   // S3 Asset delete trigger
   const handleAssetDelete = async (targetAsset) => {
     const targetName = typeof targetAsset === 'string' ? targetAsset : (targetAsset?.name || targetAsset?.url || '');
-    if (!targetName) return;
+    const targetUrl = typeof targetAsset === 'object' ? (targetAsset?.url || targetAsset?.publicUrl || '') : '';
+    if (!targetName && !targetUrl) return;
 
-    if (window.confirm(`Delete media asset (${targetName}) from storage?`)) {
+    if (window.confirm(`Delete media asset (${targetName || targetUrl}) from storage?`)) {
       try {
-        await assetService.deleteAsset(targetName);
+        await assetService.deleteAsset(targetName || targetUrl);
       } catch (err) {
         console.warn('[DELETE WARN]', err.message);
       }
+
+      // Add to persistent deleted keys in localStorage
+      try {
+        const parsedDel = JSON.parse(localStorage.getItem('kts_deleted_media_assets') || '[]');
+        const toAdd = [targetName, targetUrl].filter(Boolean);
+        const updatedDel = Array.isArray(parsedDel) ? [...new Set([...parsedDel, ...toAdd])] : toAdd;
+        localStorage.setItem('kts_deleted_media_assets', JSON.stringify(updatedDel));
+      } catch(e) {}
+
       setAssets(prev => {
         const list = Array.isArray(prev) ? prev : [];
-        const updated = list.filter(a => a.name !== targetName && a.url !== targetName && a.publicUrl !== targetName);
+        const updated = list.filter(a => a.name !== targetName && a.url !== targetName && a.publicUrl !== targetName && a.url !== targetUrl);
         try {
           const customToSave = updated.filter(a => !(a.name || '').includes('scroller-images') && !(a.name || '').includes('ezgif-frame')).slice(0, 100);
           localStorage.setItem('kts_saved_media_assets', JSON.stringify(customToSave));
         } catch(e) {}
         return updated;
       });
-      alert(`✅ [SUCCESS] Asset removed: ${targetName}`);
+      alert(`✅ [SUCCESS] Asset removed permanently: ${targetName || targetUrl}`);
     }
   };
 
@@ -3848,6 +3864,7 @@ ${allEntries.map(entry => `    <url>
                         <input 
                           type="file" 
                           multiple
+                          accept="image/*,.png,.jpg,.jpeg,.webp,.gif,.svg"
                           className="hidden" 
                           onChange={handleAssetUpload} 
                           disabled={uploadingAsset} 

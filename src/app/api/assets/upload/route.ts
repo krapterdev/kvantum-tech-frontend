@@ -22,6 +22,8 @@ export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
     const file = formData.get('file') as File | null;
+    const folder = (formData.get('folder') as string | null) || '';
+
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
@@ -31,18 +33,21 @@ export async function POST(req: NextRequest) {
 
     const rawName = file.name || 'image.png';
     const cleanName = rawName.replace(/[^a-zA-Z0-9_.-]/g, '_');
-    // Save at root object key for guaranteed public 200 OK access
-    const key = `${Date.now()}_${cleanName}`;
+    
+    // Prefix key with folder name if present (e.g., blogs_1787028546809_photo.jpeg)
+    const cleanFolder = folder ? folder.replace(/[^a-zA-Z0-9_-]/g, '') : '';
+    const key = cleanFolder ? `${cleanFolder}_${Date.now()}_${cleanName}` : `${Date.now()}_${cleanName}`;
     const publicUrl = `${SUPABASE_PUBLIC_URL}/${S3_BUCKET}/${key}`;
 
-    let contentType = file.type || 'image/png';
+    let contentType = file.type || 'image/jpeg';
+    const ext = cleanName.split('.').pop()?.toLowerCase();
     if (!contentType || contentType === 'application/octet-stream') {
-      const ext = cleanName.split('.').pop()?.toLowerCase();
       if (ext === 'png') contentType = 'image/png';
       else if (ext === 'jpg' || ext === 'jpeg') contentType = 'image/jpeg';
       else if (ext === 'svg') contentType = 'image/svg+xml';
       else if (ext === 'webp') contentType = 'image/webp';
-      else contentType = 'image/png';
+      else if (ext === 'gif') contentType = 'image/gif';
+      else contentType = 'image/jpeg';
     }
 
     await s3.send(new PutObjectCommand({
@@ -57,6 +62,7 @@ export async function POST(req: NextRequest) {
       name: key,
       url: publicUrl,
       publicUrl: publicUrl,
+      folder: cleanFolder,
       size: file.size,
       contentType: contentType,
     });

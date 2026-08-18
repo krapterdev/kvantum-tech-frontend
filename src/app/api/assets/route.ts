@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import { S3Client, ListObjectsV2Command } from '@aws-sdk/client-s3';
+import { NextRequest, NextResponse } from 'next/server';
+import { S3Client, ListObjectsV2Command, DeleteObjectCommand } from '@aws-sdk/client-s3';
 
 const S3_ENDPOINT = process.env.S3_ENDPOINT || 'https://bwdtxlosvptlqtixgcip.storage.supabase.co/storage/v1/s3';
 const S3_REGION = process.env.S3_REGION || 'ap-southeast-1';
@@ -27,11 +27,22 @@ export async function GET() {
       const ext = key.split('.').pop()?.toLowerCase() || '';
       const imageExtensions = ['png', 'jpg', 'jpeg', 'svg', 'gif', 'webp'];
       const contentType = imageExtensions.includes(ext)
-        ? `image/${ext === 'svg' ? 'svg+xml' : ext === 'jpg' ? 'jpeg' : ext}`
+        ? `image/${ext === 'svg' ? 'svg+xml' : ext === 'jpg' || ext === 'jpeg' ? 'jpeg' : ext}`
         : 'application/octet-stream';
+
+      let folder = '';
+      if (key.includes('_')) {
+        const firstPart = key.split('_')[0].toLowerCase();
+        if (['blogs', 'services', 'projects'].includes(firstPart)) {
+          folder = firstPart;
+        }
+      } else if (key.includes('/')) {
+        folder = key.split('/')[0].toLowerCase();
+      }
 
       return {
         name: key,
+        folder: folder,
         created_at: item.LastModified ? new Date(item.LastModified).toISOString() : new Date().toISOString(),
         publicUrl: publicUrl,
         url: publicUrl,
@@ -44,5 +55,33 @@ export async function GET() {
   } catch (err: any) {
     console.error('[NEXT API LIST ASSETS ERROR]', err);
     return NextResponse.json([]);
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const body = await req.json().catch(() => ({}));
+    const targetName = body?.name || body?.url || body?.key || '';
+    
+    if (!targetName) {
+      return NextResponse.json({ error: 'No asset name provided' }, { status: 400 });
+    }
+
+    let key = targetName;
+    if (key.includes('/kvantumtechsolutions_storage/')) {
+      key = key.split('/kvantumtechsolutions_storage/').pop();
+    } else if (key.includes('/')) {
+      key = key.split('/').pop();
+    }
+
+    await s3.send(new DeleteObjectCommand({
+      Bucket: S3_BUCKET,
+      Key: key,
+    }));
+
+    return NextResponse.json({ success: true, message: `Deleted ${key}` });
+  } catch (err: any) {
+    console.error('[NEXT API DELETE ASSET ERROR]', err);
+    return NextResponse.json({ error: err?.message || 'Delete failed' }, { status: 500 });
   }
 }

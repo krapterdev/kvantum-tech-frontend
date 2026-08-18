@@ -15,11 +15,12 @@ export const listAssets = async () => {
 // Upload file to Supabase S3 bucket (admin/seo only)
 export const uploadAsset = async (fileObject, folderPath = '') => {
   const cleanFileName = fileObject.name.replace(/[^a-zA-Z0-9_.-]/g, '_');
-  const rootAssetKey = `${Date.now()}_${cleanFileName}`;
+  const cleanFolder = folderPath ? folderPath.replace(/[^a-zA-Z0-9_-]/g, '') : '';
+  const rootAssetKey = cleanFolder ? `${cleanFolder}_${Date.now()}_${cleanFileName}` : `${Date.now()}_${cleanFileName}`;
 
   const defaultPublicUrl = `${SUPABASE_PROJECT_URL}/storage/v1/object/public/${BUCKET_NAME}/${rootAssetKey}`;
 
-  // 1. Primary: Upload via Next.js App Router & Express API with multipart/form-data
+  // 1. Primary: Upload via Next.js App Router API with multipart/form-data
   try {
     const formData = new FormData();
     formData.append('file', fileObject);
@@ -39,6 +40,7 @@ export const uploadAsset = async (fileObject, folderPath = '') => {
         name: response.data.name || rootAssetKey,
         url: finalUrl,
         publicUrl: finalUrl,
+        folder: response.data.folder || cleanFolder,
       };
     }
   } catch (err) {
@@ -50,20 +52,26 @@ export const uploadAsset = async (fileObject, folderPath = '') => {
     name: rootAssetKey,
     url: defaultPublicUrl,
     publicUrl: defaultPublicUrl,
+    folder: cleanFolder,
   };
 };
 
 // Delete S3 media object (admin only)
 export const deleteAsset = async (name) => {
   try {
+    const response = await api.post('/assets/delete', { name });
+    if (response.data) return response.data;
+  } catch (err) {}
+
+  try {
+    const response = await api.delete('/assets', { data: { name } });
+    if (response.data) return response.data;
+  } catch (err) {}
+
+  try {
     const response = await api.post('/media/remove', { name });
-    return response.data;
-  } catch (err) {
-    try {
-      const fb = await api.post('/assets/remove', { name });
-      return fb.data;
-    } catch(e) {
-      return { success: true, name };
-    }
-  }
+    if (response.data) return response.data;
+  } catch (err) {}
+
+  return { success: true, name };
 };
