@@ -497,10 +497,11 @@ app.delete('/api/services/:id', async function(req, res) {
 // ── BLOGS ─────────────────────────────────────────────────────
 app.get('/api/blogs', async function(req, res) {
   try {
-    var r = await db.query('SELECT * FROM blogs ORDER BY "created_at" DESC');
+    var r = await db.query('SELECT * FROM blogs ORDER BY created_at DESC');
     var rows = (r.rows || []).map(function(row) {
-      var img = row.image || row.coverImage || row.cover_image || '';
-      return Object.assign({}, row, { image: img, coverImage: img });
+      var img = row.image || row.ogImage || row.coverImage || row.cover_image || '';
+      var slug = row.id;
+      return Object.assign({}, row, { _id: slug, slug: slug, id: slug, image: img, coverImage: img, metaTitle: row.meta_title || row.metaTitle, metaDesc: row.meta_desc || row.metaDesc });
     });
     res.json(rows);
   } catch(err) { res.json([]); }
@@ -508,34 +509,85 @@ app.get('/api/blogs', async function(req, res) {
 
 app.get('/api/blogs/:slug', async function(req, res) {
   try {
-    var r = await db.query('SELECT * FROM blogs WHERE "slug"=$1 OR "_id"=$1', [req.params.slug]);
+    var r = await db.query('SELECT * FROM blogs WHERE id=$1', [req.params.slug]);
     if (!r.rows[0]) return res.status(404).json({ error: 'Not found' });
     var row = r.rows[0];
-    var img = row.image || row.coverImage || row.cover_image || '';
-    res.json(Object.assign({}, row, { image: img, coverImage: img }));
+    var img = row.image || row.ogImage || row.coverImage || row.cover_image || '';
+    var slug = row.id;
+    res.json(Object.assign({}, row, { _id: slug, slug: slug, id: slug, image: img, coverImage: img, metaTitle: row.meta_title || row.metaTitle, metaDesc: row.meta_desc || row.metaDesc }));
   } catch(err) { res.status(500).json({ error: err.message }); }
 });
 
 app.post('/api/blogs', async function(req, res) {
   try {
-    var b = req.body, id = b.slug || b._id || b.id || (b.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
-    var img = b.image || b.coverImage || b.ogImage || '';
-    await db.query('INSERT INTO blogs ("_id","title","slug","excerpt","content","metaTitle","metaDesc","coverImage","tags","author","status") VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) ON CONFLICT ("_id") DO UPDATE SET "title"=EXCLUDED."title","excerpt"=EXCLUDED."excerpt","content"=EXCLUDED."content","metaTitle"=EXCLUDED."metaTitle","metaDesc"=EXCLUDED."metaDesc","coverImage"=EXCLUDED."coverImage","tags"=EXCLUDED."tags","author"=EXCLUDED."author","status"=EXCLUDED."status","updated_at"=NOW()', [id, b.title, id, b.excerpt||b.summary||'', b.content||'', b.metaTitle||b.title, b.metaDesc||b.excerpt||b.summary||'', img, b.tags||'', b.author||'Admin', b.status||'published']);
-    res.status(201).json(Object.assign({ id: id, _id: id, image: img, coverImage: img }, b));
+    var b = req.body, id = b.slug || b.id || b._id || (b.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    var img = b.image || b.ogImage || b.coverImage || '';
+    var metaTitle = b.meta_title || b.metaTitle || b.ogTitle || b.title;
+    var metaDesc = b.meta_desc || b.metaDesc || b.ogDesc || b.summary || b.excerpt || '';
+    var ogTitle = b.ogTitle || metaTitle;
+    var ogDesc = b.ogDesc || metaDesc;
+    var ogImage = b.ogImage || img;
+    var faqsJson = typeof b.faqs === 'string' ? b.faqs : JSON.stringify(b.faqs || []);
+
+    await db.query(
+      `INSERT INTO blogs (id, title, category, date, read_time, summary, content, meta_title, meta_desc, author, image, keywords, canonical, "ogTitle", "ogDesc", "ogImage", "ogType", "twitterTitle", "twitterDesc", "twitterCard", faqs, "imageAlt", "imageTitle", "schemaMarkup", "otherSeoTags")
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25)
+       ON CONFLICT (id) DO UPDATE SET
+         title=EXCLUDED.title, category=EXCLUDED.category, date=EXCLUDED.date, read_time=EXCLUDED.read_time,
+         summary=EXCLUDED.summary, content=EXCLUDED.content, meta_title=EXCLUDED.meta_title, meta_desc=EXCLUDED.meta_desc,
+         author=EXCLUDED.author, image=EXCLUDED.image, keywords=EXCLUDED.keywords, canonical=EXCLUDED.canonical,
+         "ogTitle"=EXCLUDED."ogTitle", "ogDesc"=EXCLUDED."ogDesc", "ogImage"=EXCLUDED."ogImage", "ogType"=EXCLUDED."ogType",
+         "twitterTitle"=EXCLUDED."twitterTitle", "twitterDesc"=EXCLUDED."twitterDesc", "twitterCard"=EXCLUDED."twitterCard",
+         faqs=EXCLUDED.faqs, "imageAlt"=EXCLUDED."imageAlt", "imageTitle"=EXCLUDED."imageTitle",
+         "schemaMarkup"=EXCLUDED."schemaMarkup", "otherSeoTags"=EXCLUDED."otherSeoTags"`,
+      [
+        id, b.title, b.category||'IT Services', b.date||new Date().toISOString().split('T')[0], b.read_time||b.readTime||'5 min read',
+        b.summary||b.excerpt||'', b.content||'', metaTitle, metaDesc, b.author||'Admin', img,
+        b.keywords||'', b.canonical||`https://kvantumtechsolutions.com/blog/${id}`,
+        ogTitle, ogDesc, ogImage, b.ogType||'article', b.twitterTitle||ogTitle, b.twitterDesc||ogDesc,
+        b.twitterCard||'summary_large_image', faqsJson, b.imageAlt||b.title, b.imageTitle||b.title,
+        b.schemaMarkup||'', b.otherSeoTags||''
+      ]
+    );
+    res.status(201).json(Object.assign({ id: id, _id: id, slug: id, image: img, coverImage: img, metaTitle: metaTitle, metaDesc: metaDesc }, b));
   } catch(err) { res.status(500).json({ error: err.message }); }
 });
 
 app.put('/api/blogs/:id', async function(req, res) {
   try {
+    var id = req.params.id;
     var b = req.body;
-    var img = b.image || b.coverImage || b.ogImage || '';
-    await db.query('UPDATE blogs SET "title"=COALESCE($1,"title"),"excerpt"=COALESCE($2,"excerpt"),"content"=COALESCE($3,"content"),"metaTitle"=COALESCE($4,"metaTitle"),"metaDesc"=COALESCE($5,"metaDesc"),"coverImage"=COALESCE($6,"coverImage"),"tags"=COALESCE($7,"tags"),"author"=COALESCE($8,"author"),"status"=COALESCE($9,"status"),"updated_at"=NOW() WHERE "_id"=$10', [b.title, b.excerpt||b.summary, b.content, b.metaTitle, b.metaDesc, img, b.tags, b.author, b.status, req.params.id]);
-    res.json(Object.assign({ id: req.params.id, _id: req.params.id, image: img, coverImage: img }, b));
+    var img = b.image || b.ogImage || b.coverImage || '';
+    var metaTitle = b.meta_title || b.metaTitle || b.ogTitle || b.title;
+    var metaDesc = b.meta_desc || b.metaDesc || b.ogDesc || b.summary || b.excerpt || '';
+    var ogTitle = b.ogTitle || metaTitle;
+    var ogDesc = b.ogDesc || metaDesc;
+    var ogImage = b.ogImage || img;
+    var faqsJson = typeof b.faqs === 'string' ? b.faqs : JSON.stringify(b.faqs || []);
+
+    await db.query(
+      `UPDATE blogs SET
+         title=COALESCE($1,title), category=COALESCE($2,category), date=COALESCE($3,date), read_time=COALESCE($4,read_time),
+         summary=COALESCE($5,summary), content=COALESCE($6,content), meta_title=COALESCE($7,meta_title), meta_desc=COALESCE($8,meta_desc),
+         author=COALESCE($9,author), image=COALESCE($10,image), keywords=COALESCE($11,keywords), canonical=COALESCE($12,canonical),
+         "ogTitle"=COALESCE($13,"ogTitle"), "ogDesc"=COALESCE($14,"ogDesc"), "ogImage"=COALESCE($15,"ogImage"), "ogType"=COALESCE($16,"ogType"),
+         "twitterTitle"=COALESCE($17,"twitterTitle"), "twitterDesc"=COALESCE($18,"twitterDesc"), "twitterCard"=COALESCE($19,"twitterCard"),
+         faqs=COALESCE($20,faqs), "imageAlt"=COALESCE($21,"imageAlt"), "imageTitle"=COALESCE($22,"imageTitle"),
+         "schemaMarkup"=COALESCE($23,"schemaMarkup"), "otherSeoTags"=COALESCE($24,"otherSeoTags")
+       WHERE id=$25`,
+      [
+        b.title, b.category, b.date, b.read_time||b.readTime, b.summary||b.excerpt, b.content, metaTitle, metaDesc,
+        b.author, img, b.keywords, b.canonical, ogTitle, ogDesc, ogImage, b.ogType,
+        b.twitterTitle, b.twitterDesc, b.twitterCard, faqsJson, b.imageAlt, b.imageTitle,
+        b.schemaMarkup, b.otherSeoTags, id
+      ]
+    );
+    res.json(Object.assign({ id: id, _id: id, slug: id, image: img, coverImage: img, metaTitle: metaTitle, metaDesc: metaDesc }, b));
   } catch(err) { res.status(500).json({ error: err.message }); }
 });
 
 app.delete('/api/blogs/:id', async function(req, res) {
-  try { await db.query('DELETE FROM blogs WHERE "_id"=$1', [req.params.id]); res.json({ success: true }); }
+  try { await db.query('DELETE FROM blogs WHERE id=$1', [req.params.id]); res.json({ success: true }); }
   catch(err) { res.status(500).json({ error: err.message }); }
 });
 

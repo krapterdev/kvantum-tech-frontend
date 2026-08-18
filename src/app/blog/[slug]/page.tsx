@@ -29,7 +29,7 @@ async function getBlog(slug: string): Promise<any> {
   try {
     const pool = getPool();
     if (pool) {
-      const res = await pool.query('SELECT * FROM blogs WHERE slug = $1 OR id = $1 OR "_id" = $1', [slug]);
+      const res = await pool.query('SELECT * FROM blogs WHERE id = $1', [slug]);
       if (res.rows && res.rows.length > 0) {
         return res.rows[0];
       }
@@ -54,11 +54,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const blog = await getBlog(slug);
 
   // Extract clean title and avoid duplicate '| Kvantum Tech Solutions'
-  let rawTitle = blog?.metaTitle || blog?.ogTitle || blog?.title || slug.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+  let rawTitle = blog?.meta_title || blog?.metaTitle || blog?.ogTitle || blog?.title || slug.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
   const cleanTitleOnly = rawTitle.replace(/\s*\|\s*Kvantum Tech Solutions\s*/gi, '').trim();
   const fullTitle = `${cleanTitleOnly} | Kvantum Tech Solutions`;
 
-  const description = blog?.metaDesc || blog?.ogDesc || blog?.summary || blog?.excerpt || `Read about ${cleanTitleOnly} on Kvantum Tech Solutions.`;
+  const description = blog?.meta_desc || blog?.metaDesc || blog?.ogDesc || blog?.summary || blog?.excerpt || `Read about ${cleanTitleOnly} on Kvantum Tech Solutions.`;
   const canonicalUrl = `https://kvantumtechsolutions.com/blog/${slug}`;
 
   // Extract true dynamic cover image
@@ -74,7 +74,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   if (!rawImage || rawImage.startsWith('data:image') || rawImage.includes('unsplash')) {
-    rawImage = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/blogs_1787035311661_Why_Custom_Software_Services__Kvantum_Tech_Solutions.jpg';
+    rawImage = 'https://kvantumtechsolutions.com/api/img/blogs_1787035311661_Why_Custom_Software_Services__Kvantum_Tech_Solutions.jpg';
+  } else if (rawImage.includes('supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/')) {
+    const parts = rawImage.split('kvantumtechsolutions_storage/');
+    const fileName = parts[parts.length - 1];
+    rawImage = `https://kvantumtechsolutions.com/api/img/${fileName}`;
   } else if (rawImage.startsWith('/')) {
     rawImage = `https://kvantumtechsolutions.com${rawImage}`;
   }
