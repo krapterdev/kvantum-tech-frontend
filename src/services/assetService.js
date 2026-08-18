@@ -18,51 +18,71 @@ export const uploadAsset = async (fileObject, folderPath = '') => {
   const folderPrefix = folderPath ? (folderPath.replace(/^\/+|\/+$/g, '') + '/') : '';
   const fullAssetKey = `${folderPrefix}${Date.now()}_${cleanFileName}`;
 
-  const uploadUrl = `${SUPABASE_PROJECT_URL}/storage/v1/object/${BUCKET_NAME}/${fullAssetKey}`;
   const publicUrl = `${SUPABASE_PROJECT_URL}/storage/v1/object/public/${BUCKET_NAME}/${fullAssetKey}`;
 
-  // 1. Try direct upload to Supabase Storage REST API
-  try {
-    const res = await fetch(uploadUrl, {
-      method: 'POST',
-      headers: {
-        'x-upsert': 'true',
-        'content-type': fileObject.type || 'application/octet-stream'
-      },
-      body: fileObject
-    });
-    
-    if (res.ok || res.status === 200 || res.status === 201) {
-      return {
-        name: fullAssetKey,
-        url: publicUrl,
-        publicUrl: publicUrl
-      };
-    }
-  } catch (err) {
-    console.warn('[SUPABASE DIRECT UPLOAD WARN]', err);
+  let token = '';
+  if (typeof window !== 'undefined') {
+    token = localStorage.getItem('kts_admin_token') || '';
   }
 
-  // 2. Fallback to backend Node.js API upload endpoint
+  // 1. Primary: Upload via Backend API with multipart/form-data headers
   try {
     const formData = new FormData();
     formData.append('file', fileObject);
     if (folderPath) {
       formData.append('folder', folderPath);
     }
-    const response = await api.post('/assets/upload', formData);
+
+    const response = await api.post('/assets/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
     if (response.data && (response.data.url || response.data.publicUrl)) {
-      return response.data;
+      return {
+        name: response.data.name || fullAssetKey,
+        url: response.data.publicUrl || response.data.url || publicUrl,
+        publicUrl: response.data.publicUrl || response.data.url || publicUrl,
+      };
     }
   } catch (err) {
-    console.warn('[BACKEND UPLOAD WARN]', err);
+    console.warn('[BACKEND MULTIPART UPLOAD WARN]', err?.response?.data || err.message);
   }
 
-  // 3. Guaranteed public URL fallback
+  // 2. Direct Supabase Storage REST API Upload with Authorization header
+  try {
+    const uploadUrl = `${SUPABASE_PROJECT_URL}/storage/v1/object/${BUCKET_NAME}/${fullAssetKey}`;
+    const headers = {
+      'x-upsert': 'true',
+      'Content-Type': fileObject.type || 'application/octet-stream',
+    };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const res = await fetch(uploadUrl, {
+      method: 'POST',
+      headers: headers,
+      body: fileObject,
+    });
+
+    if (res.ok || res.status === 200 || res.status === 201) {
+      return {
+        name: fullAssetKey,
+        url: publicUrl,
+        publicUrl: publicUrl,
+      };
+    }
+  } catch (err) {
+    console.warn('[SUPABASE DIRECT UPLOAD WARN]', err);
+  }
+
+  // 3. Guaranteed public URL return
   return {
     name: fullAssetKey,
     url: publicUrl,
-    publicUrl: publicUrl
+    publicUrl: publicUrl,
   };
 };
 
