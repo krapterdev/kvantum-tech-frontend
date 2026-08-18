@@ -625,6 +625,19 @@ ${allEntries.map(entry => `    <url>
         localBlobUrl = URL.createObjectURL(file);
       } catch (e) {}
 
+      // Read persistent Data URL for cross-reload preview
+      let persistentDataUrl = '';
+      if (file.size < 3 * 1024 * 1024) { // Only store data URL for files < 3MB to keep localStorage lightweight
+        try {
+          persistentDataUrl = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (evt) => resolve(evt.target.result);
+            reader.onerror = () => resolve('');
+            reader.readAsDataURL(file);
+          });
+        } catch(e) {}
+      }
+
       try {
         const res = await assetService.uploadAsset(file, currentFolder);
         const uploadedUrl = res?.publicUrl || res?.url;
@@ -634,7 +647,8 @@ ${allEntries.map(entry => `    <url>
           name: assetName,
           url: uploadedUrl,
           publicUrl: uploadedUrl,
-          localPreviewUrl: localBlobUrl || uploadedUrl,
+          localDataUrl: persistentDataUrl || localBlobUrl || uploadedUrl,
+          localPreviewUrl: localBlobUrl || persistentDataUrl || uploadedUrl,
           contentType: file.type || (file.name.endsWith('.png') ? 'image/png' : 'image/jpeg'),
           size: file.size,
           created_at: new Date().toISOString()
@@ -644,7 +658,7 @@ ${allEntries.map(entry => `    <url>
           const list = Array.isArray(prev) ? prev : [];
           const updated = [finalAsset, ...list.filter(a => a.name !== finalAsset.name)];
           try {
-            const customToSave = updated.filter(a => a.url && !a.url.startsWith('data:') && !(a.name || '').includes('scroller-images') && !(a.name || '').includes('ezgif-frame')).slice(0, 100);
+            const customToSave = updated.filter(a => !(a.name || '').includes('scroller-images') && !(a.name || '').includes('ezgif-frame')).slice(0, 100);
             localStorage.setItem('kts_saved_media_assets', JSON.stringify(customToSave));
           } catch(err) {}
           return updated;
@@ -3756,10 +3770,12 @@ ${allEntries.map(entry => `    <url>
                             >
                               {isImg ? (
                                 <img 
-                                  src={asset.localPreviewUrl || asset.url || asset.publicUrl} 
+                                  src={asset.localDataUrl || asset.localPreviewUrl || asset.url || asset.publicUrl} 
                                   alt={asset.name}
                                   onError={(e) => {
-                                    if (asset.localPreviewUrl && e.target.src !== asset.localPreviewUrl) {
+                                    if (asset.localDataUrl && e.target.src !== asset.localDataUrl) {
+                                      e.target.src = asset.localDataUrl;
+                                    } else if (asset.localPreviewUrl && e.target.src !== asset.localPreviewUrl) {
                                       e.target.src = asset.localPreviewUrl;
                                     } else {
                                       e.target.onerror = null;
@@ -3860,10 +3876,12 @@ ${allEntries.map(entry => `    <url>
 
                 <div className="w-full bg-zinc-950 rounded-xl overflow-hidden flex items-center justify-center border border-white/10 p-2">
                   <img 
-                    src={assetZoomModal.localPreviewUrl || assetZoomModal.url || assetZoomModal.publicUrl} 
+                    src={assetZoomModal.localDataUrl || assetZoomModal.localPreviewUrl || assetZoomModal.url || assetZoomModal.publicUrl} 
                     alt={assetZoomModal.name}
                     onError={(e) => {
-                      if (assetZoomModal.localPreviewUrl && e.target.src !== assetZoomModal.localPreviewUrl) {
+                      if (assetZoomModal.localDataUrl && e.target.src !== assetZoomModal.localDataUrl) {
+                        e.target.src = assetZoomModal.localDataUrl;
+                      } else if (assetZoomModal.localPreviewUrl && e.target.src !== assetZoomModal.localPreviewUrl) {
                         e.target.src = assetZoomModal.localPreviewUrl;
                       } else {
                         e.target.onerror = null;
