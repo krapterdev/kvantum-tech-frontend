@@ -457,7 +457,9 @@ ${allEntries.map(entry => `    <url>
     let localSaved = [];
     try {
       const parsed = JSON.parse(localStorage.getItem('kts_saved_media_assets') || '[]');
-      localSaved = Array.isArray(parsed) ? parsed : [];
+      const rawList = Array.isArray(parsed) ? parsed : [];
+      // Filter out raw base64 data URIs from stored local assets
+      localSaved = rawList.filter(a => a && (a.url || a.name) && !(a.url || '').startsWith('data:') && !(a.name || '').startsWith('data:'));
     } catch(e) {
       localSaved = [];
     }
@@ -470,18 +472,19 @@ ${allEntries.map(entry => `    <url>
 
     try {
       const data = await assetService.listAssets();
-      const serverList = Array.isArray(data) ? data : [];
+      const rawServerList = Array.isArray(data) ? data : [];
+      const serverList = rawServerList.filter(a => a && (a.url || a.name) && !(a.url || '').startsWith('data:') && !(a.name || '').startsWith('data:'));
       
       const combinedMap = new Map();
       // Put localSaved items FIRST so user uploads are NEVER lost or overwritten
       localSaved.forEach(a => {
-        if (a && (a.name || a.url)) {
+        if (a && (a.name || a.url) && !(a.url || '').startsWith('data:') && !(a.name || '').startsWith('data:')) {
           combinedMap.set(a.name || a.url, a);
         }
       });
       // Merge server items
       serverList.forEach(a => {
-        if (a && (a.name || a.url)) {
+        if (a && (a.name || a.url) && !(a.url || '').startsWith('data:') && !(a.name || '').startsWith('data:')) {
           const key = a.name || a.url;
           if (!combinedMap.has(key)) {
             combinedMap.set(key, a);
@@ -504,9 +507,9 @@ ${allEntries.map(entry => `    <url>
 
       setAssets(merged);
 
-      // Persist all custom uploaded non-scroller assets to localStorage
+      // Persist only clean HTTPS CDN asset URLs to localStorage (no base64 strings)
       try {
-        const customToSave = merged.filter(a => !(a.name || '').includes('scroller-images') && !(a.name || '').includes('ezgif-frame')).slice(0, 100);
+        const customToSave = merged.filter(a => a.url && !a.url.startsWith('data:') && !(a.name || '').startsWith('data:') && !(a.name || '').includes('scroller-images') && !(a.name || '').includes('ezgif-frame')).slice(0, 100);
         localStorage.setItem('kts_saved_media_assets', JSON.stringify(customToSave));
       } catch(e) {}
     } catch (err) {
@@ -2208,7 +2211,11 @@ ${allEntries.map(entry => `    <url>
 
   // Clipboard copy helper
   const copyToClipboard = (text, idx) => {
-    navigator.clipboard.writeText(text);
+    let cleanText = text || '';
+    if (cleanText.startsWith('data:')) {
+      cleanText = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg';
+    }
+    navigator.clipboard.writeText(cleanText);
     setCopiedIndex(idx);
     setTimeout(() => setCopiedIndex(null), 2000);
   };
@@ -3640,6 +3647,7 @@ ${allEntries.map(entry => `    <url>
 
             allList.forEach(ast => {
               if (!ast || !ast.name) return;
+              if ((ast.url || '').startsWith('data:') || (ast.name || '').startsWith('data:')) return;
               const fullName = ast.name.replace(/^\/+/, '');
               
               if (assetSearchTerm) {
