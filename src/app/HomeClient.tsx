@@ -29,21 +29,41 @@ import SeoSchema from '@/components/sections/SeoSchema';
 import { fallbackServices } from '@/data/services';
 import { fallbackBlogs } from '@/pages/BlogPage';
 import { fallbackSettings } from '@/data/settings';
+import { getAllBlogs } from '@/services/blogService';
 
 export default function HomeClient() {
   const [services, setServices] = React.useState<any[]>(fallbackServices);
+  const [blogs, setBlogs] = React.useState<any[]>(fallbackBlogs);
 
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('kts_custom_services');
-      if (saved) {
+      const savedServices = localStorage.getItem('kts_custom_services');
+      if (savedServices) {
         try {
-          const parsed = JSON.parse(saved);
+          const parsed = JSON.parse(savedServices);
           if (Array.isArray(parsed) && parsed.length > 0) {
             setServices(parsed);
           }
         } catch (e) {}
       }
+
+      const savedBlogs = localStorage.getItem('kts_saved_admin_blogs');
+      if (savedBlogs) {
+        try {
+          const parsed = JSON.parse(savedBlogs);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setBlogs(parsed);
+          }
+        } catch (e) {}
+      }
+
+      getAllBlogs()
+        .then((fetched) => {
+          if (Array.isArray(fetched) && fetched.length > 0) {
+            setBlogs(fetched);
+          }
+        })
+        .catch(() => {});
     }
   }, []);
 
@@ -69,7 +89,7 @@ export default function HomeClient() {
       <Testimonials settings={fallbackSettings as any} />
       <Pricing />
       <HomeSeoContentSection />
-      <BlogPreview blogs={fallbackBlogs as any} blogsLoading={false} />
+      <BlogPreview blogs={blogs as any} blogsLoading={false} />
       <FAQ />
       <CTA />
       <VisitorOdometerCounter />
