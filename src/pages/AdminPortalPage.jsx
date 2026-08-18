@@ -620,12 +620,6 @@ ${allEntries.map(entry => `    <url>
 
     setUploadingAsset(true);
     for (const file of files) {
-      const cleanFileName = file.name.replace(/[^a-zA-Z0-9_.-]/g, '_');
-      const folderPrefix = currentFolder ? (currentFolder.replace(/^\/+|\/+$/g, '') + '/') : '';
-      const fullAssetKey = `${folderPrefix}${cleanFileName}`;
-      const supabaseUrl = `https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/${fullAssetKey}`;
-
-      // Instant local preview blob URL so user's uploaded image ALWAYS renders perfectly
       let localBlobUrl = '';
       try {
         localBlobUrl = URL.createObjectURL(file);
@@ -633,9 +627,11 @@ ${allEntries.map(entry => `    <url>
 
       try {
         const res = await assetService.uploadAsset(file, currentFolder);
-        const uploadedUrl = res?.publicUrl || res?.url || supabaseUrl;
+        const uploadedUrl = res?.publicUrl || res?.url;
+        const assetName = res?.name || `${currentFolder ? currentFolder + '/' : ''}${file.name}`;
+        
         const finalAsset = {
-          name: res?.name || fullAssetKey,
+          name: assetName,
           url: uploadedUrl,
           publicUrl: uploadedUrl,
           localPreviewUrl: localBlobUrl || uploadedUrl,
@@ -653,28 +649,9 @@ ${allEntries.map(entry => `    <url>
           } catch(err) {}
           return updated;
         });
-        alert(`✅ [SUCCESS] Uploaded to ${currentFolder ? currentFolder + '/' : 'Root'}: ${file.name}`);
+        alert(`✅ [SUCCESS] Uploaded to ${currentFolder ? currentFolder + '/' : 'Root'}: ${file.name}\n\nPublic CDN URL:\n${uploadedUrl}`);
       } catch (err) {
-        console.warn('[ASSET UPLOAD WARN] Local asset fallback:', err.message);
-        const fallbackAsset = {
-          name: fullAssetKey,
-          url: supabaseUrl,
-          publicUrl: supabaseUrl,
-          localPreviewUrl: localBlobUrl || supabaseUrl,
-          contentType: file.type || (file.name.endsWith('.png') ? 'image/png' : 'image/jpeg'),
-          size: file.size,
-          created_at: new Date().toISOString()
-        };
-        setAssets(prev => {
-          const list = Array.isArray(prev) ? prev : [];
-          const updated = [fallbackAsset, ...list.filter(a => a.name !== fallbackAsset.name)];
-          try {
-            const customToSave = updated.filter(a => a.url && !a.url.startsWith('data:') && !(a.name || '').includes('scroller-images') && !(a.name || '').includes('ezgif-frame')).slice(0, 100);
-            localStorage.setItem('kts_saved_media_assets', JSON.stringify(customToSave));
-          } catch(e) {}
-          return updated;
-        });
-        alert(`✅ [SUCCESS] Uploaded to ${currentFolder ? currentFolder + '/' : 'Root'}: ${file.name}`);
+        console.warn('[ASSET UPLOAD WARN]', err.message);
       }
     }
     setUploadingAsset(false);
