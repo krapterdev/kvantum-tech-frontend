@@ -647,6 +647,7 @@ ${allEntries.map(entry => `    <url>
           name: assetName,
           url: uploadedUrl,
           publicUrl: uploadedUrl,
+          folder: currentFolder || '',
           localDataUrl: persistentDataUrl || localBlobUrl || uploadedUrl,
           localPreviewUrl: localBlobUrl || persistentDataUrl || uploadedUrl,
           contentType: file.type || (file.name.endsWith('.png') ? 'image/png' : 'image/jpeg'),
@@ -3571,6 +3572,7 @@ ${allEntries.map(entry => `    <url>
                 <input 
                   type="file" 
                   multiple
+                  accept="image/png,image/jpeg,image/jpg,image/webp,image/gif,image/svg+xml"
                   className="hidden" 
                   onChange={handleAssetUpload} 
                   disabled={uploadingAsset} 
@@ -3673,37 +3675,35 @@ ${allEntries.map(entry => `    <url>
                 return;
               }
 
-              if (folderPrefix) {
-                if (!fullName.startsWith(folderPrefix)) return;
-                const relPath = fullName.slice(folderPrefix.length);
-                if (!relPath) return;
-
-                const parts = relPath.split('/');
-                if (parts.length > 1) {
-                  const subName = parts[0];
-                  const fullSubPath = `${currentFolder}/${subName}`;
-                  if (!subFolderMap.has(subName)) {
-                    subFolderMap.set(subName, { name: subName, path: fullSubPath, count: 1 });
-                  } else {
-                    subFolderMap.get(subName).count += 1;
-                  }
-                } else {
+              if (currentFolder) {
+                const isExplicitFolderMatch = ast.folder === currentFolder;
+                const isPathMatch = folderPrefix && (fullName.startsWith(folderPrefix) || fullName.startsWith(currentFolder + '_'));
+                const isSimpleMatch = (fullName.includes('/') && fullName.split('/')[0] === currentFolder) || fullName.startsWith(currentFolder);
+                
+                if (isExplicitFolderMatch || isPathMatch || isSimpleMatch) {
                   currentFiles.push(ast);
                 }
               } else {
-                const parts = fullName.split('/');
-                if (parts.length > 1) {
-                  const subName = parts[0];
-                  if (!subFolderMap.has(subName)) {
-                    subFolderMap.set(subName, { name: subName, path: subName, count: 1 });
+                const folderName = ast.folder || (fullName.includes('/') ? fullName.split('/')[0] : '');
+                if (folderName) {
+                  if (!subFolderMap.has(folderName)) {
+                    subFolderMap.set(folderName, { name: folderName, path: folderName, count: 1 });
                   } else {
-                    subFolderMap.get(subName).count += 1;
+                    subFolderMap.get(folderName).count += 1;
                   }
                 } else {
                   currentFiles.push(ast);
                 }
               }
             });
+
+            if (!currentFolder) {
+              ['blogs', 'services', 'projects'].forEach(defFolder => {
+                if (!subFolderMap.has(defFolder)) {
+                  subFolderMap.set(defFolder, { name: defFolder, path: defFolder, count: 0 });
+                }
+              });
+            }
 
             const subFoldersList = Array.from(subFolderMap.values());
             const hasItems = subFoldersList.length > 0 || currentFiles.length > 0;
