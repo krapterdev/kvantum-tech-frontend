@@ -175,7 +175,24 @@ export default function App() {
     let faqsList = [];
     let otherTagsContent = '';
 
-    let activeSeoObj = null;
+    let targetKey = '';
+    if (path === '/') targetKey = 'home';
+    else if (path === '/about') targetKey = 'about';
+    else if (path === '/services') targetKey = 'services';
+    else if (path === '/projects' || path === '/portfolio') targetKey = 'projects';
+    else if (path === '/blog') targetKey = 'blog';
+    else if (path === '/contact') targetKey = 'contact';
+
+    let localSeoObj = null;
+    if (typeof window !== 'undefined' && targetKey) {
+      try {
+        const saved = localStorage.getItem('kts_seo_settings');
+        if (saved) {
+          const list = JSON.parse(saved);
+          localSeoObj = list.find(s => s.key === targetKey);
+        }
+      } catch(e) {}
+    }
 
     if (path === '/') {
       title = 'IT Solutions Company in Delhi NCR | Kvantum Tech Solutions';
@@ -184,7 +201,8 @@ export default function App() {
       canonicalUrl = 'https://kvantumtechsolutions.com/';
       ogTitle = title;
       ogDesc = description;
-      activeSeoObj = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'home') : null;
+      const remoteObj = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'home') : null;
+      activeSeoObj = localSeoObj ? { ...(remoteObj || {}), ...localSeoObj } : remoteObj;
     } else if (path === '/about') {
       title = 'About Kvantum Tech Solutions | IT & AI Innovation Experts';
       description = 'Learn about Kvantum Tech Solutions, a trusted IT company delivering AI-powered solutions, web development, digital marketing, and enterprise technology services.';
@@ -192,7 +210,8 @@ export default function App() {
       canonicalUrl = 'https://kvantumtechsolutions.com/about';
       ogTitle = 'About Kvantum Tech Solutions | IT & AI Innovation Experts';
       ogDesc = 'Discover Kvantum Tech Solutions, delivering innovative AI, web development, digital marketing, and enterprise IT solutions for business growth.';
-      activeSeoObj = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'about') : null;
+      const remoteObj = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'about') : null;
+      activeSeoObj = localSeoObj ? { ...(remoteObj || {}), ...localSeoObj } : remoteObj;
     } else if (path === '/services') {
       title = 'IT Services | Web Development, SEO & AI Solutions | Kvantum Tech Solutions';
       description = 'Explore Kvantum Tech Solutions\' expert IT services, including web development, SEO, digital marketing, AI chatbots, app development, UI/UX design, and scalable business solutions.';
@@ -200,7 +219,8 @@ export default function App() {
       canonicalUrl = 'https://kvantumtechsolutions.com/services';
       ogTitle = 'IT Services | Web Development, SEO & AI Solutions | Kvantum Tech Solutions';
       ogDesc = 'Discover enterprise-grade IT services from Kvantum Tech Solutions, including web development, SEO, AI chatbots, digital marketing, app development, and UI/UX design.';
-      activeSeoObj = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'services') : null;
+      const remoteObj = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'services') : null;
+      activeSeoObj = localSeoObj ? { ...(remoteObj || {}), ...localSeoObj } : remoteObj;
     } else if (path === '/projects' || path === '/portfolio') {
       title = 'Featured Software & Engineering Projects | Kvantum Tech Solutions';
       description = 'Explore web products, apps, and custom platforms built for our clients by Kvantum Tech Solutions.';
@@ -208,7 +228,8 @@ export default function App() {
       canonicalUrl = 'https://kvantumtechsolutions.com/projects';
       ogTitle = title;
       ogDesc = description;
-      activeSeoObj = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'projects') : null;
+      const remoteObj = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'projects') : null;
+      activeSeoObj = localSeoObj ? { ...(remoteObj || {}), ...localSeoObj } : remoteObj;
     } else if (path === '/blog') {
       title = 'Tech Blog | AI, SEO, Web Development & Digital Marketing | Kvantum Tech Solutions';
       description = 'Explore the Kvantum Tech Solutions blog for expert insights on AI, SEO, web development, digital marketing, software solutions, and the latest technology trends to grow your business.';
@@ -216,7 +237,8 @@ export default function App() {
       canonicalUrl = 'https://kvantumtechsolutions.com/blog';
       ogTitle = 'Tech Blog | AI, SEO, Web Development & Digital Marketing | Kvantum Tech Solutions';
       ogDesc = 'Read the latest articles from Kvantum Tech Solutions covering AI, SEO, web development, digital marketing, software innovation, and business technology .';
-      activeSeoObj = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'blog') : null;
+      const remoteObj = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'blog') : null;
+      activeSeoObj = localSeoObj ? { ...(remoteObj || {}), ...localSeoObj } : remoteObj;
     } else if (path === '/contact') {
       title = 'Contact Kvantum Tech Solutions | Let\'s Build Your Digital Future';
       description = 'Get in touch with Kvantum Tech Solutions for web development, AI solutions, SEO, digital marketing, mobile apps, and enterprise IT services. Contact our experts today.';
@@ -224,7 +246,8 @@ export default function App() {
       canonicalUrl = 'https://kvantumtechsolutions.com/contact';
       ogTitle = 'Contact Kvantum Tech Solutions | Let\'s Build Your Digital Future';
       ogDesc = 'Contact Kvantum Tech Solutions to discuss your next digital project. Our experts deliver innovative web, AI, SEO, app development, and digital marketing solutions.';
-      activeSeoObj = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'contact') : null;
+      const remoteObj = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'contact') : null;
+      activeSeoObj = localSeoObj ? { ...(remoteObj || {}), ...localSeoObj } : remoteObj;
     } else if (path.startsWith('/keyword/')) {
       const slug = path.replace('/keyword/', '').trim();
       activeSeoObj = (seoPages || []).find(p => p.slug === slug || p.id === slug);
