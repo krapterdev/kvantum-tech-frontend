@@ -17,11 +17,14 @@ import ProjectsPage from '@/pages/ProjectsPage';
 import ContactPage from '@/pages/ContactPage';
 import ThankYouPage from '@/pages/ThankYouPage';
 import BlogPage, { DEFAULT_SEED_BLOG, fallbackBlogs } from '@/pages/BlogPage';
-import DynamicSeoPage from '@/pages/DynamicSeoPage';
-import AdminPortalPage from '@/pages/AdminPortalPage';
 import TermsPage from '@/pages/TermsPage';
 import PrivacyPage from '@/pages/PrivacyPage';
 import NotFound from '@/pages/NotFound';
+
+import DynamicSeoPage from '@/pages/DynamicSeoPage';
+
+// Lazy load heavy admin portal module to keep public bundle ultra-light for PageSpeed performance
+const AdminPortalPage = React.lazy(() => import('@/pages/AdminPortalPage'));
 
 // API services
 import * as serviceService from '@/services/serviceService';
@@ -155,6 +158,22 @@ export default function App() {
 
   // Dynamic Browser SEO Metadata Injection & Custom Scripts
   useEffect(() => {
+    // Trigger SPA Pageview Event for Google Analytics (gtag.js) & GTM on route changes
+    if (typeof window !== 'undefined') {
+      window.dataLayer = window.dataLayer || [];
+      if (typeof window.gtag === 'function') {
+        window.gtag('config', 'G-YME6G02ES5', {
+          page_path: location.pathname + location.search,
+          page_title: document.title
+        });
+      }
+      window.dataLayer.push({
+        event: 'page_view',
+        page_path: location.pathname + location.search,
+        page_title: document.title
+      });
+    }
+
     let title = 'IT Solutions Company in Delhi NCR | Kvantum Tech Solutions';
     let description = 'Kvantum Tech Solutions offers reliable IT services, software development, cloud solutions, web development, and digital transformation services across Delhi NCR.';
     let keywords = 'IT Solutions Company in Delhi NCR, Kvantum Tech Solutions, software development, cloud solutions, web development, digital transformation';
@@ -485,36 +504,40 @@ export default function App() {
           <Route path="/privacy" element={<PrivacyPage />} />
           
           <Route path="/admin" element={
-            <AdminPortalPage 
-              services={services} 
-              setServices={setServices} 
-              blogs={blogs} 
-              setBlogs={setBlogs} 
-              seoPages={seoPages} 
-              setSeoPages={setSeoPages} 
-              settings={settings}
-              setSettings={setSettings}
-              portfolios={portfolios}
-              setPortfolios={setPortfolios}
-              seoSettings={seoSettings}
-              setSeoSettings={setSeoSettings}
-            />
+            <React.Suspense fallback={<PageLoader />}>
+              <AdminPortalPage 
+                services={services} 
+                setServices={setServices} 
+                blogs={blogs} 
+                setBlogs={setBlogs} 
+                seoPages={seoPages} 
+                setSeoPages={setSeoPages} 
+                settings={settings}
+                setSettings={setSettings}
+                portfolios={portfolios}
+                setPortfolios={setPortfolios}
+                seoSettings={seoSettings}
+                setSeoSettings={setSeoSettings}
+              />
+            </React.Suspense>
           } />
           <Route path="/admin/:tab" element={
-            <AdminPortalPage 
-              services={services} 
-              setServices={setServices} 
-              blogs={blogs} 
-              setBlogs={setBlogs} 
-              seoPages={seoPages} 
-              setSeoPages={setSeoPages} 
-              settings={settings}
-              setSettings={setSettings}
-              portfolios={portfolios}
-              setPortfolios={setPortfolios}
-              seoSettings={seoSettings}
-              setSeoSettings={setSeoSettings}
-            />
+            <React.Suspense fallback={<PageLoader />}>
+              <AdminPortalPage 
+                services={services} 
+                setServices={setServices} 
+                blogs={blogs} 
+                setBlogs={setBlogs} 
+                seoPages={seoPages} 
+                setSeoPages={setSeoPages} 
+                settings={settings}
+                setSettings={setSettings}
+                portfolios={portfolios}
+                setPortfolios={setPortfolios}
+                seoSettings={seoSettings}
+                setSeoSettings={setSeoSettings}
+              />
+            </React.Suspense>
           } />
           
           <Route path="*" element={<NotFound />} />
