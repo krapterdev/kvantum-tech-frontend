@@ -137,7 +137,7 @@ export default function Hero({ settings }) {
 
         {/* Exact Specified H1 with Animated Flowing Brand Gradient */}
         <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black font-headline tracking-tight leading-[1.1] mb-6 max-w-5xl mx-auto">
-          <span className="animate-gradient-flow">Custom Software Development Company</span>{' '}
+          <span className="bg-gradient-to-r from-cyan-500 via-sky-500 to-pink-500 dark:from-cyan-400 dark:via-sky-400 dark:to-pink-400 bg-clip-text text-transparent">Custom Software Development Company</span>{' '}
           <span className="text-slate-900 dark:text-white">for Growing Businesses</span>
         </h1>
 
