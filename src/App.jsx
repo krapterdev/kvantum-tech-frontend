@@ -85,16 +85,14 @@ export default function App() {
     setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
   };
 
-  // Sync database telemetry details on boot
+  // Sync database telemetry details after initial page render is complete
   useEffect(() => {
     const fetchCollections = async () => {
       // 1. Services
       try {
         const data = await serviceService.getAllServices();
-        if (data.length > 0) setServices(data);
-      } catch (err) {
-        console.warn('[API CONNECTION] Services offline. Loading local seed templates.');
-      }
+        if (data && data.length > 0) setServices(data);
+      } catch (err) {}
 
       // 2. Blogs
       try {
@@ -107,7 +105,6 @@ export default function App() {
         const merged = Array.from(map.values());
         if (merged.length > 0) setBlogs(merged);
       } catch (err) {
-        console.warn('[API CONNECTION] Blogs offline.');
         let localSaved = [];
         try { localSaved = JSON.parse(localStorage.getItem('kts_saved_blogs') || '[]'); } catch(e) {}
         if (localSaved.length > 0) setBlogs(localSaved);
@@ -118,10 +115,8 @@ export default function App() {
       // 3. Programmatic SEO Pages
       try {
         const data = await seoService.getAllSeoPages();
-        setSeoPages(data);
-      } catch (err) {
-        console.warn('[API CONNECTION] SEO pages offline.');
-      }
+        if (data && data.length > 0) setSeoPages(data);
+      } catch (err) {}
 
       // 4. Site Settings
       try {
@@ -133,9 +128,7 @@ export default function App() {
           }
           setSettings(prev => ({ ...prev, ...data, contact: { ...(prev?.contact || {}), ...contactObj } }));
         }
-      } catch (err) {
-        console.warn('[API CONNECTION] Site settings offline.');
-      }
+      } catch (err) {}
       const localContact = localStorage.getItem('kts_saved_contact_settings');
       if (localContact) {
         try {
@@ -147,21 +140,23 @@ export default function App() {
       // 5. Portfolios
       try {
         const data = await portfolioService.getAllPortfolios();
-        setPortfolios(data);
-      } catch (err) {
-        console.warn('[API CONNECTION] Portfolios offline.');
-      }
+        if (data && data.length > 0) setPortfolios(data);
+      } catch (err) {}
 
-      // 6. SEO Settings (General Page SEO)
+      // 6. SEO Settings
       try {
         const data = await seoService.getSeoSettings();
-        setSeoSettings(data);
-      } catch (err) {
-        console.warn('[API CONNECTION] SEO settings list offline.');
-      }
+        if (data) setSeoSettings(data);
+      } catch (err) {}
     };
     
-    fetchCollections();
+    if (typeof window !== 'undefined') {
+      if ('requestIdleCallback' in window) {
+        window.requestIdleCallback(() => fetchCollections());
+      } else {
+        setTimeout(fetchCollections, 2500);
+      }
+    }
   }, []);
 
   // Dynamic Browser SEO Metadata Injection & Custom Scripts
