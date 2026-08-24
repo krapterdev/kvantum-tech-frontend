@@ -45,29 +45,7 @@ export default function EarthGlobe() {
 
     let rotationY = 1.6;
 
-    // Load Photorealistic NASA Earth Map Texture only when visible on desktop
-    const earthTexture = new Image();
-    earthTexture.crossOrigin = 'anonymous';
-    earthTexture.src = 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg';
-
-    const textureCanvas = document.createElement('canvas');
-    const textureCtx = textureCanvas.getContext('2d');
-    let textureData = null;
-    let texWidth = 0;
-    let texHeight = 0;
-
-    earthTexture.onload = () => {
-      texWidth = textureCanvas.width = earthTexture.width;
-      texHeight = textureCanvas.height = earthTexture.height;
-      textureCtx.drawImage(earthTexture, 0, 0);
-      try {
-        textureData = textureCtx.getImageData(0, 0, texWidth, texHeight).data;
-      } catch (e) {
-        console.warn('Texture CORS fallback mode active');
-      }
-    };
-
-    // Tech Hub Coordinates (Lat, Lon in Radians)
+    // High-performance 60FPS vector Earth Globe
     const globalHubs = [
       { name: 'India (Delhi HQ)', lat: (28.6 * Math.PI) / 180, lon: (77.2 * Math.PI) / 180, color: '#38bdf8' },
       { name: 'Dubai', lat: (25.2 * Math.PI) / 180, lon: (55.2 * Math.PI) / 180, color: '#ec4899' },
@@ -156,59 +134,24 @@ export default function EarthGlobe() {
       ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
       ctx.fill();
 
-      // 3. Render Photorealistic NASA Texture Map or High-Density Landmesh
-      if (textureData && texWidth > 0) {
-        const sampleStep = 3.5;
-        for (let py = -radius; py <= radius; py += sampleStep) {
-          const lat = Math.asin(py / radius);
-          const r = Math.sqrt(radius * radius - py * py);
-          if (r <= 0) continue;
+      // 3. Render High Precision Vector Map Points (100% Safe 60FPS)
+      for (let i = 0; i < mapPoints.length; i++) {
+        const pt = mapPoints[i];
+        const currentLon = pt.lon + rotationY;
 
-          for (let px = -r; px <= r; px += sampleStep) {
-            const lon = Math.atan2(px, Math.sqrt(r * r - px * px));
-            const z3d = Math.sqrt(r * r - px * px);
+        const x3d = radius * Math.cos(pt.lat) * Math.sin(currentLon);
+        const y3d = radius * Math.sin(pt.lat);
+        const z3d = radius * Math.cos(pt.lat) * Math.cos(currentLon);
 
-            if (z3d > 0) {
-              let adjustedLon = (lon - rotationY) % (2 * Math.PI);
-              if (adjustedLon < 0) adjustedLon += 2 * Math.PI;
+        if (z3d > 0) {
+          const screenX = centerX + x3d;
+          const screenY = centerY - y3d;
+          const alpha = (z3d / radius) ** 0.8;
 
-              const u = adjustedLon / (2 * Math.PI);
-              const v = 0.5 - lat / Math.PI;
-
-              const tx = Math.floor(u * texWidth) % texWidth;
-              const ty = Math.floor(v * texHeight) % texHeight;
-              const index = (ty * texWidth + tx) * 4;
-
-              const rCol = textureData[index];
-              const gCol = textureData[index + 1];
-              const bCol = textureData[index + 2];
-
-              const alpha = Math.max(0.2, z3d / radius);
-              ctx.fillStyle = `rgba(${rCol},${gCol},${bCol},${alpha})`;
-              ctx.fillRect(centerX + px, centerY - py, sampleStep, sampleStep);
-            }
-          }
-        }
-      } else {
-        // High Precision Vector Map Points
-        for (let i = 0; i < mapPoints.length; i++) {
-          const pt = mapPoints[i];
-          const currentLon = pt.lon + rotationY;
-
-          const x3d = radius * Math.cos(pt.lat) * Math.sin(currentLon);
-          const y3d = radius * Math.sin(pt.lat);
-          const z3d = radius * Math.cos(pt.lat) * Math.cos(currentLon);
-
-          if (z3d > 0) {
-            const screenX = centerX + x3d;
-            const screenY = centerY - y3d;
-            const alpha = (z3d / radius) ** 0.8;
-
-            ctx.beginPath();
-            ctx.arc(screenX, screenY, pt.isIndia ? 2.3 : 1.6, 0, Math.PI * 2);
-            ctx.fillStyle = pt.isIndia ? `rgba(56, 189, 248, ${alpha * 0.95})` : `rgba(34, 197, 94, ${alpha * 0.8})`;
-            ctx.fill();
-          }
+          ctx.beginPath();
+          ctx.arc(screenX, screenY, pt.isIndia ? 2.3 : 1.6, 0, Math.PI * 2);
+          ctx.fillStyle = pt.isIndia ? `rgba(56, 189, 248, ${alpha * 0.95})` : `rgba(34, 197, 94, ${alpha * 0.8})`;
+          ctx.fill();
         }
       }
 
