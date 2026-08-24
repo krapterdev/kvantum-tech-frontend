@@ -73,6 +73,7 @@ export default function MobileMenu({ isOpen, onClose, theme, settings }: MobileM
           </div>
           <button
             onClick={onClose}
+            aria-label="Close Navigation Drawer"
             className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-all"
           >
             <X size={18} />

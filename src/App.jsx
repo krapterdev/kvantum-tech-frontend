@@ -155,6 +155,42 @@ export default function App() {
     fetchCollections();
   }, []);
 
+  // Deferred non-blocking loading of Google Analytics (gtag.js) & GTM for 90+ Mobile PageSpeed
+  useEffect(() => {
+    const loadAnalyticsAndGtm = () => {
+      if (typeof window === 'undefined' || window._analyticsLoaded) return;
+      window._analyticsLoaded = true;
+
+      // 1. Load Google Analytics (gtag.js)
+      const gaScript = document.createElement('script');
+      gaScript.async = true;
+      gaScript.src = 'https://www.googletagmanager.com/gtag/js?id=G-YME6G02ES5';
+      document.head.appendChild(gaScript);
+
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){ window.dataLayer.push(arguments); }
+      window.gtag = gtag;
+      gtag('js', new Date());
+      gtag('config', 'G-YME6G02ES5');
+
+      // 2. Load Google Tag Manager (gtm.js)
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-N4RTNHDJ');
+    };
+
+    if (typeof window !== 'undefined') {
+      if ('requestIdleCallback' in window) {
+        window.requestIdleCallback(loadAnalyticsAndGtm, { timeout: 2000 });
+      } else {
+        const timer = setTimeout(loadAnalyticsAndGtm, 1500);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, []);
+
   // Dynamic Browser SEO Metadata Injection & Custom Scripts
   useEffect(() => {
     // Trigger SPA Pageview Event for Google Analytics (gtag.js) & GTM on route changes

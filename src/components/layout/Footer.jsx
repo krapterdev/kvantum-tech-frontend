@@ -86,6 +86,7 @@ export default function Footer({ seoPages = [], theme, settings, services = [], 
                     href={soc.url}
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label={`Visit Kvantum Tech ${soc.platform}`}
                     title={soc.platform}
                     className="p-2 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-zinc-400 hover:text-sky-500 transition-colors"
                   >

@@ -88,22 +88,22 @@ export default function Navbar({ theme, toggleTheme, settings }) {
           <div className="hidden lg:flex items-center gap-4">
             <div className="flex items-center gap-2 border-r border-slate-200 dark:border-white/10 pr-4">
               {showInstagram && (
-                <a href={contact.instagram || 'https://www.instagram.com/kvantumtechsolutions/'} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-pink-500 transition-colors" title="Instagram">
+                <a href={contact.instagram || 'https://www.instagram.com/kvantumtechsolutions/'} target="_blank" rel="noopener noreferrer" aria-label="Visit Kvantum Tech Instagram" className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-pink-500 transition-colors" title="Instagram">
                   <InstagramIcon size={16} />
                 </a>
               )}
               {showLinkedin && (
-                <a href={contact.linkedin || 'https://www.linkedin.com/in/kvantum-tech-solutions-75916a41b'} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-cyan-500 transition-colors" title="LinkedIn">
+                <a href={contact.linkedin || 'https://www.linkedin.com/in/kvantum-tech-solutions-75916a41b'} target="_blank" rel="noopener noreferrer" aria-label="Visit Kvantum Tech LinkedIn" className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-cyan-500 transition-colors" title="LinkedIn">
                   <LinkedinIcon size={16} />
                 </a>
               )}
               {showFacebook && (
-                <a href={contact.facebook || 'https://facebook.com/kvantumtechsolutions'} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-blue-500 transition-colors" title="Facebook">
+                <a href={contact.facebook || 'https://facebook.com/kvantumtechsolutions'} target="_blank" rel="noopener noreferrer" aria-label="Visit Kvantum Tech Facebook" className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-blue-500 transition-colors" title="Facebook">
                   <FacebookIcon size={16} />
                 </a>
               )}
               {showTwitter && (
-                <a href={contact.twitter} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-sky-400 transition-colors" title="Twitter / X">
+                <a href={contact.twitter} target="_blank" rel="noopener noreferrer" aria-label="Visit Kvantum Tech Twitter" className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-sky-400 transition-colors" title="Twitter / X">
                   <TwitterIcon size={16} />
                 </a>
               )}
