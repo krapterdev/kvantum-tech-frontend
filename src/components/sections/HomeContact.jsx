@@ -129,9 +129,11 @@ export default function HomeContact({ settings }) {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-mono text-slate-500 dark:text-slate-400 mb-1.5 font-bold">Your Full Name *</label>
+                <label htmlFor="contact-name" className="block text-xs font-mono text-slate-500 dark:text-slate-400 mb-1.5 font-bold">Your Full Name *</label>
                 <input
+                  id="contact-name"
                   type="text"
+                  aria-label="Your Full Name"
                   placeholder="Sahil Kumar"
                   value={formData.name}
                   onChange={(e) => {
@@ -152,9 +154,11 @@ export default function HomeContact({ settings }) {
               </div>
 
               <div>
-                <label className="block text-xs font-mono text-slate-500 dark:text-slate-400 mb-1.5 font-bold">Email Address *</label>
+                <label htmlFor="contact-email" className="block text-xs font-mono text-slate-500 dark:text-slate-400 mb-1.5 font-bold">Email Address *</label>
                 <input
+                  id="contact-email"
                   type="email"
+                  aria-label="Email Address"
                   placeholder="name@company.com"
                   value={formData.email}
                   onChange={(e) => {
@@ -177,9 +181,11 @@ export default function HomeContact({ settings }) {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-mono text-slate-500 dark:text-slate-400 mb-1.5 font-bold">Phone Number (10 Digits) *</label>
+                <label htmlFor="contact-phone" className="block text-xs font-mono text-slate-500 dark:text-slate-400 mb-1.5 font-bold">Phone Number (10 Digits) *</label>
                 <input
+                  id="contact-phone"
                   type="tel"
+                  aria-label="Phone Number"
                   placeholder="9811661828"
                   value={formData.phone}
                   onChange={(e) => {
@@ -200,9 +206,11 @@ export default function HomeContact({ settings }) {
               </div>
 
               <div>
-                <label className="block text-xs font-mono text-slate-500 dark:text-slate-400 mb-1.5 font-bold">Company / Organization</label>
+                <label htmlFor="contact-company" className="block text-xs font-mono text-slate-500 dark:text-slate-400 mb-1.5 font-bold">Company / Organization</label>
                 <input
+                  id="contact-company"
                   type="text"
+                  aria-label="Company or Organization Name"
                   placeholder="Company Name"
                   value={formData.company}
                   onChange={(e) => setFormData({ ...formData, company: e.target.value })}
@@ -212,8 +220,10 @@ export default function HomeContact({ settings }) {
             </div>
 
             <div>
-              <label className="block text-xs font-mono text-slate-500 dark:text-slate-400 mb-1.5 font-bold">Target Service Requirement</label>
+              <label htmlFor="contact-service" className="block text-xs font-mono text-slate-500 dark:text-slate-400 mb-1.5 font-bold">Target Service Requirement</label>
               <select
+                id="contact-service"
+                aria-label="Target Service Requirement"
                 value={formData.service}
                 onChange={(e) => setFormData({ ...formData, service: e.target.value })}
                 className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-zinc-950/60 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-sm outline-none focus:border-sky-500 font-mono"
@@ -228,9 +238,11 @@ export default function HomeContact({ settings }) {
             </div>
 
             <div>
-              <label className="block text-xs font-mono text-slate-500 dark:text-slate-400 mb-1.5 font-bold">Tell us what you want to automate / build *</label>
+              <label htmlFor="contact-message" className="block text-xs font-mono text-slate-500 dark:text-slate-400 mb-1.5 font-bold">Tell us what you want to automate / build *</label>
               <textarea
+                id="contact-message"
                 rows={4}
+                aria-label="Describe your project requirements"
                 placeholder="Describe your process, workflow, or software requirements (min 10 chars)..."
                 value={formData.message}
                 onChange={(e) => {
@@ -253,6 +265,7 @@ export default function HomeContact({ settings }) {
             <button
               type="submit"
               disabled={status.loading}
+              aria-label="Submit Free Proposal Request"
               className="w-full py-4 rounded-xl text-sm font-bold bg-sky-500 hover:bg-sky-600 text-white transition-colors shadow-md flex items-center justify-center gap-2 cursor-pointer mt-2 font-mono uppercase tracking-wider"
             >
               {status.loading ? 'Sending Request...' : 'Discuss My Project →'}

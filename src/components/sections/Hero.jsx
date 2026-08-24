@@ -164,12 +164,14 @@ export default function Hero({ settings }) {
               if (el) el.scrollIntoView({ behavior: 'smooth' });
               else navigate('/contact');
             }}
+            aria-label="Discuss Your Project"
             className="w-full sm:w-auto px-8 py-3.5 rounded-xl text-xs sm:text-sm font-bold bg-sky-500 hover:bg-sky-600 text-white transition-all duration-200 shadow-md hover:shadow-sky-500/20 hover:scale-[1.02] cursor-pointer flex items-center justify-center gap-2"
           >
             Discuss Your Project <ArrowRight size={15} />
           </button>
           <button
             onClick={() => navigate('/services')}
+            aria-label="Explore Our Services"
             className="w-full sm:w-auto px-7 py-3.5 rounded-xl text-xs sm:text-sm font-bold bg-slate-200 dark:bg-white/10 hover:bg-slate-300 dark:hover:bg-white/15 text-slate-900 dark:text-white border border-slate-300 dark:border-white/15 transition-all duration-200 cursor-pointer flex items-center justify-center gap-2"
           >
             Explore Our Services <ArrowRight size={14} />
