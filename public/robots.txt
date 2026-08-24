@@ -113,20 +113,19 @@ Disallow: /
 User-agent: PetalBot
 Disallow: /
 
-Disallow: /admin
-Disallow: /api/
-
 # ---------------------------------------------------------
 # DEFAULT CRAWLING POLICY
 # ---------------------------------------------------------
 
 User-agent: *
 Allow: /
-
+Disallow: /admin
+Disallow: /api/
 
 # ---------------------------------------------------------
 # XML SITEMAP
 # ---------------------------------------------------------
 
 Sitemap: https://kvantumtechsolutions.com/sitemap.xml
+
 

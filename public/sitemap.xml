@@ -1,60 +1,106 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-
+  <!-- Core Main Pages -->
   <url>
-    <loc>https://kvantumtechsolutions.com/ </loc>
-    <lastmod>2026-07-22</lastmod>
+    <loc>https://kvantumtechsolutions.com/</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://kvantumtechsolutions.com/about</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://kvantumtechsolutions.com/services</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://kvantumtechsolutions.com/projects</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://kvantumtechsolutions.com/blog</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://kvantumtechsolutions.com/contact</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
 
+  <!-- Service Sub-Pages -->
   <url>
-    <loc>https://kvantumtechsolutions.com/about </loc>
-    <lastmod>2026-07-22</lastmod>
-
+    <loc>https://kvantumtechsolutions.com/services/custom-software-development</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://kvantumtechsolutions.com/services/crm-software-development</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://kvantumtechsolutions.com/services/business-automation</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://kvantumtechsolutions.com/services/hrms-software</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://kvantumtechsolutions.com/services/whatsapp-automation</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://kvantumtechsolutions.com/services/web-mobile-app-development</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
   </url>
 
+  <!-- Published Blog Articles -->
   <url>
-    <loc>https://kvantumtechsolutions.com/services </loc>
-    <lastmod>2026-07-22</lastmod>
+    <loc>https://kvantumtechsolutions.com/blog/why-kvantum-tech-solutions-is-the-best-it-solutions-company-in-delhi-ncr</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
-
-  <url>
-    <loc>https://kvantumtechsolutions.com/services/web-development </loc>
-    <lastmod>2026-07-22</lastmod>
-  </url>
-
-  <url>
-    <loc>https://kvantumtechsolutions.com/services/mobile-apps </loc>
-    <lastmod>2026-07-22</lastmod>
-  </url>
-
-  <url>
-    <loc>https://kvantumtechsolutions.com/services/ui-ux </loc>
-    <lastmod>2026-07-22</lastmod>
-  </url>
-
-  <url>
-    <loc>https://kvantumtechsolutions.com/projects </loc>
-    <lastmod>2026-07-22</lastmod>
-  </url>
-
-  <url>
-    <loc>https://kvantumtechsolutions.com/blog </loc>
-    <lastmod>2026-07-22</lastmod>
-  </url>
-
-  <url>
-    <loc>https://kvantumtechsolutions.com/contact </loc>
-    <lastmod>2026-07-22</lastmod>
-  </url>
-
-  <url>
-    <loc>https://kvantumtechsolutions.com/blog/why-kvantum-tech-solutions-is-the-best-it-solutions-company-in-delhi-ncr </loc>
-    <lastmod>2026-08-01</lastmod>
-  </url>
-
   <url>
     <loc>https://kvantumtechsolutions.com/blog/why-custom-software-services-are-essential-for-business-growth-kvantum-tech-solutions</loc>
-    <lastmod>2026-08-05</lastmod>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
 
+  <!-- Legal Pages -->
+  <url>
+    <loc>https://kvantumtechsolutions.com/terms</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://kvantumtechsolutions.com/privacy</loc>
+    <lastmod>2026-08-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
 </urlset>
