@@ -36,7 +36,7 @@ const GLOBAL_HUBS = [
 
 export default function EarthGlobe() {
   const canvasRef = useRef(null);
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;

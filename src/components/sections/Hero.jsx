@@ -81,7 +81,9 @@ export default function Hero({ settings }) {
       animationId = requestAnimationFrame(render);
     };
 
-    render();
+    const startTimeout = setTimeout(() => {
+      render();
+    }, 1200);
 
     const handleResize = () => {
       width = canvas.width = window.innerWidth;
@@ -90,6 +92,7 @@ export default function Hero({ settings }) {
     window.addEventListener('resize', handleResize);
 
     return () => {
+      clearTimeout(startTimeout);
       cancelAnimationFrame(animationId);
       window.removeEventListener('resize', handleResize);
     };

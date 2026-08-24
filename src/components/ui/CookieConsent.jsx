@@ -8,8 +8,19 @@ export default function CookieConsent() {
   useEffect(() => {
     const consent = localStorage.getItem('kts_cookie_consent');
     if (!consent) {
-      const timer = setTimeout(() => setShow(true), 1200);
-      return () => clearTimeout(timer);
+      const showConsent = () => {
+        setShow(true);
+        window.removeEventListener('scroll', showConsent);
+        window.removeEventListener('click', showConsent);
+      };
+      window.addEventListener('scroll', showConsent, { once: true, passive: true });
+      window.addEventListener('click', showConsent, { once: true, passive: true });
+      const timer = setTimeout(() => setShow(true), 4000);
+      return () => {
+        clearTimeout(timer);
+        window.removeEventListener('scroll', showConsent);
+        window.removeEventListener('click', showConsent);
+      };
     }
   }, []);
 
