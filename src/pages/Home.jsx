@@ -25,36 +25,13 @@ import HomeContact from '@/components/sections/HomeContact';
 import HomeSeoContentSection from '@/components/sections/HomeSeoContentSection';
 import SeoSchema from '@/components/sections/SeoSchema';
 
-function LazySection({ children, minHeight = "200px" }) {
-  const [isVisible, setIsVisible] = React.useState(false);
-  const ref = React.useRef(null);
-
-  React.useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        setIsVisible(true);
-        observer.disconnect();
-      }
-    }, { rootMargin: '300px' });
-
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <div ref={ref} style={{ minHeight: isVisible ? 'auto' : minHeight }}>
-      {isVisible ? children : null}
-    </div>
-  );
-}
-
 export default function Home({ services = [], blogs = [], blogsLoading = false, settings }) {
   return (
     <div className="fade-in-up">
       {/* Rich Snippet JSON-LD SEO Schema */}
       <SeoSchema />
 
-      {/* 1. Hero Banner (Eager) */}
+      {/* 1. Hero Banner (Eager Above-The-Fold) */}
       <Hero settings={settings} />
 
       {/* 2. Trusted By / Social Proof Marquee (Eager) */}
@@ -66,95 +43,95 @@ export default function Home({ services = [], blogs = [], blogsLoading = false, 
       {/* 4. Core Services & Custom Software (Eager) */}
       <Services services={services} />
 
-      {/* 5. Business Automation Highlight (Lazy) */}
-      <LazySection minHeight="250px">
+      {/* 5. Business Automation Highlight (Native CSS Deferred) */}
+      <div className="content-visibility-auto">
         <BusinessAutomationHighlight />
-      </LazySection>
+      </div>
 
-      {/* 6. Interactive ROI & Time-Saved Calculator (Lazy) */}
-      <LazySection minHeight="300px">
+      {/* 6. Interactive ROI & Time-Saved Calculator (Native CSS Deferred) */}
+      <div className="content-visibility-auto">
         <AutomationCalculator />
-      </LazySection>
+      </div>
 
-      {/* 7. Software Products Suite (Lazy) */}
-      <LazySection minHeight="300px">
+      {/* 7. Software Products Suite (Native CSS Deferred) */}
+      <div className="content-visibility-auto">
         <SoftwareProducts />
-      </LazySection>
+      </div>
 
-      {/* 8. Interactive System Dashboard Previews (Lazy) */}
-      <LazySection minHeight="300px">
+      {/* 8. Interactive System Dashboard Previews (Native CSS Deferred) */}
+      <div className="content-visibility-auto">
         <InteractiveDashboardMockup />
-      </LazySection>
+      </div>
 
-      {/* 9. Industries We Serve (Lazy) */}
-      <LazySection minHeight="250px">
+      {/* 9. Industries We Serve (Native CSS Deferred) */}
+      <div className="content-visibility-auto">
         <Industries />
-      </LazySection>
+      </div>
 
-      {/* 10. Why Choose Us (Lazy) */}
-      <LazySection minHeight="250px">
+      {/* 10. Why Choose Us (Native CSS Deferred) */}
+      <div className="content-visibility-auto">
         <WhyChooseUs />
-      </LazySection>
+      </div>
 
-      {/* 11. Technologies We Use (Lazy) */}
-      <LazySection minHeight="250px">
+      {/* 11. Technologies We Use (Native CSS Deferred) */}
+      <div className="content-visibility-auto">
         <Technologies />
-      </LazySection>
+      </div>
 
-      {/* 12. How We Work (Lazy) */}
-      <LazySection minHeight="250px">
+      {/* 12. How We Work (Native CSS Deferred) */}
+      <div className="content-visibility-auto">
         <HowWeWork />
-      </LazySection>
+      </div>
 
-      {/* 13. Portfolio Showcase (Lazy) */}
-      <LazySection minHeight="300px">
+      {/* 13. Portfolio Showcase (Native CSS Deferred) */}
+      <div className="content-visibility-auto">
         <Projects />
-      </LazySection>
+      </div>
 
-      {/* 14. Live System Interactive Demo (Lazy) */}
-      <LazySection minHeight="250px">
+      {/* 14. Live System Interactive Demo (Native CSS Deferred) */}
+      <div className="content-visibility-auto">
         <LiveDemo />
-      </LazySection>
+      </div>
 
-      {/* 15. Key Metrics & Stats (Lazy) */}
-      <LazySection minHeight="150px">
+      {/* 15. Key Metrics & Stats (Native CSS Deferred) */}
+      <div className="content-visibility-auto">
         <Stats settings={settings} />
-      </LazySection>
+      </div>
 
-      {/* 16. Client Testimonials (Lazy) */}
-      <LazySection minHeight="250px">
+      {/* 16. Client Testimonials (Native CSS Deferred) */}
+      <div className="content-visibility-auto">
         <Testimonials settings={settings} />
-      </LazySection>
+      </div>
 
-      {/* 17. Transparent Pricing (Lazy) */}
-      <LazySection minHeight="250px">
+      {/* 17. Transparent Pricing (Native CSS Deferred) */}
+      <div className="content-visibility-auto">
         <Pricing />
-      </LazySection>
+      </div>
 
-      {/* 18. Frequently Asked Questions (Lazy) */}
-      <LazySection minHeight="250px">
+      {/* 18. Frequently Asked Questions (Native CSS Deferred) */}
+      <div className="content-visibility-auto">
         <FAQ />
-      </LazySection>
+      </div>
 
-      {/* 19. Latest Articles & Tech Insights (Lazy) */}
-      <LazySection minHeight="250px">
+      {/* 19. Latest Articles & Tech Insights (Native CSS Deferred) */}
+      <div className="content-visibility-auto">
         <BlogPreview blogs={blogs} blogsLoading={blogsLoading} />
-      </LazySection>
+      </div>
 
-      {/* 20. Full SEO Content Section (Lazy) */}
-      <LazySection minHeight="300px">
+      {/* 20. Full SEO Content Section (Native CSS Deferred) */}
+      <div className="content-visibility-auto">
         <HomeSeoContentSection />
-      </LazySection>
+      </div>
 
-      {/* 21. Live Counter Odometer (Lazy) */}
-      <LazySection minHeight="100px">
+      {/* 21. Live Counter Odometer (Native CSS Deferred) */}
+      <div className="content-visibility-auto">
         <VisitorOdometerCounter />
-      </LazySection>
+      </div>
 
-      {/* 22. Quick Consultation Form (Lazy) */}
-      <LazySection minHeight="250px">
+      {/* 22. Quick Consultation Form (Native CSS Deferred) */}
+      <div className="content-visibility-auto">
         <HomeContact settings={settings} />
-      </LazySection>
+      </div>
     </div>
   );
 }

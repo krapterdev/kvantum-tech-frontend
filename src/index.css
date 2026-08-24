@@ -12,6 +12,12 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Native Browser Offscreen Rendering Optimization (0ms JS TBT) */
+.content-visibility-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 500px;
+}
+
 /* Elegant Custom Theme-Aware Gradient Scrollbar */
 ::-webkit-scrollbar {
   width: 9px;
