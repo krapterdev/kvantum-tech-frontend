@@ -24,13 +24,9 @@ export default defineConfig({
             if (id.includes('react-dom') || id.includes('react-router-dom') || id.includes('/react/')) {
               return 'vendor-react';
             }
-            if (id.includes('lucide-react')) {
-              return 'vendor-icons';
-            }
             if (id.includes('framer-motion')) {
               return 'vendor-motion';
             }
-            return 'vendor-utils';
           }
         },
       },
