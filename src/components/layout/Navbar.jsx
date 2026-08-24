@@ -37,7 +37,7 @@ export default function Navbar({ theme, toggleTheme, settings }) {
             <NavLink 
               to="/"
               className={({ isActive }) => 
-                `text-sm font-medium transition-colors duration-200 ${isActive ? 'text-cyan-600 dark:text-cyan-400 font-bold' : 'text-slate-600 dark:text-slate-300 hover:text-cyan-500'}`
+                `text-sm font-medium transition-colors duration-200 ${isActive ? 'text-cyan-600 dark:text-cyan-400 font-bold' : 'text-slate-800 dark:text-slate-200 hover:text-cyan-500'}`
               }
             >
               Home
@@ -45,7 +45,7 @@ export default function Navbar({ theme, toggleTheme, settings }) {
             <NavLink 
               to="/about"
               className={({ isActive }) => 
-                `text-sm font-medium transition-colors duration-200 ${isActive ? 'text-cyan-600 dark:text-cyan-400 font-bold' : 'text-slate-600 dark:text-slate-300 hover:text-cyan-500'}`
+                `text-sm font-medium transition-colors duration-200 ${isActive ? 'text-cyan-600 dark:text-cyan-400 font-bold' : 'text-slate-800 dark:text-slate-200 hover:text-cyan-500'}`
               }
             >
               About
@@ -53,7 +53,7 @@ export default function Navbar({ theme, toggleTheme, settings }) {
             <NavLink 
               to="/services"
               className={({ isActive }) => 
-                `text-sm font-medium transition-colors duration-200 ${isActive ? 'text-cyan-600 dark:text-cyan-400 font-bold' : 'text-slate-600 dark:text-slate-300 hover:text-cyan-500'}`
+                `text-sm font-medium transition-colors duration-200 ${isActive ? 'text-cyan-600 dark:text-cyan-400 font-bold' : 'text-slate-800 dark:text-slate-200 hover:text-cyan-500'}`
               }
             >
               Services
@@ -61,7 +61,7 @@ export default function Navbar({ theme, toggleTheme, settings }) {
             <NavLink 
               to="/projects"
               className={({ isActive }) => 
-                `text-sm font-medium transition-colors duration-200 ${isActive ? 'text-cyan-600 dark:text-cyan-400 font-bold' : 'text-slate-600 dark:text-slate-300 hover:text-cyan-500'}`
+                `text-sm font-medium transition-colors duration-200 ${isActive ? 'text-cyan-600 dark:text-cyan-400 font-bold' : 'text-slate-800 dark:text-slate-200 hover:text-cyan-500'}`
               }
             >
               Projects
@@ -69,7 +69,7 @@ export default function Navbar({ theme, toggleTheme, settings }) {
             <NavLink 
               to="/blog"
               className={({ isActive }) => 
-                `text-sm font-medium transition-colors duration-200 ${isActive ? 'text-cyan-600 dark:text-cyan-400 font-bold' : 'text-slate-600 dark:text-slate-300 hover:text-cyan-500'}`
+                `text-sm font-medium transition-colors duration-200 ${isActive ? 'text-cyan-600 dark:text-cyan-400 font-bold' : 'text-slate-800 dark:text-slate-200 hover:text-cyan-500'}`
               }
             >
               Blog
@@ -77,7 +77,7 @@ export default function Navbar({ theme, toggleTheme, settings }) {
             <NavLink 
               to="/contact"
               className={({ isActive }) => 
-                `text-sm font-medium transition-colors duration-200 ${isActive ? 'text-cyan-600 dark:text-cyan-400 font-bold' : 'text-slate-600 dark:text-slate-300 hover:text-cyan-500'}`
+                `text-sm font-medium transition-colors duration-200 ${isActive ? 'text-cyan-600 dark:text-cyan-400 font-bold' : 'text-slate-800 dark:text-slate-200 hover:text-cyan-500'}`
               }
             >
               Contact

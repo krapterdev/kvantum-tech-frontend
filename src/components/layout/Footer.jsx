@@ -182,15 +182,15 @@ export default function Footer({ seoPages = [], theme, settings, services = [], 
             </h5>
             <ul className="flex flex-col gap-2 text-xs">
               <li>
-                <a href="mailto:info@kvantumtechsolutions.com" className="text-slate-600 dark:text-zinc-400 hover:text-pink-500 transition-colors block break-all font-mono">
+                <a href="mailto:info@kvantumtechsolutions.com" className="text-slate-800 dark:text-zinc-300 hover:text-pink-500 transition-colors block break-all font-mono">
                   info@kvantumtechsolutions.com
                 </a>
               </li>
-              <li className="flex flex-col gap-1 text-slate-600 dark:text-zinc-400 font-mono">
+              <li className="flex flex-col gap-1 text-slate-800 dark:text-zinc-300 font-mono">
                 <a href="tel:+919811661828" className="hover:text-pink-500 transition-colors">+91 9811661828</a>
                 <a href="tel:+919811663433" className="hover:text-pink-500 transition-colors">+91 9811663433</a>
               </li>
-              <li className="text-[11px] text-slate-500 dark:text-zinc-500 font-mono leading-relaxed mt-1">
+              <li className="text-[11px] text-slate-700 dark:text-zinc-400 font-mono leading-relaxed mt-1">
                 Kvantum Tech Solutions, A33, 64, Tahirpur Rd, Priyadarshini Vihar, Taharpur Village, Dilshad Garden, Delhi, 110095
               </li>
             </ul>
@@ -201,7 +201,7 @@ export default function Footer({ seoPages = [], theme, settings, services = [], 
         {/* Justdial-Style Keyword Directory Bar */}
         {seoPages.length > 0 && (
           <div className="border-b border-slate-200 dark:border-white/8 pb-8 text-left mb-10">
-            <span className="text-[10px] font-mono text-slate-500 dark:text-zinc-500 uppercase tracking-widest block mb-3 font-bold">
+            <span className="text-[10px] font-mono text-slate-700 dark:text-zinc-400 uppercase tracking-widest block mb-3 font-bold">
               Popular Directory Searches & Services:
             </span>
             <div className="flex flex-wrap gap-2 text-xs">
@@ -209,7 +209,7 @@ export default function Footer({ seoPages = [], theme, settings, services = [], 
                 <Link
                   key={page.slug}
                   to={`/keyword/${page.slug}`}
-                  className="text-slate-600 dark:text-zinc-400 hover:text-pink-500 font-mono text-[11px] bg-slate-100 dark:bg-white/[0.02] border border-slate-200 dark:border-white/5 px-3 py-1 rounded-lg transition-colors"
+                  className="text-slate-800 dark:text-zinc-300 hover:text-pink-500 font-mono text-[11px] bg-slate-100 dark:bg-white/[0.02] border border-slate-200 dark:border-white/5 px-3 py-1 rounded-lg transition-colors"
                 >
                   {page.title}
                 </Link>
@@ -220,16 +220,16 @@ export default function Footer({ seoPages = [], theme, settings, services = [], 
 
         {/* Section 20 Mega Typography Footer */}
         <div className="pt-4 pb-6 overflow-hidden select-none">
-          <h1 className="text-4xl sm:text-7xl md:text-8xl lg:text-[9.5rem] font-black font-headline text-slate-200 dark:text-white/10 tracking-[0.08em] uppercase leading-none whitespace-nowrap">
+          <h1 className="text-4xl sm:text-7xl md:text-8xl lg:text-[9.5rem] font-black font-headline text-slate-300 dark:text-white/20 tracking-[0.08em] uppercase leading-none whitespace-nowrap">
             K V A N T U M
           </h1>
-          <span className="text-xs sm:text-sm font-mono text-slate-500 dark:text-zinc-500 tracking-[0.4em] uppercase block mt-2 font-bold">
+          <span className="text-xs sm:text-sm font-mono text-slate-700 dark:text-zinc-400 tracking-[0.4em] uppercase block mt-2 font-bold">
             TECH SOLUTIONS — ENTERPRISE DIGITAL ENGINEERING
           </span>
         </div>
 
         {/* Footer Bottom Bar */}
-        <div className="border-t border-slate-200 dark:border-white/8 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-mono text-slate-500 dark:text-zinc-500">
+        <div className="border-t border-slate-200 dark:border-white/8 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-mono text-slate-700 dark:text-zinc-400">
           <div>
             © {currentYear} Kvantum Tech Solutions. All rights reserved.
           </div>
