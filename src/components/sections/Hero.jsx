@@ -30,8 +30,9 @@ export default function Hero({ settings }) {
     return () => clearInterval(interval);
   }, [rotatingWords.length]);
 
-  // Subtle Interactive Mesh Canvas
+  // Subtle Interactive Mesh Canvas (Desktop Only)
   useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
