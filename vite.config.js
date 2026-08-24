@@ -15,7 +15,7 @@ export default defineConfig({
     },
   },
   build: {
-    chunkSizeWarningLimit: 800,
+    chunkSizeWarningLimit: 1500,
     cssCodeSplit: true,
     rollupOptions: {
       output: {
@@ -23,6 +23,12 @@ export default defineConfig({
           if (id.includes('node_modules')) {
             if (id.includes('react-dom') || id.includes('react-router-dom') || id.includes('/react/')) {
               return 'vendor-react';
+            }
+            if (id.includes('axios')) {
+              return 'vendor-axios';
+            }
+            if (id.includes('lucide-react')) {
+              return 'vendor-icons';
             }
             if (id.includes('framer-motion')) {
               return 'vendor-motion';

@@ -1,16 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
-import ScrollToTop from '@/components/layout/ScrollToTop';
-import ScrollVideoPlayer from '@/components/ScrollVideoPlayer';
-import FloatingQuickActions from '@/components/sections/FloatingQuickActions';
 import PageLoader from '@/components/ui/PageLoader';
-import CookieConsent from '@/components/ui/CookieConsent';
 
 // Keep Home page eager for zero initial render delay
 import Home from '@/pages/Home';
 import { fallbackBlogs } from '@/data/blogs';
+
+// Lazy-load below-fold layout components to cut initial bundle
+const Footer = lazy(() => import('@/components/layout/Footer'));
+const ScrollToTop = lazy(() => import('@/components/layout/ScrollToTop'));
+const ScrollVideoPlayer = lazy(() => import('@/components/ScrollVideoPlayer'));
+const FloatingQuickActions = lazy(() => import('@/components/sections/FloatingQuickActions'));
+const CookieConsent = lazy(() => import('@/components/ui/CookieConsent'));
 
 // Safe retry wrapper for dynamic import chunking to prevent ChunkLoadErrors
 const lazyWithRetry = (componentImport) =>
@@ -545,13 +547,25 @@ export default function App() {
         </React.Suspense>
       </main>
 
-      {!isAdminPath && <Footer seoPages={seoPages} theme={theme} settings={settings} services={services} blogs={blogs} />}
-      
+      {!isAdminPath && (
+        <Suspense fallback={null}>
+          <Footer seoPages={seoPages} theme={theme} settings={settings} services={services} blogs={blogs} />
+        </Suspense>
+      )}
+
       {/* Floating Action Buttons */}
-      {!isAdminPath && <FloatingQuickActions settings={settings} />}
+      {!isAdminPath && (
+        <Suspense fallback={null}>
+          <FloatingQuickActions settings={settings} />
+        </Suspense>
+      )}
 
       {/* Cookie & Terms Consent Modal */}
-      {!isAdminPath && <CookieConsent />}
+      {!isAdminPath && (
+        <Suspense fallback={null}>
+          <CookieConsent />
+        </Suspense>
+      )}
     </div>
   );
 }

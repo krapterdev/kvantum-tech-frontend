@@ -1,11 +1,11 @@
 import React, { Suspense, lazy } from 'react';
 import Hero from '@/components/sections/Hero';
-import TrustedBy from '@/components/sections/TrustedBy';
-import About from '@/components/sections/About';
-import Services from '@/components/sections/Services';
 import SeoSchema from '@/components/sections/SeoSchema';
 
-// Lazy load below-the-fold sections so mobile initial payload is lightweight and instant
+// All below-the-fold sections lazy — only Hero is eager for instant LCP
+const TrustedBy = lazy(() => import('@/components/sections/TrustedBy'));
+const About = lazy(() => import('@/components/sections/About'));
+const Services = lazy(() => import('@/components/sections/Services'));
 const BusinessAutomationHighlight = lazy(() => import('@/components/sections/BusinessAutomationHighlight'));
 const AutomationCalculator = lazy(() => import('@/components/sections/AutomationCalculator'));
 const SoftwareProducts = lazy(() => import('@/components/sections/SoftwareProducts'));
@@ -35,14 +35,20 @@ export default function Home({ services = [], blogs = [], blogsLoading = false, 
       {/* 1. Hero Banner (Eager Above-The-Fold) */}
       <Hero settings={settings} />
 
-      {/* 2. Trusted By / Social Proof Marquee (Eager Above-The-Fold) */}
-      <TrustedBy />
+      {/* 2. Trusted By / Social Proof Marquee */}
+      <Suspense fallback={<div className="h-32 w-full" />}>
+        <TrustedBy />
+      </Suspense>
 
-      {/* 3. About Kvantum Tech Solutions (Eager) */}
-      <About settings={settings} />
+      {/* 3. About Kvantum Tech Solutions */}
+      <Suspense fallback={<div className="h-40 w-full" />}>
+        <About settings={settings} />
+      </Suspense>
 
-      {/* 4. Core Services & Custom Software (Eager) */}
-      <Services services={services} />
+      {/* 4. Core Services & Custom Software */}
+      <Suspense fallback={<div className="h-40 w-full" />}>
+        <Services services={services} />
+      </Suspense>
 
       {/* Below-the-fold lazy loaded sections */}
       <Suspense fallback={<div className="h-40 w-full" />}>
