@@ -70,12 +70,13 @@ export default function FloatingQuickActions({ settings }) {
 
   return (
     <>
-      {/* Scroll To Top Button (Fixed Bottom-Right above Chatbot) */}
+      {/* Scroll-to-Top Floating Button */}
       {showScrollTop && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-24 right-6 z-[85] flex items-center justify-center w-11 h-11 rounded-full bg-slate-900 dark:bg-zinc-800 text-white border border-slate-700 dark:border-white/20 shadow-lg hover:scale-110 transition-all duration-300 cursor-pointer"
-          title="Scroll to Top"
+          aria-label="Scroll back to top of page"
+          className="fixed bottom-6 right-6 z-[90] p-3 rounded-full bg-cyan-500 hover:bg-cyan-600 text-white shadow-[0_10px_25px_rgba(6,182,212,0.4)] transition-all duration-300 hover:scale-110 cursor-pointer border border-cyan-400/30"
+          title="Scroll to top"
         >
           <ArrowUp size={18} />
         </button>
@@ -89,6 +90,7 @@ export default function FloatingQuickActions({ settings }) {
           href={whatsappUrl}
           target="_blank"
           rel="noopener noreferrer"
+          aria-label="Chat with Kvantum Tech Solutions on WhatsApp"
           className="group relative flex items-center gap-2.5 px-4 py-3 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white shadow-[0_10px_25px_rgba(16,185,129,0.4)] transition-all duration-300 hover:scale-105 cursor-pointer border border-emerald-400/30"
           title="Chat on WhatsApp"
         >
@@ -99,6 +101,7 @@ export default function FloatingQuickActions({ settings }) {
         {/* Floating Call / Quick Request Button */}
         <button
           onClick={() => setIsOpen(!isOpen)}
+          aria-label="Request Quick Callback"
           className="group relative flex items-center gap-2.5 px-4 py-3 rounded-full bg-pinkCustom hover:bg-pink-600 text-white shadow-[0_10px_25px_rgba(236,72,153,0.4)] transition-all duration-300 hover:scale-105 cursor-pointer border border-pink-400/30"
           title="Request Quick Callback"
         >
@@ -125,7 +128,7 @@ export default function FloatingQuickActions({ settings }) {
             <span className="text-xs font-mono font-bold uppercase tracking-wider text-pinkCustom bg-pinkCustom/10 border border-pinkCustom/20 px-3 py-1 rounded-full flex items-center gap-1.5">
               <Headphones size={13} /> Quick Callback
             </span>
-            <button onClick={() => setIsOpen(false)} className="text-zinc-400 hover:text-white cursor-pointer p-1">
+            <button onClick={() => setIsOpen(false)} aria-label="Close Callback Modal" className="text-zinc-400 hover:text-white cursor-pointer p-1">
               <X size={18} />
             </button>
           </div>

@@ -7,56 +7,68 @@ export default function ScrollVideoPlayer() {
   const [images, setImages] = useState<HTMLImageElement[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDark, setIsDark] = useState(true);
-  const totalFrames = 300;
+  const [isMobile, setIsMobile] = useState(false);
+  const totalFrames = 150;
 
-  // Listen for theme changes
+  // Detect Mobile screens and theme
   useEffect(() => {
-    const checkTheme = () => {
+    const checkState = () => {
       const root = document.documentElement;
       setIsDark(root.classList.contains('dark') && !root.classList.contains('light-mode'));
+      setIsMobile(window.innerWidth < 768);
     };
-    checkTheme();
+    checkState();
 
-    // MutationObserver to detect class changes on <html>
-    const observer = new MutationObserver(checkTheme);
+    const observer = new MutationObserver(checkState);
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-    return () => observer.disconnect();
+    window.addEventListener('resize', checkState);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', checkState);
+    };
   }, []);
 
-  // Preload frames on component mount
+  // Preload scroller frames ONLY on Desktop AFTER initial page load (FCP/LCP completed)
   useEffect(() => {
-    let loadedCount = 0;
-    const preloadedImages: HTMLImageElement[] = [];
+    if (isMobile) return;
 
-    // Fallback timeout to force start canvas drawing even if network is slow
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1500);
+    let timer: any;
+    const loadFrames = () => {
+      let loadedCount = 0;
+      const preloadedImages: HTMLImageElement[] = [];
 
-    for (let i = 1; i <= totalFrames; i++) {
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      const paddedIndex = String(i).padStart(3, '0');
-      img.src = `https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/scroller-images/ezgif-frame-${paddedIndex}.jpg`;
+      for (let i = 1; i <= totalFrames; i += 2) {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        const paddedIndex = String(i).padStart(3, '0');
+        img.src = `https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/scroller-images/ezgif-frame-${paddedIndex}.jpg`;
 
-      const handleLoadOrError = () => {
-        loadedCount++;
-        if (loadedCount >= 10) {
-          setLoading(false);
-        }
-      };
+        const handleLoadOrError = () => {
+          loadedCount++;
+          if (loadedCount >= 5) {
+            setLoading(false);
+          }
+        };
 
-      img.onload = handleLoadOrError;
-      img.onerror = handleLoadOrError;
-      preloadedImages.push(img);
+        img.onload = handleLoadOrError;
+        img.onerror = handleLoadOrError;
+        preloadedImages.push(img);
+      }
+      setImages(preloadedImages);
+    };
+
+    if ('requestIdleCallback' in window) {
+      (window as any).requestIdleCallback(() => loadFrames(), { timeout: 3000 });
+    } else {
+      timer = setTimeout(loadFrames, 2500);
     }
-    setImages(preloadedImages);
+
     return () => clearTimeout(timer);
-  }, []);
+  }, [isMobile]);
 
   // Handle canvas drawing on scroll and resize
   useEffect(() => {
-    if (loading || images.length === 0) return;
+    if (isMobile || loading || images.length === 0) return;
 
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -78,7 +90,7 @@ export default function ScrollVideoPlayer() {
         scrollFraction = scrollTop / scrollHeight;
       }
 
-      const frameIndex = Math.min(totalFrames - 1, Math.max(0, Math.floor(scrollFraction * totalFrames)));
+      const frameIndex = Math.min(images.length - 1, Math.max(0, Math.floor(scrollFraction * images.length)));
       const img = images[frameIndex];
 
       if (!img || !img.complete) return;
@@ -106,17 +118,16 @@ export default function ScrollVideoPlayer() {
     };
 
     window.addEventListener('resize', handleResize);
-    window.addEventListener('scroll', drawFrame);
+    window.addEventListener('scroll', drawFrame, { passive: true });
     handleResize();
 
     return () => {
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('scroll', drawFrame);
     };
-  }, [loading, images]);
+  }, [isMobile, loading, images]);
 
-  // In light mode, hide canvas entirely
-  if (!isDark) return null;
+  if (isMobile || !isDark) return null;
 
   return (
     <canvas
@@ -124,7 +135,7 @@ export default function ScrollVideoPlayer() {
       className="fixed inset-0 w-full h-full pointer-events-none"
       style={{
         zIndex: -20,
-        opacity: 0.35,        /* subtle dark mode scroller background */
+        opacity: 0.35,
         filter: 'blur(1px)',
       }}
     />

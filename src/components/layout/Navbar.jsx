@@ -112,6 +112,7 @@ export default function Navbar({ theme, toggleTheme, settings }) {
             {/* Theme Toggle Button */}
             <button
               onClick={toggleTheme}
+              aria-label="Toggle Theme"
               className="p-2 rounded-xl bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-white/15 transition-colors cursor-pointer"
               title="Toggle Light / Dark Mode"
             >
@@ -121,6 +122,7 @@ export default function Navbar({ theme, toggleTheme, settings }) {
             {/* Contact CTA Button */}
             <button
               onClick={() => navigate('/contact')}
+              aria-label="Contact Us"
               className="px-5 py-2.5 rounded-xl text-xs font-bold bg-pink-500 hover:bg-pink-600 text-white transition-all duration-200 shadow-md hover:shadow-pink-500/25 cursor-pointer flex items-center gap-1.5"
             >
               Let's Talk <ArrowRight size={14} />
@@ -131,6 +133,7 @@ export default function Navbar({ theme, toggleTheme, settings }) {
           <div className="flex lg:hidden items-center gap-3">
             <button
               onClick={toggleTheme}
+              aria-label="Toggle Theme Mobile"
               className="p-2 rounded-xl bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-200"
             >
               {theme === 'dark' ? <Sun size={18} className="text-amber-400" /> : <Moon size={18} />}
@@ -138,6 +141,7 @@ export default function Navbar({ theme, toggleTheme, settings }) {
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle Navigation Menu"
               className="p-2.5 rounded-xl bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-200"
             >
               {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
