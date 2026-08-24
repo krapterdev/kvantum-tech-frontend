@@ -15,7 +15,7 @@ import * as settingService from '@/services/settingService';
 export default function ClientLayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith('/admin');
-  const [theme, setTheme] = useState('dark');
+  const [theme, setTheme] = useState('light');
   const [settings, setSettings] = useState<any>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('kts_saved_contact_settings');

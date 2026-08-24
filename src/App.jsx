@@ -50,7 +50,13 @@ import { fallbackServices } from '@/data/services';
 import { fallbackSettings } from '@/data/settings';
 
 export default function App() {
-  const [theme, setTheme] = useState('dark');
+  const [theme, setTheme] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('kts_theme_mode');
+      if (saved === 'light' || saved === 'dark') return saved;
+    }
+    return 'light'; // Default white theme as requested
+  });
   const [services, setServices] = useState(fallbackServices);
   const [blogs, setBlogs] = useState(fallbackBlogs);
   const [blogsLoading, setBlogsLoading] = useState(true);
@@ -60,29 +66,19 @@ export default function App() {
   const [seoSettings, setSeoSettings] = useState(null);
   const location = useLocation();
 
-  // Initialize theme tracking (dark theme is default corporate view)
-  useEffect(() => {
-    localStorage.removeItem('kts_theme_override');
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    setTheme(mediaQuery.matches ? 'dark' : 'light');
-
-    const handleSystemThemeChange = (e) => {
-      setTheme(e.matches ? 'dark' : 'light');
-    };
-    mediaQuery.addEventListener('change', handleSystemThemeChange);
-    return () => mediaQuery.removeEventListener('change', handleSystemThemeChange);
-  }, []);
-
-  // Sync theme classes directly to the root element
+  // Sync theme classes directly to root element
   useEffect(() => {
     const root = document.documentElement;
     if (theme === 'light') {
+      root.classList.add('light');
       root.classList.add('light-mode');
       root.classList.remove('dark');
     } else {
+      root.classList.remove('light');
       root.classList.remove('light-mode');
       root.classList.add('dark');
     }
+    localStorage.setItem('kts_theme_mode', theme);
   }, [theme]);
 
   const toggleTheme = () => {
