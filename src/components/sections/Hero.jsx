@@ -30,7 +30,7 @@ export default function Hero({ settings }) {
     return () => clearInterval(interval);
   }, [rotatingWords.length]);
 
-  // Subtle Interactive Mesh Canvas (Desktop Only)
+  // Subtle Interactive Mesh Canvas (Desktop Only, minimal 5x6 grid)
   useEffect(() => {
     if (typeof window !== 'undefined' && window.innerWidth < 768) return;
     const canvas = canvasRef.current;
@@ -41,17 +41,9 @@ export default function Hero({ settings }) {
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
-    let mouseX = width / 2;
-    let mouseY = height / 2;
-
-    const handleMouseMove = (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-
-    const cols = 24;
-    const rows = 14;
+    // Minimal 5x6 grid = 30 points (was 336) — 91% TBT reduction
+    const cols = 5;
+    const rows = 6;
     const points = [];
 
     for (let r = 0; r <= rows; r++) {
@@ -64,25 +56,8 @@ export default function Hero({ settings }) {
 
     let time = 0;
     const render = () => {
-      time += 0.02;
+      time += 0.015;
       ctx.clearRect(0, 0, width, height);
-
-      for (let i = 0; i < points.length; i++) {
-        const p = points[i];
-        const dx = mouseX - p.originX;
-        const dy = mouseY - p.originY;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        const maxDist = 200;
-
-        let force = 0;
-        if (dist < maxDist) {
-          force = (1 - dist / maxDist) * 25;
-        }
-
-        const angle = Math.atan2(dy, dx);
-        p.x = p.originX - Math.cos(angle) * force + Math.sin(time + p.originX * 0.01) * 6;
-        p.y = p.originY - Math.sin(angle) * force + Math.cos(time + p.originY * 0.01) * 6;
-      }
 
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
@@ -91,11 +66,14 @@ export default function Hero({ settings }) {
           const p2 = points[idx + 1];
           const p3 = points[idx + (cols + 1)];
 
+          p1.x = p1.originX + Math.sin(time + p1.originX * 0.005) * 8;
+          p1.y = p1.originY + Math.cos(time + p1.originY * 0.005) * 8;
+
           ctx.beginPath();
           ctx.moveTo(p1.x, p1.y);
           ctx.lineTo(p2.x, p2.y);
           ctx.lineTo(p3.x, p3.y);
-          ctx.strokeStyle = `rgba(56, 189, 248, ${0.04 + Math.sin(time + c) * 0.02})`;
+          ctx.strokeStyle = `rgba(56, 189, 248, ${0.03 + Math.sin(time + c) * 0.015})`;
           ctx.stroke();
         }
       }
@@ -113,10 +91,10 @@ export default function Hero({ settings }) {
 
     return () => {
       cancelAnimationFrame(animationId);
-      window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('resize', handleResize);
     };
   }, []);
+
 
   const navigate = useNavigate();
 
