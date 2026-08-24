@@ -2,6 +2,38 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 
+// True geographic landmass outlines for photorealistic 3D Earth rendering
+const CONTINENT_PATHS = [
+  // North America
+  [[-168,65],[-160,70],[-140,70],[-125,50],[-124,38],[-117,32],[-105,20],[-97,18],[-80,8],[-77,8],[-80,25],[-81,30],[-75,35],[-70,42],[-64,45],[-60,50],[-65,60],[-85,68],[-100,70],[-130,72],[-168,65]],
+  // South America
+  [[-77,8],[-75,11],[-62,10],[-50,-1],[-35,-5],[-38,-13],[-43,-22],[-50,-30],[-58,-38],[-65,-55],[-74,-52],[-72,-40],[-70,-20],[-80,-4],[-77,8]],
+  // Europe & Asia (Eurasia)
+  [[-9,38],[-9,43],[0,45],[5,53],[5,62],[15,68],[30,70],[60,70],[100,75],[140,72],[170,65],[160,55],[140,50],[130,42],[122,30],[108,20],[100,14],[92,21],[80,13],[75,8],[72,20],[68,25],[60,25],[50,30],[40,36],[30,36],[20,40],[10,38],[-5,36],[-9,38]],
+  // Indian Peninsula Highlight
+  [[68,24],[72,21],[76,15],[77,8],[80,13],[85,19],[88,22],[80,28],[74,32],[68,24]],
+  // Africa
+  [[-17,14],[-17,21],[-5,36],[10,37],[25,32],[32,31],[34,27],[43,12],[51,11],[45,-12],[35,-25],[28,-34],[18,-34],[12,-18],[9,4],[-5,5],[-17,14]],
+  // Australia
+  [[114,-22],[118,-35],[135,-35],[145,-38],[150,-35],[153,-28],[148,-19],[142,-11],[130,-14],[122,-18],[114,-22]],
+  // Japan
+  [[130,32],[135,35],[140,40],[142,43],[138,37],[130,32]],
+  // United Kingdom & Ireland
+  [[-5,50],[0,52],[0,58],[-5,58],[-5,50]],
+  // Scandinavia
+  [[5,58],[15,58],[25,65],[20,70],[10,65],[5,58]]
+];
+
+const GLOBAL_HUBS = [
+  { name: 'Delhi HQ (India)', lat: 28.6, lon: 77.2, color: '#38bdf8', isHQ: true },
+  { name: 'Dubai', lat: 25.2, lon: 55.2, color: '#ec4899' },
+  { name: 'London', lat: 51.5, lon: -0.1, color: '#a855f7' },
+  { name: 'New York', lat: 40.7, lon: -74.0, color: '#38bdf8' },
+  { name: 'Singapore', lat: 1.3, lon: 103.8, color: '#4ade80' },
+  { name: 'Tokyo', lat: 35.6, lon: 139.6, color: '#fbbf24' },
+  { name: 'Sydney', lat: -33.8, lon: 151.2, color: '#38bdf8' },
+];
+
 export default function EarthGlobe() {
   const canvasRef = useRef(null);
   const [isVisible, setIsVisible] = useState(true);
@@ -12,7 +44,7 @@ export default function EarthGlobe() {
 
     const observer = new IntersectionObserver(([entry]) => {
       setIsVisible(entry.isIntersecting);
-    }, { rootMargin: '150px' });
+    }, { rootMargin: '100px' });
 
     observer.observe(canvas);
     return () => observer.disconnect();
@@ -28,10 +60,12 @@ export default function EarthGlobe() {
     let animationFrameId;
     let isDragging = false;
     let previousMouseX = 0;
+    let rotationY = 1.3; // Initial angle showing India / Asia
+    let time = 0;
 
     const updateDimensions = () => {
       const containerWidth = canvas.parentElement?.clientWidth || 550;
-      const displayWidth = Math.min(containerWidth, 600);
+      const displayWidth = Math.min(containerWidth, 580);
       const isSmall = window.innerWidth < 640;
       const displayHeight = isSmall ? 320 : 420;
 
@@ -40,47 +74,8 @@ export default function EarthGlobe() {
       return { width: displayWidth, height: displayHeight };
     };
 
-    let { width, height } = updateDimensions();
+    updateDimensions();
 
-    let rotationY = 1.8;
-    let time = 0;
-
-    // Major Global Tech Hubs
-    const globalHubs = [
-      { name: 'India (Delhi HQ)', lat: (28.6 * Math.PI) / 180, lon: (77.2 * Math.PI) / 180, color: '#38bdf8', isHQ: true },
-      { name: 'Dubai', lat: (25.2 * Math.PI) / 180, lon: (55.2 * Math.PI) / 180, color: '#ec4899' },
-      { name: 'London', lat: (51.5 * Math.PI) / 180, lon: (-0.1 * Math.PI) / 180, color: '#a855f7' },
-      { name: 'New York', lat: (40.7 * Math.PI) / 180, lon: (-74.0 * Math.PI) / 180, color: '#38bdf8' },
-      { name: 'Singapore', lat: (1.3 * Math.PI) / 180, lon: (103.8 * Math.PI) / 180, color: '#4ade80' },
-      { name: 'Tokyo', lat: (35.6 * Math.PI) / 180, lon: (139.6 * Math.PI) / 180, color: '#fbbf24' },
-      { name: 'Sydney', lat: (-33.8 * Math.PI) / 180, lon: (151.2 * Math.PI) / 180, color: '#38bdf8' },
-    ];
-
-    // High Density Vector Continents
-    const mapPoints = [];
-    const step = 0.055;
-
-    for (let lat = -Math.PI / 2 + 0.12; lat <= Math.PI / 2 - 0.12; lat += step) {
-      const latDeg = (lat * 180) / Math.PI;
-
-      for (let lon = -Math.PI; lon <= Math.PI; lon += step) {
-        const lonDeg = (lon * 180) / Math.PI;
-
-        const isIndia = latDeg >= 6 && latDeg <= 36 && lonDeg >= 68 && lonDeg <= 90;
-        const isAsia = latDeg > 5 && latDeg < 75 && lonDeg >= 45 && lonDeg < 150;
-        const isEurope = latDeg > 35 && latDeg < 72 && lonDeg >= -10 && lonDeg < 45;
-        const isAfrica = latDeg > -35 && latDeg < 37 && lonDeg >= -18 && lonDeg < 52;
-        const isNAmerica = latDeg > 15 && latDeg < 72 && lonDeg >= -170 && lonDeg < -50;
-        const isSAmerica = latDeg > -56 && latDeg < 15 && lonDeg >= -85 && lonDeg < -35;
-        const isAustralia = latDeg > -42 && latDeg < -10 && lonDeg >= 110 && lonDeg < 155;
-
-        if (isIndia || isAsia || isEurope || isAfrica || isNAmerica || isSAmerica || isAustralia) {
-          mapPoints.push({ lat, lon, isIndia });
-        }
-      }
-    }
-
-    // Mouse & Touch Drag Controls
     const onMouseDown = (e) => {
       isDragging = true;
       previousMouseX = e.clientX;
@@ -88,7 +83,7 @@ export default function EarthGlobe() {
     const onMouseMove = (e) => {
       if (!isDragging) return;
       const deltaX = e.clientX - previousMouseX;
-      rotationY += deltaX * 0.006;
+      rotationY += deltaX * 0.007;
       previousMouseX = e.clientX;
     };
     const onMouseUp = () => { isDragging = false; };
@@ -102,7 +97,7 @@ export default function EarthGlobe() {
     const onTouchMove = (e) => {
       if (!isDragging || !e.touches || !e.touches[0]) return;
       const deltaX = e.touches[0].clientX - previousMouseX;
-      rotationY += deltaX * 0.006;
+      rotationY += deltaX * 0.007;
       previousMouseX = e.touches[0].clientX;
     };
     const onTouchEnd = () => { isDragging = false; };
@@ -114,6 +109,23 @@ export default function EarthGlobe() {
     window.addEventListener('touchmove', onTouchMove, { passive: true });
     window.addEventListener('touchend', onTouchEnd);
 
+    // Project [lon, lat] in degrees to 3D sphere screen coordinate
+    const project = (lonDeg, latDeg, rad, cX, cY, rot) => {
+      const lat = (latDeg * Math.PI) / 180;
+      const lon = ((lonDeg + rot * (180 / Math.PI)) * Math.PI) / 180;
+
+      const x3d = rad * Math.cos(lat) * Math.sin(lon);
+      const y3d = rad * Math.sin(lat);
+      const z3d = rad * Math.cos(lat) * Math.cos(lon);
+
+      return {
+        x: cX + x3d,
+        y: cY - y3d,
+        z: z3d,
+        visible: z3d > -rad * 0.1
+      };
+    };
+
     const render = () => {
       try {
         const radius = Math.min(canvas.width, canvas.height) * 0.38;
@@ -123,77 +135,112 @@ export default function EarthGlobe() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         if (!isDragging) {
-          rotationY += 0.0035; // Smooth continuous 360 rotation
+          rotationY += 0.004; // Smooth continuous planetary rotation
         }
         time += 0.03;
 
-        // 1. Atmosphere Holographic Glow
-        const glow = ctx.createRadialGradient(
+        // 1. Atmosphere Rayleigh Scattering Outer Glow
+        const atmosGlow = ctx.createRadialGradient(
           centerX, centerY, radius * 0.95,
-          centerX, centerY, radius * 1.3
+          centerX, centerY, radius * 1.35
         );
-        glow.addColorStop(0, 'rgba(56, 189, 248, 0.35)');
-        glow.addColorStop(0.5, 'rgba(37, 99, 235, 0.12)');
-        glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
-        ctx.fillStyle = glow;
+        atmosGlow.addColorStop(0, 'rgba(56, 189, 248, 0.45)');
+        atmosGlow.addColorStop(0.4, 'rgba(14, 165, 233, 0.2)');
+        atmosGlow.addColorStop(0.8, 'rgba(3, 105, 161, 0.05)');
+        atmosGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = atmosGlow;
         ctx.beginPath();
-        ctx.arc(centerX, centerY, radius * 1.3, 0, Math.PI * 2);
+        ctx.arc(centerX, centerY, radius * 1.35, 0, Math.PI * 2);
         ctx.fill();
 
-        // 2. 3D Planet Base Sphere (Deep Ocean)
+        // 2. Realistic 3D Ocean Sphere (Deep Vibrant Blue Marble)
         const oceanGrad = ctx.createRadialGradient(
           centerX - radius * 0.35, centerY - radius * 0.35, radius * 0.05,
           centerX, centerY, radius
         );
-        oceanGrad.addColorStop(0, '#1e3a8a');
-        oceanGrad.addColorStop(0.5, '#0f172a');
-        oceanGrad.addColorStop(0.9, '#020617');
-        oceanGrad.addColorStop(1, '#000000');
+        oceanGrad.addColorStop(0, '#0284c7');   // Sunlit Ocean Turquoise
+        oceanGrad.addColorStop(0.35, '#0369a1'); // Deep Sea Blue
+        oceanGrad.addColorStop(0.7, '#075985');  // NASA Navy
+        oceanGrad.addColorStop(0.95, '#0c4a6e'); // Horizon Rim
+        oceanGrad.addColorStop(1, '#082f49');
 
         ctx.fillStyle = oceanGrad;
         ctx.beginPath();
         ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
         ctx.fill();
 
-        // 3. Render Landmass Points
-        for (let i = 0; i < mapPoints.length; i++) {
-          const pt = mapPoints[i];
-          const currentLon = pt.lon + rotationY;
+        // Clip everything inside the Earth Sphere
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius - 0.5, 0, Math.PI * 2);
+        ctx.clip();
 
-          const x3d = radius * Math.cos(pt.lat) * Math.sin(currentLon);
-          const y3d = radius * Math.sin(pt.lat);
-          const z3d = radius * Math.cos(pt.lat) * Math.cos(currentLon);
+        // 3. Render Photorealistic Continents & Landmass Polygons
+        CONTINENT_PATHS.forEach((path) => {
+          ctx.beginPath();
+          let started = false;
 
-          if (z3d > 0) {
-            const screenX = centerX + x3d;
-            const screenY = centerY - y3d;
-            const alpha = (z3d / radius) ** 0.85;
+          for (let i = 0; i < path.length; i++) {
+            const [lon, lat] = path[i];
+            const pt = project(lon, lat, radius, centerX, centerY, rotationY);
 
-            ctx.beginPath();
-            ctx.arc(screenX, screenY, pt.isIndia ? 2.2 : 1.5, 0, Math.PI * 2);
-            ctx.fillStyle = pt.isIndia 
-              ? `rgba(56, 189, 248, ${alpha * 0.95})` 
-              : `rgba(34, 197, 94, ${alpha * 0.75})`;
-            ctx.fill();
+            if (pt.z > 0) {
+              if (!started) {
+                ctx.moveTo(pt.x, pt.y);
+                started = true;
+              } else {
+                ctx.lineTo(pt.x, pt.y);
+              }
+            }
           }
-        }
 
-        // 4. Global Hubs & Arc Lines
-        const projectedHubs = [];
-        globalHubs.forEach((hub) => {
-          const currentLon = hub.lon + rotationY;
-          const x3d = radius * Math.cos(hub.lat) * Math.sin(currentLon);
-          const y3d = radius * Math.sin(hub.lat);
-          const z3d = radius * Math.cos(hub.lat) * Math.cos(currentLon);
-
-          if (z3d > 0) {
-            const screenX = centerX + x3d;
-            const screenY = centerY - y3d;
-            projectedHubs.push({ ...hub, screenX, screenY, z3d });
+          if (started) {
+            ctx.closePath();
+            // Vibrant Earth Landmass Color
+            ctx.fillStyle = 'rgba(34, 197, 94, 0.85)'; // Emerald / Forest Green
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(74, 222, 128, 0.9)'; // Coastline highlight
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
           }
         });
 
-        // Connected Glowing Arcs
+        // 4. Subtle Dynamic Atmospheric Cloud Belts
+        ctx.beginPath();
+        const cloudOffset = time * 0.2;
+        for (let a = 0; a < Math.PI * 2; a += 0.2) {
+          const cx = centerX + (radius * 0.85) * Math.cos(a + cloudOffset);
+          const cy = centerY + (radius * 0.25) * Math.sin(a * 2);
+          ctx.arc(cx, cy, radius * 0.12, 0, Math.PI * 2);
+        }
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.12)';
+        ctx.fill();
+
+        // 5. Specular Sunlight Shading Reflection
+        const sunHighlight = ctx.createRadialGradient(
+          centerX - radius * 0.4, centerY - radius * 0.4, 0,
+          centerX - radius * 0.4, centerY - radius * 0.4, radius * 0.95
+        );
+        sunHighlight.addColorStop(0, 'rgba(255, 255, 255, 0.45)');
+        sunHighlight.addColorStop(0.5, 'rgba(255, 255, 255, 0.1)');
+        sunHighlight.addColorStop(1, 'rgba(0, 0, 0, 0.35)');
+        ctx.fillStyle = sunHighlight;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore(); // Restore clip
+
+        // 6. Global Hubs & Orbital Flight Arcs (Projected over Earth)
+        const projectedHubs = [];
+        GLOBAL_HUBS.forEach((hub) => {
+          const pt = project(hub.lon, hub.lat, radius, centerX, centerY, rotationY);
+          if (pt.z > 0) {
+            projectedHubs.push({ ...hub, screenX: pt.x, screenY: pt.y, z3d: pt.z });
+          }
+        });
+
+        // Glowing Arcs Between Delivery Hubs
         for (let i = 0; i < projectedHubs.length; i++) {
           for (let j = i + 1; j < projectedHubs.length; j++) {
             const h1 = projectedHubs[i];
@@ -202,53 +249,56 @@ export default function EarthGlobe() {
             const dy = h1.screenY - h2.screenY;
             const dist = Math.sqrt(dx * dx + dy * dy);
 
-            if (dist < radius * 1.35) {
+            if (dist < radius * 1.4) {
               ctx.beginPath();
               ctx.moveTo(h1.screenX, h1.screenY);
               const midX = (h1.screenX + h2.screenX) / 2;
               const midY = (h1.screenY + h2.screenY) / 2 - 25;
               ctx.quadraticCurveTo(midX, midY, h2.screenX, h2.screenY);
-              ctx.strokeStyle = `rgba(56, 189, 248, ${0.45 * (1 - dist / (radius * 1.35))})`;
-              ctx.lineWidth = 1.2;
+              ctx.strokeStyle = `rgba(56, 189, 248, ${0.55 * (1 - dist / (radius * 1.4))})`;
+              ctx.lineWidth = 1.5;
               ctx.stroke();
             }
           }
         }
 
-        // Hub Pulsing Nodes
+        // Hub Markers & Pulsing Radar Rings
         projectedHubs.forEach((h) => {
+          // Solid Center Node
           ctx.beginPath();
-          ctx.arc(h.screenX, h.screenY, h.isHQ ? 5 : 4, 0, Math.PI * 2);
+          ctx.arc(h.screenX, h.screenY, h.isHQ ? 5.5 : 4, 0, Math.PI * 2);
           ctx.fillStyle = h.color;
           ctx.fill();
-
-          ctx.beginPath();
-          ctx.arc(h.screenX, h.screenY, 7 + Math.sin(time * 3) * 3, 0, Math.PI * 2);
-          ctx.strokeStyle = h.color;
-          ctx.lineWidth = 1.3;
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 1.5;
           ctx.stroke();
+
+          // Pulsing Ring
+          ctx.beginPath();
+          ctx.arc(h.screenX, h.screenY, (h.isHQ ? 8 : 6) + Math.sin(time * 3.5) * 3.5, 0, Math.PI * 2);
+          ctx.strokeStyle = h.color;
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+
+          // HQ Label
+          if (h.isHQ) {
+            ctx.font = 'bold 11px system-ui, sans-serif';
+            ctx.fillStyle = '#38bdf8';
+            ctx.textAlign = 'center';
+            ctx.fillText('📍 Delhi HQ', h.screenX, h.screenY - 12);
+          }
         });
 
-        // 5. Specular Sunlight Shading Layer
-        const sun = ctx.createRadialGradient(
-          centerX - radius * 0.35, centerY - radius * 0.35, 0,
-          centerX - radius * 0.35, centerY - radius * 0.35, radius * 0.9
-        );
-        sun.addColorStop(0, 'rgba(255, 255, 255, 0.35)');
-        sun.addColorStop(1, 'rgba(255, 255, 255, 0)');
-        ctx.fillStyle = sun;
+        // 7. Outer Atmospheric Rim Ring
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.7)';
+        ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Edge Rim
-        ctx.strokeStyle = 'rgba(56, 189, 248, 0.5)';
-        ctx.lineWidth = 2;
         ctx.stroke();
 
         animationFrameId = requestAnimationFrame(render);
       } catch (err) {
-        console.warn('[EarthGlobe] animation frame error:', err);
+        console.warn('[EarthGlobe] render error:', err);
       }
     };
 
@@ -278,11 +328,12 @@ export default function EarthGlobe() {
         ref={canvasRef} 
         className="max-w-full cursor-grab active:cursor-grabbing touch-none" 
       />
-      <div className="text-[11px] font-mono tracking-[0.2em] uppercase text-cyanCustom font-bold mt-2 flex items-center gap-2">
-        <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-        <span>Global IT Network & Delivery Presence (Drag to Rotate)</span>
+      <div className="text-[11px] font-mono tracking-[0.2em] uppercase text-sky-600 dark:text-cyan-400 font-bold mt-2 flex items-center gap-2">
+        <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+        <span>3D Real Earth Planet • Global Tech Delivery (Drag to Rotate)</span>
       </div>
     </div>
   );
 }
+
 

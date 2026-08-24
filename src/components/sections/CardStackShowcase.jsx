@@ -1,7 +1,7 @@
 import React from 'react';
-import { Users, Code, Palette, Search, Share2, TrendingUp, Award } from 'lucide-react';
+import { Users, Award } from 'lucide-react';
 import Badge from '../ui/Badge';
-import { defaultTeamMembers, DUMMY_AVATAR } from '@/data/team';
+import { defaultTeamMembers } from '@/data/team';
 
 export default function CardStackShowcase() {
   return (
@@ -24,7 +24,7 @@ export default function CardStackShowcase() {
       {/* Super Readable 6-Card Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {defaultTeamMembers.map((member) => {
-          const avatarUrl = member.image ? member.image : DUMMY_AVATAR;
+          const avatarUrl = member.image;
           return (
             <div
               key={member.id}

@@ -1,5 +1,3 @@
-export const DUMMY_AVATAR = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&auto=format&fit=crop&q=80';
-
 export const defaultTeamMembers = [
   {
     id: 1,
@@ -11,7 +9,7 @@ export const defaultTeamMembers = [
     tagColor: 'text-pink-600 dark:text-pink-400 bg-pink-500/10 border-pink-500/30',
     bio: 'Leads custom software architecture, full-stack web application engineering, and responsive UI design.',
     skills: ['Web Architecture', 'React & Full-Stack', 'UI/UX Engineering'],
-    image: '',
+    image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
   },
   {
     id: 2,
@@ -23,7 +21,7 @@ export const defaultTeamMembers = [
     tagColor: 'text-sky-600 dark:text-sky-400 bg-sky-500/10 border-sky-500/30',
     bio: 'Drives enterprise sales strategy, client consulting, and strategic business growth solutions.',
     skills: ['Business Development', 'Client Consulting', 'Growth Strategy'],
-    image: '',
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80',
   },
   {
     id: 3,
@@ -35,7 +33,7 @@ export const defaultTeamMembers = [
     tagColor: 'text-purple-600 dark:text-purple-400 bg-purple-500/10 border-purple-500/30',
     bio: 'Spearheads brand positioning, multi-channel social media campaigns, and community engagement.',
     skills: ['SMO Strategy', 'Brand Campaigns', 'Audience Growth'],
-    image: '',
+    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop&q=80',
   },
   {
     id: 4,
@@ -47,7 +45,7 @@ export const defaultTeamMembers = [
     tagColor: 'text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/30',
     bio: 'Specializes in technical SEO auditing, high-converting keyword architecture, and search visibility.',
     skills: ['Technical SEO', 'Keyword Architecture', 'Organic Traffic'],
-    image: '',
+    image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&auto=format&fit=crop&q=80',
   },
   {
     id: 5,
@@ -59,7 +57,7 @@ export const defaultTeamMembers = [
     tagColor: 'text-amber-600 dark:text-amber-400 bg-amber-500/10 border-amber-500/30',
     bio: 'Oversees visual identity design, brand aesthetics, UI graphics, and marketing media assets.',
     skills: ['Graphic Design', 'Brand Identity', 'UI Visuals & Assets'],
-    image: '',
+    image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&auto=format&fit=crop&q=80',
   },
   {
     id: 6,
@@ -71,6 +69,7 @@ export const defaultTeamMembers = [
     tagColor: 'text-pink-600 dark:text-pink-400 bg-pink-500/10 border-pink-500/30',
     bio: 'Manages client onboarding, initial project consultations, and daily sales coordination.',
     skills: ['Client Onboarding', 'Sales Support', 'Requirements Gathering'],
-    image: '',
+    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&auto=format&fit=crop&q=80',
   },
 ];
+

@@ -59,57 +59,57 @@ function parseStat(valStr, defaultNum, defaultSuffix) {
 const defaultMetrics = [
   {
     id: '01',
-    num: 95,
-    suffix: '%',
-    value: '95%',
+    num: 250,
+    suffix: '+',
+    value: '250+',
     tag: '+9.4% YOY',
-    tagColor: 'text-emerald-400 border-emerald-500/20 bg-emerald-500/10',
-    subtitle: 'CLIENT SATISFACTION',
-    gradient: 'from-cyan-300 via-sky-400 to-white',
-    lineColor: 'bg-cyan-400 shadow-[0_0_12px_#38bdf8]',
+    tagColor: 'text-emerald-600 dark:text-emerald-400 border-emerald-500/30 bg-emerald-500/10',
+    subtitle: 'SUCCESSFUL PROJECTS DELIVERED',
+    gradient: 'from-cyan-600 to-blue-600 dark:from-cyan-300 dark:via-sky-400 dark:to-white',
+    lineColor: 'bg-cyan-500 shadow-[0_0_12px_#38bdf8]',
   },
   {
     id: '02',
-    num: 150,
+    num: 100,
     suffix: '+',
-    value: '150+',
+    value: '100+',
     tag: 'VOL.MAX',
-    tagColor: 'text-purple-400 border-purple-500/20 bg-purple-500/10',
-    subtitle: 'PROJECTS COMPLETED',
-    gradient: 'from-purple-400 via-pink-400 to-cyan-300',
+    tagColor: 'text-purple-600 dark:text-purple-400 border-purple-500/30 bg-purple-500/10',
+    subtitle: 'HAPPY CLIENTS',
+    gradient: 'from-purple-600 to-pink-600 dark:from-purple-400 dark:via-pink-400 dark:to-cyan-300',
     lineColor: 'bg-purple-500 shadow-[0_0_12px_#a855f7]',
   },
   {
     id: '03',
-    num: 50,
+    num: 15,
     suffix: '+',
-    value: '50+',
+    value: '15+',
     tag: 'ACTIVE STREAM',
-    tagColor: 'text-emerald-400 border-emerald-500/20 bg-emerald-500/10',
-    subtitle: 'AUTOMATIONS LIVE',
-    gradient: 'from-emerald-400 via-teal-300 to-cyan-200',
-    lineColor: 'bg-emerald-400 shadow-[0_0_12px_#34d399]',
+    tagColor: 'text-emerald-600 dark:text-emerald-400 border-emerald-500/30 bg-emerald-500/10',
+    subtitle: 'INDUSTRIES SERVED',
+    gradient: 'from-emerald-600 to-teal-600 dark:from-emerald-400 dark:via-teal-300 dark:to-cyan-200',
+    lineColor: 'bg-emerald-500 shadow-[0_0_12px_#34d399]',
   },
   {
     id: '04',
-    num: 99.9,
+    num: 98,
     suffix: '%',
-    value: '99.9%',
+    value: '98%',
     tag: 'BANK-GRADE',
-    tagColor: 'text-sky-400 border-sky-500/20 bg-sky-500/10',
-    subtitle: 'SYSTEM UPTIME',
-    gradient: 'from-sky-400 via-cyan-300 to-white',
-    lineColor: 'bg-sky-400 shadow-[0_0_12px_#38bdf8]',
+    tagColor: 'text-sky-600 dark:text-sky-400 border-sky-500/30 bg-sky-500/10',
+    subtitle: 'CLIENT SATISFACTION RATE',
+    gradient: 'from-sky-600 to-indigo-600 dark:from-sky-400 dark:via-cyan-300 dark:to-white',
+    lineColor: 'bg-sky-500 shadow-[0_0_12px_#38bdf8]',
   },
   {
     id: '05',
     isStatic: true,
     value: '24/7',
     tag: 'SECURE_LINK',
-    tagColor: 'text-cyan-400 border-cyan-500/20 bg-cyan-500/10',
-    subtitle: 'SUPPORT AVAILABLE',
-    gradient: 'from-indigo-400 via-purple-400 to-cyan-300',
-    lineColor: 'bg-cyan-400 shadow-[0_0_12px_#22d3ee]',
+    tagColor: 'text-cyan-600 dark:text-cyan-400 border-cyan-500/30 bg-cyan-500/10',
+    subtitle: 'TECHNICAL SUPPORT',
+    gradient: 'from-indigo-600 to-purple-600 dark:from-indigo-400 dark:via-purple-400 dark:to-cyan-300',
+    lineColor: 'bg-cyan-500 shadow-[0_0_12px_#22d3ee]',
   },
 ];
 
@@ -131,7 +131,7 @@ export default function Stats({ settings }) {
   });
 
   return (
-    <section className="bg-zinc-950/90 border-y border-white/10 py-24 select-none relative overflow-hidden text-left font-sans">
+    <section className="bg-slate-50/90 dark:bg-zinc-950/90 border-y border-slate-200 dark:border-white/10 py-20 md:py-24 select-none relative overflow-hidden text-left font-sans transition-colors duration-300">
       {/* Background Ambient Glow Gradients */}
       <div className="absolute top-0 right-1/4 w-[500px] h-[300px] bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-0 left-1/4 w-[500px] h-[300px] bg-purple-500/10 rounded-full blur-[140px] pointer-events-none" />
@@ -140,28 +140,28 @@ export default function Stats({ settings }) {
         <Badge className="mb-4 mx-auto inline-flex items-center gap-1.5 bg-sky-500/10 border-sky-500/20 text-sky-600 dark:text-sky-400">
           <Award size={14} /> Proven Track Record
         </Badge>
-        <h2 className="text-3xl sm:text-4xl font-headline font-bold text-slate-900 dark:text-white leading-tight mb-4">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-headline font-bold text-slate-900 dark:text-white leading-tight mb-4">
           Built for Business. Backed by Results.
         </h2>
-        <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
+        <p className="text-slate-600 dark:text-slate-300 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
           Measurable achievements in software engineering, process automation, and system reliability for growing enterprise teams.
         </p>
       </div>
 
-        {/* 5 Glassmorphic Floating Cards Grid */}
-        <div className="container mx-auto max-w-[1340px] px-6 relative z-10">
+      {/* 5 Glassmorphic Floating Cards Grid */}
+      <div className="container mx-auto max-w-[1340px] px-6 relative z-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
           {activeMetrics.map((st, idx) => (
             <div 
               key={idx} 
-              className="relative rounded-3xl bg-zinc-900/50 border border-white/10 p-7 flex flex-col justify-between min-h-[240px] overflow-hidden shadow-2xl hover:border-cyanCustom/50 hover:bg-zinc-900/90 hover:-translate-y-2 transition-all duration-300 group cursor-pointer"
+              className="relative rounded-3xl bg-white dark:bg-zinc-900/70 border border-slate-200/90 dark:border-white/10 p-7 flex flex-col justify-between min-h-[240px] overflow-hidden shadow-lg dark:shadow-2xl hover:border-cyan-500/50 hover:shadow-cyan-500/10 hover:-translate-y-1.5 transition-all duration-300 group cursor-pointer"
             >
               {/* Ambient Hover Backlight Glow */}
-              <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 absolute -top-16 -right-16 w-36 h-36 bg-cyanCustom/20 blur-3xl pointer-events-none rounded-full" />
+              <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 absolute -top-16 -right-16 w-36 h-36 bg-cyan-500/20 blur-3xl pointer-events-none rounded-full" />
 
               {/* Card Top Row */}
               <div className="flex justify-between items-center text-xs font-mono mb-6 relative z-10">
-                <span className="text-zinc-500 font-bold bg-white/[0.04] px-2.5 py-1 rounded-lg border border-white/5">
+                <span className="text-slate-500 dark:text-zinc-400 font-bold bg-slate-100 dark:bg-white/[0.06] px-2.5 py-1 rounded-lg border border-slate-200 dark:border-white/5">
                   [ 0{idx + 1} ]
                 </span>
                 <span className={`text-[10px] font-bold font-mono px-2.5 py-0.5 rounded-full border ${st.tagColor} tracking-wider`}>
@@ -183,9 +183,9 @@ export default function Stats({ settings }) {
               </div>
 
               {/* Bottom Line & Label */}
-              <div className="mt-6 pt-4 border-t border-white/5 space-y-3 relative z-10">
-                <div className={`h-1 w-10 rounded-full ${st.lineColor} group-hover:w-full transition-all duration-500`} />
-                <span className="text-xs font-mono font-bold text-zinc-300 uppercase tracking-wider block leading-snug group-hover:text-white transition-colors">
+              <div className="mt-6 pt-4 border-t border-slate-100 dark:border-white/5 space-y-3 relative z-10">
+                <div className={`h-1.5 w-10 rounded-full ${st.lineColor} group-hover:w-full transition-all duration-500`} />
+                <span className="text-xs font-mono font-bold text-slate-700 dark:text-zinc-300 uppercase tracking-wider block leading-snug group-hover:text-cyan-600 dark:group-hover:text-white transition-colors">
                   {st.subtitle}
                 </span>
               </div>
