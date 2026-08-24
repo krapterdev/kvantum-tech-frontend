@@ -1,29 +1,30 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import Hero from '@/components/sections/Hero';
 import TrustedBy from '@/components/sections/TrustedBy';
 import About from '@/components/sections/About';
 import Services from '@/components/sections/Services';
-import BusinessAutomationHighlight from '@/components/sections/BusinessAutomationHighlight';
-import AutomationCalculator from '@/components/sections/AutomationCalculator';
-import SoftwareProducts from '@/components/sections/SoftwareProducts';
-import InteractiveDashboardMockup from '@/components/sections/InteractiveDashboardMockup';
-import CardStackShowcase from '@/components/sections/CardStackShowcase';
-import Industries from '@/components/sections/Industries';
-import WhyChooseUs from '@/components/sections/WhyChooseUs';
-import Technologies from '@/components/sections/Technologies';
-import HowWeWork from '@/components/sections/HowWeWork';
-import Projects from '@/components/sections/Projects';
-import LiveDemo from '@/components/sections/LiveDemo';
-import Stats from '@/components/sections/Stats';
-import Testimonials from '@/components/sections/Testimonials';
-import Pricing from '@/components/sections/Pricing';
-import FAQ from '@/components/sections/FAQ';
-import BlogPreview from '@/components/sections/BlogPreview';
-import CTA from '@/components/sections/CTA';
-import VisitorOdometerCounter from '@/components/sections/VisitorOdometerCounter';
-import HomeContact from '@/components/sections/HomeContact';
-import HomeSeoContentSection from '@/components/sections/HomeSeoContentSection';
 import SeoSchema from '@/components/sections/SeoSchema';
+
+// Lazy load below-the-fold sections so mobile initial payload is lightweight and instant
+const BusinessAutomationHighlight = lazy(() => import('@/components/sections/BusinessAutomationHighlight'));
+const AutomationCalculator = lazy(() => import('@/components/sections/AutomationCalculator'));
+const SoftwareProducts = lazy(() => import('@/components/sections/SoftwareProducts'));
+const InteractiveDashboardMockup = lazy(() => import('@/components/sections/InteractiveDashboardMockup'));
+const CardStackShowcase = lazy(() => import('@/components/sections/CardStackShowcase'));
+const Industries = lazy(() => import('@/components/sections/Industries'));
+const WhyChooseUs = lazy(() => import('@/components/sections/WhyChooseUs'));
+const Technologies = lazy(() => import('@/components/sections/Technologies'));
+const HowWeWork = lazy(() => import('@/components/sections/HowWeWork'));
+const Projects = lazy(() => import('@/components/sections/Projects'));
+const LiveDemo = lazy(() => import('@/components/sections/LiveDemo'));
+const Stats = lazy(() => import('@/components/sections/Stats'));
+const Testimonials = lazy(() => import('@/components/sections/Testimonials'));
+const Pricing = lazy(() => import('@/components/sections/Pricing'));
+const FAQ = lazy(() => import('@/components/sections/FAQ'));
+const BlogPreview = lazy(() => import('@/components/sections/BlogPreview'));
+const VisitorOdometerCounter = lazy(() => import('@/components/sections/VisitorOdometerCounter'));
+const HomeContact = lazy(() => import('@/components/sections/HomeContact'));
+const HomeSeoContentSection = lazy(() => import('@/components/sections/HomeSeoContentSection'));
 
 export default function Home({ services = [], blogs = [], blogsLoading = false, settings }) {
   return (
@@ -34,7 +35,7 @@ export default function Home({ services = [], blogs = [], blogsLoading = false, 
       {/* 1. Hero Banner (Eager Above-The-Fold) */}
       <Hero settings={settings} />
 
-      {/* 2. Trusted By / Social Proof Marquee (Eager) */}
+      {/* 2. Trusted By / Social Proof Marquee (Eager Above-The-Fold) */}
       <TrustedBy />
 
       {/* 3. About Kvantum Tech Solutions (Eager) */}
@@ -43,95 +44,104 @@ export default function Home({ services = [], blogs = [], blogsLoading = false, 
       {/* 4. Core Services & Custom Software (Eager) */}
       <Services services={services} />
 
-      {/* 5. Business Automation Highlight (Native CSS Deferred) */}
-      <div className="content-visibility-auto">
-        <BusinessAutomationHighlight />
-      </div>
+      {/* Below-the-fold lazy loaded sections */}
+      <Suspense fallback={<div className="h-40 w-full" />}>
+        {/* 5. Business Automation Highlight */}
+        <div className="content-visibility-auto">
+          <BusinessAutomationHighlight />
+        </div>
 
-      {/* 6. Interactive ROI & Time-Saved Calculator (Native CSS Deferred) */}
-      <div className="content-visibility-auto">
-        <AutomationCalculator />
-      </div>
+        {/* 6. Interactive ROI & Time-Saved Calculator */}
+        <div className="content-visibility-auto">
+          <AutomationCalculator />
+        </div>
 
-      {/* 7. Software Products Suite (Native CSS Deferred) */}
-      <div className="content-visibility-auto">
-        <SoftwareProducts />
-      </div>
+        {/* 7. Software Products Suite */}
+        <div className="content-visibility-auto">
+          <SoftwareProducts />
+        </div>
 
-      {/* 8. Interactive System Dashboard Previews (Native CSS Deferred) */}
-      <div className="content-visibility-auto">
-        <InteractiveDashboardMockup />
-      </div>
+        {/* 8. Interactive System Dashboard Previews */}
+        <div className="content-visibility-auto">
+          <InteractiveDashboardMockup />
+        </div>
 
-      {/* 9. Industries We Serve (Native CSS Deferred) */}
-      <div className="content-visibility-auto">
-        <Industries />
-      </div>
+        {/* 9. Leadership & Core Department Heads */}
+        <div className="content-visibility-auto">
+          <CardStackShowcase />
+        </div>
 
-      {/* 10. Why Choose Us (Native CSS Deferred) */}
-      <div className="content-visibility-auto">
-        <WhyChooseUs />
-      </div>
+        {/* 10. Industries We Serve */}
+        <div className="content-visibility-auto">
+          <Industries />
+        </div>
 
-      {/* 11. Technologies We Use (Native CSS Deferred) */}
-      <div className="content-visibility-auto">
-        <Technologies />
-      </div>
+        {/* 11. Why Choose Us */}
+        <div className="content-visibility-auto">
+          <WhyChooseUs />
+        </div>
 
-      {/* 12. How We Work (Native CSS Deferred) */}
-      <div className="content-visibility-auto">
-        <HowWeWork />
-      </div>
+        {/* 12. Technologies We Use */}
+        <div className="content-visibility-auto">
+          <Technologies />
+        </div>
 
-      {/* 13. Portfolio Showcase (Native CSS Deferred) */}
-      <div className="content-visibility-auto">
-        <Projects />
-      </div>
+        {/* 13. How We Work */}
+        <div className="content-visibility-auto">
+          <HowWeWork />
+        </div>
 
-      {/* 14. Live System Interactive Demo (Native CSS Deferred) */}
-      <div className="content-visibility-auto">
-        <LiveDemo />
-      </div>
+        {/* 14. Portfolio Showcase */}
+        <div className="content-visibility-auto">
+          <Projects />
+        </div>
 
-      {/* 15. Key Metrics & Stats (Native CSS Deferred) */}
-      <div className="content-visibility-auto">
-        <Stats settings={settings} />
-      </div>
+        {/* 15. Live System Interactive Demo */}
+        <div className="content-visibility-auto">
+          <LiveDemo />
+        </div>
 
-      {/* 16. Client Testimonials (Native CSS Deferred) */}
-      <div className="content-visibility-auto">
-        <Testimonials settings={settings} />
-      </div>
+        {/* 16. Key Metrics & Stats */}
+        <div className="content-visibility-auto">
+          <Stats settings={settings} />
+        </div>
 
-      {/* 17. Transparent Pricing (Native CSS Deferred) */}
-      <div className="content-visibility-auto">
-        <Pricing />
-      </div>
+        {/* 17. Client Testimonials */}
+        <div className="content-visibility-auto">
+          <Testimonials settings={settings} />
+        </div>
 
-      {/* 18. Frequently Asked Questions (Native CSS Deferred) */}
-      <div className="content-visibility-auto">
-        <FAQ />
-      </div>
+        {/* 18. Transparent Pricing */}
+        <div className="content-visibility-auto">
+          <Pricing />
+        </div>
 
-      {/* 19. Latest Articles & Tech Insights (Native CSS Deferred) */}
-      <div className="content-visibility-auto">
-        <BlogPreview blogs={blogs} blogsLoading={blogsLoading} />
-      </div>
+        {/* 19. Frequently Asked Questions */}
+        <div className="content-visibility-auto">
+          <FAQ />
+        </div>
 
-      {/* 20. Full SEO Content Section (Native CSS Deferred) */}
-      <div className="content-visibility-auto">
-        <HomeSeoContentSection />
-      </div>
+        {/* 20. Latest Articles & Tech Insights */}
+        <div className="content-visibility-auto">
+          <BlogPreview blogs={blogs} blogsLoading={blogsLoading} />
+        </div>
 
-      {/* 21. Live Counter Odometer (Native CSS Deferred) */}
-      <div className="content-visibility-auto">
-        <VisitorOdometerCounter />
-      </div>
+        {/* 21. Full SEO Content Section */}
+        <div className="content-visibility-auto">
+          <HomeSeoContentSection />
+        </div>
 
-      {/* 22. Quick Consultation Form (Native CSS Deferred) */}
-      <div className="content-visibility-auto">
-        <HomeContact settings={settings} />
-      </div>
+        {/* 22. Live Counter Odometer */}
+        <div className="content-visibility-auto">
+          <VisitorOdometerCounter />
+        </div>
+
+        {/* 23. Quick Consultation Form */}
+        <div className="content-visibility-auto">
+          <HomeContact settings={settings} />
+        </div>
+      </Suspense>
     </div>
   );
 }
+
