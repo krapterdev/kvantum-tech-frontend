@@ -1,16 +1,19 @@
-import { useNavigate } from 'react-router-dom';
+'use client';
+
+// Hybrid navigation — safe in Next.js SSR static prerendering AND React Router (Vite)
+// No top-level router imports — uses only window.location for 100% SSR safety.
 
 export function useSafeNavigate() {
-  const navigate = useNavigate();
-
   return (path, options = {}) => {
     if (typeof window === 'undefined') return;
 
     if (options && options.replace) {
-      navigate(path, { replace: true });
+      if (window.location.pathname !== path) {
+        window.history.replaceState(null, '', path);
+      }
       return;
     }
 
-    navigate(path);
+    window.location.href = path;
   };
 }
