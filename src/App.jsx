@@ -8,22 +8,21 @@ import FloatingQuickActions from '@/components/sections/FloatingQuickActions';
 import PageLoader from '@/components/ui/PageLoader';
 import CookieConsent from '@/components/ui/CookieConsent';
 
-// Page components
+// Keep Home page component eager for instant homepage render
 import Home from '@/pages/Home';
-import AboutPage from '@/pages/AboutPage';
-import ServicesPage from '@/pages/ServicesPage';
-import ServiceDetailPage from '@/pages/ServiceDetailPage';
-import ProjectsPage from '@/pages/ProjectsPage';
-import ContactPage from '@/pages/ContactPage';
-import ThankYouPage from '@/pages/ThankYouPage';
 import BlogPage, { DEFAULT_SEED_BLOG, fallbackBlogs } from '@/pages/BlogPage';
-import TermsPage from '@/pages/TermsPage';
-import PrivacyPage from '@/pages/PrivacyPage';
-import NotFound from '@/pages/NotFound';
 
-import DynamicSeoPage from '@/pages/DynamicSeoPage';
-
-// Lazy load heavy admin portal module to keep public bundle ultra-light for PageSpeed performance
+// Lazy load secondary page components to optimize initial mobile PageSpeed payload
+const AboutPage = React.lazy(() => import('@/pages/AboutPage'));
+const ServicesPage = React.lazy(() => import('@/pages/ServicesPage'));
+const ServiceDetailPage = React.lazy(() => import('@/pages/ServiceDetailPage'));
+const ProjectsPage = React.lazy(() => import('@/pages/ProjectsPage'));
+const ContactPage = React.lazy(() => import('@/pages/ContactPage'));
+const ThankYouPage = React.lazy(() => import('@/pages/ThankYouPage'));
+const DynamicSeoPage = React.lazy(() => import('@/pages/DynamicSeoPage'));
+const TermsPage = React.lazy(() => import('@/pages/TermsPage'));
+const PrivacyPage = React.lazy(() => import('@/pages/PrivacyPage'));
+const NotFound = React.lazy(() => import('@/pages/NotFound'));
 const AdminPortalPage = React.lazy(() => import('@/pages/AdminPortalPage'));
 
 // API services
@@ -483,28 +482,28 @@ export default function App() {
       {!isAdminPath && <Navbar theme={theme} toggleTheme={toggleTheme} settings={settings} />}
 
       <main className={`relative z-10 ${isAdminPath ? 'pt-0 min-h-screen' : 'pt-[100px] min-h-[75vh]'}`}>
-        <Routes>
-          <Route path="/" element={<Home services={services} blogs={blogs} blogsLoading={blogsLoading} settings={settings} />} />
-          <Route path="/about" element={<AboutPage theme={theme} settings={settings} />} />
-          <Route path="/services" element={<ServicesPage services={services} />} />
-          {/* Legacy 301 Permanent Redirects for Google Search Central guidelines */}
-          <Route path="/services/web-development" element={<Navigate to="/services/web-mobile-app-development" replace />} />
-          <Route path="/services/:id" element={<ServiceDetailPage services={services} />} />
-          <Route path="/projects" element={<ProjectsPage portfolios={portfolios} />} />
-          <Route path="/portfolio" element={<ProjectsPage portfolios={portfolios} />} />
-          <Route path="/contact" element={<ContactPage settings={settings} />} />
-          <Route path="/thank-you" element={<ThankYouPage />} />
-          
-          <Route path="/blog" element={<BlogPage blogs={blogs} loading={blogsLoading} />} />
-          <Route path="/blog/:slug" element={<BlogPage blogs={blogs} loading={blogsLoading} />} />
-          
-          <Route path="/keyword/:slug" element={<DynamicSeoPage seoPages={seoPages} />} />
-          
-          <Route path="/terms" element={<TermsPage />} />
-          <Route path="/privacy" element={<PrivacyPage />} />
-          
-          <Route path="/admin" element={
-            <React.Suspense fallback={<PageLoader />}>
+        <React.Suspense fallback={<PageLoader />}>
+          <Routes>
+            <Route path="/" element={<Home services={services} blogs={blogs} blogsLoading={blogsLoading} settings={settings} />} />
+            <Route path="/about" element={<AboutPage theme={theme} settings={settings} />} />
+            <Route path="/services" element={<ServicesPage services={services} />} />
+            {/* Legacy 301 Permanent Redirects for Google Search Central guidelines */}
+            <Route path="/services/web-development" element={<Navigate to="/services/web-mobile-app-development" replace />} />
+            <Route path="/services/:id" element={<ServiceDetailPage services={services} />} />
+            <Route path="/projects" element={<ProjectsPage portfolios={portfolios} />} />
+            <Route path="/portfolio" element={<ProjectsPage portfolios={portfolios} />} />
+            <Route path="/contact" element={<ContactPage settings={settings} />} />
+            <Route path="/thank-you" element={<ThankYouPage />} />
+            
+            <Route path="/blog" element={<BlogPage blogs={blogs} loading={blogsLoading} />} />
+            <Route path="/blog/:slug" element={<BlogPage blogs={blogs} loading={blogsLoading} />} />
+            
+            <Route path="/keyword/:slug" element={<DynamicSeoPage seoPages={seoPages} />} />
+            
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            
+            <Route path="/admin" element={
               <AdminPortalPage 
                 services={services} 
                 setServices={setServices} 
@@ -519,10 +518,8 @@ export default function App() {
                 seoSettings={seoSettings}
                 setSeoSettings={setSeoSettings}
               />
-            </React.Suspense>
-          } />
-          <Route path="/admin/:tab" element={
-            <React.Suspense fallback={<PageLoader />}>
+            } />
+            <Route path="/admin/:tab" element={
               <AdminPortalPage 
                 services={services} 
                 setServices={setServices} 
@@ -537,11 +534,11 @@ export default function App() {
                 seoSettings={seoSettings}
                 setSeoSettings={setSeoSettings}
               />
-            </React.Suspense>
-          } />
-          
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+            } />
+            
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </React.Suspense>
       </main>
 
       {!isAdminPath && <Footer seoPages={seoPages} theme={theme} settings={settings} services={services} blogs={blogs} />}
