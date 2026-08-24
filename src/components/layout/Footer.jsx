@@ -10,6 +10,23 @@ import {
 import KvantumLogo from '../ui/KvantumLogo';
 import { MapPin, Phone, Mail, Globe, ShieldCheck, Share2 } from 'lucide-react';
 
+class FooterErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error, info) {
+    console.warn('[Footer Error Boundary]:', error, info);
+  }
+  render() {
+    if (this.state.hasError) return null;
+    return this.props.children;
+  }
+}
+
 export default function Footer({ seoPages = [], theme, settings, services = [], blogs = [] }) {
   const currentYear = new Date().getFullYear();
   const contact = settings?.contact || {};
@@ -39,11 +56,13 @@ export default function Footer({ seoPages = [], theme, settings, services = [], 
         </div>
 
         {/* 360 Degree Rotating Real 3D Earth Planet (NASA Style) */}
-        <div className="flex flex-col items-center justify-center mb-16 overflow-hidden">
-          <div className="w-full max-w-[650px]">
-            <EarthGlobe />
+        <FooterErrorBoundary>
+          <div className="flex flex-col items-center justify-center mb-16 overflow-hidden">
+            <div className="w-full max-w-[650px]">
+              <EarthGlobe />
+            </div>
           </div>
-        </div>
+        </FooterErrorBoundary>
 
         {/* Interactive Google Map Section in Footer */}
         <div className="mb-16 border-b border-slate-200 dark:border-white/8 pb-12 text-left">

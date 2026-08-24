@@ -37,9 +37,11 @@ export default function EarthGlobe() {
     const ctx = canvas.getContext('2d');
     let animationFrameId;
 
-    let width = (canvas.width = canvas.parentElement?.clientWidth || 650);
+    let parentWidth = canvas.parentElement?.clientWidth || 650;
+    if (parentWidth <= 0) parentWidth = 650;
+    let width = (canvas.width = parentWidth);
     let height = (canvas.height = 460);
-    const radius = Math.min(width, height) * 0.42;
+    const radius = Math.max(100, Math.min(width, height) * 0.42);
     const centerX = width / 2;
     const centerY = height / 2;
 
@@ -100,10 +102,11 @@ export default function EarthGlobe() {
     let time = 0;
 
     const render = () => {
-      ctx.clearRect(0, 0, width, height);
-      if (!isDragging) {
-        rotationY += 0.004; // Smooth continuous 360-degree rotation
-      }
+      try {
+        ctx.clearRect(0, 0, width, height);
+        if (!isDragging) {
+          rotationY += 0.004; // Smooth continuous 360-degree rotation
+        }
       time += 0.035;
 
       // 1. Atmosphere Holographic Outer Glow
@@ -224,21 +227,26 @@ export default function EarthGlobe() {
       ctx.stroke();
 
       animationFrameId = requestAnimationFrame(render);
+      } catch (e) {
+        console.warn('[EarthGlobe] Animation error caught:', e);
+      }
     };
 
     render();
 
     const handleResize = () => {
       if (canvas && canvas.parentElement) {
-        width = canvas.width = canvas.parentElement.clientWidth || 650;
+        let pWidth = canvas.parentElement.clientWidth || 650;
+        if (pWidth <= 0) pWidth = 650;
+        width = canvas.width = pWidth;
         height = canvas.height = 460;
       }
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize, { passive: true });
 
     return () => {
-      cancelAnimationFrame(animationFrameId);
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
       canvas.removeEventListener('mousedown', onMouseDown);
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mouseup', onMouseUp);
