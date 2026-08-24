@@ -8,22 +8,20 @@ import FloatingQuickActions from '@/components/sections/FloatingQuickActions';
 import PageLoader from '@/components/ui/PageLoader';
 import CookieConsent from '@/components/ui/CookieConsent';
 
-// Keep Home page component eager for instant homepage render
+// Static page imports for 100% reliable zero-crash route navigation
 import Home from '@/pages/Home';
 import BlogPage, { DEFAULT_SEED_BLOG, fallbackBlogs } from '@/pages/BlogPage';
-
-// Lazy load secondary page components to optimize initial mobile PageSpeed payload
-const AboutPage = React.lazy(() => import('@/pages/AboutPage'));
-const ServicesPage = React.lazy(() => import('@/pages/ServicesPage'));
-const ServiceDetailPage = React.lazy(() => import('@/pages/ServiceDetailPage'));
-const ProjectsPage = React.lazy(() => import('@/pages/ProjectsPage'));
-const ContactPage = React.lazy(() => import('@/pages/ContactPage'));
-const ThankYouPage = React.lazy(() => import('@/pages/ThankYouPage'));
-const DynamicSeoPage = React.lazy(() => import('@/pages/DynamicSeoPage'));
-const TermsPage = React.lazy(() => import('@/pages/TermsPage'));
-const PrivacyPage = React.lazy(() => import('@/pages/PrivacyPage'));
-const NotFound = React.lazy(() => import('@/pages/NotFound'));
-const AdminPortalPage = React.lazy(() => import('@/pages/AdminPortalPage'));
+import AboutPage from '@/pages/AboutPage';
+import ServicesPage from '@/pages/ServicesPage';
+import ServiceDetailPage from '@/pages/ServiceDetailPage';
+import ProjectsPage from '@/pages/ProjectsPage';
+import ContactPage from '@/pages/ContactPage';
+import ThankYouPage from '@/pages/ThankYouPage';
+import DynamicSeoPage from '@/pages/DynamicSeoPage';
+import TermsPage from '@/pages/TermsPage';
+import PrivacyPage from '@/pages/PrivacyPage';
+import NotFound from '@/pages/NotFound';
+import AdminPortalPage from '@/pages/AdminPortalPage';
 
 // API services
 import * as serviceService from '@/services/serviceService';

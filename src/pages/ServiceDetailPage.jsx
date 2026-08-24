@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import Link from '@/components/ui/SafeLink';
 import { useSafeNavigate as useNavigate } from '@/utils/navigation';
 import { ArrowLeft, Cpu, GitBranch, Layers, CheckCircle2, Zap, ArrowRight } from 'lucide-react';
@@ -11,7 +12,8 @@ import { getAllServices } from '@/services/serviceService';
 import { setPageSeoStatus } from '@/utils/seoUtils';
 
 export default function ServiceDetailPage({ services = [], serviceId }) {
-  const id = serviceId;
+  const params = useParams();
+  const id = serviceId || params?.id;
   const navigate = useNavigate();
   const [localService, setLocalService] = useState(null);
   const [loading, setLoading] = useState(true);

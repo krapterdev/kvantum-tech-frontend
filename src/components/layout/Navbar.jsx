@@ -29,7 +29,7 @@ export default function Navbar({ theme, toggleTheme, settings }) {
             }} 
             className="flex items-center cursor-pointer py-1"
           >
-            <KvantumLogo className="h-10 sm:h-12" theme={theme} />
+            <KvantumLogo className="h-10 sm:h-12" />
           </div>
 
           {/* Desktop Navigation Links */}

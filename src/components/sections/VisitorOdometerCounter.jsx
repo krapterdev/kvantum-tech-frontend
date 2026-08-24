@@ -7,20 +7,35 @@ export default function VisitorOdometerCounter() {
   const [yesterdayCount, setYesterdayCount] = useState(375);
   const [thisWeekCount, setThisWeekCount] = useState(732);
   const [lastWeekCount, setLastWeekCount] = useState(981);
+  const [isVisible, setIsVisible] = useState(false);
+  const containerRef = React.useRef(null);
 
   useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setIsVisible(true);
+        observer.disconnect();
+      }
+    }, { rootMargin: '200px' });
+
+    if (containerRef.current) observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!isVisible) return;
     const timer = setInterval(() => {
       setVisitorCount(prev => prev + Math.floor(Math.random() * 3) + 1);
       setTodayCount(prev => prev + 1);
     }, 4500);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [isVisible]);
 
   const digits = String(visitorCount).padStart(6, '0').split('');
 
   return (
-    <div className="w-full max-w-[1100px] mx-auto my-12 px-6 select-none text-center relative z-10">
+    <div ref={containerRef} className="w-full max-w-[1100px] mx-auto my-12 px-6 select-none text-center relative z-10">
       <div className="p-8 sm:p-10 rounded-3xl bg-white dark:bg-zinc-950/90 border border-slate-200 dark:border-white/15 backdrop-blur-2xl shadow-xl dark:shadow-2xl flex flex-col items-center gap-8">
         
         {/* Top Header */}

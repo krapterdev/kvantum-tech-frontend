@@ -40,7 +40,7 @@ export default function NavbarNext({ theme, toggleTheme, settings }: any) {
             onClick={() => setMobileMenuOpen(false)} 
             className="flex items-center cursor-pointer py-1"
           >
-            <KvantumLogo className="h-10 sm:h-12" theme={theme} />
+            <KvantumLogo className="h-10 sm:h-12" />
           </Link>
 
           {/* Desktop Navigation Links */}

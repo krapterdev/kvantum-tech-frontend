@@ -89,7 +89,7 @@ export default function Footer({ seoPages = [], theme, settings, services = [], 
           {/* Column 1: Brand Info & Dynamic Socials */}
           <div className="flex flex-col gap-4 lg:col-span-1">
             <div className="mb-2">
-              <KvantumLogo className="h-16 sm:h-24" theme={theme} />
+              <KvantumLogo className="h-16 sm:h-24" />
             </div>
             <p className="text-slate-600 dark:text-slate-400 text-xs leading-relaxed">
               Kvantum Tech Solutions is an enterprise software development & business automation agency.

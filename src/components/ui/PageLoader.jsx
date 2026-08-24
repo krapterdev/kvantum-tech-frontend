@@ -30,7 +30,7 @@ export default function PageLoader() {
 
       {/* Top Header Skeleton Bar */}
       <div className="flex items-center justify-between border-b border-white/[0.08] pb-6 relative z-10">
-        <KvantumLogo className="h-10 sm:h-12" theme="dark" />
+        <KvantumLogo className="h-10 sm:h-12" />
         <div className="hidden sm:flex items-center gap-4 animate-pulse">
           <div className="h-4 w-20 bg-white/10 rounded-full" />
           <div className="h-4 w-20 bg-white/10 rounded-full" />
