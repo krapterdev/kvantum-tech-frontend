@@ -1,19 +1,30 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 
+// Universal link component — no router imports, works in Next.js SSR AND React Router (Vite)
 export default function SafeLink({ to, href, children, className, onClick, ...props }) {
   const target = href || to || '/';
-  // External links use <a>, internal use react-router Link
-  if (target.startsWith('http') || target.startsWith('mailto') || target.startsWith('tel')) {
-    return (
-      <a href={target} className={className} onClick={onClick} {...props}>
-        {children}
-      </a>
-    );
-  }
+  const isExternal = target.startsWith('http') || target.startsWith('mailto') || target.startsWith('tel') || target.startsWith('#');
+
+  const handleClick = (e) => {
+    if (onClick) onClick(e);
+    if (!isExternal && !e.defaultPrevented && !e.metaKey && !e.ctrlKey) {
+      e.preventDefault();
+      if (typeof window !== 'undefined') {
+        window.history.pushState(null, '', target);
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      }
+    }
+  };
+
   return (
-    <Link to={target} className={className} onClick={onClick} {...props}>
+    <a
+      href={target}
+      className={className}
+      onClick={isExternal ? onClick : handleClick}
+      rel={isExternal ? 'noopener noreferrer' : undefined}
+      {...props}
+    >
       {children}
-    </Link>
+    </a>
   );
 }
