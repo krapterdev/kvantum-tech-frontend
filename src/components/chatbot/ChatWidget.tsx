@@ -127,12 +127,6 @@ export default function ChatWidget() {
             </span>
           )}
         </button>
-
-        {!open && (
-          <p className="mt-1 text-center text-[9px] text-white/70 font-mono whitespace-nowrap leading-tight select-none">
-            Chat
-          </p>
-        )}
       </div>
     </>
   );

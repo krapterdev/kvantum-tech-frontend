@@ -1,22 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { ShieldCheck, Check, Cookie, X } from 'lucide-react';
+import Link from './SafeLink';
 
 export default function CookieConsent() {
   const [show, setShow] = useState(false);
+  const [showManage, setShowManage] = useState(false);
 
   useEffect(() => {
     const consent = localStorage.getItem('kts_cookie_consent');
     if (!consent) {
-      const timer = setTimeout(() => setShow(true), 1500);
+      const timer = setTimeout(() => setShow(true), 1200);
       return () => clearTimeout(timer);
     }
   }, []);
 
-  const handleAccept = () => {
+  const handleAcceptAll = () => {
     localStorage.setItem('kts_cookie_consent', JSON.stringify({
       acceptedAt: new Date().toISOString(),
       termsAccepted: true,
-      cookiesAccepted: true
+      cookiesAccepted: true,
+      analytics: true,
+      marketing: true
+    }));
+    setShow(false);
+  };
+
+  const handleEssentialOnly = () => {
+    localStorage.setItem('kts_cookie_consent', JSON.stringify({
+      acceptedAt: new Date().toISOString(),
+      termsAccepted: true,
+      cookiesAccepted: true,
+      analytics: false,
+      marketing: false
     }));
     setShow(false);
   };
@@ -24,29 +38,50 @@ export default function CookieConsent() {
   if (!show) return null;
 
   return (
-    <div className="fixed bottom-6 left-6 z-[99999] max-w-[380px] p-6 rounded-3xl bg-zinc-950/95 border border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.85)] backdrop-blur-2xl text-left select-none animate-in fade-in slide-in-from-bottom-4 duration-300">
-      <div className="flex justify-between items-start mb-3">
-        <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-cyanCustom bg-cyanCustom/10 border border-cyanCustom/20 px-3 py-1 rounded-full">
-          <Cookie size={14} /> Cookies & Terms Consent
+    <div className="fixed bottom-0 inset-x-0 z-[99999] p-3 sm:p-4 md:p-6 pointer-events-none animate-in fade-in slide-in-from-bottom-6 duration-300">
+      <div className="max-w-[1280px] mx-auto bg-white/95 dark:bg-zinc-950/95 border border-slate-200 dark:border-white/15 rounded-2xl sm:rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.3)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.8)] backdrop-blur-2xl p-5 sm:p-6 pointer-events-auto transition-all">
+        
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-5 sm:gap-8">
+          
+          {/* Left Content: Title & Clear Descriptive Consent Statement */}
+          <div className="flex-1 text-left select-none space-y-1 sm:space-y-1.5">
+            <h4 className="text-base sm:text-lg font-bold font-headline text-slate-900 dark:text-white tracking-tight">
+              Cookie Consent
+            </h4>
+            <p className="text-slate-600 dark:text-zinc-300 text-xs sm:text-sm leading-relaxed max-w-3xl">
+              By clicking &ldquo;Accept All Cookies&rdquo;, you agree to the storing of cookies on your device to enhance site navigation, analyze site usage, and assist in our marketing efforts.{' '}
+              <Link
+                to="/privacy"
+                aria-label="Read Privacy Policy"
+                className="text-sky-600 dark:text-sky-400 font-semibold hover:underline cursor-pointer inline-block"
+              >
+                Privacy policy
+              </Link>
+            </p>
+          </div>
+
+          {/* Right Content: Dual Action Buttons */}
+          <div className="flex flex-row items-center gap-3 w-full sm:w-auto shrink-0 justify-end">
+            <button
+              onClick={handleEssentialOnly}
+              aria-label="Manage Cookies"
+              className="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl border border-sky-500 text-sky-600 dark:text-sky-400 bg-sky-500/10 hover:bg-sky-500/20 active:scale-95 text-xs sm:text-sm font-bold transition-all duration-200 cursor-pointer text-center whitespace-nowrap"
+            >
+              Manage cookies
+            </button>
+            <button
+              onClick={handleAcceptAll}
+              aria-label="Accept All Cookies"
+              className="flex-1 sm:flex-initial px-6 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 active:scale-95 text-white text-xs sm:text-sm font-bold shadow-lg shadow-sky-500/25 transition-all duration-200 cursor-pointer text-center whitespace-nowrap"
+            >
+              Accept all
+            </button>
+          </div>
+
         </div>
-        <button onClick={() => setShow(false)} aria-label="Close Cookie Consent Modal" className="text-zinc-400 hover:text-white p-1">
-          <X size={16} />
-        </button>
-      </div>
 
-      <p className="text-zinc-300 text-xs leading-relaxed mb-4">
-        We use essential cookies and analytics to ensure you get the best experience on Kvantum Tech Solutions. By clicking Accept, you agree to our <a href="/terms" aria-label="Read Terms of Service" className="text-cyanCustom hover:underline">Terms of Service</a> & <a href="/privacy" aria-label="Read Privacy Policy" className="text-cyanCustom hover:underline">Privacy Policy</a>.
-      </p>
-
-      <div className="flex items-center gap-3">
-        <button
-          onClick={handleAccept}
-          aria-label="Accept Cookies and Terms"
-          className="w-full py-2.5 rounded-xl text-xs font-bold bg-pinkCustom text-white hover:bg-pink-600 transition-colors flex items-center justify-center gap-1.5 shadow-[0_0_15px_rgba(236,72,153,0.35)] cursor-pointer"
-        >
-          <Check size={14} /> Accept Cookies & Terms
-        </button>
       </div>
     </div>
   );
 }
+

@@ -70,12 +70,12 @@ export default function FloatingQuickActions({ settings }) {
 
   return (
     <>
-      {/* Scroll-to-Top Floating Button */}
+      {/* Scroll-to-Top Floating Button (Stacked above Chatbot at Bottom-Right) */}
       {showScrollTop && (
         <button
           onClick={scrollToTop}
           aria-label="Scroll back to top of page"
-          className="fixed bottom-6 right-6 z-[90] p-3 rounded-full bg-cyan-500 hover:bg-cyan-600 text-white shadow-[0_10px_25px_rgba(6,182,212,0.4)] transition-all duration-300 hover:scale-110 cursor-pointer border border-cyan-400/30"
+          className="fixed bottom-[84px] right-6 z-[90] p-3 rounded-full bg-slate-900/90 dark:bg-zinc-800/90 text-cyan-400 hover:text-white border border-cyan-500/30 hover:bg-cyan-500 shadow-[0_10px_25px_rgba(0,0,0,0.4)] backdrop-blur-md transition-all duration-300 hover:scale-110 cursor-pointer"
           title="Scroll to top"
         >
           <ArrowUp size={18} />
