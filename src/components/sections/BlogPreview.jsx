@@ -2,7 +2,12 @@ import React from 'react';
 import Link from '../ui/SafeLink';
 import { BookOpen, Calendar, Clock, ArrowRight, User } from 'lucide-react';
 import Badge from '../ui/Badge';
-import { formatTimeAgo, fallbackBlogs } from '@/pages/BlogPage';
+import { fallbackBlogs } from '@/data/blogs';
+
+function formatTimeAgo(post) {
+  if (!post) return 'Recently';
+  return post.readTime || '7d ago';
+}
 
 export default function BlogPreview({ blogs = [], blogsLoading = false }) {
   if (blogsLoading) {

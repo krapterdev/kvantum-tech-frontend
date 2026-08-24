@@ -8,20 +8,35 @@ import FloatingQuickActions from '@/components/sections/FloatingQuickActions';
 import PageLoader from '@/components/ui/PageLoader';
 import CookieConsent from '@/components/ui/CookieConsent';
 
-// Static page imports for 100% reliable zero-crash route navigation
+// Keep Home page eager for zero initial render delay
 import Home from '@/pages/Home';
-import BlogPage, { DEFAULT_SEED_BLOG, fallbackBlogs } from '@/pages/BlogPage';
-import AboutPage from '@/pages/AboutPage';
-import ServicesPage from '@/pages/ServicesPage';
-import ServiceDetailPage from '@/pages/ServiceDetailPage';
-import ProjectsPage from '@/pages/ProjectsPage';
-import ContactPage from '@/pages/ContactPage';
-import ThankYouPage from '@/pages/ThankYouPage';
-import DynamicSeoPage from '@/pages/DynamicSeoPage';
-import TermsPage from '@/pages/TermsPage';
-import PrivacyPage from '@/pages/PrivacyPage';
-import NotFound from '@/pages/NotFound';
-import AdminPortalPage from '@/pages/AdminPortalPage';
+import { fallbackBlogs } from '@/data/blogs';
+
+// Safe retry wrapper for dynamic import chunking to prevent ChunkLoadErrors
+const lazyWithRetry = (componentImport) =>
+  React.lazy(async () => {
+    try {
+      return await componentImport();
+    } catch (error) {
+      console.warn('Chunk load error, retrying page import:', error);
+      // Fallback retry once before erroring
+      return await componentImport();
+    }
+  });
+
+// Code-split heavy secondary pages to keep initial JS bundle under 250KB for 90+ Mobile PageSpeed
+const BlogPage = lazyWithRetry(() => import('@/pages/BlogPage'));
+const AboutPage = lazyWithRetry(() => import('@/pages/AboutPage'));
+const ServicesPage = lazyWithRetry(() => import('@/pages/ServicesPage'));
+const ServiceDetailPage = lazyWithRetry(() => import('@/pages/ServiceDetailPage'));
+const ProjectsPage = lazyWithRetry(() => import('@/pages/ProjectsPage'));
+const ContactPage = lazyWithRetry(() => import('@/pages/ContactPage'));
+const ThankYouPage = lazyWithRetry(() => import('@/pages/ThankYouPage'));
+const DynamicSeoPage = lazyWithRetry(() => import('@/pages/DynamicSeoPage'));
+const TermsPage = lazyWithRetry(() => import('@/pages/TermsPage'));
+const PrivacyPage = lazyWithRetry(() => import('@/pages/PrivacyPage'));
+const NotFound = lazyWithRetry(() => import('@/pages/NotFound'));
+const AdminPortalPage = lazyWithRetry(() => import('@/pages/AdminPortalPage'));
 
 // API services
 import * as serviceService from '@/services/serviceService';
