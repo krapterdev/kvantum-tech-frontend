@@ -25,84 +25,136 @@ import HomeContact from '@/components/sections/HomeContact';
 import HomeSeoContentSection from '@/components/sections/HomeSeoContentSection';
 import SeoSchema from '@/components/sections/SeoSchema';
 
+function LazySection({ children, minHeight = "200px" }) {
+  const [isVisible, setIsVisible] = React.useState(false);
+  const ref = React.useRef(null);
+
+  React.useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setIsVisible(true);
+        observer.disconnect();
+      }
+    }, { rootMargin: '300px' });
+
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} style={{ minHeight: isVisible ? 'auto' : minHeight }}>
+      {isVisible ? children : null}
+    </div>
+  );
+}
+
 export default function Home({ services = [], blogs = [], blogsLoading = false, settings }) {
   return (
     <div className="fade-in-up">
       {/* Rich Snippet JSON-LD SEO Schema */}
       <SeoSchema />
 
-      {/* 1. Hero Banner */}
+      {/* 1. Hero Banner (Eager) */}
       <Hero settings={settings} />
 
-      {/* 2. Trusted By / Social Proof Marquee */}
+      {/* 2. Trusted By / Social Proof Marquee (Eager) */}
       <TrustedBy />
 
-      {/* 3. About Kvantum Tech Solutions */}
+      {/* 3. About Kvantum Tech Solutions (Eager) */}
       <About settings={settings} />
 
-      {/* 4. Core Services & Custom Software */}
+      {/* 4. Core Services & Custom Software (Eager) */}
       <Services services={services} />
 
-      {/* 5. Business Automation Highlight */}
-      <BusinessAutomationHighlight />
+      {/* 5. Business Automation Highlight (Lazy) */}
+      <LazySection minHeight="250px">
+        <BusinessAutomationHighlight />
+      </LazySection>
 
-      {/* 6. Interactive ROI & Time-Saved Calculator */}
-      <AutomationCalculator />
+      {/* 6. Interactive ROI & Time-Saved Calculator (Lazy) */}
+      <LazySection minHeight="300px">
+        <AutomationCalculator />
+      </LazySection>
 
-      {/* 7. Software Products Suite */}
-      <SoftwareProducts />
+      {/* 7. Software Products Suite (Lazy) */}
+      <LazySection minHeight="300px">
+        <SoftwareProducts />
+      </LazySection>
 
-      {/* 8. Interactive System Dashboard Previews */}
-      <InteractiveDashboardMockup />
+      {/* 8. Interactive System Dashboard Previews (Lazy) */}
+      <LazySection minHeight="300px">
+        <InteractiveDashboardMockup />
+      </LazySection>
 
-      {/* 9. Industries We Serve */}
-      <Industries />
+      {/* 9. Industries We Serve (Lazy) */}
+      <LazySection minHeight="250px">
+        <Industries />
+      </LazySection>
 
-      {/* 10. Why Choose Kvantum Tech Solutions */}
-      <WhyChooseUs />
+      {/* 10. Why Choose Us (Lazy) */}
+      <LazySection minHeight="250px">
+        <WhyChooseUs />
+      </LazySection>
 
-      {/* 11. Technologies We Use */}
-      <Technologies />
+      {/* 11. Technologies We Use (Lazy) */}
+      <LazySection minHeight="250px">
+        <Technologies />
+      </LazySection>
 
-      {/* 12. Our Development Process */}
-      <HowWeWork />
+      {/* 12. How We Work (Lazy) */}
+      <LazySection minHeight="250px">
+        <HowWeWork />
+      </LazySection>
 
-      {/* 13. Meet Our Leadership & Core Team */}
-      <CardStackShowcase />
+      {/* 13. Portfolio Showcase (Lazy) */}
+      <LazySection minHeight="300px">
+        <Projects />
+      </LazySection>
 
-      {/* 14. Portfolio & Case Studies */}
-      <Projects />
+      {/* 14. Live System Interactive Demo (Lazy) */}
+      <LazySection minHeight="250px">
+        <LiveDemo />
+      </LazySection>
 
-      {/* 15. Live Demo CTA */}
-      <LiveDemo />
+      {/* 15. Key Metrics & Stats (Lazy) */}
+      <LazySection minHeight="150px">
+        <Stats settings={settings} />
+      </LazySection>
 
-      {/* 16. Success Metrics */}
-      <Stats settings={settings} />
+      {/* 16. Client Testimonials (Lazy) */}
+      <LazySection minHeight="250px">
+        <Testimonials settings={settings} />
+      </LazySection>
 
-      {/* 17. Client Testimonials */}
-      <Testimonials settings={settings} />
+      {/* 17. Transparent Pricing (Lazy) */}
+      <LazySection minHeight="250px">
+        <Pricing />
+      </LazySection>
 
-      {/* 18. Pricing Plans */}
-      <Pricing />
+      {/* 18. Frequently Asked Questions (Lazy) */}
+      <LazySection minHeight="250px">
+        <FAQ />
+      </LazySection>
 
-      {/* 19. Rich SEO Enterprise Solutions Content */}
-      <HomeSeoContentSection />
+      {/* 19. Latest Articles & Tech Insights (Lazy) */}
+      <LazySection minHeight="250px">
+        <BlogPreview blogs={blogs} blogsLoading={blogsLoading} />
+      </LazySection>
 
-      {/* 20. Latest Blogs & Resources */}
-      <BlogPreview blogs={blogs} blogsLoading={blogsLoading} />
+      {/* 20. Full SEO Content Section (Lazy) */}
+      <LazySection minHeight="300px">
+        <HomeSeoContentSection />
+      </LazySection>
 
-      {/* 21. FAQs (15 SEO Questions at bottom) */}
-      <FAQ />
+      {/* 21. Live Counter Odometer (Lazy) */}
+      <LazySection minHeight="100px">
+        <VisitorOdometerCounter />
+      </LazySection>
 
-      {/* 22. Free Consultation CTA */}
-      <CTA />
-
-      {/* 22. Live Visitor Speedometer & Odometer Counter */}
-      <VisitorOdometerCounter />
-
-      {/* 23. Contact Form */}
-      <HomeContact settings={settings} />
-
+      {/* 22. Quick Consultation Form (Lazy) */}
+      <LazySection minHeight="250px">
+        <HomeContact settings={settings} />
+      </LazySection>
     </div>
   );
 }

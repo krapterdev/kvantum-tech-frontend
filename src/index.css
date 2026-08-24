@@ -155,18 +155,20 @@ body {
 
 .animate-gradient-flow {
   background: linear-gradient(90deg, #38bdf8 0%, #a855f7 33%, #ec4899 66%, #38bdf8 100%);
-  background-size: 300% 300%;
+  background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: gradientFlow 6s ease infinite;
+  will-change: background-position;
+  animation: gradientFlow 8s linear infinite;
 }
 
 :root.light-mode .animate-gradient-flow {
   background: linear-gradient(90deg, #0284c7 0%, #7e22ce 33%, #db2777 66%, #0284c7 100%);
-  background-size: 300% 300%;
+  background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: gradientFlow 6s ease infinite;
+  will-change: background-position;
+  animation: gradientFlow 8s linear infinite;
 }
 
 /* Keyframes for Marquees */

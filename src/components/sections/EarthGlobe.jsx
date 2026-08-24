@@ -4,24 +4,48 @@ import React, { useEffect, useRef, useState } from 'react';
 
 export default function EarthGlobe() {
   const canvasRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setIsVisible(true);
+        observer.disconnect();
+      }
+    }, { rootMargin: '100px' });
+
+    observer.observe(canvas);
+    return () => observer.disconnect();
+  }, [isMobile]);
+
+  useEffect(() => {
+    if (isMobile || !isVisible) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     let animationFrameId;
 
-    let width = (canvas.width = canvas.parentElement.clientWidth || 650);
+    let width = (canvas.width = canvas.parentElement?.clientWidth || 650);
     let height = (canvas.height = 460);
     const radius = Math.min(width, height) * 0.42;
     const centerX = width / 2;
     const centerY = height / 2;
 
-    let rotationY = 1.6; // Positioned focused on Asia/India
-    let isDragging = false;
-    let previousMouseX = 0;
+    let rotationY = 1.6;
 
-    // Load Photorealistic NASA Earth Map Texture
+    // Load Photorealistic NASA Earth Map Texture only when visible on desktop
     const earthTexture = new Image();
     earthTexture.crossOrigin = 'anonymous';
     earthTexture.src = 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg';
@@ -277,7 +301,9 @@ export default function EarthGlobe() {
       window.removeEventListener('mouseup', onMouseUp);
       window.removeEventListener('resize', handleResize);
     };
-  }, []);
+  }, [isMobile, isVisible]);
+
+  if (isMobile) return null;
 
   return (
     <div className="w-full flex flex-col items-center justify-center relative py-4 select-none overflow-hidden">
