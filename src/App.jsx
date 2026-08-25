@@ -94,13 +94,13 @@ export default function App() {
       try {
         const data = await serviceService.getAllServices();
         if (data && data.length > 0) setServices(data);
-      } catch (err) {}
+      } catch (err) { }
 
       // 2. Blogs
       try {
         const data = await blogService.getAllBlogs();
         let localSaved = [];
-        try { localSaved = JSON.parse(localStorage.getItem('kts_saved_blogs') || '[]'); } catch(e) {}
+        try { localSaved = JSON.parse(localStorage.getItem('kts_saved_blogs') || '[]'); } catch (e) { }
         const map = new Map();
         (Array.isArray(data) ? data : []).forEach(b => map.set(b.id || b._id || b.slug, b));
         localSaved.forEach(b => map.set(b.id || b._id || b.slug, b));
@@ -108,7 +108,7 @@ export default function App() {
         if (merged.length > 0) setBlogs(merged);
       } catch (err) {
         let localSaved = [];
-        try { localSaved = JSON.parse(localStorage.getItem('kts_saved_blogs') || '[]'); } catch(e) {}
+        try { localSaved = JSON.parse(localStorage.getItem('kts_saved_blogs') || '[]'); } catch (e) { }
         if (localSaved.length > 0) setBlogs(localSaved);
       } finally {
         setBlogsLoading(false);
@@ -118,7 +118,7 @@ export default function App() {
       try {
         const data = await seoService.getAllSeoPages();
         if (data && data.length > 0) setSeoPages(data);
-      } catch (err) {}
+      } catch (err) { }
 
       // 4. Site Settings
       try {
@@ -126,32 +126,32 @@ export default function App() {
         if (data && Object.keys(data).length > 0) {
           let contactObj = data.contact || {};
           if (typeof contactObj === 'string') {
-            try { contactObj = JSON.parse(contactObj); } catch(e) {}
+            try { contactObj = JSON.parse(contactObj); } catch (e) { }
           }
           setSettings(prev => ({ ...prev, ...data, contact: { ...(prev?.contact || {}), ...contactObj } }));
         }
-      } catch (err) {}
+      } catch (err) { }
       const localContact = localStorage.getItem('kts_saved_contact_settings');
       if (localContact) {
         try {
           const parsed = JSON.parse(localContact);
           setSettings(prev => ({ ...prev, contact: { ...(prev?.contact || {}), ...parsed } }));
-        } catch(e) {}
+        } catch (e) { }
       }
 
       // 5. Portfolios
       try {
         const data = await portfolioService.getAllPortfolios();
         if (data && data.length > 0) setPortfolios(data);
-      } catch (err) {}
+      } catch (err) { }
 
       // 6. SEO Settings
       try {
         const data = await seoService.getSeoSettings();
         if (data) setSeoSettings(data);
-      } catch (err) {}
+      } catch (err) { }
     };
-    
+
     if (typeof window !== 'undefined') {
       if ('requestIdleCallback' in window) {
         window.requestIdleCallback(() => fetchCollections());
@@ -191,7 +191,7 @@ export default function App() {
 
     let ogTitle = '';
     let ogDesc = '';
-    let ogImage = 'https://kvantumtechsolutions.com/og_banners/home.jpg';
+    let ogImage = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787116160287_og_home_page_banner.png';
     let ogType = 'website';
     let twitterTitle = '';
     let twitterDesc = '';
@@ -208,7 +208,7 @@ export default function App() {
       canonicalUrl = 'https://kvantumtechsolutions.com/';
       ogTitle = title;
       ogDesc = description;
-      ogImage = 'https://kvantumtechsolutions.com/og_banners/home.jpg';
+      ogImage = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787116160287_og_home_page_banner.png';
 
     } else if (path === '/about') {
       title = 'About Kvantum Tech Solutions | IT & AI Innovation Experts';
@@ -217,7 +217,7 @@ export default function App() {
       canonicalUrl = 'https://kvantumtechsolutions.com/about';
       ogTitle = 'About Kvantum Tech Solutions | IT & AI Innovation Experts';
       ogDesc = 'Discover Kvantum Tech Solutions, delivering innovative AI, web development, digital marketing, and enterprise IT solutions for business growth.';
-      ogImage = 'https://kvantumtechsolutions.com/og_banners/about.jpg';
+      ogImage = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787117307981_og_about_page_banner.png';
 
     } else if (path === '/services') {
       title = 'IT Services | Web Development, SEO & AI Solutions | Kvantum Tech Solutions';
@@ -226,7 +226,7 @@ export default function App() {
       canonicalUrl = 'https://kvantumtechsolutions.com/services';
       ogTitle = 'IT Services | Web Development, SEO & AI Solutions | Kvantum Tech Solutions';
       ogDesc = 'Discover enterprise-grade IT services from Kvantum Tech Solutions, including web development, SEO, AI chatbots, digital marketing, app development, and UI/UX design.';
-      ogImage = 'https://kvantumtechsolutions.com/og_banners/services.jpg';
+      ogImage = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787118547861_og_services_page_banner.png';
 
     } else if (path === '/projects' || path === '/portfolio') {
       title = 'Featured Software & Engineering Projects | Kvantum Tech Solutions';
@@ -235,7 +235,7 @@ export default function App() {
       canonicalUrl = 'https://kvantumtechsolutions.com/projects';
       ogTitle = 'Featured Software & Engineering Projects | Kvantum Tech Solutions';
       ogDesc = 'Explore web products, apps, and custom platforms built for our clients by Kvantum Tech Solutions.';
-      ogImage = 'https://kvantumtechsolutions.com/og_banners/projects.jpg';
+      ogImage = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787118540771_og_project_page_banner.png';
 
     } else if (path === '/blog') {
       title = 'Tech Blog | AI, SEO, Web Development & Digital Marketing | Kvantum Tech Solutions';
@@ -244,7 +244,7 @@ export default function App() {
       canonicalUrl = 'https://kvantumtechsolutions.com/blog';
       ogTitle = 'Tech Blog | AI, SEO, Web Development & Digital Marketing | Kvantum Tech Solutions';
       ogDesc = 'Read the latest articles from Kvantum Tech Solutions covering AI, SEO, web development, digital marketing, software innovation, and business technology.';
-      ogImage = 'https://kvantumtechsolutions.com/og_banners/blog.jpg';
+      ogImage = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787118518420_og_blog_page_banner.png';
 
     } else if (path === '/contact') {
       title = "Contact Kvantum Tech Solutions | Let's Build Your Digital Future";
@@ -253,7 +253,7 @@ export default function App() {
       canonicalUrl = 'https://kvantumtechsolutions.com/contact';
       ogTitle = "Contact Kvantum Tech Solutions | Let's Build Your Digital Future";
       ogDesc = 'Contact Kvantum Tech Solutions to discuss your next digital project. Our experts deliver innovative web, AI, SEO, app development, and digital marketing solutions.';
-      ogImage = 'https://kvantumtechsolutions.com/og_banners/contact.jpg';
+      ogImage = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787118530037_og_contact_page_banner.png';
 
 
     } else if (path.startsWith('/keyword/')) {
@@ -424,7 +424,7 @@ export default function App() {
           const parser = new DOMParser();
           const doc = parser.parseFromString(`<div>${scriptObj.code}</div>`, 'text/html');
           const elements = doc.body.firstChild.childNodes;
-          
+
           elements.forEach(node => {
             if (node.nodeType === Node.ELEMENT_NODE) {
               const clone = document.createElement(node.tagName);
@@ -450,21 +450,20 @@ export default function App() {
   const isAdminPath = location.pathname.startsWith('/admin');
 
   return (
-    <div className={`relative min-h-screen transition-colors duration-300 ${
-      isAdminPath 
-        ? 'bg-[#050811] text-zinc-100' 
-        : theme === 'light' 
-          ? 'bg-[#f8fafc] text-zinc-900' 
-          : 'text-zinc-100 overflow-hidden'
-    }`}>
+    <div className={`relative min-h-screen transition-colors duration-300 ${isAdminPath
+      ? 'bg-[#050811] text-zinc-100'
+      : theme === 'light'
+        ? 'bg-[#f8fafc] text-zinc-900'
+        : 'text-zinc-100 overflow-hidden'
+      }`}>
       {/* Auto Reset Scroll position */}
 
       {/* Background color layer behind the canvas */}
       {!isAdminPath && theme === 'dark' && <div className="fixed inset-0 bg-background-dark -z-30 pointer-events-none" />}
-      
+
       {/* Dynamic Scroll Video Frame Canvas Background */}
       {!isAdminPath && theme === 'dark' && <ScrollVideoPlayer />}
-      
+
       {/* Dark Overlay for Contrast & Text Readability */}
       {!isAdminPath && theme === 'dark' && <div className="fixed inset-0 bg-black/80 backdrop-blur-[2px] -z-10 pointer-events-none" />}
 
@@ -486,23 +485,23 @@ export default function App() {
             <Route path="/portfolio" element={<ProjectsPage portfolios={portfolios} />} />
             <Route path="/contact" element={<ContactPage settings={settings} />} />
             <Route path="/thank-you" element={<ThankYouPage />} />
-            
+
             <Route path="/blog" element={<BlogPage blogs={blogs} loading={blogsLoading} />} />
             <Route path="/blog/:slug" element={<BlogPage blogs={blogs} loading={blogsLoading} />} />
-            
+
             <Route path="/keyword/:slug" element={<DynamicSeoPage seoPages={seoPages} />} />
-            
+
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/privacy" element={<PrivacyPage />} />
-            
+
             <Route path="/admin" element={
-              <AdminPortalPage 
-                services={services} 
-                setServices={setServices} 
-                blogs={blogs} 
-                setBlogs={setBlogs} 
-                seoPages={seoPages} 
-                setSeoPages={setSeoPages} 
+              <AdminPortalPage
+                services={services}
+                setServices={setServices}
+                blogs={blogs}
+                setBlogs={setBlogs}
+                seoPages={seoPages}
+                setSeoPages={setSeoPages}
                 settings={settings}
                 setSettings={setSettings}
                 portfolios={portfolios}
@@ -512,13 +511,13 @@ export default function App() {
               />
             } />
             <Route path="/admin/:tab" element={
-              <AdminPortalPage 
-                services={services} 
-                setServices={setServices} 
-                blogs={blogs} 
-                setBlogs={setBlogs} 
-                seoPages={seoPages} 
-                setSeoPages={setSeoPages} 
+              <AdminPortalPage
+                services={services}
+                setServices={setServices}
+                blogs={blogs}
+                setBlogs={setBlogs}
+                seoPages={seoPages}
+                setSeoPages={setSeoPages}
                 settings={settings}
                 setSettings={setSettings}
                 portfolios={portfolios}
@@ -527,7 +526,7 @@ export default function App() {
                 setSeoSettings={setSeoSettings}
               />
             } />
-            
+
             <Route path="*" element={<NotFound />} />
           </Routes>
         </React.Suspense>

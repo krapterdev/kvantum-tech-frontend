@@ -62,7 +62,7 @@ export const metadata: Metadata = {
     description: 'Kvantum Tech Solutions offers reliable IT services, software development, cloud solutions, web development, and digital transformation services across Delhi NCR.',
     images: [
       {
-        url: 'https://kvantumtechsolutions.com/og_banners/home.jpg',
+        url: 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787116160287_og_home_page_banner.png',
         width: 1200,
         height: 630,
         type: 'image/jpeg',
@@ -74,7 +74,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'IT Solutions Company in Delhi NCR | Kvantum Tech Solutions',
     description: 'Kvantum Tech Solutions offers reliable IT services, software development, cloud solutions, web development, and digital transformation services across Delhi NCR.',
-    images: ['https://kvantumtechsolutions.com/og_banners/home.jpg'],
+    images: ['https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787116160287_og_home_page_banner.png'],
   },
   robots: {
     index: true,
@@ -99,15 +99,15 @@ export default function RootLayout({
       <head>
         <meta property="og:site_name" content="Kvantum Tech Solutions" />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://kvantumtechsolutions.com/og_banners/home.jpg" />
-        <meta property="og:image:secure_url" content="https://kvantumtechsolutions.com/og_banners/home.jpg" />
+        <meta property="og:image" content="https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787116160287_og_home_page_banner.png" />
+        <meta property="og:image:secure_url" content="https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787116160287_og_home_page_banner.png" />
         <meta property="og:image:type" content="image/jpeg" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="og:image:alt" content="Kvantum Tech Solutions" />
-        <link rel="image_src" href="https://kvantumtechsolutions.com/og_banners/home.jpg" />
+        <link rel="image_src" href="https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787116160287_og_home_page_banner.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:image" content="https://kvantumtechsolutions.com/og_banners/home.jpg" />
+        <meta name="twitter:image" content="https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787116160287_og_home_page_banner.png" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="icon" href="/icon-32.svg" sizes="32x32" type="image/svg+xml" />
         <link rel="icon" href="/icon-16.svg" sizes="16x16" type="image/svg+xml" />
