@@ -13,6 +13,21 @@ export const metadata: Metadata = {
     description: 'Discover Kvantum Tech Solutions, delivering innovative AI, web development, digital marketing, and enterprise IT solutions for business growth.',
     url: 'https://kvantumtechsolutions.com/about',
     type: 'website',
+    siteName: 'Kvantum Tech Solutions',
+    images: [
+      {
+        url: 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787117307981_og_about_page_banner.png',
+        width: 1200,
+        height: 630,
+        alt: 'About Kvantum Tech Solutions',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'About Kvantum Tech Solutions | IT & AI Innovation Experts',
+    description: 'Discover Kvantum Tech Solutions, delivering innovative AI, web development, digital marketing, and enterprise IT solutions for business growth.',
+    images: ['https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787117307981_og_about_page_banner.png'],
   },
 };
 
