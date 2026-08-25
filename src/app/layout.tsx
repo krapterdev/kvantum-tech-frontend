@@ -97,6 +97,17 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${plusJakarta.variable} dark`}>
       <head>
+        <meta property="og:site_name" content="Kvantum Tech Solutions" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://kvantumtechsolutions.com/og_banners/home.jpg" />
+        <meta property="og:image:secure_url" content="https://kvantumtechsolutions.com/og_banners/home.jpg" />
+        <meta property="og:image:type" content="image/jpeg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Kvantum Tech Solutions" />
+        <link rel="image_src" href="https://kvantumtechsolutions.com/og_banners/home.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content="https://kvantumtechsolutions.com/og_banners/home.jpg" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="icon" href="/icon-32.svg" sizes="32x32" type="image/svg+xml" />
         <link rel="icon" href="/icon-16.svg" sizes="16x16" type="image/svg+xml" />

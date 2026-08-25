@@ -33,5 +33,27 @@ export const metadata: Metadata = {
 };
 
 export default function BlogPage() {
-  return <BlogPageClient />;
+  return (
+    <>
+      <head>
+        <title>Tech Blog | AI, SEO, Web Development & Digital Marketing | Kvantum Tech Solutions</title>
+        <meta name="description" content="Explore the Kvantum Tech Solutions blog for expert insights on AI, SEO, web development, digital marketing, software solutions, and the latest technology trends to grow your business." />
+        <link rel="canonical" href="https://kvantumtechsolutions.com/blog" />
+        <meta property="og:title" content="Tech Blog | AI, SEO, Web Development & Digital Marketing | Kvantum Tech Solutions" />
+        <meta property="og:description" content="Read the latest articles from Kvantum Tech Solutions covering AI, SEO, web development, digital marketing, software innovation, and business technology." />
+        <meta property="og:image" content="https://kvantumtechsolutions.com/og_banners/blog.jpg" />
+        <meta property="og:image:secure_url" content="https://kvantumtechsolutions.com/og_banners/blog.jpg" />
+        <meta property="og:image:type" content="image/jpeg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Tech Blog Kvantum Tech Solutions" />
+        <link rel="image_src" href="https://kvantumtechsolutions.com/og_banners/blog.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Tech Blog | AI, SEO, Web Development & Digital Marketing | Kvantum Tech Solutions" />
+        <meta name="twitter:description" content="Explore the Kvantum Tech Solutions blog for expert insights on AI, SEO, web development, digital marketing, software solutions, and the latest technology trends to grow your business." />
+        <meta name="twitter:image" content="https://kvantumtechsolutions.com/og_banners/blog.jpg" />
+      </head>
+      <BlogPageClient />
+    </>
+  );
 }

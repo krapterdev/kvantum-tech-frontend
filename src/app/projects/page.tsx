@@ -33,5 +33,27 @@ export const metadata: Metadata = {
 };
 
 export default function ProjectsPage() {
-  return <ProjectsPageClient />;
+  return (
+    <>
+      <head>
+        <title>Featured Software & Engineering Projects | Kvantum Tech Solutions</title>
+        <meta name="description" content="Explore web products, apps, and custom platforms built for our clients by Kvantum Tech Solutions." />
+        <link rel="canonical" href="https://kvantumtechsolutions.com/projects" />
+        <meta property="og:title" content="Featured Software & Engineering Projects | Kvantum Tech Solutions" />
+        <meta property="og:description" content="Explore web products, apps, and custom platforms built for our clients by Kvantum Tech Solutions." />
+        <meta property="og:image" content="https://kvantumtechsolutions.com/og_banners/projects.jpg" />
+        <meta property="og:image:secure_url" content="https://kvantumtechsolutions.com/og_banners/projects.jpg" />
+        <meta property="og:image:type" content="image/jpeg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Featured Projects Kvantum Tech Solutions" />
+        <link rel="image_src" href="https://kvantumtechsolutions.com/og_banners/projects.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Featured Software & Engineering Projects | Kvantum Tech Solutions" />
+        <meta name="twitter:description" content="Explore web products, apps, and custom platforms built for our clients by Kvantum Tech Solutions." />
+        <meta name="twitter:image" content="https://kvantumtechsolutions.com/og_banners/projects.jpg" />
+      </head>
+      <ProjectsPageClient />
+    </>
+  );
 }

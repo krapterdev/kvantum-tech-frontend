@@ -33,5 +33,27 @@ export const metadata: Metadata = {
 };
 
 export default function HomePage() {
-  return <HomeClient />;
+  return (
+    <>
+      <head>
+        <title>IT Solutions Company in Delhi NCR | Kvantum Tech Solutions</title>
+        <meta name="description" content="Kvantum Tech Solutions offers reliable IT services, software development, cloud solutions, web development, and digital transformation services across Delhi NCR." />
+        <link rel="canonical" href="https://kvantumtechsolutions.com/" />
+        <meta property="og:title" content="IT Solutions Company in Delhi NCR | Kvantum Tech Solutions" />
+        <meta property="og:description" content="Kvantum Tech Solutions offers reliable IT services, software development, cloud solutions, web development, and digital transformation services across Delhi NCR." />
+        <meta property="og:image" content="https://kvantumtechsolutions.com/og_banners/home.jpg" />
+        <meta property="og:image:secure_url" content="https://kvantumtechsolutions.com/og_banners/home.jpg" />
+        <meta property="og:image:type" content="image/jpeg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Kvantum Tech Solutions" />
+        <link rel="image_src" href="https://kvantumtechsolutions.com/og_banners/home.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="IT Solutions Company in Delhi NCR | Kvantum Tech Solutions" />
+        <meta name="twitter:description" content="Kvantum Tech Solutions offers reliable IT services, software development, cloud solutions, web development, and digital transformation services across Delhi NCR." />
+        <meta name="twitter:image" content="https://kvantumtechsolutions.com/og_banners/home.jpg" />
+      </head>
+      <HomeClient />
+    </>
+  );
 }
