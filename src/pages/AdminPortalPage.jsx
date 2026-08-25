@@ -3563,181 +3563,30 @@ ${allEntries.map(entry => `    <url>
             <h2 className="text-xl font-bold font-headline text-zinc-200 flex items-center gap-2">
               <Key size={18} className="text-purpleCustom" /> Page Meta Configurations
             </h2>
-            <p className="text-zinc-400 text-xs">Manage Page Meta Titles, Meta Descriptions, Canonical URLs, Open Graph (OG) Social Cards, Twitter Cards, FAQs, JSON-LD Schemas, and Custom Code Snippets.</p>
+            <p className="text-zinc-400 text-xs">Static SEO meta tags for all main pages are now hardcoded in the frontend source code for maximum performance and reliability.</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {(() => {
-              const DEFAULT_PAGE_SEO_ITEMS = [
-                {
-                  key: 'home',
-                  title: 'Custom Software Development Company | Kvantum Tech Solutions',
-                  description: 'Kvantum Tech Solutions is a custom software development company building scalable business software, CRM, HRMS, ERP, web and mobile apps, and automation solutions across Delhi NCR.',
-                  keywords: 'custom software development company, software development company, custom software development services, business software development company',
-                  canonical: 'https://kvantumtechsolutions.com/',
-                  ogTitle: 'Custom Software Development Company | Kvantum Tech Solutions',
-                  ogDesc: 'Kvantum Tech Solutions is a custom software development company building scalable business software, CRM, HRMS, ERP, web and mobile apps, and automation solutions across Delhi NCR.',
-                  ogImage: 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg',
-                  ogType: 'website',
-                  twitterTitle: 'Custom Software Development Company | Kvantum Tech Solutions',
-                  twitterDesc: 'Kvantum Tech Solutions is a custom software development company building scalable business software, CRM, HRMS, ERP, web and mobile apps, and automation solutions across Delhi NCR.',
-                  twitterImage: 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg',
-                  twitterCard: 'summary_large_image',
-                  faqs: [
-                    { question: 'What services does Kvantum Tech Solutions offer?', answer: 'We specialize in custom software development, CRM/HRMS software, business automation, web and mobile application development, and enterprise digital solutions.' }
-                  ],
-                  schema: `{"@context": "https://schema.org", "@type": "ITPrivateTeam", "name": "Kvantum Tech Solutions", "url": "https://kvantumtechsolutions.com/"}`,
-                  other: '<meta property="og:site_name" content="Kvantum Tech Solutions" />'
-                },
-                {
-                  key: 'about',
-                  title: 'About Kvantum Tech Solutions | Enterprise Software & IT Services',
-                  description: 'Learn about Kvantum Tech Solutions, a trusted custom software development company specializing in CRM, HRMS, web apps, and business automation in Delhi NCR.',
-                  keywords: 'about kvantum tech solutions, software engineering team, custom software company',
-                  canonical: 'https://kvantumtechsolutions.com/about',
-                  ogTitle: 'About Kvantum Tech Solutions | Enterprise Software & IT Services',
-                  ogDesc: 'Learn about Kvantum Tech Solutions, a trusted custom software development company specializing in CRM, HRMS, web apps, and business automation in Delhi NCR.',
-                  ogImage: 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg',
-                  ogType: 'website',
-                  twitterTitle: 'About Kvantum Tech Solutions | Enterprise Software & IT Services',
-                  twitterDesc: 'Learn about Kvantum Tech Solutions, a trusted custom software development company specializing in CRM, HRMS, web apps, and business automation in Delhi NCR.',
-                  twitterImage: 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg',
-                  twitterCard: 'summary_large_image',
-                  faqs: [],
-                  schema: '',
-                  other: '<meta property="og:site_name" content="Kvantum Tech Solutions" />'
-                },
-                {
-                  key: 'services',
-                  title: 'Enterprise IT & Custom Software Services | Kvantum Tech Solutions',
-                  description: 'Explore custom software development, SaaS products, WhatsApp API integration, CRM/HRMS development, and web and mobile app development services.',
-                  keywords: 'custom software services, CRM software development, HRMS development, web application development',
-                  canonical: 'https://kvantumtechsolutions.com/services',
-                  ogTitle: 'Enterprise IT & Custom Software Services | Kvantum Tech Solutions',
-                  ogDesc: 'Explore custom software development, SaaS products, WhatsApp API integration, CRM/HRMS development, and web and mobile app development services.',
-                  ogImage: 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg',
-                  ogType: 'website',
-                  twitterTitle: 'Enterprise IT & Custom Software Services | Kvantum Tech Solutions',
-                  twitterDesc: 'Explore custom software development, SaaS products, WhatsApp API integration, CRM/HRMS development, and web and mobile app development services.',
-                  twitterImage: 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg',
-                  twitterCard: 'summary_large_image',
-                  faqs: [],
-                  schema: '',
-                  other: '<meta property="og:site_name" content="Kvantum Tech Solutions" />'
-                },
-                {
-                  key: 'projects',
-                  title: 'Featured Projects | Studio Kvantum Tech Solutions',
-                  description: 'Explore web products, apps, and custom platforms built for our clients by Kvantum Tech Solutions.',
-                  keywords: 'featured software projects, portfolio, enterprise software development',
-                  canonical: 'https://kvantumtechsolutions.com/projects',
-                  ogTitle: 'Featured Projects | Studio Kvantum Tech Solutions',
-                  ogDesc: 'Explore web products, apps, and custom platforms built for our clients by Kvantum Tech Solutions.',
-                  ogImage: 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg',
-                  ogType: 'website',
-                  twitterTitle: 'Featured Projects | Studio Kvantum Tech Solutions',
-                  twitterDesc: 'Explore web products, apps, and custom platforms built for our clients by Kvantum Tech Solutions.',
-                  twitterImage: 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg',
-                  twitterCard: 'summary_large_image',
-                  faqs: [],
-                  schema: '',
-                  other: '<meta property="og:site_name" content="Kvantum Tech Solutions" />'
-                },
-                {
-                  key: 'blog',
-                  title: 'Engineering & Tech Insights | Kvantum Tech Solutions Blog',
-                  description: 'Latest articles on custom software development, business automation, CRM tools, SaaS engineering, and enterprise digital transformation.',
-                  keywords: 'software engineering blog, tech insights, custom software development guides',
-                  canonical: 'https://kvantumtechsolutions.com/blog',
-                  ogTitle: 'Engineering & Tech Insights | Kvantum Tech Solutions Blog',
-                  ogDesc: 'Latest articles on custom software development, business automation, CRM tools, SaaS engineering, and enterprise digital transformation.',
-                  ogImage: 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg',
-                  ogType: 'website',
-                  twitterTitle: 'Engineering & Tech Insights | Kvantum Tech Solutions Blog',
-                  twitterDesc: 'Latest articles on custom software development, business automation, CRM tools, SaaS engineering, and enterprise digital transformation.',
-                  twitterImage: 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg',
-                  twitterCard: 'summary_large_image',
-                  faqs: [],
-                  schema: '',
-                  other: '<meta property="og:site_name" content="Kvantum Tech Solutions" />'
-                },
-                {
-                  key: 'contact',
-                  title: 'Contact Kvantum Tech Solutions | Direct Technical Contact',
-                  description: 'Get in touch with Kvantum Tech Solutions for custom software, CRM, HRMS, ERP, web apps, and business automation. Book a live demo or request project quotes.',
-                  keywords: 'contact software company, request software proposal, custom software quote',
-                  canonical: 'https://kvantumtechsolutions.com/contact',
-                  ogTitle: 'Contact Kvantum Tech Solutions | Direct Technical Contact',
-                  ogDesc: 'Get in touch with Kvantum Tech Solutions for custom software, CRM, HRMS, ERP, web apps, and business automation. Book a live demo or request project quotes.',
-                  ogImage: 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg',
-                  ogType: 'website',
-                  twitterTitle: 'Contact Kvantum Tech Solutions | Direct Technical Contact',
-                  twitterDesc: 'Get in touch with Kvantum Tech Solutions for custom software, CRM, HRMS, ERP, web apps, and business automation. Book a live demo or request project quotes.',
-                  twitterImage: 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg',
-                  twitterCard: 'summary_large_image',
-                  faqs: [],
-                  schema: '',
-                  other: '<meta property="og:site_name" content="Kvantum Tech Solutions" />'
-                }
-              ];
-
-              const fetchedList = Array.isArray(seoSettings) 
-                ? seoSettings 
-                : (seoSettings && typeof seoSettings === 'object' ? Object.values(seoSettings) : []);
-
-              const mergedList = DEFAULT_PAGE_SEO_ITEMS.map(defItem => {
-                const found = fetchedList.find(s => s.key === defItem.key);
-                return found ? { ...defItem, ...found } : defItem;
-              });
-
-              return mergedList.map(setting => (
-                <Card key={setting.key} className="p-6 border flex flex-col justify-between items-start gap-4 h-full hover:border-purpleCustom/40 transition-colors">
-                  <div className="text-left w-full flex flex-col justify-between flex-1">
-                    <div>
-                      <div className="flex justify-between items-center mb-3">
-                        <span className="px-2.5 py-1 rounded-md text-[10px] font-mono bg-purpleCustom/15 text-purpleCustom border border-purpleCustom/30 font-bold uppercase block w-fit">
-                          {setting.key} PAGE
-                        </span>
-                        <span className="text-[10px] font-mono text-zinc-500">
-                          {setting.ogImage ? '🖼️ OG Image Set' : 'Default OG'}
-                        </span>
-                      </div>
-                      <div className="flex flex-col gap-1.5 min-h-[5.5rem] justify-center">
-                        <h4 className="text-zinc-100 text-sm font-semibold line-clamp-1 font-headline" title={setting.title || 'Untitled Page'}>
-                          {setting.title || 'Untitled Page'}
-                        </h4>
-                        <p className="text-zinc-400 text-xs line-clamp-3 leading-relaxed" title={setting.description || 'No description'}>
-                          {setting.description || 'No description'}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <Button 
-                    onClick={() => {
-                      let parsedFaqs = [];
-                      if (Array.isArray(setting.faqs)) parsedFaqs = setting.faqs;
-                      else if (typeof setting.faqs === 'string') {
-                        try { parsedFaqs = JSON.parse(setting.faqs); } catch(e) { parsedFaqs = []; }
-                      }
-                      setEditingSeoSettingItem({ 
-                        ...setting,
-                        faqs: parsedFaqs
-                      });
-                      setSeoModalTab('basic');
-                      setIsEditingSeoSetting(true);
-                    }}
-                    variant="secondary"
-                    className="w-full py-2.5 text-xs rounded-xl mt-4 cursor-pointer gap-2 justify-center border-white/10 hover:border-purpleCustom/40 hover:text-purpleCustom"
-                  >
-                    <Edit2 size={13} /> Configure Meta & OG Node
-                  </Button>
-                </Card>
-              ));
-            })()}
+          <div className="bg-zinc-900/30 border border-emerald-500/20 rounded-2xl p-8 flex flex-col items-center justify-center gap-4 text-center">
+            <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center">
+              <CheckCircle2 size={24} className="text-emerald-500" />
+            </div>
+            <h3 className="text-zinc-100 font-bold font-headline text-lg">SEO Tags Are Now Static</h3>
+            <p className="text-zinc-400 text-sm max-w-lg leading-relaxed">
+              Meta titles, descriptions, OG images, Twitter cards, and canonical URLs for <span className="text-zinc-200 font-semibold">Home, About, Services, Projects, Blog, and Contact</span> pages are now hardcoded directly in the frontend source code.
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-2 w-full max-w-xl">
+              {['Home', 'About', 'Services', 'Projects', 'Blog', 'Contact'].map(page => (
+                <div key={page} className="flex items-center gap-2 px-4 py-2.5 bg-zinc-950/40 border border-emerald-500/20 rounded-xl text-xs font-mono text-emerald-400">
+                  <CheckCircle2 size={12} /> {page}
+                </div>
+              ))}
+            </div>
+            <p className="text-zinc-600 text-xs mt-2">OG Image: Static banner · Twitter Card: summary_large_image</p>
+            <p className="text-zinc-500 text-xs">To update these, edit <code className="text-cyanCustom bg-zinc-950/60 px-1.5 py-0.5 rounded">src/App.jsx</code> in the frontend source.</p>
           </div>
         </div>
       )}
+
 
       {/* ================================== TAB: CUSTOM CODE SNIPPETS & GTM ================================== */}
       {activeTab === 'custom_scripts' && (currentUser.role === 'admin' || currentUser.role === 'seo') && (

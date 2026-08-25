@@ -179,79 +179,76 @@ export default function App() {
       });
     }
 
-    let title = 'IT Solutions Company in Delhi NCR | Kvantum Tech Solutions';
-    let description = 'Kvantum Tech Solutions offers reliable IT services, software development, cloud solutions, web development, and digital transformation services across Delhi NCR.';
-    let keywords = 'IT Solutions Company in Delhi NCR, Kvantum Tech Solutions, software development, cloud solutions, web development, digital transformation';
-    
+    // ── FULLY STATIC SEO META ────────────────────────────────────────────────
+    // All main pages use hardcoded values. Admin panel no longer controls these.
+    // OG image is static banner for all main pages.
+    const STATIC_OG_IMAGE = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787116160287_og_home_page_banner.png';
+
+    let title = 'Kvantum Tech Solutions';
+    let description = 'Kvantum Tech Solutions is a custom software development company.';
+    let keywords = 'custom software development company, Kvantum Tech Solutions';
+
     const path = location.pathname;
-    const siteUrl = 'https://kvantumtechsolutions.com';
-    let canonicalUrl = `${siteUrl}${path === '/' ? '/' : path}`;
+    let canonicalUrl = `https://kvantumtechsolutions.com${path === '/' ? '/' : path}`;
 
     let ogTitle = '';
     let ogDesc = '';
-    let ogImage = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/logo-2-FINAL-DM.jpg';
+    let ogImage = STATIC_OG_IMAGE;
     let ogType = 'website';
     let twitterTitle = '';
     let twitterDesc = '';
-    let twitterImage = '';
+    let twitterImage = STATIC_OG_IMAGE;
     let twitterCard = 'summary_large_image';
     let schemaMarkup = '';
     let faqsList = [];
     let otherTagsContent = '';
 
-    let activeSeoObj = null;
-
     if (path === '/') {
-      title = 'IT Solutions Company in Delhi NCR | Kvantum Tech Solutions';
-      description = 'Kvantum Tech Solutions offers reliable IT services, software development, cloud solutions, web development, and digital transformation services across Delhi NCR.';
-      keywords = 'IT Solutions Company in Delhi NCR, Kvantum Tech Solutions, software development, cloud solutions, web development, digital transformation';
+      title = 'Custom Software Development Company | Kvantum Tech Solutions';
+      description = 'Kvantum Tech Solutions is a custom software development company building scalable business software, CRM, HRMS, ERP, web and mobile apps, and automation solutions across Delhi NCR.';
+      keywords = 'custom software development company, software development company, custom software development services, business software development company';
       canonicalUrl = 'https://kvantumtechsolutions.com/';
       ogTitle = title;
       ogDesc = description;
-      activeSeoObj = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'home') : null;
     } else if (path === '/about') {
-      title = 'About Kvantum Tech Solutions | IT & AI Innovation Experts';
-      description = 'Learn about Kvantum Tech Solutions, a trusted IT company delivering AI-powered solutions, web development, digital marketing, and enterprise technology services.';
+      title = 'About Kvantum Tech Solutions | Enterprise Software & IT Services';
+      description = 'Learn about Kvantum Tech Solutions, a trusted custom software development company specializing in CRM, HRMS, web apps, and business automation in Delhi NCR.';
       keywords = 'about kvantum tech solutions, software engineering team, custom software company';
       canonicalUrl = 'https://kvantumtechsolutions.com/about';
-      ogTitle = 'About Kvantum Tech Solutions | IT & AI Innovation Experts';
-      ogDesc = 'Discover Kvantum Tech Solutions, delivering innovative AI, web development, digital marketing, and enterprise IT solutions for business growth.';
-      activeSeoObj = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'about') : null;
+      ogTitle = title;
+      ogDesc = description;
     } else if (path === '/services') {
-      title = 'IT Services | Web Development, SEO & AI Solutions | Kvantum Tech Solutions';
-      description = 'Explore Kvantum Tech Solutions\' expert IT services, including web development, SEO, digital marketing, AI chatbots, app development, UI/UX design, and scalable business solutions.';
-      keywords = 'IT Services, Web Development, SEO, AI Solutions, Kvantum Tech Solutions';
+      title = 'Enterprise IT & Custom Software Services | Kvantum Tech Solutions';
+      description = 'Explore custom software development, SaaS products, WhatsApp API integration, CRM/HRMS development, and web and mobile app development services.';
+      keywords = 'custom software services, CRM software development, HRMS development, web application development';
       canonicalUrl = 'https://kvantumtechsolutions.com/services';
-      ogTitle = 'IT Services | Web Development, SEO & AI Solutions | Kvantum Tech Solutions';
-      ogDesc = 'Discover enterprise-grade IT services from Kvantum Tech Solutions, including web development, SEO, AI chatbots, digital marketing, app development, and UI/UX design.';
-      activeSeoObj = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'services') : null;
+      ogTitle = title;
+      ogDesc = description;
     } else if (path === '/projects' || path === '/portfolio') {
-      title = 'Featured Software & Engineering Projects | Kvantum Tech Solutions';
+      title = 'Featured Projects | Studio Kvantum Tech Solutions';
       description = 'Explore web products, apps, and custom platforms built for our clients by Kvantum Tech Solutions.';
       keywords = 'featured software projects, portfolio, enterprise software development';
       canonicalUrl = 'https://kvantumtechsolutions.com/projects';
       ogTitle = title;
       ogDesc = description;
-      activeSeoObj = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'projects') : null;
     } else if (path === '/blog') {
-      title = 'Tech Blog | AI, SEO, Web Development & Digital Marketing | Kvantum Tech Solutions';
-      description = 'Explore the Kvantum Tech Solutions blog for expert insights on AI, SEO, web development, digital marketing, software solutions, and the latest technology trends to grow your business.';
-      keywords = 'tech blog, web development articles, software engineering insights';
+      title = 'Engineering & Tech Insights | Kvantum Tech Solutions Blog';
+      description = 'Latest articles on custom software development, business automation, CRM tools, SaaS engineering, and enterprise digital transformation.';
+      keywords = 'software engineering blog, tech insights, custom software development guides';
       canonicalUrl = 'https://kvantumtechsolutions.com/blog';
-      ogTitle = 'Tech Blog | AI, SEO, Web Development & Digital Marketing | Kvantum Tech Solutions';
-      ogDesc = 'Read the latest articles from Kvantum Tech Solutions covering AI, SEO, web development, digital marketing, software innovation, and business technology .';
-      activeSeoObj = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'blog') : null;
+      ogTitle = title;
+      ogDesc = description;
     } else if (path === '/contact') {
-      title = 'Contact Kvantum Tech Solutions | Let\'s Build Your Digital Future';
-      description = 'Get in touch with Kvantum Tech Solutions for web development, AI solutions, SEO, digital marketing, mobile apps, and enterprise IT services. Contact our experts today.';
-      keywords = 'contact kvantum tech solutions, hire developers, start custom software project';
+      title = 'Contact Kvantum Tech Solutions | Direct Technical Contact';
+      description = 'Get in touch with Kvantum Tech Solutions for custom software, CRM, HRMS, ERP, web apps, and business automation. Book a live demo or request project quotes.';
+      keywords = 'contact software company, request software proposal, custom software quote';
       canonicalUrl = 'https://kvantumtechsolutions.com/contact';
-      ogTitle = 'Contact Kvantum Tech Solutions | Let\'s Build Your Digital Future';
-      ogDesc = 'Contact Kvantum Tech Solutions to discuss your next digital project. Our experts deliver innovative web, AI, SEO, app development, and digital marketing solutions.';
-      activeSeoObj = Array.isArray(seoSettings) ? seoSettings.find(s => s.key === 'contact') : null;
+      ogTitle = title;
+      ogDesc = description;
     } else if (path.startsWith('/keyword/')) {
+      // Programmatic SEO pages still dynamic from admin
       const slug = path.replace('/keyword/', '').trim();
-      activeSeoObj = (seoPages || []).find(p => p.slug === slug || p.id === slug);
+      const activeSeoObj = (seoPages || []).find(p => p.slug === slug || p.id === slug);
       if (activeSeoObj) {
         title = activeSeoObj.metaTitle || activeSeoObj.title || title;
         description = activeSeoObj.metaDesc || (activeSeoObj.content ? activeSeoObj.content.substring(0, 160) : description);
@@ -285,30 +282,6 @@ export default function App() {
         otherTagsContent = activePost.otherSeoTags || '';
         faqsList = Array.isArray(activePost.faqs) ? activePost.faqs : [];
       }
-    }
-
-    if (activeSeoObj) {
-      if (activeSeoObj.title && activeSeoObj.title.trim()) title = activeSeoObj.title.trim();
-      if (activeSeoObj.description && activeSeoObj.description.trim()) description = activeSeoObj.description.trim();
-      if (activeSeoObj.keywords && activeSeoObj.keywords.trim()) keywords = activeSeoObj.keywords.trim();
-      if (activeSeoObj.canonical && activeSeoObj.canonical.trim()) canonicalUrl = activeSeoObj.canonical.trim();
-      if (activeSeoObj.ogTitle && activeSeoObj.ogTitle.trim()) ogTitle = activeSeoObj.ogTitle.trim();
-      if (activeSeoObj.ogDesc && activeSeoObj.ogDesc.trim()) ogDesc = activeSeoObj.ogDesc.trim();
-      if (activeSeoObj.ogImage && activeSeoObj.ogImage.trim()) ogImage = activeSeoObj.ogImage.trim();
-      if (activeSeoObj.ogType && activeSeoObj.ogType.trim()) ogType = activeSeoObj.ogType.trim();
-      if (activeSeoObj.twitterTitle && activeSeoObj.twitterTitle.trim()) twitterTitle = activeSeoObj.twitterTitle.trim();
-      if (activeSeoObj.twitterDesc && activeSeoObj.twitterDesc.trim()) twitterDesc = activeSeoObj.twitterDesc.trim();
-      if (activeSeoObj.twitterImage && activeSeoObj.twitterImage.trim()) twitterImage = activeSeoObj.twitterImage.trim();
-      if (activeSeoObj.twitterCard && activeSeoObj.twitterCard.trim()) twitterCard = activeSeoObj.twitterCard.trim();
-      if (activeSeoObj.schema && activeSeoObj.schema.trim()) schemaMarkup = activeSeoObj.schema.trim();
-      if (activeSeoObj.other && activeSeoObj.other.trim()) otherTagsContent = activeSeoObj.other.trim();
-      
-      let parsedFaqs = [];
-      if (Array.isArray(activeSeoObj.faqs)) parsedFaqs = activeSeoObj.faqs;
-      else if (typeof activeSeoObj.faqs === 'string') {
-        try { parsedFaqs = JSON.parse(activeSeoObj.faqs); } catch(e) {}
-      }
-      if (parsedFaqs.length > 0) faqsList = parsedFaqs;
     }
 
     if (!ogTitle) ogTitle = title;
