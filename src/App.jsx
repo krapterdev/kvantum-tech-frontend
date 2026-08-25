@@ -180,73 +180,83 @@ export default function App() {
     }
 
     // ── FULLY STATIC SEO META ────────────────────────────────────────────────
-    // All main pages use hardcoded values. Admin panel no longer controls these.
-    // OG image is static banner for all main pages.
-    const STATIC_OG_IMAGE = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787116160287_og_home_page_banner.png';
+    // Each page has its own unique OG banner image + exact meta tags.
 
-    let title = 'Kvantum Tech Solutions';
-    let description = 'Kvantum Tech Solutions is a custom software development company.';
-    let keywords = 'custom software development company, Kvantum Tech Solutions';
+    let title = 'IT Solutions Company in Delhi NCR | Kvantum Tech Solutions';
+    let description = 'Kvantum Tech Solutions offers reliable IT services, software development, cloud solutions, web development, and digital transformation services across Delhi NCR.';
+    let keywords = 'IT Solutions Company, Kvantum Tech Solutions, software development, web development, digital transformation';
 
     const path = location.pathname;
     let canonicalUrl = `https://kvantumtechsolutions.com${path === '/' ? '/' : path}`;
 
     let ogTitle = '';
     let ogDesc = '';
-    let ogImage = STATIC_OG_IMAGE;
+    let ogImage = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787116160287_og_home_page_banner.png';
     let ogType = 'website';
     let twitterTitle = '';
     let twitterDesc = '';
-    let twitterImage = STATIC_OG_IMAGE;
+    let twitterImage = ogImage;
     let twitterCard = 'summary_large_image';
     let schemaMarkup = '';
     let faqsList = [];
     let otherTagsContent = '';
 
     if (path === '/') {
-      title = 'Custom Software Development Company | Kvantum Tech Solutions';
-      description = 'Kvantum Tech Solutions is a custom software development company building scalable business software, CRM, HRMS, ERP, web and mobile apps, and automation solutions across Delhi NCR.';
-      keywords = 'custom software development company, software development company, custom software development services, business software development company';
+      title = 'IT Solutions Company in Delhi NCR | Kvantum Tech Solutions';
+      description = 'Kvantum Tech Solutions offers reliable IT services, software development, cloud solutions, web development, and digital transformation services across Delhi NCR.';
+      keywords = 'IT Solutions Company in Delhi NCR, Kvantum Tech Solutions, software development, cloud solutions, web development, digital transformation';
       canonicalUrl = 'https://kvantumtechsolutions.com/';
       ogTitle = title;
       ogDesc = description;
+      ogImage = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787116160287_og_home_page_banner.png';
+
     } else if (path === '/about') {
-      title = 'About Kvantum Tech Solutions | Enterprise Software & IT Services';
-      description = 'Learn about Kvantum Tech Solutions, a trusted custom software development company specializing in CRM, HRMS, web apps, and business automation in Delhi NCR.';
-      keywords = 'about kvantum tech solutions, software engineering team, custom software company';
+      title = 'About Kvantum Tech Solutions | IT & AI Innovation Experts';
+      description = 'Learn about Kvantum Tech Solutions, a trusted IT company delivering AI-powered solutions, web development, digital marketing, and enterprise technology services.';
+      keywords = 'about kvantum tech solutions, IT company Delhi NCR, AI solutions, web development company';
       canonicalUrl = 'https://kvantumtechsolutions.com/about';
-      ogTitle = title;
-      ogDesc = description;
+      ogTitle = 'About Kvantum Tech Solutions | IT & AI Innovation Experts';
+      ogDesc = 'Discover Kvantum Tech Solutions, delivering innovative AI, web development, digital marketing, and enterprise IT solutions for business growth.';
+      ogImage = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787117307981_og_about_page_banner.png';
+
     } else if (path === '/services') {
-      title = 'Enterprise IT & Custom Software Services | Kvantum Tech Solutions';
-      description = 'Explore custom software development, SaaS products, WhatsApp API integration, CRM/HRMS development, and web and mobile app development services.';
-      keywords = 'custom software services, CRM software development, HRMS development, web application development';
+      title = 'IT Services | Web Development, SEO & AI Solutions | Kvantum Tech Solutions';
+      description = "Explore Kvantum Tech Solutions' expert IT services, including web development, SEO, digital marketing, AI chatbots, app development, UI/UX design, and scalable business solutions.";
+      keywords = 'IT Services, Web Development, SEO, AI Solutions, digital marketing, app development';
       canonicalUrl = 'https://kvantumtechsolutions.com/services';
-      ogTitle = title;
-      ogDesc = description;
+      ogTitle = 'IT Services | Web Development, SEO & AI Solutions | Kvantum Tech Solutions';
+      ogDesc = 'Discover enterprise-grade IT services from Kvantum Tech Solutions, including web development, SEO, AI chatbots, digital marketing, app development, and UI/UX design.';
+      ogImage = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787118547861_og_services_page_banner.png';
+
     } else if (path === '/projects' || path === '/portfolio') {
-      title = 'Featured Projects | Studio Kvantum Tech Solutions';
+      title = 'Featured Software & Engineering Projects | Kvantum Tech Solutions';
       description = 'Explore web products, apps, and custom platforms built for our clients by Kvantum Tech Solutions.';
-      keywords = 'featured software projects, portfolio, enterprise software development';
+      keywords = 'featured software projects, portfolio, enterprise software development, custom platforms';
       canonicalUrl = 'https://kvantumtechsolutions.com/projects';
-      ogTitle = title;
-      ogDesc = description;
+      ogTitle = 'Featured Software & Engineering Projects | Kvantum Tech Solutions';
+      ogDesc = 'Explore web products, apps, and custom platforms built for our clients by Kvantum Tech Solutions.';
+      ogImage = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787118540771_og_project_page_banner.png';
+
     } else if (path === '/blog') {
-      title = 'Engineering & Tech Insights | Kvantum Tech Solutions Blog';
-      description = 'Latest articles on custom software development, business automation, CRM tools, SaaS engineering, and enterprise digital transformation.';
-      keywords = 'software engineering blog, tech insights, custom software development guides';
+      title = 'Tech Blog | AI, SEO, Web Development & Digital Marketing | Kvantum Tech Solutions';
+      description = 'Explore the Kvantum Tech Solutions blog for expert insights on AI, SEO, web development, digital marketing, software solutions, and the latest technology trends to grow your business.';
+      keywords = 'tech blog, AI blog, SEO articles, web development blog, digital marketing insights';
       canonicalUrl = 'https://kvantumtechsolutions.com/blog';
-      ogTitle = title;
-      ogDesc = description;
+      ogTitle = 'Tech Blog | AI, SEO, Web Development & Digital Marketing | Kvantum Tech Solutions';
+      ogDesc = 'Read the latest articles from Kvantum Tech Solutions covering AI, SEO, web development, digital marketing, software innovation, and business technology.';
+      ogImage = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787118518420_og_blog_page_banner.png';
+
     } else if (path === '/contact') {
-      title = 'Contact Kvantum Tech Solutions | Direct Technical Contact';
-      description = 'Get in touch with Kvantum Tech Solutions for custom software, CRM, HRMS, ERP, web apps, and business automation. Book a live demo or request project quotes.';
-      keywords = 'contact software company, request software proposal, custom software quote';
+      title = "Contact Kvantum Tech Solutions | Let's Build Your Digital Future";
+      description = 'Get in touch with Kvantum Tech Solutions for web development, AI solutions, SEO, digital marketing, mobile apps, and enterprise IT services. Contact our experts today.';
+      keywords = 'contact kvantum tech solutions, hire IT experts, web development inquiry, digital project quote';
       canonicalUrl = 'https://kvantumtechsolutions.com/contact';
-      ogTitle = title;
-      ogDesc = description;
+      ogTitle = "Contact Kvantum Tech Solutions | Let's Build Your Digital Future";
+      ogDesc = 'Contact Kvantum Tech Solutions to discuss your next digital project. Our experts deliver innovative web, AI, SEO, app development, and digital marketing solutions.';
+      ogImage = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787118530037_og_contact_page_banner.png';
+
     } else if (path.startsWith('/keyword/')) {
-      // Programmatic SEO pages still dynamic from admin
+      // Programmatic SEO pages — dynamic from admin
       const slug = path.replace('/keyword/', '').trim();
       const activeSeoObj = (seoPages || []).find(p => p.slug === slug || p.id === slug);
       if (activeSeoObj) {
@@ -284,11 +294,13 @@ export default function App() {
       }
     }
 
+
     if (!ogTitle) ogTitle = title;
     if (!ogDesc) ogDesc = description;
     if (!twitterTitle) twitterTitle = ogTitle;
     if (!twitterDesc) twitterDesc = ogDesc;
-    if (!twitterImage) twitterImage = ogImage;
+    // Twitter image always follows the per-page og:image
+    twitterImage = ogImage;
 
     document.title = title;
 
