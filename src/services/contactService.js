@@ -16,7 +16,21 @@ export const submitContact = async (formData) => {
     console.warn('[LOCAL LEAD QUEUE]', e);
   }
 
-  // 2. Transmit to backend PostgreSQL database
+  // 2. Transmit to backend Next.js API / PostgreSQL
+  try {
+    const res = await fetch('/api/leads', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      return data;
+    }
+  } catch (fetchErr) {
+    console.warn('[DIRECT FETCH POST /api/leads FAIL]', fetchErr);
+  }
+
   try {
     const response = await api.post('/leads', formData);
     return response.data;
@@ -29,11 +43,30 @@ export const submitContact = async (formData) => {
 // Fetch submitted leads (admin/sales only)
 export const getLeads = async () => {
   let serverLeads = [];
+
+  // Primary: Direct Next.js /api/leads endpoint
   try {
-    const response = await api.get('/leads');
-    serverLeads = Array.isArray(response.data) ? response.data : [];
-  } catch (err) {
-    console.warn('[CRM LOGS] Server lead fetch error:', err.message);
+    const res = await fetch('/api/leads', { cache: 'no-store' });
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        serverLeads = data;
+      }
+    }
+  } catch (e) {
+    console.warn('[FETCH /api/leads]', e);
+  }
+
+  // Secondary fallback: Axios api instance
+  if (serverLeads.length === 0) {
+    try {
+      const response = await api.get('/leads');
+      if (Array.isArray(response.data)) {
+        serverLeads = response.data;
+      }
+    } catch (err) {
+      console.warn('[CRM LOGS] Axios lead fetch error:', err.message);
+    }
   }
 
   let localQueue = [];
@@ -55,13 +88,13 @@ export const getLeads = async () => {
     created_at: item.submittedAt || item.createdAt || new Date().toISOString()
   }));
 
-  // Merge server + local leads and deduplicate
+  // Merge server + local leads and deduplicate by id or composite key
   const combined = [...formattedLocal, ...serverLeads];
   const uniqueLeads = [];
   const seenKeys = new Set();
 
   for (const lead of combined) {
-    const key = `${lead.name}_${lead.email}_${lead.phone}`.toLowerCase();
+    const key = lead._id || lead.id || `${lead.name}_${lead.email}_${lead.phone}`.toLowerCase();
     if (!seenKeys.has(key)) {
       seenKeys.add(key);
       uniqueLeads.push(lead);

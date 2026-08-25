@@ -36,20 +36,15 @@ export default function ContactPage({ settings }) {
     }
 
     const cleanPhone = formData.phone.replace(/[^0-9]/g, '');
-    const indianPhoneRegex = /^[6-9]\d{9}$/;
     if (!formData.phone.trim()) {
       errors.phone = 'Phone number is required.';
-    } else if (cleanPhone.length !== 10) {
-      errors.phone = `Phone number must be exactly 10 digits (you entered ${cleanPhone.length} digits).`;
-    } else if (!indianPhoneRegex.test(cleanPhone)) {
-      errors.phone = 'Indian mobile numbers must start with 6, 7, 8, or 9 (e.g. 9811661828).';
+    } else if (cleanPhone.length < 10) {
+      errors.phone = `Please enter a valid phone number (at least 10 digits).`;
     }
 
     const trimmedMsg = formData.message.trim();
     if (!trimmedMsg) {
-      errors.message = 'Please describe your project requirements.';
-    } else if (trimmedMsg.length < 10) {
-      errors.message = `Message is too short (currently ${trimmedMsg.length} chars). Please write at least 10 characters so we understand your requirement.`;
+      errors.message = 'Please enter a message.';
     }
 
     setFieldErrors(errors);
