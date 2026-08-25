@@ -62,9 +62,10 @@ export const metadata: Metadata = {
     description: 'Kvantum Tech Solutions offers reliable IT services, software development, cloud solutions, web development, and digital transformation services across Delhi NCR.',
     images: [
       {
-        url: 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787116160287_og_home_page_banner.png',
+        url: 'https://kvantumtechsolutions.com/og_banners/home.jpg',
         width: 1200,
         height: 630,
+        type: 'image/jpeg',
         alt: 'Kvantum Tech Solutions Banner',
       },
     ],
@@ -73,7 +74,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'IT Solutions Company in Delhi NCR | Kvantum Tech Solutions',
     description: 'Kvantum Tech Solutions offers reliable IT services, software development, cloud solutions, web development, and digital transformation services across Delhi NCR.',
-    images: ['https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787116160287_og_home_page_banner.png'],
+    images: ['https://kvantumtechsolutions.com/og_banners/home.jpg'],
   },
   robots: {
     index: true,

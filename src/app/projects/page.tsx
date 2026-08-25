@@ -16,9 +16,10 @@ export const metadata: Metadata = {
     siteName: 'Kvantum Tech Solutions',
     images: [
       {
-        url: 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787118540771_og_project_page_banner.png',
+        url: 'https://kvantumtechsolutions.com/og_banners/projects.jpg',
         width: 1200,
         height: 630,
+        type: 'image/jpeg',
         alt: 'Featured Projects Kvantum Tech Solutions',
       },
     ],
@@ -27,7 +28,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Featured Software & Engineering Projects | Kvantum Tech Solutions',
     description: 'Explore web products, apps, and custom platforms built for our clients by Kvantum Tech Solutions.',
-    images: ['https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787118540771_og_project_page_banner.png'],
+    images: ['https://kvantumtechsolutions.com/og_banners/projects.jpg'],
   },
 };
 

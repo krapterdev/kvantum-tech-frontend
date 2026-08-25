@@ -16,9 +16,10 @@ export const metadata: Metadata = {
     siteName: 'Kvantum Tech Solutions',
     images: [
       {
-        url: 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787118530037_og_contact_page_banner.png',
+        url: 'https://kvantumtechsolutions.com/og_banners/contact.jpg',
         width: 1200,
         height: 630,
+        type: 'image/jpeg',
         alt: 'Contact Kvantum Tech Solutions',
       },
     ],
@@ -27,7 +28,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: "Contact Kvantum Tech Solutions | Let's Build Your Digital Future",
     description: 'Contact Kvantum Tech Solutions to discuss your next digital project. Our experts deliver innovative web, AI, SEO, app development, and digital marketing solutions.',
-    images: ['https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787118530037_og_contact_page_banner.png'],
+    images: ['https://kvantumtechsolutions.com/og_banners/contact.jpg'],
   },
 };
 

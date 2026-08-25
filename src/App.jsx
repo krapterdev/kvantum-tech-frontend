@@ -191,7 +191,7 @@ export default function App() {
 
     let ogTitle = '';
     let ogDesc = '';
-    let ogImage = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787116160287_og_home_page_banner.png';
+    let ogImage = 'https://kvantumtechsolutions.com/og_banners/home.jpg';
     let ogType = 'website';
     let twitterTitle = '';
     let twitterDesc = '';
@@ -208,7 +208,7 @@ export default function App() {
       canonicalUrl = 'https://kvantumtechsolutions.com/';
       ogTitle = title;
       ogDesc = description;
-      ogImage = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787116160287_og_home_page_banner.png';
+      ogImage = 'https://kvantumtechsolutions.com/og_banners/home.jpg';
 
     } else if (path === '/about') {
       title = 'About Kvantum Tech Solutions | IT & AI Innovation Experts';
@@ -217,7 +217,7 @@ export default function App() {
       canonicalUrl = 'https://kvantumtechsolutions.com/about';
       ogTitle = 'About Kvantum Tech Solutions | IT & AI Innovation Experts';
       ogDesc = 'Discover Kvantum Tech Solutions, delivering innovative AI, web development, digital marketing, and enterprise IT solutions for business growth.';
-      ogImage = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787117307981_og_about_page_banner.png';
+      ogImage = 'https://kvantumtechsolutions.com/og_banners/about.jpg';
 
     } else if (path === '/services') {
       title = 'IT Services | Web Development, SEO & AI Solutions | Kvantum Tech Solutions';
@@ -226,7 +226,7 @@ export default function App() {
       canonicalUrl = 'https://kvantumtechsolutions.com/services';
       ogTitle = 'IT Services | Web Development, SEO & AI Solutions | Kvantum Tech Solutions';
       ogDesc = 'Discover enterprise-grade IT services from Kvantum Tech Solutions, including web development, SEO, AI chatbots, digital marketing, app development, and UI/UX design.';
-      ogImage = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787118547861_og_services_page_banner.png';
+      ogImage = 'https://kvantumtechsolutions.com/og_banners/services.jpg';
 
     } else if (path === '/projects' || path === '/portfolio') {
       title = 'Featured Software & Engineering Projects | Kvantum Tech Solutions';
@@ -235,7 +235,7 @@ export default function App() {
       canonicalUrl = 'https://kvantumtechsolutions.com/projects';
       ogTitle = 'Featured Software & Engineering Projects | Kvantum Tech Solutions';
       ogDesc = 'Explore web products, apps, and custom platforms built for our clients by Kvantum Tech Solutions.';
-      ogImage = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787118540771_og_project_page_banner.png';
+      ogImage = 'https://kvantumtechsolutions.com/og_banners/projects.jpg';
 
     } else if (path === '/blog') {
       title = 'Tech Blog | AI, SEO, Web Development & Digital Marketing | Kvantum Tech Solutions';
@@ -244,7 +244,7 @@ export default function App() {
       canonicalUrl = 'https://kvantumtechsolutions.com/blog';
       ogTitle = 'Tech Blog | AI, SEO, Web Development & Digital Marketing | Kvantum Tech Solutions';
       ogDesc = 'Read the latest articles from Kvantum Tech Solutions covering AI, SEO, web development, digital marketing, software innovation, and business technology.';
-      ogImage = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787118518420_og_blog_page_banner.png';
+      ogImage = 'https://kvantumtechsolutions.com/og_banners/blog.jpg';
 
     } else if (path === '/contact') {
       title = "Contact Kvantum Tech Solutions | Let's Build Your Digital Future";
@@ -253,7 +253,8 @@ export default function App() {
       canonicalUrl = 'https://kvantumtechsolutions.com/contact';
       ogTitle = "Contact Kvantum Tech Solutions | Let's Build Your Digital Future";
       ogDesc = 'Contact Kvantum Tech Solutions to discuss your next digital project. Our experts deliver innovative web, AI, SEO, app development, and digital marketing solutions.';
-      ogImage = 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787118530037_og_contact_page_banner.png';
+      ogImage = 'https://kvantumtechsolutions.com/og_banners/contact.jpg';
+
 
     } else if (path.startsWith('/keyword/')) {
       // Programmatic SEO pages — dynamic from admin

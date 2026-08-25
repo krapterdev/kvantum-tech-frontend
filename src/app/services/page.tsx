@@ -16,9 +16,10 @@ export const metadata: Metadata = {
     siteName: 'Kvantum Tech Solutions',
     images: [
       {
-        url: 'https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787118547861_og_services_page_banner.png',
+        url: 'https://kvantumtechsolutions.com/og_banners/services.jpg',
         width: 1200,
         height: 630,
+        type: 'image/jpeg',
         alt: 'IT Services Kvantum Tech Solutions',
       },
     ],
@@ -27,7 +28,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'IT Services | Web Development, SEO & AI Solutions | Kvantum Tech Solutions',
     description: 'Discover enterprise-grade IT services from Kvantum Tech Solutions, including web development, SEO, AI chatbots, digital marketing, app development, and UI/UX design.',
-    images: ['https://bwdtxlosvptlqtixgcip.supabase.co/storage/v1/object/public/kvantumtechsolutions_storage/og_img_1787118547861_og_services_page_banner.png'],
+    images: ['https://kvantumtechsolutions.com/og_banners/services.jpg'],
   },
 };
 

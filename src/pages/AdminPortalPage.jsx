@@ -3068,11 +3068,14 @@ ${allEntries.map(entry => `    <url>
                             return new Date().toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
                           })()}
                         </td>
-                        <td className="px-5 py-4 font-bold text-zinc-200">{lead.name}</td>
-                        <td className="px-5 py-4 font-mono text-xs">{lead.email}</td>
+                        <td className="px-5 py-4 font-bold text-zinc-200">{lead.name || 'Anonymous Client'}</td>
+                        <td className="px-5 py-4 font-mono text-xs">
+                          <div>{lead.email || 'N/A'}</div>
+                          {lead.phone && <div className="text-[11px] text-cyanCustom/80 mt-0.5">{lead.phone}</div>}
+                        </td>
                         <td className="px-5 py-4">
                           <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-zinc-800 text-zinc-300">
-                            {lead.service.toUpperCase()}
+                            {(lead.service || 'Inquiry').toUpperCase()}
                           </span>
                         </td>
                         <td className="px-5 py-4">
